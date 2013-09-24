@@ -5,9 +5,9 @@ This version of Sparrow has been reverted to MRC (manual retain count) from ARC 
 
 **Benchmark Comparison:**
 
-[iPhone5] Sparrow(S) with MRC @ 60fps 	- ~6640 objects
+[iPhone5] Sparrow-S with MRC @ 60fps 	- ~6640 objects
 
-[iPhone5] Sparrow(S) with MRC @ 30fps - ~12735 objects
+[iPhone5] Sparrow-S with MRC @ 30fps - ~12735 objects
 
 [iPhone5] Sparrow-Framework ARC @ 60fps - ~1815 objects
 
