@@ -23,7 +23,7 @@
     BOOL _tinted;
 }
 
-- (id)initWithWidth:(float)width height:(float)height color:(uint)color premultipliedAlpha:(BOOL)pma;
+- (instancetype)initWithWidth:(float)width height:(float)height color:(uint)color premultipliedAlpha:(BOOL)pma;
 {
     if ((self = [super init]))
     {
@@ -46,38 +46,44 @@
     return self;
 }
 
-- (id)initWithWidth:(float)width height:(float)height color:(uint)color
+- (instancetype)initWithWidth:(float)width height:(float)height color:(uint)color
 {
     return [self initWithWidth:width height:height color:color premultipliedAlpha:YES];
 }
 
-- (id)initWithWidth:(float)width height:(float)height
+- (instancetype)initWithWidth:(float)width height:(float)height
 {
     return [self initWithWidth:width height:height color:SP_WHITE];
 }
 
-- (id)init
+- (instancetype)init
 {    
     return [self initWithWidth:32 height:32];
+}
+
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_vertexData);
+    [super dealloc];
 }
 
 - (SPRectangle*)boundsInSpace:(SPDisplayObject*)targetSpace
 {
     if (targetSpace == self) // optimization
     {
-        SPPoint *bottomRight = [_vertexData positionAtIndex:3];
-        return [[SPRectangle alloc] initWithX:0.0f y:0.0f width:bottomRight.x height:bottomRight.y];
+        SPPoint* bottomRight = [_vertexData positionAtIndex:3];
+        return [SPRectangle rectangleWithX:0.0f y:0.0f width:bottomRight.x height:bottomRight.y];
     }
     else if ((id)targetSpace == (id)self.parent && self.rotation == 0.0f) // optimization
     {
         float scaleX = self.scaleX;
         float scaleY = self.scaleY;
         
-        SPPoint *bottomRight = [_vertexData positionAtIndex:3];
-        SPRectangle *resultRect = [[SPRectangle alloc] initWithX:self.x - self.pivotX * scaleX
-                                                               y:self.y - self.pivotY * scaleY
-                                                           width:bottomRight.x * scaleX
-                                                          height:bottomRight.y * scaleY];
+        SPPoint* bottomRight = [_vertexData positionAtIndex:3];
+        SPRectangle* resultRect = [SPRectangle rectangleWithX:self.x - self.pivotX * scaleX
+                                                            y:self.y - self.pivotY * scaleY
+                                                        width:bottomRight.x * scaleX
+                                                       height:bottomRight.y * scaleY];
         
         if (scaleX < 0.0f) { resultRect.width  *= -1.0f; resultRect.x -= resultRect.width;  }
         if (scaleY < 0.0f) { resultRect.height *= -1.0f; resultRect.y -= resultRect.height; }
@@ -86,7 +92,7 @@
     }
     else
     {
-        SPMatrix *transformationMatrix = [self transformationMatrixToSpace:targetSpace];
+        SPMatrix* transformationMatrix = [self transformationMatrixToSpace:targetSpace];
         return [_vertexData boundsAfterTransformation:transformationMatrix atIndex:0 numVertices:4];
     }
 }
@@ -148,7 +154,7 @@
     // override in subclass
 }
 
-- (void)copyVertexDataTo:(SPVertexData *)targetData atIndex:(int)targetIndex
+- (void)copyVertexDataTo:(SPVertexData*)targetData atIndex:(int)targetIndex
 {
     [_vertexData copyToVertexData:targetData atIndex:targetIndex];
 }
@@ -169,29 +175,29 @@
     return _tinted;
 }
 
-- (SPTexture *)texture
+- (SPTexture*)texture
 {
     return nil;
 }
 
-- (void)render:(SPRenderSupport *)support
+- (void)render:(SPRenderSupport*)support
 {
     [support batchQuad:self];
 }
 
-+ (id)quadWithWidth:(float)width height:(float)height
++ (instancetype)quadWithWidth:(float)width height:(float)height
 {
-    return [[self alloc] initWithWidth:width height:height];
+    return [[[self alloc] initWithWidth:width height:height] autorelease];
 }
 
-+ (id)quadWithWidth:(float)width height:(float)height color:(uint)color
++ (instancetype)quadWithWidth:(float)width height:(float)height color:(uint)color
 {
-    return [[self alloc] initWithWidth:width height:height color:color];
+    return [[[self alloc] initWithWidth:width height:height color:color] autorelease];
 }
 
-+ (id)quad
++ (instancetype)quad
 {
-    return [[self alloc] init];
+    return [[[self alloc] init] autorelease];
 }
 
 @end

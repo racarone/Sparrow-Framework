@@ -26,7 +26,7 @@
 
 - (void)testEmpty
 {
-    SPVertexData *vertexData = [[SPVertexData alloc] initWithSize:0];
+    SPVertexData* vertexData = [[SPVertexData alloc] initWithSize:0];
     
     STAssertEquals(0, vertexData.numVertices, @"wrong number of vertices");
     STAssertTrue(vertexData.vertices == NULL, @"vertex array should be null");
@@ -39,7 +39,7 @@
     SPVertex vertex = [self anyVertex];
     SPVertex defaultVertex = [self defaultVertex];
     
-    SPVertexData *vertexData = [[SPVertexData alloc] initWithSize:numVertices];
+    SPVertexData* vertexData = [[SPVertexData alloc] initWithSize:numVertices];
     
     STAssertEquals(numVertices, vertexData.numVertices, @"wrong number of vertices");
     STAssertTrue(vertexData.vertices != NULL, @"vertex array not accessible");
@@ -58,7 +58,7 @@
 - (void)testSetAllColors
 {
     uint color = 0xabcdef;
-    SPVertexData *vertexData = [[SPVertexData alloc] initWithSize:4];
+    SPVertexData* vertexData = [[SPVertexData alloc] initWithSize:4];
     vertexData.color = color;
     
     for (int i=0; i<vertexData.numVertices; ++i)
@@ -67,7 +67,7 @@
 
 - (void)testSetAllAlphas
 {
-    SPVertexData *vertexData = [[SPVertexData alloc] initWithSize:4];
+    SPVertexData* vertexData = [[SPVertexData alloc] initWithSize:4];
     vertexData.alpha = 0.5f;
     
     for (int i=0; i<vertexData.numVertices; ++i)
@@ -78,7 +78,7 @@
 {
     uint color = 0xabcdef;
     float alpha = 0.5f;
-    SPVertexData *vertexData = [[SPVertexData alloc] initWithSize:4];
+    SPVertexData* vertexData = [[SPVertexData alloc] initWithSize:4];
     vertexData.color = color;
     vertexData.alpha = alpha;
     
@@ -93,7 +93,7 @@
 {
     SPVertex vertex = [self anyVertex];
     SPVertex defaultVertex = [self defaultVertex];
-    SPVertexData *vertexData = [[SPVertexData alloc] initWithSize:4];
+    SPVertexData* vertexData = [[SPVertexData alloc] initWithSize:4];
     
     STAssertEquals(4, vertexData.numVertices, @"wrong number of vertices");
     
@@ -116,7 +116,7 @@
 - (void)testAppend
 {
     SPVertex vertex = [self anyVertex];
-    SPVertexData *vertexData = [[SPVertexData alloc] init];
+    SPVertexData* vertexData = [[SPVertexData alloc] init];
     
     STAssertEquals(0, vertexData.numVertices, @"wrong number of vertices");
     
@@ -128,7 +128,7 @@
 
 - (void)testPremultipliedAlpha
 {
-    SPVertexData *vertexData = [[SPVertexData alloc] initWithSize:0 premultipliedAlpha:NO];
+    SPVertexData* vertexData = [[SPVertexData alloc] initWithSize:0 premultipliedAlpha:NO];
     
     SPVertex vertex = [self defaultVertex];
     vertex.color = SPVertexColorMake(80, 60, 40, 204); // alpha = 4/5
@@ -150,7 +150,7 @@
 
 - (void)testScaleAlphaWithoutPMA
 {
-    SPVertexData *vertexData = [[SPVertexData alloc] initWithSize:0 premultipliedAlpha:NO];
+    SPVertexData* vertexData = [[SPVertexData alloc] initWithSize:0 premultipliedAlpha:NO];
     
     SPVertex vertex = [self defaultVertex];
     vertex.color = SPVertexColorMake(80, 60, 40, 128);
@@ -166,7 +166,7 @@
 
 - (void)testScaleAlphaWithPMA
 {
-    SPVertexData *vertexData = [[SPVertexData alloc] initWithSize:0 premultipliedAlpha:YES];
+    SPVertexData* vertexData = [[SPVertexData alloc] initWithSize:0 premultipliedAlpha:YES];
     
     SPVertex vertex = [self defaultVertex];
     vertex.color = SPVertexColorMake(80, 60, 40, 204);
@@ -182,7 +182,7 @@
 
 - (void)testTransformVertices
 {
-    SPVertexData *vertexData = [[SPVertexData alloc] initWithSize:0 premultipliedAlpha:YES];
+    SPVertexData* vertexData = [[SPVertexData alloc] initWithSize:0 premultipliedAlpha:YES];
     
     SPVertex defaultVertex = [self defaultVertex];
     SPVertex secondVertex = [self defaultVertex];
@@ -193,7 +193,7 @@
     [vertexData appendVertex:secondVertex];
     [vertexData appendVertex:defaultVertex];
     
-    SPMatrix *matrix = [[SPMatrix alloc] init];
+    SPMatrix* matrix = [[SPMatrix alloc] init];
     [matrix rotateBy:M_PI];
     
     [vertexData transformVerticesWithMatrix:matrix atIndex:1 numVertices:1];
@@ -211,13 +211,13 @@
 {
     SPVertex defaultVertex = [self defaultVertex];
     SPVertex vertex = [self anyVertex];
-    SPVertexData *sourceData = [[SPVertexData alloc] init];
+    SPVertexData* sourceData = [[SPVertexData alloc] init];
     
     [sourceData appendVertex:vertex];
     [sourceData appendVertex:defaultVertex];
     [sourceData appendVertex:vertex];
     
-    SPVertexData *targetData = [[SPVertexData alloc] initWithSize:5 premultipliedAlpha:NO];
+    SPVertexData* targetData = [[SPVertexData alloc] initWithSize:5 premultipliedAlpha:NO];
     
     [sourceData copyToVertexData:targetData atIndex:2];
     

@@ -36,16 +36,16 @@
 /// -----------------
 
 /// Initializes a matrix with the specified components. _Designated Initializer_.
-- (id)initWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;
+- (instancetype)initWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;
 
 /// Initializes an identity matrix.
-- (id)init;
+- (instancetype)init;
 
 /// Factory method.
-+ (id)matrixWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;
++ (instancetype)matrixWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;
 
 /// Factory method.
-+ (id)matrixWithIdentity;
++ (instancetype)matrixWithIdentity;
 
 /// -------------
 /// @name Methods
@@ -55,13 +55,13 @@
 - (void)setA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;
 
 /// Compares two matrices.
-- (BOOL)isEquivalent:(SPMatrix *)other;
+- (BOOL)isEquivalent:(SPMatrix*)other;
 
 /// Appends the matrix by multiplying another matrix by the current matrix.
-- (void)appendMatrix:(SPMatrix *)lhs;
+- (void)appendMatrix:(SPMatrix*)lhs;
 
 /// Prepends a matrix by multiplying the current matrix by another matrix.
-- (void)prependMatrix:(SPMatrix *)rhs;
+- (void)prependMatrix:(SPMatrix*)rhs;
 
 /// Translates the matrix along the x and y axes.
 - (void)translateXBy:(float)dx yBy:(float)dy;
@@ -90,7 +90,7 @@
 - (void)invert;
 
 // Copies all of the matrix data from the source object into the calling Matrix object.
-- (void)copyFromMatrix:(SPMatrix *)matrix;
+- (void)copyFromMatrix:(SPMatrix*)matrix;
 
 /// Creates a 3D GLKit matrix that is equivalent to this instance.
 - (GLKMatrix4)convertToGLKMatrix4;
@@ -99,10 +99,10 @@
 - (GLKMatrix3)convertToGLKMatrix3;
 
 /// Applies the geometric transformation represented by the matrix to the specified point.
-- (SPPoint *)transformPoint:(SPPoint*)point;
+- (SPPoint*)transformPoint:(SPPoint*)point;
 
 /// Applies the geometric transformation represented by the matrix to the specified coordinates.
-- (SPPoint *)transformPointWithX:(float)x y:(float)y;
+- (SPPoint*)transformPointWithX:(float)x y:(float)y;
 
 /// ----------------
 /// @name Properties

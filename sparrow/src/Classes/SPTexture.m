@@ -24,7 +24,7 @@
 
 @implementation SPTexture
 
-- (id)init
+- (instancetype)init
 {    
     if ([self isMemberOfClass:[SPTexture class]]) 
     {
@@ -34,37 +34,37 @@
     return [super init];
 }
 
-- (id)initWithContentsOfFile:(NSString *)path
+- (instancetype)initWithContentsOfFile:(NSString*)path
 {
     return [self initWithContentsOfFile:path generateMipmaps:NO];
 }
 
-- (id)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
+- (instancetype)initWithContentsOfFile:(NSString*)path generateMipmaps:(BOOL)mipmaps
 {
     BOOL pma = [SPTexture expectedPmaValueForFile:path];
     return [self initWithContentsOfFile:path generateMipmaps:mipmaps premultipliedAlpha:pma];
 }
 
-- (id)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
-          premultipliedAlpha:(BOOL)pma
+- (instancetype)initWithContentsOfFile:(NSString*)path generateMipmaps:(BOOL)mipmaps
+                    premultipliedAlpha:(BOOL)pma
 {
-    NSString *fullPath = [SPUtils absolutePathToFile:path];
+    NSString* fullPath = [SPUtils absolutePathToFile:path];
     
     if (!fullPath)
         [NSException raise:SP_EXC_FILE_NOT_FOUND format:@"File '%@' not found", path];
     
-    NSError *error = NULL;
-    NSData *data = [NSData dataWithUncompressedContentsOfFile:fullPath];
-    NSDictionary *options = [SPTexture optionsForPath:path mipmaps:mipmaps pma:pma];
+    NSError* error = NULL;
+    NSData* data = [NSData dataWithUncompressedContentsOfFile:fullPath];
+    NSDictionary* options = [SPTexture optionsForPath:path mipmaps:mipmaps pma:pma];
     
-    GLKTextureInfo *info = [GLKTextureLoader textureWithContentsOfData:data
+    GLKTextureInfo* info = [GLKTextureLoader textureWithContentsOfData:data
                                                                options:options error:&error];
     
     if (!info)
     {
         [NSException raise:SP_EXC_FILE_INVALID
                     format:@"Error loading texture: %@", [error localizedDescription]];
-        return nil;
+        SP_RELEASE_AND_NIL(self);
     }
     else if (mipmaps && (![SPUtils isPowerOfTwo:info.width] || ![SPUtils isPowerOfTwo:info.height])
              && glGetError() == GL_INVALID_OPERATION)
@@ -72,33 +72,38 @@
         [NSException raise:SP_EXC_INVALID_OPERATION
                     format:@"Mipmapping is only supported for textures with sidelengths that "
                            @"are powers of two."];
+        SP_RELEASE_AND_NIL(self);
     }
-    
-    return [[SPGLTexture alloc] initWithTextureInfo:info scale:[fullPath contentScaleFactor]
+
+    SP_RELEASE_AND_NIL(self);
+    self = [[SPGLTexture alloc] initWithTextureInfo:info
+                                              scale:[fullPath contentScaleFactor]
                                  premultipliedAlpha:pma];
+
+    return self;
 }
 
-- (id)initWithWidth:(float)width height:(float)height
+- (instancetype)initWithWidth:(float)width height:(float)height
 {
     return [self initWithWidth:width height:height draw:NULL];
 }
 
-- (id)initWithWidth:(float)width height:(float)height draw:(SPTextureDrawingBlock)drawingBlock
+- (instancetype)initWithWidth:(float)width height:(float)height draw:(SPTextureDrawingBlock)drawingBlock
 {
     return [self initWithWidth:width height:height generateMipmaps:NO draw:drawingBlock];
 }
 
-- (id)initWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
-               draw:(SPTextureDrawingBlock)drawingBlock
+- (instancetype)initWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
+                         draw:(SPTextureDrawingBlock)drawingBlock
 {
     return [self initWithWidth:width height:height generateMipmaps:mipmaps
                          scale:Sparrow.contentScaleFactor draw:drawingBlock];
 }
 
-- (id)initWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
-              scale:(float)scale draw:(SPTextureDrawingBlock)drawingBlock
+- (instancetype)initWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
+                        scale:(float)scale draw:(SPTextureDrawingBlock)drawingBlock
 {
-    // only textures with sidelengths that are powers of 2 support all OpenGL ES features.
+    // only textures with side lengths that are powers of 2 support all OpenGL ES features.
     int legalWidth  = [SPUtils nextPowerOfTwo:width  * scale];
     int legalHeight = [SPUtils nextPowerOfTwo:height * scale];
     
@@ -109,7 +114,7 @@
     
     void *imageData = calloc(legalWidth * legalHeight * bytesPerPixel, 1);
     CGContextRef context = CGBitmapContextCreate(imageData, legalWidth, legalHeight, 8, 
-                                                 bytesPerPixel * legalWidth, cgColorSpace, 
+                                                 bytesPerPixel * legalWidth, cgColorSpace,
                                                  bitmapInfo);
     CGColorSpaceRelease(cgColorSpace);
     
@@ -124,26 +129,29 @@
         UIGraphicsPopContext();        
     }
     
-    SPGLTexture *glTexture = [[SPGLTexture alloc] initWithData:imageData
-                                                         width:legalWidth
-                                                        height:legalHeight
-                                               generateMipmaps:mipmaps
-                                                         scale:scale
-                                            premultipliedAlpha:premultipliedAlpha];
+    SPGLTexture* glTexture = [[[SPGLTexture alloc] initWithData:imageData
+                                                          width:legalWidth
+                                                         height:legalHeight
+                                                generateMipmaps:mipmaps
+                                                          scale:scale
+                                             premultipliedAlpha:premultipliedAlpha] autorelease];
     
     CGContextRelease(context);
     free(imageData);
     
-    SPRectangle *region = [SPRectangle rectangleWithX:0 y:0 width:width height:height];
-    return [[SPTexture alloc] initWithRegion:region ofTexture:glTexture];
+    SPRectangle* region = [SPRectangle rectangleWithX:0 y:0 width:width height:height];
+
+    SP_RELEASE_AND_NIL(self);
+    self = [[SPTexture alloc] initWithRegion:region ofTexture:glTexture];
+    return self;
 }
 
-- (id)initWithContentsOfImage:(UIImage *)image
+- (instancetype)initWithContentsOfImage:(UIImage*)image
 {
     return [self initWithContentsOfImage:image generateMipmaps:NO];
 }
 
-- (id)initWithContentsOfImage:(UIImage *)image generateMipmaps:(BOOL)mipmaps
+- (instancetype)initWithContentsOfImage:(UIImage*)image generateMipmaps:(BOOL)mipmaps
 {
     return [self initWithWidth:image.size.width height:image.size.height generateMipmaps:mipmaps
                          scale:image.scale draw:^(CGContextRef context)
@@ -152,50 +160,102 @@
             }];
 }
 
-- (id)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
+- (instancetype)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
 {
     return [self initWithRegion:region frame:nil ofTexture:texture];
 }
 
-- (id)initWithRegion:(SPRectangle*)region frame:(SPRectangle *)frame ofTexture:(SPTexture*)texture
+- (instancetype)initWithRegion:(SPRectangle*)region frame:(SPRectangle*)frame ofTexture:(SPTexture*)texture
 {
     if (frame || region.x != 0.0f || region.width  != texture.width
               || region.y != 0.0f || region.height != texture.height)
     {
-        return [[SPSubTexture alloc] initWithRegion:region frame:frame ofTexture:texture];
+        SP_RELEASE_AND_NIL(self);
+        self = [[SPSubTexture alloc] initWithRegion:region frame:frame ofTexture:texture];
     }
     else
     {
-        return texture;
+        SP_RELEASE_AND_NIL(self);
+        self = [texture retain];
     }
+
+    return self;
 }
 
-+ (id)textureWithContentsOfFile:(NSString *)path
++ (instancetype)textureWithContentsOfFile:(NSString*)path
 {
-    return [[self alloc] initWithContentsOfFile:path];
+    return [[(SPTexture*)[self alloc] initWithContentsOfFile:path] autorelease];
 }
 
-+ (id)textureWithContentsOfFile:(NSString*)path generateMipmaps:(BOOL)mipmaps
++ (instancetype)textureWithContentsOfFile:(NSString*)path generateMipmaps:(BOOL)mipmaps
 {
-    return [[self alloc] initWithContentsOfFile:path generateMipmaps:mipmaps];
+    return [[(SPTexture*)[self alloc] initWithContentsOfFile:path generateMipmaps:mipmaps] autorelease];
 }
 
-+ (id)textureWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture
++ (instancetype)textureWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
 {
-    return [[self alloc] initWithRegion:region ofTexture:texture];
+    return [[(SPTexture*)[self alloc] initWithRegion:region ofTexture:texture] autorelease];
 }
 
-+ (id)textureWithWidth:(float)width height:(float)height draw:(SPTextureDrawingBlock)drawingBlock
++ (instancetype)textureWithWidth:(float)width height:(float)height draw:(SPTextureDrawingBlock)drawingBlock
 {
-    return [[self alloc] initWithWidth:width height:height draw:drawingBlock];
+    return [[(SPTexture*)[self alloc] initWithWidth:width height:height draw:drawingBlock] autorelease];
 }
 
-+ (id)emptyTexture
++ (instancetype)emptyTexture
 {
-    return [[self alloc] init];
+    return [[(SPTexture*)[self alloc] init] autorelease];
 }
 
-- (void)adjustVertexData:(SPVertexData *)vertexData atIndex:(int)index numVertices:(int)count
++ (instancetype)emptyTextureWithWidth:(float)width height:(float)height
+{
+    return [self emptyTextureWithWidth:width height:height generateMipmaps:false];
+}
+
++ (instancetype)emptyTextureWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
+{
+    return [self emptyTextureWithWidth:width height:height generateMipmaps:false premultipliedAlpha:true];
+}
+
++ (instancetype)emptyTextureWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps premultipliedAlpha:(BOOL)pma
+{
+    return [self emptyTextureWithWidth:width height:height generateMipmaps:false premultipliedAlpha:true scale:-1];
+}
+
++ (instancetype)emptyTextureWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps premultipliedAlpha:(BOOL)pma scale:(float)scale
+{
+    if (scale <= 0) scale = [Sparrow contentScaleFactor];
+
+    NSInteger actualWidth;
+    NSInteger actualHeight;
+    SPGLTexture* glTexture;
+
+    NSInteger origWidth = width * scale;
+    NSInteger origHeight = height * scale;
+    NSInteger potWidth = [SPUtils nextPowerOfTwo:origWidth];
+    NSInteger potHeight = [SPUtils nextPowerOfTwo:origHeight];
+    BOOL isPot = (origWidth == potWidth && origHeight == potHeight);
+    BOOL useRectTexture = !isPot && !mipmaps;
+
+    if (useRectTexture) {
+        actualWidth  = origWidth;
+        actualHeight = origHeight;
+    }
+    else {
+        actualWidth  = potWidth;
+        actualHeight = potHeight;
+    }
+
+    glTexture = [[[SPGLTexture alloc] initWithData:NULL width:actualWidth height:actualHeight
+                                   generateMipmaps:mipmaps scale:scale premultipliedAlpha:pma] autorelease];
+
+    if (isPot || useRectTexture)
+        return glTexture;
+    else
+        return [self textureWithRegion:[SPRectangle rectangleWithX:0 y:0 width:width height:height] ofTexture:glTexture];
+}
+
+- (void)adjustVertexData:(SPVertexData*)vertexData atIndex:(int)index numVertices:(int)count
 {
     // override in subclasses
 }
@@ -207,6 +267,18 @@
 }
 
 - (float)height
+{
+    [NSException raise:SP_EXC_ABSTRACT_METHOD format:@"Override 'height' in subclasses."];
+    return 0;
+}
+
+- (float)nativeWidth
+{
+    [NSException raise:SP_EXC_ABSTRACT_METHOD format:@"Override 'width' in subclasses."];
+    return 0;
+}
+
+- (float)nativeHeight
 {
     [NSException raise:SP_EXC_ABSTRACT_METHOD format:@"Override 'height' in subclasses."];
     return 0;
@@ -245,22 +317,27 @@
     return NO;
 }
 
+- (BOOL)mipmaps
+{
+    return NO;
+}
+
 - (float)scale
 {
     return 1.0f;
 }
 
-- (SPRectangle *)frame
+- (SPRectangle*)frame
 {
     return nil;
 }
 
-+ (NSDictionary *)optionsForPath:(NSString *)path mipmaps:(BOOL)mipmaps pma:(BOOL)pma
++ (NSDictionary*)optionsForPath:(NSString*)path mipmaps:(BOOL)mipmaps pma:(BOOL)pma
 {
     // This is a workaround for a nasty inconsistency between different iOS versions :|
     
-    NSString *osVersion = [[UIDevice currentDevice] systemVersion];
-    NSDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+    NSString* osVersion = [[UIDevice currentDevice] systemVersion];
+    NSDictionary* options = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                              @(mipmaps), GLKTextureLoaderGenerateMipmaps, nil];
     
     #if TARGET_IPHONE_SIMULATOR
@@ -278,24 +355,24 @@
     return options;
 }
 
-+ (BOOL)isPVRFile:(NSString *)path
++ (BOOL)isPVRFile:(NSString*)path
 {
     path = [path lowercaseString];
     return [path hasSuffix:@".pvr"] || [path hasSuffix:@".pvr.gz"];
 }
 
-+ (BOOL)isPNGFile:(NSString *)path
++ (BOOL)isPNGFile:(NSString*)path
 {
     path = [path lowercaseString];
     return [path hasSuffix:@".png"] || [path hasSuffix:@".png.gz"];
 }
 
-+ (BOOL)isCompressedFile:(NSString *)path
++ (BOOL)isCompressedFile:(NSString*)path
 {
     return [[path lowercaseString] hasSuffix:@".gz"];
 }
 
-+ (BOOL)expectedPmaValueForFile:(NSString *)path
++ (BOOL)expectedPmaValueForFile:(NSString*)path
 {
     // PVR files typically don't use PMA.
     // PNG files in the root are preprocessed by Xcode, others are not.
@@ -304,7 +381,7 @@
     {
         if ([path isAbsolutePath])
         {
-            NSString *resourcePath = [[NSBundle appBundle] resourcePath];
+            NSString* resourcePath = [[NSBundle appBundle] resourcePath];
             return [[path stringByDeletingLastPathComponent] isEqualToString:resourcePath];
         }
         else return [path rangeOfString:@"/"].location == NSNotFound;
@@ -314,22 +391,22 @@
 
 #pragma mark - Asynchronous Texture Loading
 
-+ (void)loadFromFile:(NSString *)path onComplete:(SPTextureLoadingBlock)callback
++ (void)loadFromFile:(NSString*)path onComplete:(SPTextureLoadingBlock)callback
 {
     [self loadFromFile:path generateMipmaps:NO onComplete:callback];
 }
 
-+ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
++ (void)loadFromFile:(NSString*)path generateMipmaps:(BOOL)mipmaps
           onComplete:(SPTextureLoadingBlock)callback
 {
     BOOL pma = [SPTexture expectedPmaValueForFile:path];
     [self loadFromFile:path generateMipmaps:mipmaps premultipliedAlpha:pma onComplete:callback];
 }
 
-+ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps premultipliedAlpha:(BOOL)pma
++ (void)loadFromFile:(NSString*)path generateMipmaps:(BOOL)mipmaps premultipliedAlpha:(BOOL)pma
           onComplete:(SPTextureLoadingBlock)callback;
 {
-    NSString *fullPath = [SPUtils absolutePathToFile:path];
+    NSString* fullPath = [SPUtils absolutePathToFile:path];
     float actualScaleFactor = [fullPath contentScaleFactor];
     
     if ([self isCompressedFile:path])
@@ -339,13 +416,13 @@
     if (!fullPath)
         [NSException raise:SP_EXC_FILE_NOT_FOUND format:@"File '%@' not found", path];
     
-    NSDictionary *options = [SPTexture optionsForPath:path mipmaps:mipmaps pma:pma];
+    NSDictionary* options = [SPTexture optionsForPath:path mipmaps:mipmaps pma:pma];
     GLKTextureLoader *loader = Sparrow.currentController.textureLoader;
 
     [loader textureWithContentsOfFile:fullPath options:options queue:NULL
-                    completionHandler:^(GLKTextureInfo *info, NSError *outError)
+                    completionHandler:^(GLKTextureInfo* info, NSError* outError)
      {
-         SPTexture *texture = nil;
+         SPTexture* texture = nil;
          
          if (!outError)
              texture = [[SPGLTexture alloc] initWithTextureInfo:info scale:actualScaleFactor
@@ -355,32 +432,32 @@
      }];
 }
 
-+ (void)loadFromURL:(NSURL *)url onComplete:(SPTextureLoadingBlock)callback
++ (void)loadFromURL:(NSURL*)url onComplete:(SPTextureLoadingBlock)callback
 {
     [self loadFromURL:url generateMipmaps:NO onComplete:callback];
 }
 
-+ (void)loadFromURL:(NSURL *)url generateMipmaps:(BOOL)mipmaps
++ (void)loadFromURL:(NSURL*)url generateMipmaps:(BOOL)mipmaps
          onComplete:(SPTextureLoadingBlock)callback
 {
     float scale = [[url path] contentScaleFactor];
     [self loadFromURL:url generateMipmaps:mipmaps scale:scale onComplete:callback];
 }
 
-+ (void)loadFromURL:(NSURL *)url generateMipmaps:(BOOL)mipmaps scale:(float)scale
++ (void)loadFromURL:(NSURL*)url generateMipmaps:(BOOL)mipmaps scale:(float)scale
          onComplete:(SPTextureLoadingBlock)callback
 {
     if ([self isCompressedFile:url.path])
         [NSException raise:SP_EXC_INVALID_OPERATION
                     format:@"Async loading of gzip-compressed files is not supported"];
     
-    NSDictionary *options = @{ GLKTextureLoaderGenerateMipmaps: @(mipmaps) };
+    NSDictionary* options = @{ GLKTextureLoaderGenerateMipmaps: @(mipmaps) };
     GLKTextureLoader *loader = Sparrow.currentController.textureLoader;
     
     [loader textureWithContentsOfURL:url options:options queue:NULL
-                   completionHandler:^(GLKTextureInfo *info, NSError *outError)
+                   completionHandler:^(GLKTextureInfo* info, NSError* outError)
      {
-         SPTexture *texture = nil;
+         SPTexture* texture = nil;
          
          if (!outError)
              texture = [[SPGLTexture alloc] initWithTextureInfo:info scale:scale];
@@ -389,17 +466,17 @@
      }];
 }
 
-+ (void)loadFromSuffixedURL:(NSURL *)url onComplete:(SPTextureLoadingBlock)callback
++ (void)loadFromSuffixedURL:(NSURL*)url onComplete:(SPTextureLoadingBlock)callback
 {
     [self loadFromSuffixedURL:url generateMipmaps:NO onComplete:callback];
 }
 
-+ (void)loadFromSuffixedURL:(NSURL *)url generateMipmaps:(BOOL)mipmaps
++ (void)loadFromSuffixedURL:(NSURL*)url generateMipmaps:(BOOL)mipmaps
                  onComplete:(SPTextureLoadingBlock)callback
 {
     float scale = Sparrow.contentScaleFactor;
-    NSString *suffixedString = [[url absoluteString] stringByAppendingScaleSuffixToFilename:scale];
-    NSURL *suffixedURL = [NSURL URLWithString:suffixedString];
+    NSString* suffixedString = [[url absoluteString] stringByAppendingScaleSuffixToFilename:scale];
+    NSURL* suffixedURL = [NSURL URLWithString:suffixedString];
     [self loadFromURL:suffixedURL generateMipmaps:mipmaps scale:scale onComplete:callback];
 }
 

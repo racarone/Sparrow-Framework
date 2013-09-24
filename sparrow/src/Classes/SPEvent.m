@@ -13,39 +13,54 @@
 #import "SPEvent.h"
 #import "SPEvent_Internal.h"
 
+NSString* const kSPEventTypeAdded                   = @"added";
+NSString* const kSPEventTypeAddedToStage            = @"addedToStage";
+NSString* const kSPEventTypeRemoved                 = @"removed";
+NSString* const kSPEventTypeRemovedFromStage        = @"removedFromStage";
+NSString* const kSPEventTypeRemoveFromJuggler       = @"removedFromJuggler";
+NSString* const kSPEventTypeCompleted               = @"completed";
+NSString* const kSPEventTypeTriggered               = @"triggered";
+NSString* const kSPEventTypeFlatten                 = @"flatten";
+
 @implementation SPEvent
 {
-    SPEventDispatcher *__weak _target;
-    SPEventDispatcher *__weak _currentTarget;
-    NSString *_type;
-    BOOL _stopsImmediatePropagation;
-    BOOL _stopsPropagation;
-    BOOL _bubbles;
+    SPEventDispatcher*  _target;
+    SPEventDispatcher*  _currentTarget;
+    NSString*           _type;
+    BOOL                _stopsImmediatePropagation;
+    BOOL                _stopsPropagation;
+    BOOL                _bubbles;
 }
 
-@synthesize target = _target;
-@synthesize currentTarget = _currentTarget;
-@synthesize type = _type;
-@synthesize bubbles = _bubbles;
+@synthesize target          = _target;
+@synthesize currentTarget   = _currentTarget;
+@synthesize type            = _type;
+@synthesize bubbles         = _bubbles;
 
-- (id)initWithType:(NSString*)type bubbles:(BOOL)bubbles
-{    
+- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles
+{
     if ((self = [super init]))
-    {        
-        _type = [[NSString alloc] initWithString:type];
+    {
+        _type = [type copy];
         _bubbles = bubbles;
     }
     return self;
 }
 
-- (id)initWithType:(NSString*)type
+- (instancetype)initWithType:(NSString*)type
 {
     return [self initWithType:type bubbles:NO];
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithType:@"undefined"];
+}
+
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_type);
+    [super dealloc];
 }
 
 - (void)stopImmediatePropagation
@@ -58,22 +73,21 @@
     _stopsPropagation = YES;
 }
 
-- (NSString *)description
+- (NSString*)description
 {
     return [NSString stringWithFormat:@"[%@: type=\"%@\", bubbles=%@]",
             NSStringFromClass([self class]), _type, _bubbles ? @"YES" : @"NO"];
 }
 
-+ (id)eventWithType:(NSString*)type bubbles:(BOOL)bubbles
++ (instancetype)eventWithType:(NSString*)type bubbles:(BOOL)bubbles
 {
-    return [[self alloc] initWithType:type bubbles:bubbles];
+    return [[[self alloc] initWithType:type bubbles:bubbles] autorelease];
 }
 
-+ (id)eventWithType:(NSString*)type
++ (instancetype)eventWithType:(NSString*)type
 {
-    return [[self alloc] initWithType:type];
+    return [[[self alloc] initWithType:type] autorelease];
 }
-
 
 @end
 

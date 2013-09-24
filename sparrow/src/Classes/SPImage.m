@@ -19,17 +19,17 @@
 
 @implementation SPImage
 {
-    SPVertexData *_vertexDataCache;
-    BOOL _vertexDataCacheInvalid;
+    SPVertexData*   _vertexDataCache;
+    BOOL            _vertexDataCacheInvalid;
 }
 
 @synthesize texture = _texture;
 
-- (id)initWithTexture:(SPTexture*)texture
+- (instancetype)initWithTexture:(SPTexture*)texture
 {
     if (!texture) [NSException raise:SP_EXC_INVALID_OPERATION format:@"texture cannot be nil!"];
     
-    SPRectangle *frame = texture.frame;    
+    SPRectangle* frame = texture.frame;
     float width  = frame ? frame.width  : texture.width;
     float height = frame ? frame.height : texture.height;
     BOOL pma = texture.premultipliedAlpha;
@@ -40,27 +40,34 @@
         _vertexData.vertices[2].texCoords.y = 1.0f;
         _vertexData.vertices[3].texCoords.x = 1.0f;
         _vertexData.vertices[3].texCoords.y = 1.0f;
-        
-        _texture = texture;
+
+        self.texture = texture;
         _vertexDataCache = [[SPVertexData alloc] initWithSize:4 premultipliedAlpha:pma];
         _vertexDataCacheInvalid = YES;
     }
     return self;
 }
 
-- (id)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
+- (instancetype)initWithContentsOfFile:(NSString*)path generateMipmaps:(BOOL)mipmaps
 {
     return [self initWithTexture:[SPTexture textureWithContentsOfFile:path generateMipmaps:mipmaps]];
 }
 
-- (id)initWithContentsOfFile:(NSString*)path
+- (instancetype)initWithContentsOfFile:(NSString*)path
 {
     return [self initWithContentsOfFile:path generateMipmaps:NO];
 }
 
-- (id)initWithWidth:(float)width height:(float)height
+- (instancetype)initWithWidth:(float)width height:(float)height
 {
     return [self initWithTexture:[SPTexture textureWithWidth:width height:height draw:NULL]];
+}
+
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_texture);
+    SP_RELEASE_AND_NIL(_vertexDataCache);
+    [super dealloc];
 }
 
 - (void)setTexCoords:(SPPoint*)coords ofVertex:(int)vertexID
@@ -82,7 +89,7 @@
 
 - (void)readjustSize
 {
-    SPRectangle *frame = _texture.frame;    
+    SPRectangle* frame = _texture.frame;
     float width  = frame ? frame.width  : _texture.width;
     float height = frame ? frame.height : _texture.height;
 
@@ -99,7 +106,7 @@
     _vertexDataCacheInvalid = YES;
 }
 
-- (void)copyVertexDataTo:(SPVertexData *)targetData atIndex:(int)targetIndex
+- (void)copyVertexDataTo:(SPVertexData*)targetData atIndex:(int)targetIndex
 {
     if (_vertexDataCacheInvalid)
     {
@@ -111,7 +118,7 @@
     [_vertexDataCache copyToVertexData:targetData atIndex:targetIndex numVertices:4];
 }
 
-- (void)setTexture:(SPTexture *)value
+- (void)setTexture:(SPTexture*)value
 {
     if (value == nil)
     {
@@ -119,21 +126,22 @@
     }
     else if (value != _texture)
     {
-        _texture = value;
+        SP_ASSIGN_RETAIN(_texture, value);
+
         [_vertexData setPremultipliedAlpha:_texture.premultipliedAlpha updateVertices:YES];
         [_vertexDataCache setPremultipliedAlpha:_texture.premultipliedAlpha updateVertices:NO];
         [self vertexDataDidChange];
     }
 }
 
-+ (id)imageWithTexture:(SPTexture*)texture
++ (instancetype)imageWithTexture:(SPTexture*)texture
 {
-    return [[self alloc] initWithTexture:texture];
+    return [[[self alloc] initWithTexture:texture] autorelease];
 }
 
-+ (id)imageWithContentsOfFile:(NSString*)path
++ (instancetype)imageWithContentsOfFile:(NSString*)path
 {
-    return [[self alloc] initWithContentsOfFile:path];
+    return [[[self alloc] initWithContentsOfFile:path] autorelease];
 }
 
 @end

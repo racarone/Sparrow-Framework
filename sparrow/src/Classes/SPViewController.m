@@ -20,12 +20,13 @@
 #import "SPJuggler.h"
 #import "SPProgram.h"
 #import "SPStatsDisplay.h"
+#import "SPTexture.h"
 
 // --- private interaface --------------------------------------------------------------------------
 
 @interface SPViewController()
 
-@property (nonatomic, readonly) GLKView *glkView;
+@property (nonatomic, readonly) GLKView* glkView;
 
 @end
 
@@ -33,36 +34,29 @@
 
 @implementation SPViewController
 {
-    EAGLContext *_context;
-    Class _rootClass;
-    SPStage *_stage;
-    SPDisplayObject *_root;
-    SPJuggler *_juggler;
-    SPTouchProcessor *_touchProcessor;
-    SPRenderSupport *_support;
-    SPRootCreatedBlock _onRootCreated;
-    SPStatsDisplay *_statsDisplay;
-    NSMutableDictionary *_programs;
-    GLKTextureLoader *_textureLoader;
+    Class                   _rootClass;
+    SPTouchProcessor*       _touchProcessor;
+    SPRenderSupport*        _support;
+    SPStatsDisplay*         _statsDisplay;
+    NSMutableDictionary*    _programs;
     
-    double _lastTouchTimestamp;
-    float _contentScaleFactor;
-    float _viewScaleFactor;
-    BOOL _supportHighResolutions;
-    BOOL _doubleOnPad;
+    double                  _lastTouchTimestamp;
+    float                   _viewScaleFactor;
+    BOOL                    _supportHighResolutions;
+    BOOL                    _doubleOnPad;
 }
 
-@synthesize stage = _stage;
-@synthesize juggler = _juggler;
-@synthesize root = _root;
-@synthesize context = _context;
-@synthesize supportHighResolutions = _supportHighResolutions;
-@synthesize doubleOnPad = _doubleOnPad;
-@synthesize contentScaleFactor = _contentScaleFactor;
-@synthesize onRootCreated = _onRootCreated;
-@synthesize textureLoader = _textureLoader;
+@synthesize stage                   = _stage;
+@synthesize juggler                 = _juggler;
+@synthesize root                    = _root;
+@synthesize context                 = _context;
+@synthesize supportHighResolutions  = _supportHighResolutions;
+@synthesize doubleOnPad             = _doubleOnPad;
+@synthesize contentScaleFactor      = _contentScaleFactor;
+@synthesize onRootCreated           = _onRootCreated;
+@synthesize textureLoader           = _textureLoader;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (instancetype)initWithNibName:(NSString*)nibNameOrNil bundle:(NSBundle*)nibBundleOrNil
 {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
     {
@@ -71,7 +65,7 @@
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder*)aDecoder
 {
     if ((self = [super initWithCoder:aDecoder]))
     {
@@ -80,13 +74,33 @@
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
         [self setup];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [self purgePools];
+
+    [EAGLContext setCurrentContext:nil];
+    [Sparrow setCurrentController:nil];
+
+    SP_RELEASE_AND_NIL(_stage);
+    SP_RELEASE_AND_NIL(_root);
+    SP_RELEASE_AND_NIL(_juggler);
+    SP_RELEASE_AND_NIL(_touchProcessor);
+    SP_RELEASE_AND_NIL(_support);
+    SP_RELEASE_AND_NIL(_onRootCreated);
+    SP_RELEASE_AND_NIL(_statsDisplay);
+    SP_RELEASE_AND_NIL(_programs);
+    SP_RELEASE_AND_NIL(_textureLoader);
+
+    [super dealloc];
 }
 
 - (void)setup
@@ -118,13 +132,6 @@
     [self purgePools];
     [_support purgeBuffers];
     [super didReceiveMemoryWarning];
-}
-
-- (void)dealloc
-{
-    [self purgePools];
-    [EAGLContext setCurrentContext:nil];
-    [Sparrow setCurrentController:nil];
 }
 
 - (void)purgePools
@@ -207,7 +214,7 @@
 
 #pragma mark - GLKViewDelegate
 
-- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
+- (void)glkView:(GLKView*)view drawInRect:(CGRect)rect
 {
     @autoreleasepool
     {
@@ -219,15 +226,15 @@
             [self readjustStageSize];
             [self createRoot];
         }
-        
+
         [Sparrow setCurrentController:self];
         [EAGLContext setCurrentContext:_context];
+        [_support nextFrame];
         
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
-        
-        [_support nextFrame];
+
         [_stage render:_support];
         [_support finishQuadBatch];
         
@@ -242,17 +249,25 @@
 
 - (void)update
 {
+
     @autoreleasepool
     {
-        double passedTime = self.timeSinceLastUpdate;
-        
         [Sparrow setCurrentController:self];
+
+        double passedTime = self.timeSinceLastUpdate;
+        [_stage advanceTime:passedTime];
         [_juggler advanceTime:passedTime];
-        
-        SPEnterFrameEvent *enterFrameEvent =
-        [[SPEnterFrameEvent alloc] initWithType:SP_EVENT_TYPE_ENTER_FRAME passedTime:passedTime];
-        [_stage broadcastEvent:enterFrameEvent];
     }
+}
+
+- (NSInteger)backBufferWidth
+{
+    return self.glkView.drawableWidth;
+}
+
+- (NSInteger)backBufferHeight
+{
+    return self.glkView.drawableHeight;
 }
 
 #pragma mark - Touch Processing
@@ -267,22 +282,22 @@
     return self.view.multipleTouchEnabled;
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
 {
     [self processTouchEvent:event];
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
 {
     [self processTouchEvent:event];
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
 {
     [self processTouchEvent:event];
 }
 
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesCancelled:(NSSet*)touches withEvent:(UIEvent*)event
 {
     _lastTouchTimestamp -= 0.0001f; // cancelled touch events have an old timestamp -> workaround
     [self processTouchEvent:event];
@@ -299,13 +314,13 @@
             float yConversion = _stage.height / viewSize.height;
             
             // convert to SPTouches and forward to stage
-            NSMutableSet *touches = [NSMutableSet set];
+            NSMutableSet* touches = [NSMutableSet set];
             double now = CACurrentMediaTime();
-            for (UITouch *uiTouch in [event touchesForView:self.view])
+            for (UITouch* uiTouch in [event touchesForView:self.view])
             {
                 CGPoint location = [uiTouch locationInView:self.view];
                 CGPoint previousLocation = [uiTouch previousLocationInView:self.view];
-                SPTouch *touch = [SPTouch touch];
+                SPTouch* touch = [SPTouch touch];
                 touch.timestamp = now; // timestamp of uiTouch not compatible to Sparrow timestamp
                 touch.globalX = location.x * xConversion;
                 touch.globalY = location.y * yConversion;
@@ -329,7 +344,7 @@
 
 - (NSUInteger)supportedInterfaceOrientations
 {
-    NSArray *supportedOrientations =
+    NSArray* supportedOrientations =
     [[NSBundle mainBundle] infoDictionary][@"UISupportedInterfaceOrientations"];
     
     NSUInteger returnOrientations = 0;
@@ -347,7 +362,7 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    NSArray *supportedOrientations =
+    NSArray* supportedOrientations =
     [[NSBundle mainBundle] infoDictionary][@"UISupportedInterfaceOrientations"];
     
     return ((interfaceOrientation == UIInterfaceOrientationPortrait &&
@@ -376,34 +391,34 @@
         _stage.width  = newWidth;
         _stage.height = newHeight;
         
-        SPEvent *resizeEvent = [[SPResizeEvent alloc] initWithType:SP_EVENT_TYPE_RESIZE
-                               width:newWidth height:newHeight animationTime:duration];
+        SPEvent* resizeEvent = [[SPResizeEvent alloc] initWithType:kSPEventTypeResize width:newWidth height:newHeight animationTime:duration];
         [_stage broadcastEvent:resizeEvent];
+        [resizeEvent release];
     }
 }
 
 #pragma mark - Program registration
 
-- (void)registerProgram:(SPProgram *)program name:(NSString *)name
+- (void)registerProgram:(SPProgram*)program name:(NSString*)name
 {
     _programs[name] = program;
 }
 
-- (void)unregisterProgram:(NSString *)name
+- (void)unregisterProgram:(NSString*)name
 {
     [_programs removeObjectForKey:name];
 }
 
-- (SPProgram *)programByName:(NSString *)name
+- (SPProgram*)programByName:(NSString*)name
 {
     return _programs[name];
 }
 
 #pragma mark - Properties
 
-- (GLKView *)glkView
+- (GLKView*)glkView
 {
-    return (GLKView *)self.view;
+    return (GLKView*)self.view;
 }
 
 @end

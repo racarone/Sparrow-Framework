@@ -10,30 +10,40 @@
 //
 
 #import "SPPoint.h"
+#import "SPPoint_Internal.h"
 #import "SPMacros.h"
 #import <math.h>
 
+typedef id(*SPPointAllocIMP)(id,SEL);
+
+static id               __SPPointAllocClass;
+static SEL              __SPPointAllocSEL;
+static SPPointAllocIMP  __SPPointAllocIMP;
+
+SPPoint* SPPointAlloc(void)
+{
+    return __SPPointAllocIMP(__SPPointAllocClass, __SPPointAllocSEL);
+}
+
 // --- class implementation ------------------------------------------------------------------------
 
-#define SQ(x) ((x)*(x))
-
 @implementation SPPoint
-{
-    float _x;
-    float _y;
-}
 
 @synthesize x = _x;
 @synthesize y = _y;
 
++ (void)initialize
+{
+    __SPPointAllocClass = self;
+    __SPPointAllocSEL = @selector(alloc);
+    __SPPointAllocIMP = (SPPointAllocIMP)[self methodForSelector:__SPPointAllocSEL];
+}
+
 // designated initializer
 - (id)initWithX:(float)x y:(float)y
 {
-    if ((self = [super init]))
-    {
-        _x = x;
-        _y = y;        
-    }
+    _x = x;
+    _y = y;
     return self;
 }
 
@@ -49,129 +59,115 @@
 
 - (float)length
 {
-    return sqrtf(SQ(_x) + SQ(_y));
+    return SPPointGetLength(self);
 }
 
 - (float)lengthSquared 
 {
-    return SQ(_x) + SQ(_y);
+    return SPPointGetLengthSquared(self);
 }
 
 - (float)angle
 {
-    return atan2f(_y, _x);
+    return SPPointGetAngle(self);
 }
 
 - (BOOL)isOrigin
 {
-    return _x == 0.0f && _y == 0.0f;
+    return SPPointIsOrigin(self);
 }
 
-- (SPPoint *)invert
+- (SPPoint*)invert
 {
-    return [[SPPoint alloc] initWithX:-_x y:-_y];
+    return SPPointInvert(self);
 }
 
 - (SPPoint*)addPoint:(SPPoint*)point
 {
-    return [[SPPoint alloc] initWithX:_x+point->_x y:_y+point->_y];
+    return SPPointAddPoint(self, point);
 }
 
 - (SPPoint*)subtractPoint:(SPPoint*)point
 {
-    return [[SPPoint alloc] initWithX:_x-point->_x y:_y-point->_y];
+    return SPPointSubtractPoint(self, point);
 }
 
-- (SPPoint *)scaleBy:(float)scalar
+- (SPPoint*)scaleBy:(float)scalar
 {
-    return [[SPPoint alloc] initWithX:_x * scalar y:_y * scalar];
+    return SPPointScaleBy(self, scalar);
 }
 
-- (SPPoint *)rotateBy:(float)angle  
+- (SPPoint*)rotateBy:(float)angle  
 {
-    float sina = sinf(angle);
-    float cosa = cosf(angle);
-    return [[SPPoint alloc] initWithX:(_x * cosa) - (_y * sina) y:(_x * sina) + (_y * cosa)];
+    return SPPointRotateBy(self, angle);
 }
 
-- (SPPoint *)normalize
+- (SPPoint*)normalize
 {
     if (_x == 0 && _y == 0)
         [NSException raise:SP_EXC_INVALID_OPERATION format:@"Cannot normalize point in the origin"];
-        
-    float inverseLength = 1.0f / self.length;
-    return [[SPPoint alloc] initWithX:_x * inverseLength y:_y * inverseLength];
+
+    return SPPointNormalize(self);
 }
 
-- (float)dot:(SPPoint *)other
+- (float)dot:(SPPoint*)other
 {
-    return _x * other->_x + _y * other->_y;
+    return SPPointDot(self, other);
 }
 
-- (void)copyFromPoint:(SPPoint *)point
+- (void)copyFromPoint:(SPPoint*)point
 {
-    _x = point->_x;
-    _y = point->_y;
+    return SPPointCopyFromPoint(self, point);
 }
 
 - (void)setX:(float)x y:(float)y
 {
-    _x = x;
-    _y = y;
+    SPPointSet(self, x, y);
 }
 
 - (GLKVector2)convertToGLKVector
 {
-    return GLKVector2Make(_x, _y);
+    return SPPointConvertToGLKVector2(self);
 }
 
-- (BOOL)isEquivalent:(SPPoint *)other
+- (BOOL)isEquivalent:(SPPoint*)other
 {
-    if (other == self) return YES;
-    else if (!other) return NO;
-    else
-    {
-        SPPoint *point = (SPPoint*)other;
-        return SP_IS_FLOAT_EQUAL(_x, point->_x) && SP_IS_FLOAT_EQUAL(_y, point->_y);    
-    }
+    return SPPointIsEquivalent(self, other);
 }
 
-- (NSString *)description
+- (NSString*)description
 {
     return [NSString stringWithFormat:@"[SPPoint: x=%f, y=%f]", _x, _y];
 }
 
 + (float)distanceFromPoint:(SPPoint*)p1 toPoint:(SPPoint*)p2
 {
-    return sqrtf(SQ(p2->_x - p1->_x) + SQ(p2->_y - p1->_y));
+    return SPPointDistanceFromPoints(p1, p2);
 }
 
-+ (SPPoint *)interpolateFromPoint:(SPPoint *)p1 toPoint:(SPPoint *)p2 ratio:(float)ratio
++ (SPPoint*)interpolateFromPoint:(SPPoint*)p1 toPoint:(SPPoint*)p2 ratio:(float)ratio
 {
-    float invRatio = 1.0f - ratio;
-    return [SPPoint pointWithX:invRatio * p1->_x + ratio * p2->_x
-                             y:invRatio * p1->_y + ratio * p2->_y];
+    return SPPointInterpolateFromPoints(p1, p2, ratio);
 }
 
-+ (float)angleBetweenPoint:(SPPoint *)p1 andPoint:(SPPoint *)p2
++ (float)angleBetweenPoint:(SPPoint*)p1 andPoint:(SPPoint*)p2
 {
-    float cos = [p1 dot:p2] / (p1.length * p2.length);
-    return cos >= 1.0f ? 0.0f : acosf(cos);
+    return SPPointAngleBetweenPoints(p1, p2);
 }
 
 + (id)pointWithPolarLength:(float)length angle:(float)angle
 {
-    return [[self alloc] initWithPolarLength:length angle:angle];
+    return [[[self alloc] initWithPolarLength:length angle:angle] autorelease];
 }
 
 + (id)pointWithX:(float)x y:(float)y
 {
-    return [[self alloc] initWithX:x y:y];
+    return [[[self alloc] initWithX:x y:y] autorelease];
 }
 
 + (id)point
 {
-    return [[self alloc] init];
+    return [[[self alloc] init] autorelease];
 }
 
 #pragma mark NSCopying

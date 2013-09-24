@@ -18,11 +18,11 @@
 
  Use it as a simple means of grouping objects together in one coordinate system.
  
-	SPSprite *sprite = [SPSprite sprite];
+	SPSprite* sprite = [SPSprite sprite];
 	
 	// create children
-	SPImage *venus = [SPImage imageWithContentsOfFile:@"venus.png"];
-	SPImage *mars = [SPImage imageWithContentsOfFile:@"mars.png"];
+	SPImage* venus = [SPImage imageWithContentsOfFile:@"venus.png"];
+	SPImage* mars = [SPImage imageWithContentsOfFile:@"mars.png"];
 	
 	// move children to some relative positions
 	venus.x = 50;
@@ -52,6 +52,9 @@
 
 @interface SPSprite : SPDisplayObjectContainer 
 
+/// Create a new, empty sprite.
++ (instancetype)sprite;
+
 /// Optimizes the sprite for optimal rendering performance. Changes in the children of a flattened
 /// sprite will not be displayed any longer. For this to happen, either call `flatten` again, or
 /// `unflatten` the sprite. Beware that the actual flattening will not happen right away, but right
@@ -62,8 +65,15 @@
 /// Changes to the sprite's children will immediately become visible again.
 - (void)unflatten;
 
-/// Create a new, empty sprite.
-+ (id)sprite;
+/// Returns the bounds of the container's clipRect in the given coordinate space, or
+/// null if the sprite doens't have a clipRect.
+- (SPRectangle*)clipRectInSpace:(SPDisplayObject*)targetSpace;
+
+/// The object's clipping rectangle in its local coordinate system.
+/// Only pixels within that rectangle will be drawn.
+/// @note clip rects are axis aligned with the screen, so they
+/// will not be rotated or skewed if the Sprite is.
+@property (nonatomic, copy) SPRectangle* clipRect;
 
 @property (nonatomic, readonly) BOOL isFlattened;
 

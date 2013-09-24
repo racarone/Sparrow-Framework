@@ -13,7 +13,7 @@
 
 @implementation SPOverlayView
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent*)event
 {
     for (UIView *subview in self.subviews)
     {

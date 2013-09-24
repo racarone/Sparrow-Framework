@@ -10,11 +10,15 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#import "SPAlignment.h"
+#import "SPBlendMode.h"
 #import "SPEventDispatcher.h"
 #import "SPRectangle.h"
 #import "SPMatrix.h"
 
 @class SPDisplayObjectContainer;
+@class SPFragmentFilter;
 @class SPStage;
 @class SPRenderSupport;
 
@@ -83,6 +87,9 @@
 /// Removes the object from its parent, if it has one.
 - (void)removeFromParent;
 
+/// Moves the pivot point to a certain position within the local coordinate system of the object.
+- (void)alignPivotWithHAlign:(SPHAlign)hAlign vAlign:(SPVAlign)vAlign;
+
 /// Creates a matrix that represents the transformation from the local coordinate system to another.
 - (SPMatrix*)transformationMatrixToSpace:(SPDisplayObject*)targetSpace;
 
@@ -99,10 +106,10 @@
 - (SPDisplayObject*)hitTestPoint:(SPPoint*)localPoint;
 
 /// Dispatches an event on all children (recursively). The event must not bubble. */
-- (void)broadcastEvent:(SPEvent *)event;
+- (void)broadcastEvent:(SPEvent*)event;
 
 /// Creates an event and dispatches it on all children (recursively). */
-- (void)broadcastEventWithType:(NSString *)type;
+- (void)broadcastEventWithType:(NSString*)type;
 
 /// ----------------
 /// @name Properties
@@ -132,12 +139,6 @@
 /// The vertical skew angle in radians.
 @property (nonatomic, assign) float skewY;
 
-/// The width of the object in points.
-@property (nonatomic, assign) float width;
-
-/// The height of the object in points.
-@property (nonatomic, assign) float height;
-
 /// The rotation of the object in radians. (In Sparrow, all angles are measured in radians.)
 @property (nonatomic, assign) float rotation;
 
@@ -150,29 +151,35 @@
 /// Indicates if this object (and its children) will receive touch events.
 @property (nonatomic, assign) BOOL touchable;
 
+/// The width of the object in points.
+@property (nonatomic, assign) float width;
+
+/// The height of the object in points.
+@property (nonatomic, assign) float height;
+
 /// The bounds of the object relative to the local coordinates of the parent.
-@property (weak, nonatomic, readonly) SPRectangle *bounds;
+@property (assign, nonatomic, readonly) SPRectangle* bounds;
 
 /// The display object container that contains this display object.
-@property (weak, nonatomic, readonly) SPDisplayObjectContainer *parent;
+@property (assign, nonatomic, readonly) SPDisplayObjectContainer* parent;
 
 /// The root object the display object is connected to (i.e. an instance of the class
 /// that was passed to `[SPViewController startWithRoot:]`), or nil if the object is not connected
 /// to it.
-@property (weak, nonatomic, readonly) SPDisplayObject *root;
+@property (assign, nonatomic, readonly) SPDisplayObject* root;
 
 /// The stage the display object is connected to, or nil if it is not connected to a stage.
-@property (weak, nonatomic, readonly) SPStage *stage;
+@property (assign, nonatomic, readonly) SPStage* stage;
 
 /// The topmost object in the display tree the object is part of.
-@property (weak, nonatomic, readonly) SPDisplayObject *base;
+@property (assign, nonatomic, readonly) SPDisplayObject* base;
 
 /// The transformation matrix of the object relative to its parent.
 /// @returns CAUTION: not a copy, but the actual object!
-@property (nonatomic, copy) SPMatrix *transformationMatrix;
+@property (nonatomic, copy) SPMatrix* transformationMatrix;
 
 /// The name of the display object (default: nil). Used by `childByName:` of display object containers.
-@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString* name;
 
 /// The blend mode determines how the object is blended with the objects underneath. Default: AUTO
 @property (nonatomic, assign) uint blendMode;

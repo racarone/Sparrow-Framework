@@ -21,9 +21,9 @@
 - (void)setPreviousGlobalY:(float)y;
 - (void)setTapCount:(int)tapCount;
 - (void)setPhase:(SPTouchPhase)phase;
-- (void)setTarget:(SPDisplayObject *)target;
+- (void)setTarget:(SPDisplayObject*)target;
 
-+ (SPTouch *)touch;
++ (SPTouch*)touch;
 
 @property (nonatomic, strong) id nativeTouch;
 

@@ -27,7 +27,7 @@
  frame a custom duration. You can also play a sound whenever a certain frame appears.
  
  The methods `play` and `pause` control playback of the movie. You will receive an event of type
- `SP_EVENT_TYPE_COMPLETED` when the movie finished playback. When the movie is looping,
+ `kSPEventTypeCompleted` when the movie finished playback. When the movie is looping,
  the event is dispatched once per loop.
  
  As any animated object, a movie clip has to be added to a juggler (or have its `advanceTime:` 
@@ -42,57 +42,57 @@
 /// ------------------
 
 /// Initializes a movie with the first frame and the default number of frames per second. _Designated initializer_.
-- (id)initWithFrame:(SPTexture *)texture fps:(float)fps;
+- (instancetype)initWithFrame:(SPTexture*)texture fps:(float)fps;
 
 /// Initializes a movie with an array of textures and the default number of frames per second.
-- (id)initWithFrames:(NSArray *)textures fps:(float)fps;
+- (instancetype)initWithFrames:(NSArray*)textures fps:(float)fps;
 
 /// Factory method.
-+ (id)movieWithFrame:(SPTexture *)texture fps:(float)fps;
++ (instancetype)movieWithFrame:(SPTexture*)texture fps:(float)fps;
 
 /// Factory method.
-+ (id)movieWithFrames:(NSArray *)textures fps:(float)fps;
++ (instancetype)movieWithFrames:(NSArray*)textures fps:(float)fps;
 
 /// --------------------------------
 /// @name Frame Manipulation Methods
 /// --------------------------------
 
 /// Adds a frame with a certain texture, using the default duration.
-- (void)addFrameWithTexture:(SPTexture *)texture;
+- (void)addFrameWithTexture:(SPTexture*)texture;
 
 /// Adds a frame with a certain texture and duration.
-- (void)addFrameWithTexture:(SPTexture *)texture duration:(double)duration;
+- (void)addFrameWithTexture:(SPTexture*)texture duration:(double)duration;
 
 /// Adds a frame with a certain texture, duration and sound.
-- (void)addFrameWithTexture:(SPTexture *)texture duration:(double)duration sound:(SPSoundChannel *)sound;
+- (void)addFrameWithTexture:(SPTexture*)texture duration:(double)duration sound:(SPSoundChannel*)sound;
 
 /// Inserts a frame at the specified index. The successors will move down.
-- (void)addFrameWithTexture:(SPTexture *)texture atIndex:(int)frameID;
+- (void)addFrameWithTexture:(SPTexture*)texture atIndex:(int)frameID;
 
 /// Adds a frame with a certain texture and duration.
-- (void)addFrameWithTexture:(SPTexture *)texture duration:(double)duration atIndex:(int)frameID;
+- (void)addFrameWithTexture:(SPTexture*)texture duration:(double)duration atIndex:(int)frameID;
 
 /// Adds a frame with a certain texture, duration and sound.
-- (void)addFrameWithTexture:(SPTexture *)texture duration:(double)duration
-                     sound:(SPSoundChannel *)sound atIndex:(int)frameID;
+- (void)addFrameWithTexture:(SPTexture*)texture duration:(double)duration
+                     sound:(SPSoundChannel*)sound atIndex:(int)frameID;
 
 /// Removes the frame at the specified index. The successors will move up.
 - (void)removeFrameAtIndex:(int)frameID;
 
 /// Sets the texture of a certain frame.
-- (void)setTexture:(SPTexture *)texture atIndex:(int)frameID;
+- (void)setTexture:(SPTexture*)texture atIndex:(int)frameID;
 
 /// Sets the sound that will be played back when a certain frame is active.
-- (void)setSound:(SPSoundChannel *)sound atIndex:(int)frameID;
+- (void)setSound:(SPSoundChannel*)sound atIndex:(int)frameID;
 
 /// Sets the duration of a certain frame in seconds.
 - (void)setDuration:(double)duration atIndex:(int)frameID;
 
 /// Returns the texture of a frame at a certain index.
-- (SPTexture *)textureAtIndex:(int)frameID;
+- (SPTexture*)textureAtIndex:(int)frameID;
 
 /// Returns the sound of a frame at a certain index.
-- (SPSoundChannel *)soundAtIndex:(int)frameID;
+- (SPSoundChannel*)soundAtIndex:(int)frameID;
 
 /// Returns the duration (in seconds) of a frame at a certain index.
 - (double)durationAtIndex:(int)frameID;

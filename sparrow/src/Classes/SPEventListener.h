@@ -28,16 +28,16 @@
 /// Initializes an event listener with the specified properties. Note that `target` and `selector`
 /// are only used by the `fitsTarget:` method; it's always the block that will be invoked.
 /// _Designated Initializer._
-- (id)initWithTarget:(id)target selector:(SEL)selector block:(SPEventBlock)block;
+- (instancetype)initWithTarget:(id)target selector:(SEL)selector block:(SPEventBlock)block;
 
 /// Initializes an event listener from a target and a selector.
-- (id)initWithTarget:(id)target selector:(SEL)selector;
+- (instancetype)initWithTarget:(id)target selector:(SEL)selector;
 
 /// Initializes an event listener from a block.
-- (id)initWithBlock:(SPEventBlock)block;
+- (instancetype)initWithBlock:(SPEventBlock)block;
 
 /// Invokes the event block with a certain event.
-- (void)invokeWithEvent:(SPEvent *)event;
+- (void)invokeWithEvent:(SPEvent*)event;
 
 /// Indicates if this event fits either the combination of target and selector, or a block.
 - (BOOL)fitsTarget:(id)target andSelector:(SEL)selector orBlock:(SPEventBlock)block;

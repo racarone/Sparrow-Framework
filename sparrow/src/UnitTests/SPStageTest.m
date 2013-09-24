@@ -33,7 +33,7 @@
 
 - (void)testForbiddenProperties
 {
-    SPStage *stage = [[SPStage alloc] init];
+    SPStage* stage = [[SPStage alloc] init];
     STAssertThrows([stage setX:10], @"allowed to set x coordinate of stage");
     STAssertThrows([stage setY:10], @"allowed to set y coordinate of stage");
     STAssertThrows([stage setScaleX:2.0], @"allowed to scale stage");

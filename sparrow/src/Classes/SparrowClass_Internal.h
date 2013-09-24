@@ -13,6 +13,6 @@
 
 @interface Sparrow (Internal)
 
-+ (void)setCurrentController:(SPViewController *)controller;
++ (void)setCurrentController:(SPViewController*)controller;
 
 @end

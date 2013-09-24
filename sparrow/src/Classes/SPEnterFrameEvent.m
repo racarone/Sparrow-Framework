@@ -11,6 +11,7 @@
 
 #import "SPEnterFrameEvent.h"
 
+NSString* const kSPEventTypeEnterFrame = @"enterFrame";
 
 @implementation SPEnterFrameEvent
 {
@@ -19,7 +20,7 @@
 
 @synthesize passedTime = _passedTime;
 
-- (id)initWithType:(NSString*)type bubbles:(BOOL)bubbles passedTime:(double)seconds 
+- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles passedTime:(double)seconds 
 {
     if ((self = [super initWithType:type bubbles:bubbles]))
     {
@@ -28,19 +29,19 @@
     return self;    
 }
 
-- (id)initWithType:(NSString*)type passedTime:(double)seconds
+- (instancetype)initWithType:(NSString*)type passedTime:(double)seconds
 {
     return [self initWithType:type bubbles:NO passedTime:seconds];
 }
 
-- (id)initWithType:(NSString*)type bubbles:(BOOL)bubbles
+- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles
 {
     return [self initWithType:type bubbles:bubbles passedTime:0.0f];
 }
 
-+ (id)eventWithType:(NSString*)type passedTime:(double)seconds
++ (instancetype)eventWithType:(NSString*)type passedTime:(double)seconds
 {
-    return [[self alloc] initWithType:type passedTime:seconds];
+    return [[[self alloc] initWithType:type passedTime:seconds] autorelease];
 }
 
 @end

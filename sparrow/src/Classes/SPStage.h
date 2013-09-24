@@ -36,7 +36,9 @@
 /// --------------------
 
 /// Initializes a stage with a certain size in points.
-- (id)initWithWidth:(float)width height:(float)height;
+- (instancetype)initWithWidth:(float)width height:(float)height;
+
+- (void)advanceTime:(double)seconds;
 
 /// ----------------
 /// @name Properties

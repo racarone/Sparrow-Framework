@@ -9,8 +9,11 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import "SparrowClass.h"
+#import "SPViewController.h"
 #import "SPRenderSupport.h"
 #import "SPDisplayObject.h"
+#import "SPMatrix_Internal.h"
 #import "SPVertexData.h"
 #import "SPQuadBatch.h"
 #import "SPTexture.h"
@@ -22,47 +25,65 @@
 
 // --- helper macros -------------------------------------------------------------------------------
 
-#define CURRENT_STATE()  ((SPRenderState *)(_stateStack[_stateStackIndex]))
-#define CURRENT_BATCH()  ((SPQuadBatch *)(_quadBatches[_quadBatchIndex]))
+#define CURRENT_STATE()  ((SPRenderState*)(CFArrayGetValueAtIndex((CFArrayRef)_stateStack, _stateStackIndex)))
+#define CURRENT_BATCH()  ((SPQuadBatch*)(CFArrayGetValueAtIndex((CFArrayRef)_quadBatches, _quadBatchIndex)))
 
 // --- helper class --------------------------------------------------------------------------------
 
 @interface SPRenderState : NSObject
 
-@property (nonatomic, readonly) SPMatrix *modelviewMatrix;
-@property (nonatomic, readonly) float alpha;
-@property (nonatomic, readonly) uint blendMode;
+@property (nonatomic, copy) SPMatrix* modelviewMatrix;
+@property (nonatomic) float alpha;
+@property (nonatomic) uint blendMode;
 
-- (void)setupDerivedFromState:(SPRenderState *)state withModelviewMatrix:(SPMatrix *)matrix
++ (instancetype)renderState;
+
+- (void)setupWithState:(SPRenderState*)state;
+- (void)setupDerivedFromState:(SPRenderState*)state withModelviewMatrix:(SPMatrix*)matrix
                         alpha:(float)alpha blendMode:(uint)blendMode;
 
 @end
 
 @implementation SPRenderState
 
-@synthesize modelviewMatrix = _modelviewMatrix;
-@synthesize alpha = _alpha;
-@synthesize blendMode = _blendMode;
-
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
-        _modelviewMatrix = [SPMatrix matrixWithIdentity];
+        _modelviewMatrix = [[SPMatrix alloc] init];
         _alpha = 1.0f;
         _blendMode = SP_BLEND_MODE_NORMAL;
     }
     return self;
 }
 
-- (void)setupDerivedFromState:(SPRenderState *)state withModelviewMatrix:(SPMatrix *)matrix
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_modelviewMatrix);
+    [super dealloc];
+}
+
+- (void)setupWithState:(SPRenderState*)state
+{
+    _alpha = state->_alpha;
+    _blendMode = state->_blendMode;
+
+    SPMatrixCopyFrom(_modelviewMatrix, state->_modelviewMatrix);
+}
+
+- (void)setupDerivedFromState:(SPRenderState*)state withModelviewMatrix:(SPMatrix*)matrix
                         alpha:(float)alpha blendMode:(uint)blendMode
 {
     _alpha = alpha * state->_alpha;
     _blendMode = blendMode == SP_BLEND_MODE_AUTO ? state->_blendMode : blendMode;
-    
-    [_modelviewMatrix copyFromMatrix:state->_modelviewMatrix];
-    [_modelviewMatrix prependMatrix:matrix];
+
+    SPMatrixCopyFrom(_modelviewMatrix, state->_modelviewMatrix);
+    SPMatrixPrependMatrix(_modelviewMatrix, matrix);
+}
+
++ (instancetype)renderState
+{
+    return [[[self alloc] init] autorelease];
 }
 
 @end
@@ -71,41 +92,60 @@
 
 @implementation SPRenderSupport
 {
-    SPMatrix *_projectionMatrix;
-    SPMatrix *_mvpMatrix;
-    int _numDrawCalls;
+    SPMatrix*       _projectionMatrix;
+    SPMatrix*       _mvpMatrix;
+    int             _numDrawCalls;
     
-    NSMutableArray *_stateStack;
-    int _stateStackIndex;
-    int _stateStackSize;
+    NSMutableArray* _stateStack;
+    int             _stateStackIndex;
+    int             _stateStackSize;
     
-    NSMutableArray *_quadBatches;
-    int _quadBatchIndex;
-    int _quadBatchSize;
+    NSMutableArray* _quadBatches;
+    int             _quadBatchIndex;
+    int             _quadBatchSize;
+
+    NSMutableArray* _clipRectStack;
+    int             _clipRectStackIndex;
+    int             _clipRectStackSize;
 }
 
-@synthesize projectionMatrix = _projectionMatrix;
-@synthesize mvpMatrix = _mvpMatrix;
-@synthesize numDrawCalls = _numDrawCalls;
+@synthesize projectionMatrix    = _projectionMatrix;
+@synthesize mvpMatrix           = _mvpMatrix;
+@synthesize numDrawCalls        = _numDrawCalls;
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
         _projectionMatrix = [[SPMatrix alloc] init];
         _mvpMatrix        = [[SPMatrix alloc] init];
         
-        _stateStack = [[NSMutableArray alloc] initWithObjects:[[SPRenderState alloc] init], nil];
+        _stateStack = [[NSMutableArray alloc] initWithObjects:[SPRenderState renderState], nil];
         _stateStackIndex = 0;
         _stateStackSize = 1;
         
-        _quadBatches = [[NSMutableArray alloc] initWithObjects:[[SPQuadBatch alloc] init], nil];
+        _quadBatches = [[NSMutableArray alloc] initWithObjects:[SPQuadBatch quadBatch], nil];
         _quadBatchIndex = 0;
         _quadBatchSize = 1;
+
+        _clipRectStack = [[NSMutableArray alloc] init];
+        _clipRectStackIndex = 0;
+        _clipRectStackSize = 0;
         
         [self setupOrthographicProjectionWithLeft:0 right:320 top:0 bottom:480];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_projectionMatrix);
+    SP_RELEASE_AND_NIL(_mvpMatrix);
+    SP_RELEASE_AND_NIL(_stateStack);
+    SP_RELEASE_AND_NIL(_quadBatches);
+    SP_RELEASE_AND_NIL(_clipRectStack);
+
+    [super dealloc];
 }
 
 - (void)nextFrame
@@ -118,9 +158,29 @@
 - (void)purgeBuffers
 {
     [_quadBatches removeAllObjects];
-    [_quadBatches addObject:[[SPQuadBatch alloc] init]];
+    [_quadBatches addObject:[SPQuadBatch quadBatch]];
      _quadBatchIndex = 0;
      _quadBatchSize = 1;
+}
+
+- (void)clear
+{
+    [SPRenderSupport clearWithColor:0x0 alpha:0.0f];
+}
+
+- (void)clearWithColor:(uint)color
+{
+    [SPRenderSupport clearWithColor:color alpha:1.0f];
+}
+
+- (void)clearWithColor:(uint)color alpha:(float)alpha
+{
+    [SPRenderSupport clearWithColor:color alpha:alpha];
+}
+
+- (void)applyBlendModeWithPremulitpliedAlpha:(BOOL)pma
+{
+    [SPBlendMode applyBlendFactorsForBlendMode:CURRENT_STATE().blendMode premultipliedAlpha:pma];
 }
 
 + (void)clearWithColor:(uint)color alpha:(float)alpha;
@@ -151,17 +211,85 @@
     [_projectionMatrix setA:2.0f/(right-left) b:0.0f c:0.0f d:2.0f/(top-bottom)
                          tx:-(right+left) / (right-left)
                          ty:-(top+bottom) / (top-bottom)];
+    
+    [self applyClipRect];
+}
+
+#pragma mark - clip rect stack
+
+- (SPRectangle*)pushClipRect:(SPRectangle*)clipRect
+{
+    if (_clipRectStack.count < _clipRectStackSize+1)
+        [_clipRectStack addObject:[[[SPRectangle alloc] init] autorelease]];
+
+    [_clipRectStack[_clipRectStackSize] copyFromRectangle:clipRect];
+    SPRectangle* rectangle = _clipRectStack[_clipRectStackSize];
+
+    // intersect with the last pushed clip rect
+    if (_clipRectStackSize > 0)
+        rectangle = [rectangle intersectionWithRectangle:_clipRectStack[_clipRectStackSize-1]];
+
+    ++ _clipRectStackSize;
+    [self applyClipRect];
+
+    // return the intersected clip rect so callers can skip draw calls if it's empty
+    return rectangle;
+}
+
+- (void)popClipRect
+{
+    if (_clipRectStackSize > 0)
+    {
+        -- _clipRectStackSize;
+        [self applyClipRect];
+    }
+}
+
+- (void)applyClipRect
+{
+    [self finishQuadBatch];
+
+    if (_clipRectStackSize > 0)
+    {
+        SPRectangle* rect = _clipRectStack[_clipRectStackSize-1];
+        SPRectangle* clip = [[rect copy] autorelease];
+        SPPoint* point = nil;
+
+        SPViewPort viewport;
+        glGetIntegerv(GL_VIEWPORT, (int*)&viewport);
+
+        // convert to pixel coordinates (matrix transformation ends up in range [-1, 1])
+        point = SPMatrixTransformPointWith(_projectionMatrix, rect.x, rect.y);
+        clip.x = point.x > -1 ? (( point.x + 1) / 2) * viewport.width  : 0.0;
+        clip.y = point.y > -1 ? ((-point.y + 1) / 2) * viewport.height : 0.0;
+
+        point = SPMatrixTransformPointWith(_projectionMatrix, rect.right, rect.bottom);
+        clip.right  = point.x < 1 ? (( point.x + 1) / 2) * viewport.width  : viewport.width;
+        clip.bottom = point.y < 1 ? ((-point.y + 1) / 2) * viewport.height : viewport.height;
+
+        // an empty rectangle is not allowed, so we set it to the smallest possible size
+        // if the bounds are outside the visible area.
+        if (clip.right < 1 || clip.bottom < 1)
+            [clip setX:0 y:0 width:1 height:1];
+        // convert to OpenGL coordinate
+        else
+            clip.y = MAX((viewport.height - clip.y - clip.height), 0.0);
+
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(clip.x, clip.y, clip.width, clip.height);
+    }
+    else glDisable(GL_SCISSOR_TEST);
 }
 
 #pragma mark - state stack
 
-- (void)pushStateWithMatrix:(SPMatrix *)matrix alpha:(float)alpha blendMode:(uint)blendMode
+- (void)pushStateWithMatrix:(SPMatrix*)matrix alpha:(float)alpha blendMode:(uint)blendMode
 {
-    SPRenderState *previousState = CURRENT_STATE();
+    SPRenderState* previousState = CURRENT_STATE();
     
     if (_stateStackSize == _stateStackIndex + 1)
     {
-        [_stateStack addObject:[[SPRenderState alloc] init]];
+        [_stateStack addObject:[SPRenderState renderState]];
         ++_stateStackSize;
     }
     
@@ -189,33 +317,28 @@
     return CURRENT_STATE().blendMode;
 }
 
-- (SPMatrix *)modelviewMatrix
+- (SPMatrix*)modelviewMatrix
 {
     return CURRENT_STATE().modelviewMatrix;
 }
 
-- (SPMatrix *)mvpMatrix
+- (SPMatrix*)mvpMatrix
 {
-    [_mvpMatrix copyFromMatrix:CURRENT_STATE().modelviewMatrix];
-    [_mvpMatrix appendMatrix:_projectionMatrix];
+    SPMatrixCopyFrom(_mvpMatrix, CURRENT_STATE().modelviewMatrix);
+    SPMatrixAppendMatrix(_mvpMatrix, _projectionMatrix);
     return _mvpMatrix;
-}
-
-- (void)applyBlendModeForPremultipliedAlpha:(BOOL)pma
-{
-    [SPBlendMode applyBlendFactorsForBlendMode:CURRENT_STATE().blendMode premultipliedAlpha:pma];
 }
 
 #pragma mark - rendering
 
-- (void)batchQuad:(SPQuad *)quad
+- (void)batchQuad:(SPQuad*)quad
 {
-    SPRenderState *currentState = CURRENT_STATE();
-    SPQuadBatch *currentBatch = CURRENT_BATCH();
+    SPRenderState* currentState = CURRENT_STATE();
+    SPQuadBatch* currentBatch = CURRENT_BATCH();
     
     float alpha = currentState.alpha;
     uint blendMode = currentState.blendMode;
-    SPMatrix *modelviewMatrix = currentState.modelviewMatrix;
+    SPMatrix* modelviewMatrix = currentState.modelviewMatrix;
     
     if ([currentBatch isStateChangeWithTinted:quad.tinted texture:quad.texture alpha:alpha
                            premultipliedAlpha:quad.premultipliedAlpha blendMode:blendMode
@@ -228,9 +351,29 @@
     [currentBatch addQuad:quad alpha:alpha blendMode:blendMode matrix:modelviewMatrix];
 }
 
+- (void)batchQuadBatch:(SPQuadBatch*)quadBatch
+{
+    SPRenderState* currentState = CURRENT_STATE();
+    SPQuadBatch* currentBatch = CURRENT_BATCH();
+
+    float alpha = currentState.alpha;
+    uint blendMode = currentState.blendMode;
+    SPMatrix* modelviewMatrix = currentState.modelviewMatrix;
+
+    if ([currentBatch isStateChangeWithTinted:quadBatch.tinted texture:quadBatch.texture alpha:alpha
+                           premultipliedAlpha:quadBatch.premultipliedAlpha blendMode:blendMode
+                                     numQuads:1])
+    {
+        [self finishQuadBatch];
+        currentBatch = CURRENT_BATCH();
+    }
+
+    [currentBatch addQuadBatch:quadBatch alpha:alpha blendMode:blendMode matrix:modelviewMatrix];
+}
+
 - (void)finishQuadBatch
 {
-    SPQuadBatch *currentBatch = CURRENT_BATCH();
+    SPQuadBatch* currentBatch = CURRENT_BATCH();
     
     if (currentBatch.numQuads)
     {
@@ -242,7 +385,7 @@
         
         if (_quadBatchSize <= _quadBatchIndex)
         {
-            [_quadBatches addObject:[[SPQuadBatch alloc] init]];
+            [_quadBatches addObject:[SPQuadBatch quadBatch]];
             ++_quadBatchSize;
         }
     }

@@ -15,14 +15,14 @@
 #define SP_NOTIFICATION_AUDIO_INTERRUPTION_BEGAN   @"audioInterruptionBegan"
 #define SP_NOTIFICATION_AUDIO_INTERRUPTION_ENDED   @"audioInterruptionEnded"
 
-typedef enum {
+typedef NS_ENUM(UInt32, SPAudioSessionCategory) {
     SPAudioSessionCategory_AmbientSound     = 'ambi',
     SPAudioSessionCategory_SoloAmbientSound = 'solo',
     SPAudioSessionCategory_MediaPlayback    = 'medi',
     SPAudioSessionCategory_RecordAudio      = 'reca',
     SPAudioSessionCategory_PlayAndRecord    = 'plar',
     SPAudioSessionCategory_AudioProcessing  = 'proc'
-} SPAudioSessionCategory;
+};
 
 /** ------------------------------------------------------------------------------------------------ 
 

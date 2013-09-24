@@ -14,53 +14,58 @@
 
 @implementation SPDelayedInvocation
 {
-    id _target;
-    double _totalTime;
-    double _currentTime;
+    id                  _target;
+    double              _totalTime;
+    double              _currentTime;
     
-    SPCallbackBlock _block;
-    NSMutableArray *_invocations;
+    SPCallbackBlock     _block;
+    NSMutableArray*     _invocations;
 }
 
-@synthesize totalTime = _totalTime;
-@synthesize currentTime = _currentTime;
-@synthesize target = _target;
-
-- (id)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block
+- (instancetype)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block
 {
     if ((self = [super init]))
     {
         _totalTime = MAX(0.0001, time); // zero is not allowed
         _currentTime = 0;
-        _block = block;
+        _block = [block copy];
         
         if (target)
         {
-            _target = target;
+            _target = [target retain];
             _invocations = [[NSMutableArray alloc] init];
         }
     }
     return self;
 }
 
-- (id)initWithTarget:(id)target delay:(double)time
+- (instancetype)initWithTarget:(id)target delay:(double)time
 {
     return [self initWithTarget:target delay:time block:NULL];
 }
 
-- (id)initWithDelay:(double)time block:(SPCallbackBlock)block
+- (instancetype)initWithDelay:(double)time block:(SPCallbackBlock)block
 {
     return [self initWithTarget:nil delay:time block:block];
 }
 
-- (id)init
+- (instancetype)init
 {
     return nil;
 }
 
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_target);
+    SP_RELEASE_AND_NIL(_block);
+    SP_RELEASE_AND_NIL(_invocations);
+
+    [super dealloc];
+}
+
 - (NSMethodSignature*)methodSignatureForSelector:(SEL)aSelector
 {
-    NSMethodSignature *sig = [[self class] instanceMethodSignatureForSelector:aSelector];
+    NSMethodSignature* sig = [[self class] instanceMethodSignatureForSelector:aSelector];
     if (!sig) sig = [_target methodSignatureForSelector:aSelector];
     return sig;
 }
@@ -90,7 +95,7 @@
         if (_invocations) [_invocations makeObjectsPerformSelector:@selector(invoke)];
         if (_block) _block();
         
-        [self dispatchEventWithType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+        [self dispatchEventWithType:kSPEventTypeRemoveFromJuggler];
     }
 }
 
@@ -99,14 +104,14 @@
     return _currentTime >= _totalTime;
 }
 
-+ (id)invocationWithTarget:(id)target delay:(double)time
++ (instancetype)invocationWithTarget:(id)target delay:(double)time
 {
-    return [[self alloc] initWithTarget:target delay:time];
+    return [[[self alloc] initWithTarget:target delay:time] autorelease];
 }
 
-+ (id)invocationWithDelay:(double)time block:(SPCallbackBlock)block
++ (instancetype)invocationWithDelay:(double)time block:(SPCallbackBlock)block
 {
-    return [[self alloc] initWithDelay:time block:block];
+    return [[[self alloc] initWithDelay:time block:block] autorelease];
 }
 
 @end

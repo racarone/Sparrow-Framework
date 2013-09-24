@@ -27,14 +27,10 @@
 
 - (id)initWithX:(float)x y:(float)y width:(float)width height:(float)height
 {
-    if ((self = [super init]))
-    {
-        _x = x;
-        _y = y;
-        _width = width;
-        _height = height;
-    }
-     
+    _x = x;
+    _y = y;
+    _width = width;
+    _height = height;
     return self;
 }
 
@@ -64,6 +60,15 @@
 
     return rX >= _x && rX + rWidth <= _x + _width &&
            rY >= _y && rY + rHeight <= _y + _height;
+}
+
+- (void)inflateWithXBy:(float)dx yBy:(float)dy
+{
+    _x -= dx;
+    _width += 2 * dx;
+
+    _y -= dy;
+    _height += 2 * dy;
 }
 
 - (BOOL)intersectsRectangle:(SPRectangle*)rectangle
@@ -98,7 +103,7 @@
 
 - (SPRectangle*)uniteWithRectangle:(SPRectangle*)rectangle
 {
-    if (!rectangle) return [self copy];
+    if (!rectangle) return [[self copy] autorelease];
     
     float left   = MIN(_x, rectangle->_x);
     float right  = MAX(_x + _width, rectangle->_x + rectangle->_width);
@@ -120,7 +125,7 @@
     _x = _y = _width = _height = 0;
 }
 
-- (void)copyFromRectangle:(SPRectangle *)rectangle
+- (void)copyFromRectangle:(SPRectangle*)rectangle
 {
     _x = rectangle->_x;
     _y = rectangle->_y;
@@ -140,27 +145,27 @@
 - (float)right { return _x + _width; }
 - (void)setRight:(float)value { _width = value - _x; }
 
-- (SPPoint *)topLeft { return [SPPoint pointWithX:_x y:_y]; }
-- (void)setTopLeft:(SPPoint *)value { _x = value.x; _y = value.y; }
+- (SPPoint*)topLeft { return [SPPoint pointWithX:_x y:_y]; }
+- (void)setTopLeft:(SPPoint*)value { _x = value.x; _y = value.y; }
 
-- (SPPoint *)bottomRight { return [SPPoint pointWithX:_x+_width y:_y+_height]; }
-- (void)setBottomRight:(SPPoint *)value { self.right = value.x; self.bottom = value.y; }
+- (SPPoint*)bottomRight { return [SPPoint pointWithX:_x+_width y:_y+_height]; }
+- (void)setBottomRight:(SPPoint*)value { self.right = value.x; self.bottom = value.y; }
 
-- (SPPoint *)size { return [SPPoint pointWithX:_width y:_height]; }
-- (void)setSize:(SPPoint *)value { _width = value.x; _height = value.y; }
+- (SPPoint*)size { return [SPPoint pointWithX:_width y:_height]; }
+- (void)setSize:(SPPoint*)value { _width = value.x; _height = value.y; }
 
 - (BOOL)isEmpty
 {
     return _width == 0 || _height == 0;
 }
 
-- (BOOL)isEquivalent:(SPRectangle *)other
+- (BOOL)isEquivalent:(SPRectangle*)other
 {
     if (other == self) return YES;
     else if (!other) return NO;
     else 
     {
-        SPRectangle *rect = (SPRectangle*)other;
+        SPRectangle* rect = (SPRectangle*)other;
         return SP_IS_FLOAT_EQUAL(_x, rect->_x) && SP_IS_FLOAT_EQUAL(_y, rect->_y) &&
                SP_IS_FLOAT_EQUAL(_width, rect->_width) && SP_IS_FLOAT_EQUAL(_height, rect->_height);    
     }
@@ -174,7 +179,7 @@
 
 + (id)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height
 {
-    return [[self alloc] initWithX:x y:y width:width height:height];
+    return [[[self alloc] initWithX:x y:y width:width height:height] autorelease];
 }
 
 #pragma mark NSCopying

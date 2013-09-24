@@ -42,10 +42,10 @@
 /// ------------------
 
 /// Initializes a sound 
-- (id)initWithContentsOfFile:(NSString *)path;
+- (instancetype)initWithContentsOfFile:(NSString*)path;
 
 /// Factory method.
-+ (SPSound *)soundWithContentsOfFile:(NSString *)path;
++ (instancetype)soundWithContentsOfFile:(NSString*)path;
 
 /// -------------
 /// @name Methods
@@ -56,7 +56,7 @@
 
 /// Creates an audio channel that gives you more control over playback. Make sure to save
 /// a reference to the returned object, because the sound will immediately stop when it's released.
-- (SPSoundChannel *)createChannel;
+- (SPSoundChannel*)createChannel;
 
 /// ----------------
 /// @name Properties

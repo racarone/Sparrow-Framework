@@ -9,29 +9,30 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import "SPMacros.h"
 #import "SPProgram.h"
 
 #import <GLKit/GLKit.h>
 
 @implementation SPProgram
 {
-    uint _name;
-    NSString *_vertexShader;
-    NSString *_fragmentShader;
-    NSMutableDictionary *_uniforms;
-    NSMutableDictionary *_attributes;
+    uint                    _name;
+    NSString*               _vertexShader;
+    NSString*               _fragmentShader;
+    NSMutableDictionary*    _uniforms;
+    NSMutableDictionary*    _attributes;
 }
 
-@synthesize name = _name;
-@synthesize vertexShader = _vertexShader;
-@synthesize fragmentShader = _fragmentShader;
+@synthesize name            = _name;
+@synthesize vertexShader    = _vertexShader;
+@synthesize fragmentShader  = _fragmentShader;
 
-- (id)initWithVertexShader:(NSString *)vertexShader fragmentShader:(NSString *)fragmentShader
+- (instancetype)initWithVertexShader:(NSString*)vertexShader fragmentShader:(NSString*)fragmentShader
 {
     if ((self = [super init]))
     {
-        _vertexShader = vertexShader;
-        _fragmentShader = fragmentShader;
+        _vertexShader = [vertexShader copy];
+        _fragmentShader = [fragmentShader copy];
         
         [self compile];
         [self updateUniforms];
@@ -41,9 +42,21 @@
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     return nil;
+}
+
+- (void)dealloc
+{
+    glDeleteProgram(_name);
+
+    SP_RELEASE_AND_NIL(_vertexShader);
+    SP_RELEASE_AND_NIL(_fragmentShader);
+    SP_RELEASE_AND_NIL(_uniforms);
+    SP_RELEASE_AND_NIL(_attributes);
+
+    [super dealloc];
 }
 
 - (void)compile
@@ -88,11 +101,16 @@
 }
 
 
-- (uint)compileShader:(NSString *)source type:(GLenum)type
+- (uint)compileShader:(NSString*)source type:(GLenum)type
 {
     uint shader = glCreateShader(type);
     if (!shader) return shader;
-    
+
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+    source = type == GL_VERTEX_SHADER ? [NSString stringWithFormat:@"precision highp float;\n%@", source]:
+                                        [NSString stringWithFormat:@"precision mediump float;\n%@", source];
+#endif
+
     const char *utfSource = [source UTF8String];
     
     glShaderSource(shader, 1, &utfSource, NULL);
@@ -139,8 +157,9 @@
     for (int i=0; i<numUniforms; ++i)
     {
         glGetActiveUniform(_name, i, MAX_NAME_LENGTH, NULL, NULL, NULL, rawName);
-        NSString *name = [[NSString alloc] initWithCString:rawName encoding:NSUTF8StringEncoding];
+        NSString* name = [[NSString alloc] initWithCString:rawName encoding:NSUTF8StringEncoding];
         _uniforms[name] = @(glGetUniformLocation(_name, rawName));
+        [name release];
     }
 }
 
@@ -157,27 +176,23 @@
     for (int i=0; i<numAttributes; ++i)
     {
         glGetActiveAttrib(_name, i, MAX_NAME_LENGTH, NULL, NULL, NULL, rawName);
-        NSString *name = [[NSString alloc] initWithCString:rawName encoding:NSUTF8StringEncoding];
+        NSString* name = [[NSString alloc] initWithCString:rawName encoding:NSUTF8StringEncoding];
         _attributes[name] = @(glGetAttribLocation(_name, rawName));
+        [name release];
     }
 }
 
-- (void)dealloc
-{
-    glDeleteProgram(_name);
-}
-
-- (int)uniformByName:(NSString *)name
+- (int)uniformByName:(NSString*)name
 {
     return [_uniforms[name] intValue];
 }
 
-- (int)attributeByName:(NSString *)name
+- (int)attributeByName:(NSString*)name
 {
     return [_attributes[name] intValue];
 }
 
-- (NSString *)description
+- (NSString*)description
 {
     return [NSString stringWithFormat:
             @"[Program %d\n## VERTEX SHADER: ##\n%@\n## FRAGMENT SHADER: ##\n%@]",

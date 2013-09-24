@@ -31,8 +31,8 @@ static char encodingTable[64] = {
 
 + (NSInvocation*)invocationWithTarget:(id)target selector:(SEL)selector
 {
-    NSMethodSignature *signature = [target methodSignatureForSelector:selector];
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+    NSMethodSignature* signature = [target methodSignatureForSelector:selector];
+    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
     invocation.selector = selector;
     invocation.target = target;
     return invocation;
@@ -44,18 +44,18 @@ static char encodingTable[64] = {
 
 @implementation NSString (SPNSExtensions)
 
-- (NSString *)fullPathExtension
+- (NSString*)fullPathExtension
 {
-    NSString *filename = [self lastPathComponent];
+    NSString* filename = [self lastPathComponent];
     NSRange range = { .location = 1, .length = filename.length - 1 }; // ignore first letter -> '.hidden' files
     NSUInteger dotLocation = [filename rangeOfString:@"." options:NSLiteralSearch range:range].location;
     return dotLocation == NSNotFound ? @"" : [filename substringFromIndex:dotLocation + 1];
 }
 
-- (NSString *)stringByDeletingFullPathExtension
+- (NSString*)stringByDeletingFullPathExtension
 {
-    NSString *trimmed = self;
-    NSString *base;
+    NSString* trimmed = self;
+    NSString* base;
     
     do
     {
@@ -67,19 +67,19 @@ static char encodingTable[64] = {
     return base;
 }
 
-- (NSString *)stringByAppendingSuffixToFilename:(NSString *)suffix
+- (NSString*)stringByAppendingSuffixToFilename:(NSString*)suffix
 {
     return [[self stringByDeletingFullPathExtension] stringByAppendingFormat:@"%@.%@", 
             suffix, [self fullPathExtension]];
 }
 
-- (NSString *)stringByAppendingScaleSuffixToFilename:(float)scale
+- (NSString*)stringByAppendingScaleSuffixToFilename:(float)scale
 {
-    NSString *result = self;
+    NSString* result = self;
     
     if (scale != 1.0f)
     {
-        NSString *scaleSuffix = [NSString stringWithFormat:@"@%@x", @(scale)];
+        NSString* scaleSuffix = [NSString stringWithFormat:@"@%@x", @(scale)];
         result = [result stringByReplacingOccurrencesOfString:scaleSuffix withString:@""];
         result = [result stringByAppendingSuffixToFilename:scaleSuffix];
     }
@@ -89,7 +89,7 @@ static char encodingTable[64] = {
 
 - (float)contentScaleFactor
 {
-    NSString *filename = [self lastPathComponent];
+    NSString* filename = [self lastPathComponent];
     NSRange atRange = [filename rangeOfString:@"@"];
     if (atRange.length == 0) return 1.0f;
     else
@@ -105,7 +105,7 @@ static char encodingTable[64] = {
 
 @implementation NSMutableString (SPNSExtensions)
 
-- (void)appendLine:(NSString *)line
+- (void)appendLine:(NSString*)line
 {
     [self appendFormat:@"%@\n", line];
 }
@@ -116,28 +116,28 @@ static char encodingTable[64] = {
 
 @implementation NSBundle (SPNSExtensions)
 
-- (NSString *)pathForResource:(NSString *)name
+- (NSString*)pathForResource:(NSString*)name
 {
     if (!name) return nil;
     
-    NSString *directory = [name stringByDeletingLastPathComponent];
-    NSString *file = [name lastPathComponent];    
+    NSString* directory = [name stringByDeletingLastPathComponent];
+    NSString* file = [name lastPathComponent];    
     return [self pathForResource:file ofType:nil inDirectory:directory];
 }
 
-- (NSString *)pathForResource:(NSString *)name withScaleFactor:(float)factor
+- (NSString*)pathForResource:(NSString*)name withScaleFactor:(float)factor
 {
     if (factor != 1.0f)
     {
-        NSString *suffix = [NSString stringWithFormat:@"@%@x", @(factor)];
-        NSString *path = [self pathForResource:[name stringByAppendingSuffixToFilename:suffix]];
+        NSString* suffix = [NSString stringWithFormat:@"@%@x", @(factor)];
+        NSString* path = [self pathForResource:[name stringByAppendingSuffixToFilename:suffix]];
         if (path) return path;
     }    
     
     return [self pathForResource:name];
 }
 
-+ (NSBundle *)appBundle
++ (NSBundle*)appBundle
 {
     return [NSBundle bundleForClass:[SPDisplayObject class]];
 }
@@ -150,14 +150,14 @@ static char encodingTable[64] = {
 
 #pragma mark Base64
 
-+ (NSData *)dataWithBase64EncodedString:(NSString *)string
++ (NSData*)dataWithBase64EncodedString:(NSString*)string
 {
-    return [[NSData alloc] initWithBase64EncodedString:string];
+    return [[[NSData alloc] initWithBase64EncodedString:string] autorelease];
 }
 
-- (id)initWithBase64EncodedString:(NSString *)string
+- (instancetype)initWithBase64EncodedString:(NSString*)string
 {
-    NSMutableData *mutableData = nil;
+    NSMutableData* mutableData = nil;
     
     if (string)
     {
@@ -169,7 +169,7 @@ static char encodingTable[64] = {
         short i = 0, ixinbuf = 0;
         BOOL flignore = NO;
         BOOL flendtext = NO;
-        NSData *base64Data = nil;
+        NSData* base64Data = nil;
         const unsigned char *base64Bytes = nil;
         
         // Convert the string to ASCII data.
@@ -228,15 +228,15 @@ static char encodingTable[64] = {
     return self;
 }
 
-- (NSString *)base64Encoding
+- (NSString*)base64Encoding
 {
     return [self base64EncodingWithLineLength:0];
 }
 
-- (NSString *)base64EncodingWithLineLength:(uint)lineLength
+- (NSString*)base64EncodingWithLineLength:(uint)lineLength
 {
-    const unsigned char *bytes = [self bytes];
-    NSMutableString *result = [NSMutableString stringWithCapacity:[self length]];
+    const unsigned char* bytes = [self bytes];
+    NSMutableString* result = [NSMutableString stringWithCapacity:[self length]];
     unsigned long ixtext = 0;
     unsigned long lentext = [self length];
     long ctremaining = 0;
@@ -297,7 +297,7 @@ static char encodingTable[64] = {
 
 #pragma mark GZIP
 
-+ (NSData *)dataWithUncompressedContentsOfFile:(NSString *)file
++ (NSData*)dataWithUncompressedContentsOfFile:(NSString*)file
 {
     if ([[file pathExtension] isEqualToString:@"gz"])
         return [[NSData dataWithContentsOfFile:file] gzipInflate];
@@ -305,7 +305,7 @@ static char encodingTable[64] = {
         return [NSData dataWithContentsOfFile:file];
 }
 
-- (NSData *)gzipDeflate
+- (NSData*)gzipDeflate
 {
     if ([self length] == 0) return self;
     
@@ -315,7 +315,7 @@ static char encodingTable[64] = {
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
     strm.total_out = 0;
-    strm.next_in=(Bytef *)[self bytes];
+    strm.next_in=(Bytef*)[self bytes];
     strm.avail_in = (uint)[self length];
     
     // Compresssion Levels:
@@ -327,7 +327,7 @@ static char encodingTable[64] = {
     if (deflateInit2(&strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED, (15+16), 8, Z_DEFAULT_STRATEGY) != Z_OK)
         return nil;
     
-    NSMutableData *compressed = [NSMutableData dataWithLength:16384];  // 16K chunks for expansion
+    NSMutableData* compressed = [NSMutableData dataWithLength:16384];  // 16K chunks for expansion
     
     do
     {
@@ -347,19 +347,19 @@ static char encodingTable[64] = {
     return [NSData dataWithData:compressed];
 }
 
-- (NSData *)gzipInflate
+- (NSData*)gzipInflate
 {
     if ([self length] == 0) return self;
     
     NSUInteger full_length = [self length];
     NSUInteger half_length = [self length] / 2;
     
-    NSMutableData *decompressed = [NSMutableData dataWithLength:full_length + half_length];
+    NSMutableData* decompressed = [NSMutableData dataWithLength:full_length + half_length];
     BOOL done = NO;
     int status;
     
     z_stream strm;
-    strm.next_in = (Bytef *)[self bytes];
+    strm.next_in = (Bytef*)[self bytes];
     strm.avail_in = (uint)[self length];
     strm.total_out = 0;
     strm.zalloc = Z_NULL;
@@ -396,7 +396,7 @@ static char encodingTable[64] = {
 
 @interface NSXMLParserHelper : NSObject <NSXMLParserDelegate>
 
-- (id)initWithElementHandler:(SPXMLElementHandler)elementHandler;
+- (instancetype)initWithElementHandler:(SPXMLElementHandler)elementHandler;
 
 @end
 
@@ -405,7 +405,7 @@ static char encodingTable[64] = {
     SPXMLElementHandler _elementHandler;
 }
 
-- (id)initWithElementHandler:(SPXMLElementHandler)elementHandler
+- (instancetype)initWithElementHandler:(SPXMLElementHandler)elementHandler
 {
     if ((self = [super init]))
         _elementHandler = elementHandler;

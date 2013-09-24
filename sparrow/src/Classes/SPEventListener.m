@@ -12,38 +12,47 @@
 #import "SPEventListener.h"
 #import "SPNSExtensions.h"
 
+#import <objc/message.h>
+
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+
+typedef void (*EventIMP) (id,SEL,id);
 
 @implementation SPEventListener
 {
-    SPEventBlock _block;
-    id __weak _target;
-    SEL _selector;
+    SPEventBlock    _block;
+    id __weak       _target;
+    SEL             _selector;
 }
 
-@synthesize target = _target;
-@synthesize selector = _selector;
+@synthesize target      = _target;
+@synthesize selector    = _selector;
 
 - (id)initWithTarget:(id)target selector:(SEL)selector block:(SPEventBlock)block
 {
     if ((self = [super init]))
     {
-        _block = block;
         _target = target;
         _selector = selector;
+        _block = block ? Block_copy(block) : NULL;
+
+        if (target && selector)
+        {
+            __block EventIMP method = (EventIMP)[_target methodForSelector:_selector];
+            block = ^(id event)
+            {
+                method(target, selector, event);
+            };
+            _block = Block_copy(block);
+        }
     }
-    
+
     return self;
 }
 
 - (id)initWithTarget:(id)target selector:(SEL)selector
 {
-    id __weak weakTarget = target;
-    
-    return [self initWithTarget:target selector:selector block:^(SPEvent *event)
-            {
-                [weakTarget performSelector:selector withObject:event];
-            }];
+    return [self initWithTarget:target selector:selector block:nil];
 }
 
 - (id)initWithBlock:(SPEventBlock)block
@@ -51,7 +60,13 @@
     return [self initWithTarget:nil selector:nil block:block];
 }
 
-- (void)invokeWithEvent:(SPEvent *)event
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_block);
+    [super dealloc];
+}
+
+- (void)invokeWithEvent:(SPEvent*)event
 {
     _block(event);
 }
@@ -64,3 +79,4 @@
 }
 
 @end
+

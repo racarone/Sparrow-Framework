@@ -31,15 +31,15 @@
 
 - (void)testTextBounds
 {
-    SPTexture *texture = [[SPTexture alloc] init];
-    SPButton *button = [SPButton buttonWithUpState:texture text:@"x"];
+    SPTexture* texture = [[SPTexture alloc] init];
+    SPButton* button = [SPButton buttonWithUpState:texture text:@"x"];
     
     STAssertEquals(0.0f, button.textBounds.x, @"wrong initial textBounds.x");
     STAssertEquals(0.0f, button.textBounds.y, @"wrong initial textBounds.y");
     STAssertEquals(texture.width, button.textBounds.width, @"wrong initial textBounds.width");
     STAssertEquals(texture.height, button.textBounds.height, @"wrong initial textBounds.height");
     
-    SPRectangle *textBounds = [SPRectangle rectangleWithX:5 y:6 width:22 height:20];
+    SPRectangle* textBounds = [SPRectangle rectangleWithX:5 y:6 width:22 height:20];
     button.textBounds = textBounds;
     
     STAssertEquals(textBounds.x, button.textBounds.x, @"wrong modified textBounds.x");

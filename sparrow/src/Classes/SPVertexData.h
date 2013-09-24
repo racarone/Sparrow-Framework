@@ -71,27 +71,27 @@ SPVertexColor SPVertexColorMakeWithColorAndAlpha(uint rgb, float alpha);
 /// ------------------
 
 /// Initializes a VertexData instance with a certain size. _Designated Initializer_.
-- (id)initWithSize:(int)numVertices premultipliedAlpha:(BOOL)pma;
+- (instancetype)initWithSize:(int)numVertices premultipliedAlpha:(BOOL)pma;
 
 /// Initializes a VertexData instance with a certain size, disabling premultiplied alpha.
-- (id)initWithSize:(int)numVertices;
+- (instancetype)initWithSize:(int)numVertices;
 
 /// Initializes an empty VertexData object. Use the `appendVertex:` method and the `numVertices`
 /// property to change its size later.
-- (id)init;
+- (instancetype)init;
 
 /// -------------
 /// @name Methods
 /// -------------
 
 /// Copies the vertex data of this instance to another vertex data object, starting at element 0.
-- (void)copyToVertexData:(SPVertexData *)target;
+- (void)copyToVertexData:(SPVertexData*)target;
 
 /// Copies the vertex data of this instance to another vertex data object, starting at a certain index.
-- (void)copyToVertexData:(SPVertexData *)target atIndex:(int)targetIndex;
+- (void)copyToVertexData:(SPVertexData*)target atIndex:(int)targetIndex;
 
 /// Copies a range of vertices of this instance to another vertex data object.
-- (void)copyToVertexData:(SPVertexData *)target atIndex:(int)targetIndex numVertices:(int)count;
+- (void)copyToVertexData:(SPVertexData*)target atIndex:(int)targetIndex numVertices:(int)count;
 
 /// Returns a vertex at a certain position
 - (SPVertex)vertexAtIndex:(int)index;
@@ -103,19 +103,19 @@ SPVertexColor SPVertexColorMakeWithColorAndAlpha(uint rgb, float alpha);
 - (void)appendVertex:(SPVertex)vertex;
 
 /// Returns the position of a vertex.
-- (SPPoint *)positionAtIndex:(int)index;
+- (SPPoint*)positionAtIndex:(int)index;
 
 /// Updates the position of a vertex.
-- (void)setPosition:(SPPoint *)position atIndex:(int)index;
+- (void)setPosition:(SPPoint*)position atIndex:(int)index;
 
 /// Updates the position of a vertex.
 - (void)setPositionWithX:(float)x y:(float)y atIndex:(int)index;
 
 /// Returns the texture coordinates of a vertex.
-- (SPPoint *)texCoordsAtIndex:(int)index;
+- (SPPoint*)texCoordsAtIndex:(int)index;
 
 /// Updates the texture coordinates of a vertex.
-- (void)setTexCoords:(SPPoint *)texCoords atIndex:(int)index;
+- (void)setTexCoords:(SPPoint*)texCoords atIndex:(int)index;
 
 /// Updates the texture coordinates of a vertex.
 - (void)setTexCoordsWithX:(float)x y:(float)y atIndex:(int)index;
@@ -155,16 +155,16 @@ SPVertexColor SPVertexColorMakeWithColorAndAlpha(uint rgb, float alpha);
 - (void)setPremultipliedAlpha:(BOOL)value updateVertices:(BOOL)update;
 
 /// Transforms the positions of subsequent vertices by multiplication with a transformation matrix.
-- (void)transformVerticesWithMatrix:(SPMatrix *)matrix atIndex:(int)index numVertices:(int)count;
+- (void)transformVerticesWithMatrix:(SPMatrix*)matrix atIndex:(int)index numVertices:(int)count;
 
 /// Calculates the bounding rectangle of all vertices.
-- (SPRectangle *)bounds;
+- (SPRectangle*)bounds;
 
 /// Calculates the bounding rectangle of all vertices after being transformed by a matrix.
-- (SPRectangle *)boundsAfterTransformation:(SPMatrix *)matrix;
+- (SPRectangle*)boundsAfterTransformation:(SPMatrix*)matrix;
 
 /// Calculates the bounding rectangle of subsequent vertices after being transformed by a matrix.
-- (SPRectangle *)boundsAfterTransformation:(SPMatrix *)matrix atIndex:(int)index numVertices:(int)count;
+- (SPRectangle*)boundsAfterTransformation:(SPMatrix*)matrix atIndex:(int)index numVertices:(int)count;
 
 /// ----------------
 /// @name Properties

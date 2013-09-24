@@ -62,45 +62,45 @@
 /// ------------------
 
 /// Initializes a texture atlas from an XML file and a custom texture. _Designated Initializer_.
-- (id)initWithContentsOfFile:(NSString *)path texture:(SPTexture *)texture;
+- (instancetype)initWithContentsOfFile:(NSString*)path texture:(SPTexture*)texture;
 
 /// Initializes a texture atlas from an XML file, loading the texture that is specified in the XML.
-- (id)initWithContentsOfFile:(NSString *)path;
+- (instancetype)initWithContentsOfFile:(NSString*)path;
 
 /// Initializes a teture atlas from a texture. Add the regions manually with `addName:forRegion:`.
-- (id)initWithTexture:(SPTexture *)texture;
+- (instancetype)initWithTexture:(SPTexture*)texture;
 
 /// Factory Method.
-+ (id)atlasWithContentsOfFile:(NSString *)path;
++ (instancetype)atlasWithContentsOfFile:(NSString*)path;
 
 /// -------------
 /// @name Methods
 /// -------------
 
 /// Retrieve a subtexture by name. Returns `nil` if it is not found.
-- (SPTexture *)textureByName:(NSString *)name;
+- (SPTexture*)textureByName:(NSString*)name;
 
 /// The region rectangle associated with a specific name.
-- (SPRectangle *)regionByName:(NSString *)name;
+- (SPRectangle*)regionByName:(NSString*)name;
 
 /// The frame rectangle of a specific region, or `nil` if that region has no frame.
-- (SPRectangle *)frameByName:(NSString *)name;
+- (SPRectangle*)frameByName:(NSString*)name;
 
 /// Returns all textures that start with a certain string, sorted alphabetically
 /// (especially useful for `SPMovieClip`).
-- (NSArray *)texturesStartingWith:(NSString *)prefix;
+- (NSArray*)texturesStartingWith:(NSString*)prefix;
 
 /// Returns all texture names that start with a certain string, sorted alphabetically.
-- (NSArray *)namesStartingWith:(NSString *)prefix;
+- (NSArray*)namesStartingWith:(NSString*)prefix;
 
 /// Creates a region for a subtexture and gives it a name.
-- (void)addRegion:(SPRectangle *)region withName:(NSString *)name;
+- (void)addRegion:(SPRectangle*)region withName:(NSString*)name;
 
 /// Creates a region for a subtexture with a frame and gives it a name.
-- (void)addRegion:(SPRectangle *)region withName:(NSString *)name frame:(SPRectangle *)frame;
+- (void)addRegion:(SPRectangle*)region withName:(NSString*)name frame:(SPRectangle*)frame;
 
 /// Removes a region with a certain name.
-- (void)removeRegion:(NSString *)name;
+- (void)removeRegion:(NSString*)name;
 
 /// ----------------
 /// @name Properties
@@ -110,12 +110,12 @@
 @property (nonatomic, readonly) int numTextures;
 
 /// All texture names of the atlas, sorted alphabetically.
-@property (nonatomic, readonly) NSArray *names;
+@property (nonatomic, readonly) NSArray* names;
 
 /// All textures of the atlas, sorted alphabetically.
-@property (nonatomic, readonly) NSArray *textures;
+@property (nonatomic, readonly) NSArray* textures;
 
 /// The base texture that makes up the atlas.
-@property (nonatomic, readonly) SPTexture *texture;
+@property (nonatomic, readonly) SPTexture* texture;
 
 @end

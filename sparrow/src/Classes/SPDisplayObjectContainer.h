@@ -35,7 +35,7 @@
  Adding and removing objects from a container triggers non-bubbling events.
  
  - `SP_EVENT_TYPE_ADDED`: the object was added to a parent.
- - `SP_EVENT_TYPE_ADDED_TO_STAGE`: the object was added to a parent that is connected to the stage,
+ - `kSPEventTypeAddedToStage`: the object was added to a parent that is connected to the stage,
                                    thus becoming visible now.
  - `SP_EVENT_TYPE_REMOVED`: the object was removed from a parent.
  - `SP_EVENT_TYPE_REMOVED_FROM_STAGE`: the object was removed from a parent that is connected to 
@@ -50,7 +50,7 @@
  Below is an example how to depth-sort children by their y-coordinate; this will put objects that
  are lower on the screen in front of those higher on the screen.
  
-	[container sortChildren:^(SPDisplayObject *child1, SPDisplayObject *child2) 
+	[container sortChildren:^(SPDisplayObject*child1, SPDisplayObject*child2) 
 	{
 	    if (child1.y < child2.y) return NSOrderedAscending;
 	    else if (child1.y > child2.y) return NSOrderedDescending;
@@ -66,31 +66,34 @@
 /// -------------
 
 /// Adds a child to the container. It will be at the topmost position.
-- (void)addChild:(SPDisplayObject *)child;
+- (void)addChild:(SPDisplayObject*)child;
 
 /// Adds a child to the container at a certain index.
-- (void)addChild:(SPDisplayObject *)child atIndex:(int)index;
+- (void)addChild:(SPDisplayObject*)child atIndex:(int)index;
 
 /// Determines if a certain object is a child of the container (recursively).
-- (BOOL)containsChild:(SPDisplayObject *)child;
+- (BOOL)containsChild:(SPDisplayObject*)child;
 
 /// Returns a child object at a certain index.
-- (SPDisplayObject *)childAtIndex:(int)index;
+- (SPDisplayObject*)childAtIndex:(int)index;
 
 /// Returns a child object with a certain name (non-recursively).
-- (SPDisplayObject *)childByName:(NSString *)name;
+- (SPDisplayObject*)childByName:(NSString*)name;
 
 /// Returns the index of a child within the container.
-- (int)childIndex:(SPDisplayObject *)child;
+- (int)childIndex:(SPDisplayObject*)child;
 
 /// Moves a child to a certain index. Children at and after the replaced position move up.
-- (void)setIndex:(int)index ofChild:(SPDisplayObject *)child;
+- (void)setIndex:(int)index ofChild:(SPDisplayObject*)child;
 
 /// Removes a child from the container. If the object is not a child, nothing happens.
-- (void)removeChild:(SPDisplayObject *)child;
+- (void)removeChild:(SPDisplayObject*)child;
 
 /// Removes a child at a certain index. Children above the child will move down.
 - (void)removeChildAtIndex:(int)index;
+
+/// Removes all children in given array.
+- (void)removeChildrenInArray:(NSArray*)children;
 
 /// Removes all children from the container.
 - (void)removeAllChildren;
@@ -110,6 +113,5 @@
 
 /// The number of children of this container.
 @property (nonatomic, readonly) int numChildren;
-
 
 @end

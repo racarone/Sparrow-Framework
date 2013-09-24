@@ -15,37 +15,44 @@
 
 @implementation SPAVSound
 {
-    NSData *_soundData;
-    double _duration;
+    NSData*     _soundData;
+    double      _duration;
 }
 
 @synthesize duration = _duration;
 
-- (id)init
+- (instancetype)init
 {
     return nil;
 }
 
-- (id)initWithContentsOfFile:(NSString *)path duration:(double)duration
+- (instancetype)initWithContentsOfFile:(NSString*)path duration:(double)duration
 {
     if ((self = [super init]))
     {
-        NSString *fullPath = [SPUtils absolutePathToFile:path];
+        NSString* fullPath = [SPUtils absolutePathToFile:path];
         _soundData = [[NSData alloc] initWithContentsOfMappedFile:fullPath];
         _duration = duration;
     }
     return self;
 }
 
-- (SPSoundChannel *)createChannel
+- (void)dealloc
 {
-    return [[SPAVSoundChannel alloc] initWithSound:self];    
+    SP_RELEASE_AND_NIL(_soundData);
+
+    [super dealloc];
 }
 
-- (AVAudioPlayer *)createPlayer
+- (SPSoundChannel*)createChannel
 {
-    NSError *error = nil;    
-    AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithData:_soundData error:&error];
+    return [[[SPAVSoundChannel alloc] initWithSound:self] autorelease];
+}
+
+- (AVAudioPlayer*)createPlayer
+{
+    NSError* error = nil;    
+    AVAudioPlayer *player = [[[AVAudioPlayer alloc] initWithData:_soundData error:&error] autorelease];
     if (error) NSLog(@"Could not create AVAudioPlayer: %@", [error description]);    
     return player;	
 }

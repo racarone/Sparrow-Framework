@@ -31,29 +31,29 @@
 
 @implementation SPALSoundChannel
 {
-    SPALSound *_sound;
-    uint _sourceID;
-    float _volume;
-    BOOL _loop;
+    SPALSound*  _sound;
+    uint        _sourceID;
+    float       _volume;
+    BOOL        _loop;
     
-    double _startMoment;
-    double _pauseMoment;
-    BOOL _interrupted;
+    double      _startMoment;
+    double      _pauseMoment;
+    BOOL        _interrupted;
 }
 
-@synthesize volume = _volume;
-@synthesize loop = _loop;
+@synthesize volume  = _volume;
+@synthesize loop    = _loop;
 
-- (id)init
+- (instancetype)init
 {
     return nil;
 }
 
-- (id)initWithSound:(SPALSound *)sound
+- (instancetype)initWithSound:(SPALSound*)sound
 {
     if ((self = [super init]))
     {
-        _sound = sound;
+        _sound = [sound retain];
         _volume = 1.0f;
         _loop = NO;
         _interrupted = NO;
@@ -69,7 +69,7 @@
             return nil;
         }         
         
-        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];        
+        NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];        
         [nc addObserver:self selector:@selector(onInterruptionBegan:) 
             name:SP_NOTIFICATION_AUDIO_INTERRUPTION_BEGAN object:nil];
         [nc addObserver:self selector:@selector(onInterruptionEnded:) 
@@ -85,6 +85,10 @@
     alSourcei(_sourceID, AL_BUFFER, 0);
     alDeleteSources(1, &_sourceID);
     _sourceID = 0;
+
+    SP_RELEASE_AND_NIL(_sound);
+
+    [super dealloc];
 }
 
 - (void)play
@@ -192,10 +196,10 @@
 - (void)dispatchCompletedEvent
 {
     if (!_loop)
-        [self dispatchEventWithType:SP_EVENT_TYPE_COMPLETED];
+        [self dispatchEventWithType:kSPEventTypeCompleted];
 }
 
-- (void)onInterruptionBegan:(NSNotification *)notification
+- (void)onInterruptionBegan:(NSNotification*)notification
 {        
     if (self.isPlaying)
     {
@@ -205,7 +209,7 @@
     }
 }
 
-- (void)onInterruptionEnded:(NSNotification *)notification
+- (void)onInterruptionEnded:(NSNotification*)notification
 {
     if (_interrupted)
     {

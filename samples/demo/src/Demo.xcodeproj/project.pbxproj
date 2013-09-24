@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1D3623260D0F684500981E51 /* DemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* DemoAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		25C23A5C11EC631500A25DF7 /* button_back.png in Resources */ = {isa = PBXBuildFile; fileRef = 25C23A5511EC631500A25DF7 /* button_back.png */; };
 		25C23A5D11EC631500A25DF7 /* button_big.png in Resources */ = {isa = PBXBuildFile; fileRef = 25C23A5611EC631500A25DF7 /* button_big.png */; };
@@ -23,6 +22,8 @@
 		25C23AFD11EC7FC400A25DF7 /* atlas@2x.xml in Resources */ = {isa = PBXBuildFile; fileRef = 25C23AFB11EC7FC400A25DF7 /* atlas@2x.xml */; };
 		25C23B0011EC7FE200A25DF7 /* atlas.png in Resources */ = {isa = PBXBuildFile; fileRef = 25C23AFE11EC7FE200A25DF7 /* atlas.png */; };
 		25C23B0111EC7FE200A25DF7 /* atlas.xml in Resources */ = {isa = PBXBuildFile; fileRef = 25C23AFF11EC7FE200A25DF7 /* atlas.xml */; };
+		8762582117EA330D0049B8EE /* DemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* DemoAppDelegate.m */; };
+		87F3B96F17F2405A000FB6B0 /* MaskScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F3B96E17F2405A000FB6B0 /* MaskScene.m */; };
 		DE0240901381B87E008A91B9 /* logo_rect.pvr in Resources */ = {isa = PBXBuildFile; fileRef = DE02408F1381B87E008A91B9 /* logo_rect.pvr */; };
 		DE0240921381B891008A91B9 /* logo_rect@2x.pvr in Resources */ = {isa = PBXBuildFile; fileRef = DE0240911381B891008A91B9 /* logo_rect@2x.pvr */; };
 		DE0240941381B89B008A91B9 /* logo_rect.pvr.gz in Resources */ = {isa = PBXBuildFile; fileRef = DE0240931381B89B008A91B9 /* logo_rect.pvr.gz */; };
@@ -130,6 +131,8 @@
 		25C23AFF11EC7FE200A25DF7 /* atlas.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = atlas.xml; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Demo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Demo_Prefix.pch; sourceTree = "<group>"; };
+		87F3B96D17F2405A000FB6B0 /* MaskScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskScene.h; sourceTree = "<group>"; };
+		87F3B96E17F2405A000FB6B0 /* MaskScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaskScene.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Demo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Demo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		DE02408F1381B87E008A91B9 /* logo_rect.pvr */ = {isa = PBXFileReference; lastKnownFileType = file; path = logo_rect.pvr; sourceTree = "<group>"; };
 		DE0240911381B891008A91B9 /* logo_rect@2x.pvr */ = {isa = PBXFileReference; lastKnownFileType = file; path = "logo_rect@2x.pvr"; sourceTree = "<group>"; };
@@ -377,6 +380,8 @@
 				DE0F755810641630004F2821 /* BenchmarkScene.m */,
 				DE396AE6104055A100C27DDF /* CustomHitTestScene.h */,
 				DE396AE7104055A100C27DDF /* CustomHitTestScene.m */,
+				87F3B96D17F2405A000FB6B0 /* MaskScene.h */,
+				87F3B96E17F2405A000FB6B0 /* MaskScene.m */,
 				DE061A28119D799900DFF25D /* MovieScene.h */,
 				DE061A29119D799900DFF25D /* MovieScene.m */,
 				DEDF882412ABED67005DEAE8 /* RenderTextureScene.h */,
@@ -579,7 +584,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
-				1D3623260D0F684500981E51 /* DemoAppDelegate.m in Sources */,
+				8762582117EA330D0049B8EE /* DemoAppDelegate.m in Sources */,
 				DEFE4CF0101B684B00E22471 /* Game.m in Sources */,
 				DEFE4CF1101B684B00E22471 /* TouchScene.m in Sources */,
 				DEFE4CF2101B684B00E22471 /* TouchSheet.m in Sources */,
@@ -591,6 +596,7 @@
 				DE061A2A119D799900DFF25D /* MovieScene.m in Sources */,
 				DEF1726911B017AA00A11DD7 /* SoundScene.m in Sources */,
 				DEDF882612ABED67005DEAE8 /* RenderTextureScene.m in Sources */,
+				87F3B96F17F2405A000FB6B0 /* MaskScene.m in Sources */,
 				DEB2D16B1380580800FA7B88 /* TextureScene.m in Sources */,
 				DEE71E6C14E02E0700210256 /* Scene.m in Sources */,
 				DE04EA5F16CA965E00B828E8 /* AsyncTextureScene.m in Sources */,
@@ -612,7 +618,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -621,7 +627,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -659,7 +665,7 @@
 				PRODUCT_NAME = "Sparrow Demo";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
-				USER_HEADER_SEARCH_PATHS = "../../../sparrow/src/**";
+				USER_HEADER_SEARCH_PATHS = "../../../sparrow/src/** ../../../external/**";
 			};
 			name = Debug;
 		};
@@ -693,7 +699,7 @@
 				PRODUCT_NAME = "Sparrow Demo";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
-				USER_HEADER_SEARCH_PATHS = "../../../sparrow/src/**";
+				USER_HEADER_SEARCH_PATHS = "../../../sparrow/src/** ../../../external/**";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

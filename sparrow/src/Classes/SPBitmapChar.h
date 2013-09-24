@@ -27,7 +27,7 @@
 /// ------------------
 
 /// Initializes a char with a texture and its properties.
-- (id)initWithID:(int)charID texture:(SPTexture *)texture
+- (instancetype)initWithID:(int)charID texture:(SPTexture*)texture
          xOffset:(float)xOffset yOffset:(float)yOffset xAdvance:(float)xAdvance;
 
 /// -------------
@@ -41,7 +41,7 @@
 - (float)kerningToChar:(int)charID;
 
 /// Creates an image of the char.
-- (SPImage *)createImage;
+- (SPImage*)createImage;
 
 /// ----------------
 /// @name Properties
@@ -60,7 +60,7 @@
 @property (nonatomic, readonly) float xAdvance;
 
 /// The texture of the character.
-@property (nonatomic, readonly) SPTexture *texture;
+@property (nonatomic, readonly) SPTexture* texture;
 
 /// The width of the character in points.
 @property (nonatomic, readonly) float width;

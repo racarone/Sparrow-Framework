@@ -12,12 +12,12 @@
 
 @implementation SoundScene
 {
-    SPSoundChannel *_musicChannel;
-    SPSoundChannel *_soundChannel;
-    SPButton *_channelButton;
+    SPSoundChannel* _musicChannel;
+    SPSoundChannel* _soundChannel;
+    SPButton* _channelButton;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -27,20 +27,20 @@
         
         // Create music channel:
         
-        SPSound *music = [SPSound soundWithContentsOfFile:@"music.aifc"];        
+        SPSound* music = [SPSound soundWithContentsOfFile:@"music.aifc"];        
         _musicChannel = [music createChannel];
         _musicChannel.loop = YES;
         
-        SPSound *sound = [SPSound soundWithContentsOfFile:@"sound0.caf"];
+        SPSound* sound = [SPSound soundWithContentsOfFile:@"sound0.caf"];
         _soundChannel = [sound createChannel];
         [_soundChannel addEventListener:@selector(onSoundCompleted:) atObject:self
-                                forType:SP_EVENT_TYPE_COMPLETED];
+                                forType:kSPEventTypeCompleted];
         
-        SPTexture *buttonTexture = [SPTexture textureWithContentsOfFile:@"button_square.png"];
+        SPTexture* buttonTexture = [SPTexture textureWithContentsOfFile:@"button_square.png"];
         
         // music control
         
-        SPTextField *musicLabel = [SPTextField textFieldWithText:@"Background Music (compressed)"];
+        SPTextField* musicLabel = [SPTextField textFieldWithText:@"Background Music (compressed)"];
         musicLabel.x = 30;
         musicLabel.y = 55;
         musicLabel.fontName = FONTNAME;
@@ -48,33 +48,33 @@
         musicLabel.height = 30;
         [self addChild:musicLabel];
 
-        SPButton *playButton = [SPButton buttonWithUpState:buttonTexture text:@">"];
+        SPButton* playButton = [SPButton buttonWithUpState:buttonTexture text:@">"];
         playButton.x = 80;
         playButton.y = 105;
         playButton.fontName = FONTNAME;        
         [playButton addEventListener:@selector(onPlayButtonTriggered:) atObject:self
-                             forType:SP_EVENT_TYPE_TRIGGERED];        
+                             forType:kSPEventTypeTriggered];        
         [self addChild:playButton];
 
-        SPButton *pauseButton = [SPButton buttonWithUpState:buttonTexture text:@"||"];
+        SPButton* pauseButton = [SPButton buttonWithUpState:buttonTexture text:@"||"];
         pauseButton.x = 140;
         pauseButton.y = playButton.y;
         pauseButton.fontName = FONTNAME;
         [pauseButton addEventListener:@selector(onPauseButtonTriggered:) atObject:self
-                              forType:SP_EVENT_TYPE_TRIGGERED];        
+                              forType:kSPEventTypeTriggered];        
         [self addChild:pauseButton];
         
-        SPButton *stopButton = [SPButton buttonWithUpState:buttonTexture text:@"[]"];
+        SPButton* stopButton = [SPButton buttonWithUpState:buttonTexture text:@"[]"];
         stopButton.x = 200;
         stopButton.y = playButton.y;
         stopButton.fontName = FONTNAME;
         [stopButton addEventListener:@selector(onStopButtonTriggered:) atObject:self
-                             forType:SP_EVENT_TYPE_TRIGGERED];        
+                             forType:kSPEventTypeTriggered];        
         [self addChild:stopButton];       
         
         // simple sound button
         
-        SPTextField *simpleLabel = [SPTextField textFieldWithText:@"Simple"];
+        SPTextField* simpleLabel = [SPTextField textFieldWithText:@"Simple"];
         simpleLabel.x = 60;
         simpleLabel.y = 180;
         simpleLabel.fontName = FONTNAME;
@@ -82,17 +82,17 @@
         simpleLabel.height = 30;
         [self addChild:simpleLabel];
         
-        SPButton *simpleButton = [SPButton buttonWithUpState:buttonTexture text:@">"];
+        SPButton* simpleButton = [SPButton buttonWithUpState:buttonTexture text:@">"];
         simpleButton.x = 80;
         simpleButton.y = 230;
         simpleButton.fontName = FONTNAME;
         [simpleButton addEventListener:@selector(onSimpleButtonTriggered:) atObject:self
-                               forType:SP_EVENT_TYPE_TRIGGERED];  
+                               forType:kSPEventTypeTriggered];  
         [self addChild:simpleButton];
         
         // channel sound button
         
-        SPTextField *channelLabel = [SPTextField textFieldWithText:@"Channel"];
+        SPTextField* channelLabel = [SPTextField textFieldWithText:@"Channel"];
         channelLabel.x = 180;
         channelLabel.y = simpleLabel.y;
         channelLabel.fontName = FONTNAME;
@@ -105,12 +105,12 @@
         _channelButton.y = simpleButton.y;
         _channelButton.fontName = FONTNAME;
         [_channelButton addEventListener:@selector(onChannelButtonTriggered:) atObject:self
-                                forType:SP_EVENT_TYPE_TRIGGERED];  
+                                forType:kSPEventTypeTriggered];  
         [self addChild:_channelButton];
         
         // volume buttons
         
-        SPTextField *volumeLabel = [SPTextField textFieldWithText:@"Master Volume"];
+        SPTextField* volumeLabel = [SPTextField textFieldWithText:@"Master Volume"];
         volumeLabel.x = 30;
         volumeLabel.y = 305;
         volumeLabel.fontName = FONTNAME;
@@ -118,28 +118,28 @@
         volumeLabel.height = 30;
         [self addChild:volumeLabel];
         
-        SPButton *volume0Button = [SPButton buttonWithUpState:buttonTexture text:@"0"];
+        SPButton* volume0Button = [SPButton buttonWithUpState:buttonTexture text:@"0"];
         volume0Button.x = 80;
         volume0Button.y = 355;
         volume0Button.fontName = FONTNAME;
         [volume0Button addEventListener:@selector(onVolume0ButtonTriggered:) atObject:self
-                                forType:SP_EVENT_TYPE_TRIGGERED]; 
+                                forType:kSPEventTypeTriggered]; 
         [self addChild:volume0Button];
         
-        SPButton *volume50Button = [SPButton buttonWithUpState:buttonTexture text:@"50"];
+        SPButton* volume50Button = [SPButton buttonWithUpState:buttonTexture text:@"50"];
         volume50Button.x = 140;
         volume50Button.y = volume0Button.y;
         volume50Button.fontName = FONTNAME;
         [volume50Button addEventListener:@selector(onVolume50ButtonTriggered:) atObject:self
-                                forType:SP_EVENT_TYPE_TRIGGERED]; 
+                                forType:kSPEventTypeTriggered]; 
         [self addChild:volume50Button];
         
-        SPButton *volume100Button = [SPButton buttonWithUpState:buttonTexture text:@"100"];
+        SPButton* volume100Button = [SPButton buttonWithUpState:buttonTexture text:@"100"];
         volume100Button.x = 200;
         volume100Button.y = volume0Button.y;
         volume100Button.fontName = FONTNAME;
         [volume100Button addEventListener:@selector(onVolume100ButtonTriggered:) atObject:self
-                                forType:SP_EVENT_TYPE_TRIGGERED]; 
+                                forType:kSPEventTypeTriggered]; 
         [self addChild:volume100Button];        
         
         
@@ -150,8 +150,8 @@
         // again. On the device, it works fine. I suppose this is a bug in the OpenAL implementation
         // of the simulator.        
         
-        NSString *description = @"Warning: the simulator might not reproduce sound accurately.";        
-        SPTextField *infoText = [SPTextField textFieldWithWidth:300 height:50 text:description
+        NSString* description = @"Warning: the simulator might not reproduce sound accurately.";        
+        SPTextField* infoText = [SPTextField textFieldWithWidth:300 height:50 text:description
                                                        fontName:@"Verdana" fontSize:13 color:0x0];    
         infoText.x = infoText.y = 10;
         infoText.vAlign = SPVAlignTop;        
@@ -162,50 +162,50 @@
     return self;
 }
 
-- (void)onPlayButtonTriggered:(SPEvent *)event
+- (void)onPlayButtonTriggered:(SPEvent*)event
 {    
     [_musicChannel play];
 }
 
-- (void)onPauseButtonTriggered:(SPEvent *)event
+- (void)onPauseButtonTriggered:(SPEvent*)event
 {    
     [_musicChannel pause];
 }
 
-- (void)onStopButtonTriggered:(SPEvent *)event
+- (void)onStopButtonTriggered:(SPEvent*)event
 {    
     [_musicChannel stop];
 }
 
-- (void)onSimpleButtonTriggered:(SPEvent *)event
+- (void)onSimpleButtonTriggered:(SPEvent*)event
 {
     // that's the easiest way to play a sound!
     [[SPSound soundWithContentsOfFile:@"sound1.caf"] play];
 }
 
-- (void)onChannelButtonTriggered:(SPEvent *)event
+- (void)onChannelButtonTriggered:(SPEvent*)event
 {
     // we change the color to demonstrate the "onCompleted" feature
     _channelButton.fontColor = 0xff0000;
     [_soundChannel play];
 }
 
-- (void)onVolume0ButtonTriggered:(SPEvent *)event
+- (void)onVolume0ButtonTriggered:(SPEvent*)event
 {
     [SPAudioEngine setMasterVolume:0.0f];
 }
 
-- (void)onVolume50ButtonTriggered:(SPEvent *)event
+- (void)onVolume50ButtonTriggered:(SPEvent*)event
 {
     [SPAudioEngine setMasterVolume:0.5f];
 }
 
-- (void)onVolume100ButtonTriggered:(SPEvent *)event
+- (void)onVolume100ButtonTriggered:(SPEvent*)event
 {
     [SPAudioEngine setMasterVolume:1.0f];
 }
 
-- (void)onSoundCompleted:(SPEvent *)event
+- (void)onSoundCompleted:(SPEvent*)event
 {
     _channelButton.fontColor = 0x0;
 }

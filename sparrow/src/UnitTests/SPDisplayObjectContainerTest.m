@@ -33,8 +33,8 @@
     int _removed;
     int _removedFromStage;
     int _eventCount;
-    SPSprite *_testSprite;
-    SPEventDispatcher *_broadcastTarget;
+    SPSprite* _testSprite;
+    SPEventDispatcher* _broadcastTarget;
 }
 
 - (void)addQuadToSprite:(SPSprite*)sprite;
@@ -55,9 +55,9 @@
 
 - (void)testChildParentHandling
 {
-    SPSprite *parent = [[SPSprite alloc] init];
-    SPSprite *child1 = [[SPSprite alloc] init];
-    SPSprite *child2 = [[SPSprite alloc] init];
+    SPSprite* parent = [[SPSprite alloc] init];
+    SPSprite* child1 = [[SPSprite alloc] init];
+    SPSprite* child2 = [[SPSprite alloc] init];
     
     STAssertEquals(0, parent.numChildren, @"wrong number of children");
     STAssertNil(child1.parent, @"parent not nil");
@@ -91,10 +91,10 @@
 
 - (void)testSetChildIndex
 {
-    SPSprite *parent = [SPSprite sprite];
-    SPSprite *childA = [SPSprite sprite];
-    SPSprite *childB = [SPSprite sprite];
-    SPSprite *childC = [SPSprite sprite];
+    SPSprite* parent = [SPSprite sprite];
+    SPSprite* childA = [SPSprite sprite];
+    SPSprite* childB = [SPSprite sprite];
+    SPSprite* childC = [SPSprite sprite];
     
     [parent addChild:childA];
     [parent addChild:childB];
@@ -120,13 +120,13 @@
 
 - (void)testWidthAndHeight
 {
-    SPSprite *sprite = [[SPSprite alloc] init];
+    SPSprite* sprite = [[SPSprite alloc] init];
     
-    SPQuad *quad1 = [[SPQuad alloc] initWithWidth:10 height:20];    
+    SPQuad* quad1 = [[SPQuad alloc] initWithWidth:10 height:20];    
     quad1.x = -10;
     quad1.y = -15;
     
-    SPQuad *quad2 = [[SPQuad alloc] initWithWidth:15 height:25];
+    SPQuad* quad2 = [[SPQuad alloc] initWithWidth:15 height:25];
     quad2.x = 30;
     quad2.y = 25;
     
@@ -147,15 +147,15 @@
 
 - (void)testBounds
 {
-    SPQuad *quad = [[SPQuad alloc] initWithWidth:10 height:20];
+    SPQuad* quad = [[SPQuad alloc] initWithWidth:10 height:20];
     quad.x = -10;
     quad.y = 10;
     quad.rotation = PI_HALF;
     
-    SPSprite *sprite = [[SPSprite alloc] init];
+    SPSprite* sprite = [[SPSprite alloc] init];
     [sprite addChild:quad];
     
-    SPRectangle *bounds = [sprite bounds];
+    SPRectangle* bounds = [sprite bounds];
     STAssertTrue(SP_IS_FLOAT_EQUAL(-30, bounds.x), @"wrong bounds.x: %f", bounds.x);
     STAssertTrue(SP_IS_FLOAT_EQUAL(10, bounds.y), @"wrong bounds.y: %f", bounds.y);
     STAssertTrue(SP_IS_FLOAT_EQUAL(20, bounds.width), @"wrong bounds.width: %f", bounds.width);
@@ -170,36 +170,36 @@
 
 - (void)testBoundsInSpace
 {
-    SPSprite *root = [[SPSprite alloc] init];
+    SPSprite* root = [[SPSprite alloc] init];
     
-    SPSprite *spriteA = [[SPSprite alloc] init];
+    SPSprite* spriteA = [[SPSprite alloc] init];
     spriteA.x = 50;
     spriteA.y = 50;
     [self addQuadToSprite:spriteA];
     [root addChild:spriteA];
     
-    SPSprite *spriteA1 = [[SPSprite alloc] init];
+    SPSprite* spriteA1 = [[SPSprite alloc] init];
     spriteA1.x = 150;
     spriteA1.y = 50;
     spriteA1.scaleX = spriteA1.scaleY = 0.5;
     [self addQuadToSprite:spriteA1];
     [spriteA addChild:spriteA1];
     
-    SPSprite *spriteA11 = [[SPSprite alloc] init];
+    SPSprite* spriteA11 = [[SPSprite alloc] init];
     spriteA11.x = 25;
     spriteA11.y = 50;
     spriteA11.scaleX = spriteA11.scaleY = 0.5;
     [self addQuadToSprite:spriteA11];
     [spriteA1 addChild:spriteA11];
     
-    SPSprite *spriteA2 = [[SPSprite alloc] init];
+    SPSprite* spriteA2 = [[SPSprite alloc] init];
     spriteA2.x = 50;
     spriteA2.y = 150;
     spriteA2.scaleX = spriteA2.scaleY = 0.5;
     [self addQuadToSprite:spriteA2];
     [spriteA addChild:spriteA2];
     
-    SPSprite *spriteA21 = [[SPSprite alloc] init];
+    SPSprite* spriteA21 = [[SPSprite alloc] init];
     spriteA21.x = 50;
     spriteA21.y = 25;
     spriteA21.scaleX = spriteA21.scaleY = 0.5;
@@ -208,8 +208,8 @@
     
     // ---
     
-    SPRectangle *bounds = [spriteA21 boundsInSpace:spriteA11];
-    SPRectangle *expectedBounds = [SPRectangle rectangleWithX:-350 y:350 width:100 height:100];
+    SPRectangle* bounds = [spriteA21 boundsInSpace:spriteA11];
+    SPRectangle* expectedBounds = [SPRectangle rectangleWithX:-350 y:350 width:100 height:100];
     STAssertTrue([bounds isEquivalent:expectedBounds], @"wrong bounds: %@", bounds);
     
     // now rotate as well
@@ -224,12 +224,12 @@
 
 - (void)testSize
 {
-    SPQuad *quad1 = [SPQuad quadWithWidth:100 height:100];
-    SPQuad *quad2 = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad1 = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad2 = [SPQuad quadWithWidth:100 height:100];
     quad2.x = quad2.y = 100;
     
-    SPSprite *sprite = [SPSprite sprite];
-    SPSprite *childSprite = [SPSprite sprite];
+    SPSprite* sprite = [SPSprite sprite];
+    SPSprite* childSprite = [SPSprite sprite];
     
     [sprite addChild:childSprite];
     [childSprite addChild:quad1];
@@ -247,9 +247,9 @@
 
 - (void)testIllegalRecursion
 {
-    SPSprite *sprite1 = [SPSprite sprite];
-    SPSprite *sprite2 = [SPSprite sprite];
-    SPSprite *sprite3 = [SPSprite sprite];
+    SPSprite* sprite1 = [SPSprite sprite];
+    SPSprite* sprite2 = [SPSprite sprite];
+    SPSprite* sprite3 = [SPSprite sprite];
     
     [sprite1 addChild:sprite2];
     [sprite2 addChild:sprite3];
@@ -259,13 +259,13 @@
 
 - (void)testAddAsChildToSelf
 {
-    SPSprite *sprite = [SPSprite sprite];
+    SPSprite* sprite = [SPSprite sprite];
     STAssertThrows([sprite addChild:sprite], @"container allowed adding self as child");
 }
 
 - (void)addQuadToSprite:(SPSprite*)sprite
 {
-    SPQuad *quad = [[SPQuad alloc] initWithWidth:100 height:100];
+    SPQuad* quad = [[SPQuad alloc] initWithWidth:100 height:100];
     quad.alpha = 0.2f;
     [sprite addChild:quad];
     return;
@@ -273,12 +273,12 @@
 
 - (void)testDisplayListEvents
 {
-    SPStage *stage = [[SPStage alloc] init];
-    SPSprite *sprite = [[SPSprite alloc] init];
-    SPQuad *quad = [[SPQuad alloc] initWithWidth:20 height:20];
+    SPStage* stage = [[SPStage alloc] init];
+    SPSprite* sprite = [[SPSprite alloc] init];
+    SPQuad* quad = [[SPQuad alloc] initWithWidth:20 height:20];
     
     [quad addEventListener:@selector(onAdded:) atObject:self forType:SP_EVENT_TYPE_ADDED];
-    [quad addEventListener:@selector(onAddedToStage:) atObject:self forType:SP_EVENT_TYPE_ADDED_TO_STAGE];
+    [quad addEventListener:@selector(onAddedToStage:) atObject:self forType:kSPEventTypeAddedToStage];
     [quad addEventListener:@selector(onRemoved:) atObject:self forType:SP_EVENT_TYPE_REMOVED];
     [quad addEventListener:@selector(onRemovedFromStage:) atObject:self forType:SP_EVENT_TYPE_REMOVED_FROM_STAGE];
     
@@ -311,7 +311,7 @@
     STAssertEquals(1, _removedFromStage, @"failure on event 'removedFromStage'");
     
     [quad removeEventListenersAtObject:self forType:SP_EVENT_TYPE_ADDED];
-    [quad removeEventListenersAtObject:self forType:SP_EVENT_TYPE_ADDED_TO_STAGE];
+    [quad removeEventListenersAtObject:self forType:kSPEventTypeAddedToStage];
     [quad removeEventListenersAtObject:self forType:SP_EVENT_TYPE_REMOVED];
     [quad removeEventListenersAtObject:self forType:SP_EVENT_TYPE_REMOVED_FROM_STAGE];
 }
@@ -323,7 +323,7 @@
 
 - (void)testRemovedFromStage
 {
-    SPStage *stage = [[SPStage alloc] init];
+    SPStage* stage = [[SPStage alloc] init];
     [stage addChild:_testSprite];    
     [_testSprite addEventListener:@selector(onTestSpriteRemovedFromStage:) atObject:self
                           forType:SP_EVENT_TYPE_REMOVED_FROM_STAGE];    
@@ -331,22 +331,22 @@
     [_testSprite removeEventListenersAtObject:self forType:SP_EVENT_TYPE_REMOVED_FROM_STAGE];        
 }
 
-- (void)onTestSpriteRemovedFromStage:(SPEvent *)event
+- (void)onTestSpriteRemovedFromStage:(SPEvent*)event
 {
     STAssertNotNil(_testSprite.stage, @"stage not accessible in removed from stage event");
 }
 
 - (void)testAddExistingChild
 {
-    SPSprite *sprite = [SPSprite sprite];
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPSprite* sprite = [SPSprite sprite];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     [sprite addChild:quad];
     STAssertNoThrow([sprite addChild:quad], @"Could not add child multiple times");
 }
 
 - (void)testRemoveAllChildren
 {
-    SPSprite *sprite = [SPSprite sprite];
+    SPSprite* sprite = [SPSprite sprite];
     
     STAssertEquals(0, sprite.numChildren, @"wrong number of children");
     [sprite removeAllChildren];
@@ -362,10 +362,10 @@
 
 - (void)testChildByName
 {
-    SPSprite *parent = [SPSprite sprite];
-    SPSprite *child1 = [SPSprite sprite];
-    SPSprite *child2 = [SPSprite sprite];
-    SPSprite *child3 = [SPSprite sprite];
+    SPSprite* parent = [SPSprite sprite];
+    SPSprite* child1 = [SPSprite sprite];
+    SPSprite* child2 = [SPSprite sprite];
+    SPSprite* child3 = [SPSprite sprite];
     
     [parent addChild:child1];
     [parent addChild:child2];
@@ -381,18 +381,18 @@
 
 - (void)testSortChildren
 {
-    SPSprite *s1 = [SPSprite sprite]; s1.y = 8;
-    SPSprite *s2 = [SPSprite sprite]; s2.y = 3;
-    SPSprite *s3 = [SPSprite sprite]; s3.y = 6;
-    SPSprite *s4 = [SPSprite sprite]; s4.y = 1;
+    SPSprite* s1 = [SPSprite sprite]; s1.y = 8;
+    SPSprite* s2 = [SPSprite sprite]; s2.y = 3;
+    SPSprite* s3 = [SPSprite sprite]; s3.y = 6;
+    SPSprite* s4 = [SPSprite sprite]; s4.y = 1;
     
-    SPSprite *parent = [SPSprite sprite];
+    SPSprite* parent = [SPSprite sprite];
     [parent addChild:s1];
     [parent addChild:s2];
     [parent addChild:s3];
     [parent addChild:s4];
     
-    [parent sortChildren:^(SPDisplayObject *child1, SPDisplayObject *child2) 
+    [parent sortChildren:^(SPDisplayObject* child1, SPDisplayObject* child2) 
     {
         if (child1.y < child2.y) return NSOrderedAscending;
         else if (child1.y > child2.y) return NSOrderedDescending;
@@ -407,11 +407,11 @@
 
 - (void)testBroadcastEvent
 {
-    SPSprite *parent = [SPSprite sprite];
+    SPSprite* parent = [SPSprite sprite];
 
-    SPSprite *child1 = [SPSprite sprite];
-    SPSprite *child2 = [SPSprite sprite];
-    SPSprite *child3 = [SPSprite sprite];
+    SPSprite* child1 = [SPSprite sprite];
+    SPSprite* child2 = [SPSprite sprite];
+    SPSprite* child3 = [SPSprite sprite];
     
     [parent addChild:child1];
     [parent addChild:child2];
@@ -422,7 +422,7 @@
     [child2 addEventListener:@selector(onChildEvent:) atObject:self forType:@"dunno"];
     [child3 addEventListener:@selector(onChildEvent:) atObject:self forType:@"dunno"];
     
-    SPEvent *event = [SPEvent eventWithType:@"dunno"];
+    SPEvent* event = [SPEvent eventWithType:@"dunno"];
     [parent broadcastEvent:event];
     
     // event should have dispatched to all 3 children, even if the event listener
@@ -434,10 +434,10 @@
 
 - (void)testBroadcastEventTarget
 {
-    SPSprite *parent = [SPSprite sprite];
-    SPSprite *childA = [SPSprite sprite];
-    SPSprite *childA1 = [SPSprite sprite];
-    SPSprite *childA2 = [SPSprite sprite];
+    SPSprite* parent = [SPSprite sprite];
+    SPSprite* childA = [SPSprite sprite];
+    SPSprite* childA1 = [SPSprite sprite];
+    SPSprite* childA2 = [SPSprite sprite];
     
     [parent addChild:childA];
     [parent addChild:childA1];
@@ -454,14 +454,14 @@
     STAssertEquals(parent, _broadcastTarget, @"wrong event.target on broadcast");
 }
 
-- (void)onBroadcastEvent:(SPEvent *)event
+- (void)onBroadcastEvent:(SPEvent*)event
 {
     _broadcastTarget = event.target;
 }
 
-- (void)onChildEvent:(SPEvent *)event
+- (void)onChildEvent:(SPEvent*)event
 {
-    SPDisplayObject *target = (SPDisplayObject *)event.target;
+    SPDisplayObject* target = (SPDisplayObject*)event.target;
     
     if ([target.name isEqualToString:@"trigger"])
         [target.parent removeAllChildren];
@@ -471,10 +471,10 @@
 
 - (void)testRemoveWithEventHandler
 {
-    SPSprite *parent = [SPSprite sprite];
-    SPSprite *child0 = [SPSprite sprite];
-    SPSprite *child1 = [SPSprite sprite];
-    SPSprite *child2 = [SPSprite sprite];
+    SPSprite* parent = [SPSprite sprite];
+    SPSprite* child0 = [SPSprite sprite];
+    SPSprite* child1 = [SPSprite sprite];
+    SPSprite* child2 = [SPSprite sprite];
     
     [parent addChild:child0];
     [parent addChild:child1];
@@ -492,10 +492,10 @@
     STAssertEquals(1, parent.numChildren, @"wrong number of children");
 }
 
-- (void)onRemoveChild2:(SPEvent *)event
+- (void)onRemoveChild2:(SPEvent*)event
 {
-    SPSprite *child2 = (SPSprite *)event.target;
-    SPSprite *parent = (SPSprite *)child2.parent;
+    SPSprite* child2 = (SPSprite*)event.target;
+    SPSprite* parent = (SPSprite*)child2.parent;
     [parent removeChildAtIndex:0];
 }
 

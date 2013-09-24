@@ -18,13 +18,13 @@
 
 @implementation RenderTextureScene
 {
-    SPRenderTexture *_renderTexture;
-    SPImage *_brush;
-    SPButton *_button;
-    NSMutableDictionary *_colors;
+    SPRenderTexture* _renderTexture;
+    SPImage* _brush;
+    SPButton* _button;
+    NSMutableDictionary* _colors;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -48,13 +48,13 @@
     _renderTexture = [[SPRenderTexture alloc] initWithWidth:320 height:435];
     
     // the canvas image will display the render texture
-    SPImage *canvas = [SPImage imageWithTexture:_renderTexture];
-    [canvas addEventListener:@selector(onTouch:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+    SPImage* canvas = [SPImage imageWithTexture:_renderTexture];
+    [canvas addEventListener:@selector(onTouch:) atObject:self forType:kSPEventTypeTouch];
     [self addChild:canvas];
     
     // we draw a text into that canvas
-    NSString *description = @"Touch the screen\nto draw!";
-    SPTextField *infoText = [SPTextField textFieldWithWidth:256 height:128
+    NSString* description = @"Touch the screen\nto draw!";
+    SPTextField* infoText = [SPTextField textFieldWithWidth:256 height:128
                                                        text:description fontName:@"Verdana"
                                                    fontSize:24 color:0x0];
     infoText.x = CENTER_X - infoText.width / 2;
@@ -62,16 +62,16 @@
     [_renderTexture drawObject:infoText];
     
     // add a button to let the user switch between "draw" and "erase" mode
-    SPTexture *buttonTexture = [[SPTexture alloc] initWithContentsOfFile:@"button_normal.png"];
+    SPTexture* buttonTexture = [[SPTexture alloc] initWithContentsOfFile:@"button_normal.png"];
     _button = [[SPButton alloc] initWithUpState:buttonTexture text:@"Mode: Draw"];
     _button.x = (int)(CENTER_X - _button.width / 2);
     _button.y = 15;
     [_button addEventListener:@selector(onButtonTriggered:) atObject:self
-                      forType:SP_EVENT_TYPE_TRIGGERED];
+                      forType:kSPEventTypeTriggered];
     [self addChild:_button];
 }
 
-- (void)onButtonTriggered:(SPEvent *)event
+- (void)onButtonTriggered:(SPEvent*)event
 {
     if (_brush.blendMode == SP_BLEND_MODE_NORMAL)
     {
@@ -85,15 +85,15 @@
     }
 }
 
-- (void)onTouch:(SPTouchEvent *)event
+- (void)onTouch:(SPTouchEvent*)event
 {
-    NSSet *allTouches = [event touchesWithTarget:self];
+    NSSet* allTouches = [event touchesWithTarget:self];
     
     [_renderTexture drawBundled:^
     {
         for (SPTouch* touch in allTouches)
         {
-            NSNumber *touchID = @((uint)touch);
+            NSNumber* touchID = @((uint)touch);
             
             // don't draw on 'finger up'
             if (touch.phase == SPTouchPhaseEnded)
@@ -106,7 +106,7 @@
                 _colors[touchID] = @([SPUtils randomIntBetweenMin:0 andMax:0xffffff]);
             
             // find out location of touch event
-            SPPoint *currentLocation = [touch locationInSpace:self];
+            SPPoint* currentLocation = [touch locationInSpace:self];
             
             // center brush over location
             _brush.x = currentLocation.x;

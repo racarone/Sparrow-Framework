@@ -79,9 +79,9 @@ static NSString *getNameOfMode(uint mode)
                         sourceFactorPMA:(uint)sFactorPMA destFactorPMA:(uint)dFactorPMA
 {
     return ((encodeFactor(sFactor))    << 12) |
-           ((encodeFactor(dFactor))    <<  8) |
-           ((encodeFactor(sFactorPMA)) <<  4) |
-           ( encodeFactor(dFactorPMA));
+    ((encodeFactor(dFactor))    <<  8) |
+    ((encodeFactor(sFactorPMA)) <<  4) |
+    ( encodeFactor(dFactorPMA));
 }
 
 + (void)decodeBlendMode:(uint)blendMode premultipliedAlpha:(BOOL)pma
@@ -102,31 +102,31 @@ static NSString *getNameOfMode(uint mode)
 + (void)applyBlendFactorsForBlendMode:(uint)blendMode premultipliedAlpha:(BOOL)pma
 {
     uint srcFactor, dstFactor;
-    
+
     [self decodeBlendMode:blendMode premultipliedAlpha:pma intoSourceFactor:&srcFactor
                destFactor:&dstFactor];
-    
+
     glBlendFunc(srcFactor, dstFactor);
 }
 
 + (NSString *)describeBlendMode:(uint)blendMode
 {
     NSString *modeName = getNameOfMode(blendMode);
-    
+
     if (modeName) return [NSString stringWithFormat:@"[BlendMode: %@]", modeName];
     else
     {
         uint src, dst, srcPMA, dstPMA;
         [self decodeBlendMode:blendMode premultipliedAlpha:NO  intoSourceFactor:&src destFactor:&dst];
         [self decodeBlendMode:blendMode premultipliedAlpha:YES intoSourceFactor:&srcPMA destFactor:&dstPMA];
-        
+
         if (src == srcPMA && dst == dstPMA)
             return [NSString stringWithFormat:@"[BlendMode: src=%@, dst=%@]",
                     getNameOfFactor(src), getNameOfFactor(dst)];
         else
             return [NSString stringWithFormat:@"[BlendMode: src=%@, dst=%@, srcPMA=%@, dstPMA=%@]",
-                getNameOfFactor(src),    getNameOfFactor(dst),
-                getNameOfFactor(srcPMA), getNameOfFactor(dstPMA)];
+                    getNameOfFactor(src),    getNameOfFactor(dst),
+                    getNameOfFactor(srcPMA), getNameOfFactor(dstPMA)];
     }
 }
 

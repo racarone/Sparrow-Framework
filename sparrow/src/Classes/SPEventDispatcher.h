@@ -10,6 +10,7 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "SPEvent.h"
 
 typedef void (^SPEventBlock)(id event);
@@ -34,14 +35,14 @@ typedef void (^SPEventBlock)(id event);
 	[object addEventListener:@selector(onEvent:) atObject:self forType:@"eventType"];
 	
 	// the corresponding event listener
-	- (void)onEvent:(SPEvent *)event
+	- (void)onEvent:(SPEvent*)event
 	{
 	    // an event was triggered
 	}
  
  Alternatively, you can use blocks as event listeners:
  
-	[object addEventListenerForType:@"eventType" block:^(SPEvent *event)
+	[object addEventListenerForType:@"eventType" block:^(SPEvent* event)
 	 {
  	     // the event was triggered
 	 }];
@@ -66,30 +67,30 @@ typedef void (^SPEventBlock)(id event);
 /// -------------
 
 /// Registers an event listener which is implemented through a block.
-- (void)addEventListenerForType:(NSString *)eventType block:(SPEventBlock)block;
+- (void)addEventListenerForType:(NSString*)eventType block:(SPEventBlock)block;
 
 /// Registers an event listener at a certain object.
-- (void)addEventListener:(SEL)selector atObject:(id)object forType:(NSString *)eventType;
+- (void)addEventListener:(SEL)selector atObject:(id)object forType:(NSString*)eventType;
 
 /// Removes an event listener from an object.
-- (void)removeEventListener:(SEL)selector atObject:(id)object forType:(NSString *)eventType;
+- (void)removeEventListener:(SEL)selector atObject:(id)object forType:(NSString*)eventType;
 
 /// Removes all event listeners from an object that have a certain type.
-- (void)removeEventListenersAtObject:(id)object forType:(NSString *)eventType;
+- (void)removeEventListenersAtObject:(id)object forType:(NSString*)eventType;
 
 /// Removes an event listener that was implemented through a block.
-- (void)removeEventListenerForType:(NSString *)eventType block:(SPEventBlock)block;
+- (void)removeEventListenerForType:(NSString*)eventType block:(SPEventBlock)block;
 
 /// Dispatches an event to all objects that have registered for events of the same type.
 - (void)dispatchEvent:(SPEvent*)event;
 
 /// Creates a new (non-bubbling) event object and dispatches it.
-- (void)dispatchEventWithType:(NSString *)type;
+- (void)dispatchEventWithType:(NSString*)type;
 
 /// Creates a new event object and dispatches it.
-- (void)dispatchEventWithType:(NSString *)type bubbles:(BOOL)bubbles;
+- (void)dispatchEventWithType:(NSString*)type bubbles:(BOOL)bubbles;
 
 /// Returns if there are listeners registered for a certain event type.
-- (BOOL)hasEventListenerForType:(NSString *)eventType;
+- (BOOL)hasEventListenerForType:(NSString*)eventType;
 
 @end

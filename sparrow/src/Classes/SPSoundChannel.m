@@ -14,7 +14,7 @@
 
 @implementation SPSoundChannel
 
-- (id)init
+- (instancetype)init
 {
     if ([self isMemberOfClass:[SPSoundChannel class]]) 
     {

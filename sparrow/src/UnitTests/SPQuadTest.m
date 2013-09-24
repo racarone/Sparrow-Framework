@@ -39,7 +39,7 @@
     float x = 3;
     float y = 2;
     
-    SPQuad *quad = [[SPQuad alloc] initWithWidth:width height:height];
+    SPQuad* quad = [[SPQuad alloc] initWithWidth:width height:height];
     quad.x = x; 
     quad.y = y;
     
@@ -54,7 +54,7 @@
     float width = 30;
     float height = 40;
     float angle = SP_D2R(45.0f);
-    SPQuad *quad = [[SPQuad alloc] initWithWidth:width height:height];
+    SPQuad* quad = [[SPQuad alloc] initWithWidth:width height:height];
     quad.rotation = angle;
 
     float expectedWidth = cosf(angle) * (width + height);
@@ -63,7 +63,7 @@
 
 - (void)testVertexColorAndAlpha
 {
-    SPQuad *quad = [[SPQuad alloc] initWithWidth:100 height:100 color:0xffffff premultipliedAlpha:NO];
+    SPQuad* quad = [[SPQuad alloc] initWithWidth:100 height:100 color:0xffffff premultipliedAlpha:NO];
     
     [quad setColor:0xff0000 ofVertex:0];
     [quad setColor:0x00ff00 ofVertex:1];
@@ -98,7 +98,7 @@
 
 - (void)testTinted
 {
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     STAssertFalse(quad.tinted, @"default quad shouldn't be tinted");
     
     quad.alpha = 0.99f;

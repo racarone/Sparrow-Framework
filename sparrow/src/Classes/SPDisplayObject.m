@@ -9,58 +9,59 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPDisplayObject.h"
+#import "SparrowClass.h"
+#import "SPBlendMode.h"
 #import "SPDisplayObject_Internal.h"
 #import "SPDisplayObjectContainer.h"
-#import "SPStage.h"
+#import "SPEventDispatcher_Internal.h"
+#import "SPEnterFrameEvent.h"
 #import "SPMacros.h"
+#import "SPMatrix_Internal.h"
+#import "SPStage_Internal.h"
 #import "SPTouchEvent.h"
-#import "SPBlendMode.h"
-
-float square(float value) { return value * value; }
 
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPDisplayObject
 {
-    float _x;
-    float _y;
-    float _pivotX;
-    float _pivotY;
-    float _scaleX;
-    float _scaleY;
-    float _skewX;
-    float _skewY;
-    float _rotation;
-    float _alpha;
-    uint _blendMode;
-    BOOL _visible;
-    BOOL _touchable;
-    BOOL _orientationChanged;
-    
-    SPDisplayObjectContainer *__weak _parent;
-    SPMatrix *_transformationMatrix;
-    double _lastTouchTimestamp;
-    NSString *_name;
+    float                               _x;
+    float                               _y;
+    float                               _pivotX;
+    float                               _pivotY;
+    float                               _scaleX;
+    float                               _scaleY;
+    float                               _skewX;
+    float                               _skewY;
+    float                               _rotation;
+    float                               _alpha;
+    uint                                _blendMode;
+    BOOL                                _visible;
+    BOOL                                _touchable;
+    BOOL                                _orientationChanged;
+
+    SPDisplayObjectContainer* __weak    _parent;
+    SPMatrix*                           _transformationMatrix;
+    double                              _lastTouchTimestamp;
+    NSString*                           _name;
 }
 
-@synthesize x = _x;
-@synthesize y = _y;
-@synthesize pivotX = _pivotX;
-@synthesize pivotY = _pivotY;
-@synthesize scaleX = _scaleX;
-@synthesize scaleY = _scaleY;
-@synthesize skewX  = _skewX;
-@synthesize skewY  = _skewY;
-@synthesize rotation = _rotation;
-@synthesize parent = _parent;
-@synthesize alpha = _alpha;
-@synthesize visible = _visible;
-@synthesize touchable = _touchable;
-@synthesize name = _name;
-@synthesize blendMode = _blendMode;
+@synthesize x           = _x;
+@synthesize y           = _y;
+@synthesize pivotX      = _pivotX;
+@synthesize pivotY      = _pivotY;
+@synthesize scaleX      = _scaleX;
+@synthesize scaleY      = _scaleY;
+@synthesize skewX       = _skewX;
+@synthesize skewY       = _skewY;
+@synthesize rotation    = _rotation;
+@synthesize parent      = _parent;
+@synthesize alpha       = _alpha;
+@synthesize visible     = _visible;
+@synthesize touchable   = _touchable;
+@synthesize name        = _name;
+@synthesize blendMode   = _blendMode;
 
-- (id)init
+- (instancetype)init
 {    
     #ifdef DEBUG    
     if ([self isMemberOfClass:[SPDisplayObject class]]) 
@@ -79,11 +80,21 @@ float square(float value) { return value * value; }
         _visible = YES;
         _touchable = YES;
         _transformationMatrix = [[SPMatrix alloc] init];
-        _orientationChanged = NO;
+        _orientationChanged = YES;
         _blendMode = SP_BLEND_MODE_AUTO;
     }
     return self;
 }
+
+- (void) dealloc
+{
+    SP_RELEASE_AND_NIL(_name);
+    SP_RELEASE_AND_NIL(_transformationMatrix);
+
+    [super dealloc];
+}
+
+#pragma mark methods
 
 - (void)render:(SPRenderSupport*)support
 {
@@ -95,34 +106,56 @@ float square(float value) { return value * value; }
     [_parent removeChild:self];
 }
 
-- (SPMatrix *)transformationMatrixToSpace:(SPDisplayObject *)targetSpace
-{           
+- (void)alignPivotWithHAlign:(SPHAlign)hAlign vAlign:(SPVAlign)vAlign
+{
+    SPRectangle* bounds = [self boundsInSpace:self];
+    _orientationChanged = true;
+
+    switch (hAlign) {
+        case SPHAlignLeft:      _pivotX = bounds.x;                         break;
+        case SPHAlignCenter:    _pivotX = bounds.x + bounds.width / 2.0;    break;
+        case SPHAlignRight:     _pivotX = bounds.x + bounds.width;          break;
+        default:                [NSException raise:SP_EXC_INVALID_OPERATION format:@"Invalid horizontal alignment."];
+    }
+
+    switch (vAlign) {
+        case SPVAlignTop:       _pivotY = bounds.y;                         break;
+        case SPVAlignCenter:    _pivotY = bounds.y + bounds.height / 2.0;   break;
+        case SPVAlignBottom:    _pivotY = bounds.y + bounds.height;         break;
+        default:                [NSException raise:SP_EXC_INVALID_OPERATION format:@"Invalid vertical alignment."];
+    }
+}
+
+- (SPMatrix*)transformationMatrixToSpace:(SPDisplayObject*)targetSpace
+{
+    SPMatrix* resultMatrix = SPMatrixCreate();
+
     if (targetSpace == self)
     {
-        return [SPMatrix matrixWithIdentity];
+        return resultMatrix;
     }
     else if (targetSpace == _parent || (!targetSpace && !_parent))
     {
-        return [self.transformationMatrix copy];
+        SPMatrixCopyFrom(resultMatrix, self.transformationMatrix);
+        return resultMatrix;
     }
     else if (!targetSpace || targetSpace == self.base)
     {
         // targetSpace 'nil' represents the target coordinate of the base object.
         // -> move up from self to base
-        SPMatrix *selfMatrix = [[SPMatrix alloc] init];
-        SPDisplayObject *currentObject = self;
+        SPDisplayObject* currentObject = self;
         while (currentObject != targetSpace)
         {
-            [selfMatrix appendMatrix:currentObject.transformationMatrix];
+            SPMatrixAppendMatrix(resultMatrix, currentObject.transformationMatrix);
             currentObject = currentObject->_parent;
-        }        
-        return selfMatrix; 
+        }
+        return resultMatrix;
     }
     else if (targetSpace->_parent == self)
     {
-        SPMatrix *targetMatrix = [targetSpace.transformationMatrix copy];
-        [targetMatrix invert];
-        return targetMatrix;
+        SPMatrixCopyFrom(resultMatrix, targetSpace.transformationMatrix);
+        SPMatrixInvert(resultMatrix);
+        return resultMatrix;
     }
     
     // 1.: Find a common parent of self and the target coordinate space.
@@ -131,11 +164,11 @@ float square(float value) { return value * value; }
     // Instead of using an NSSet or NSArray (which would make the code much cleaner), we 
     // use a C array here to save the ancestors.
     
-    static SPDisplayObject *__unsafe_unretained ancestors[SP_MAX_DISPLAY_TREE_DEPTH];
+    static SPDisplayObject* ancestors[SP_MAX_DISPLAY_TREE_DEPTH];
     
     int count = 0;
-    SPDisplayObject *commonParent = nil;
-    SPDisplayObject *currentObject = self;
+    SPDisplayObject* commonParent = nil;
+    SPDisplayObject* currentObject = self;
     while (currentObject && count < SP_MAX_DISPLAY_TREE_DEPTH)
     {
         ancestors[count++] = currentObject;
@@ -160,28 +193,30 @@ float square(float value) { return value * value; }
         [NSException raise:SP_EXC_NOT_RELATED format:@"Object not connected to target"];
     
     // 2.: Move up from self to common parent
-    SPMatrix *selfMatrix = [[SPMatrix alloc] init];
     currentObject = self;    
     while (currentObject != commonParent)
     {
-        [selfMatrix appendMatrix:currentObject.transformationMatrix];
+        SPMatrixAppendMatrix(resultMatrix, currentObject.transformationMatrix);
         currentObject = currentObject->_parent;
     }
-    
+
+    if (commonParent == targetSpace)
+        return resultMatrix;
+
     // 3.: Now move up from target until we reach the common parent
-    SPMatrix *targetMatrix = [[SPMatrix alloc] init];
+    SPMatrix* targetMatrix = SPMatrixCreate();
     currentObject = targetSpace;
     while (currentObject && currentObject != commonParent)
     {
-        [targetMatrix appendMatrix:currentObject.transformationMatrix];
+        SPMatrixAppendMatrix(targetMatrix, currentObject.transformationMatrix);
         currentObject = currentObject->_parent;
     }    
     
     // 4.: Combine the two matrices
-    [targetMatrix invert];
-    [selfMatrix appendMatrix:targetMatrix];
+    SPMatrixInvert(targetMatrix);
+    SPMatrixAppendMatrix(resultMatrix, targetMatrix);
     
-    return selfMatrix;
+    return resultMatrix;
 }
 
 - (SPRectangle*)boundsInSpace:(SPDisplayObject*)targetSpace
@@ -191,49 +226,30 @@ float square(float value) { return value * value; }
     return nil;
 }
 
-- (SPRectangle *)bounds
+- (SPPoint*)localToGlobal:(SPPoint*)localPoint
 {
-    return [self boundsInSpace:_parent];
+    SPMatrix* matrix = [self transformationMatrixToSpace:self.base];
+    return SPMatrixTransformPoint(matrix, localPoint);
 }
 
-- (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
+- (SPPoint*)globalToLocal:(SPPoint*)globalPoint
+{
+    SPMatrix* matrix = [self transformationMatrixToSpace:self.base];
+    SPMatrixInvert(matrix);
+    return SPMatrixTransformPoint(matrix, globalPoint);
+}
+
+- (SPDisplayObject*)hitTestPoint:(SPPoint*)localPoint
 {
     // invisible or untouchable objects cause the test to fail
     if (!_visible || !_touchable) return nil;
-    
+
     // otherwise, check bounding box
-    if ([[self boundsInSpace:self] containsPoint:localPoint]) return self; 
+    if ([[self boundsInSpace:self] containsPoint:localPoint]) return self;
     else return nil;
 }
 
-- (SPPoint *)localToGlobal:(SPPoint *)localPoint
-{
-    SPMatrix *matrix = [self transformationMatrixToSpace:self.base];
-    return [matrix transformPoint:localPoint];
-}
-
-- (SPPoint *)globalToLocal:(SPPoint *)globalPoint
-{
-    SPMatrix *matrix = [self transformationMatrixToSpace:self.base];
-    [matrix invert];
-    return [matrix transformPoint:globalPoint];
-}
-
-- (void)dispatchEvent:(SPEvent*)event
-{
-    // on one given moment, there is only one set of touches -- thus, 
-    // we process only one touch event with a certain timestamp
-    if ([event isKindOfClass:[SPTouchEvent class]])
-    {
-        SPTouchEvent *touchEvent = (SPTouchEvent*)event;
-        if (touchEvent.timestamp == _lastTouchTimestamp) return;        
-        else _lastTouchTimestamp = touchEvent.timestamp;
-    }
-    
-    [super dispatchEvent:event];
-}
-
-- (void)broadcastEvent:(SPEvent *)event
+- (void)broadcastEvent:(SPEvent*)event
 {
     if (event.bubbles)
         [NSException raise:SP_EXC_INVALID_OPERATION
@@ -242,37 +258,67 @@ float square(float value) { return value * value; }
     [self dispatchEvent:event];
 }
 
-- (void)broadcastEventWithType:(NSString *)type
+- (void)broadcastEventWithType:(NSString*)type
 {
     [self dispatchEventWithType:type];
 }
 
-- (float)width
+- (void)dispatchEvent:(SPEvent*)event
 {
-    return [self boundsInSpace:_parent].width; 
+    // on one given moment, there is only one set of touches -- thus, 
+    // we process only one touch event with a certain timestamp
+    if ([event isKindOfClass:[SPTouchEvent class]])
+    {
+        SPTouchEvent* touchEvent = (SPTouchEvent*)event;
+        if (touchEvent.timestamp == _lastTouchTimestamp) return;        
+        else _lastTouchTimestamp = touchEvent.timestamp;
+    }
+
+    [super dispatchEvent:event];
 }
 
-- (void)setWidth:(float)value
+#pragma mark overrides
+
+// enter frame event optimization
+
+// To avoid looping through the complete display tree each frame to find out who's
+// listening to ENTER_FRAME events, we manage a list of them manually in the Stage class.
+
+- (void)addEnterFrameListenerToStage
 {
-    // this method calls 'self.scaleX' instead of changing _scaleX directly.
-    // that way, subclasses reacting on size changes need to override only the scaleX method.
-    
-    self.scaleX = 1.0f;
-    float actualWidth = self.width;
-    if (actualWidth != 0.0f) self.scaleX = value / actualWidth;
+    [[[Sparrow currentController] stage] addEnterFrameListener:self];
 }
 
-- (float)height
+- (void)removeEnterFrameListenerFromStage
 {
-    return [self boundsInSpace:_parent].height;
+    [[[Sparrow currentController] stage] removeEnterFrameListener:self];
 }
 
-- (void)setHeight:(float)value
+- (void)addEventListener:(id)listener forType:(NSString*)eventType
 {
-    self.scaleY = 1.0f;
-    float actualHeight = self.height;
-    if (actualHeight != 0.0f) self.scaleY = value / actualHeight;
+    if ([eventType isEqualToString:kSPEventTypeEnterFrame] && ![self hasEventListenerForType:kSPEventTypeEnterFrame])
+    {
+        [self addEventListener:@selector(addEnterFrameListenerToStage) atObject:self forType:kSPEventTypeAddedToStage];
+        [self addEventListener:@selector(removeEnterFrameListenerFromStage) atObject:self forType:kSPEventTypeRemovedFromStage];
+        if (self.stage) [self addEnterFrameListenerToStage];
+    }
+
+    [super addEventListener:listener forType:eventType];
 }
+
+- (void)removeEventListenersForType:(NSString*)eventType withTarget:(id)object andSelector:(SEL)selector orBlock:(SPEventBlock)block
+{
+    [super removeEventListenersForType:eventType withTarget:object andSelector:selector orBlock:block];
+
+    if ([eventType isEqualToString:kSPEventTypeEnterFrame] && ![self hasEventListenerForType:kSPEventTypeEnterFrame])
+    {
+        [self removeEventListener:@selector(addEnterFrameListenerToStage) atObject:self forType:kSPEventTypeAddedToStage];
+        [self removeEventListener:@selector(removeEnterFrameListenerFromStage) atObject:self forType:kSPEventTypeRemovedFromStage];
+        [self removeEnterFrameListenerFromStage];
+    }
+}
+
+#pragma mark properties
 
 - (void)setX:(float)value
 {
@@ -364,17 +410,49 @@ float square(float value) { return value * value; }
     _alpha = SP_CLAMP(value, 0.0f, 1.0f);
 }
 
-- (SPDisplayObject *)base
+- (float)width
 {
-    SPDisplayObject *currentObject = self;
+    return [self boundsInSpace:_parent].width;
+}
+
+- (void)setWidth:(float)value
+{
+    // this method calls 'self.scaleX' instead of changing _scaleX directly.
+    // that way, subclasses reacting on size changes need to override only the scaleX method.
+
+    self.scaleX = 1.0f;
+    float actualWidth = self.width;
+    if (actualWidth != 0.0f) self.scaleX = value / actualWidth;
+}
+
+- (float)height
+{
+    return [self boundsInSpace:_parent].height;
+}
+
+- (void)setHeight:(float)value
+{
+    self.scaleY = 1.0f;
+    float actualHeight = self.height;
+    if (actualHeight != 0.0f) self.scaleY = value / actualHeight;
+}
+
+- (SPRectangle*)bounds
+{
+    return [self boundsInSpace:_parent];
+}
+
+- (SPDisplayObject*)base
+{
+    SPDisplayObject* currentObject = self;
     while (currentObject->_parent) currentObject = currentObject->_parent;
     return currentObject;
 }
 
-- (SPDisplayObject *)root
+- (SPDisplayObject*)root
 {
     Class stageClass = [SPStage class];
-    SPDisplayObject *currentObject = self;
+    SPDisplayObject* currentObject = self;
     while (currentObject->_parent)
     {
         if ([currentObject->_parent isMemberOfClass:stageClass]) return currentObject;
@@ -385,8 +463,8 @@ float square(float value) { return value * value; }
 
 - (SPStage*)stage
 {
-    SPDisplayObject *base = self.base;
-    if ([base isKindOfClass:[SPStage class]]) return (SPStage*) base;
+    SPDisplayObject* base = self.base;
+    if ([base isKindOfClass:[SPStage class]]) return (SPStage*)base;
     else return nil;
 }
 
@@ -402,9 +480,13 @@ float square(float value) { return value * value; }
             
             if (_rotation == 0.0f)
             {
-                [_transformationMatrix setA:_scaleX b:0.0f c:0.0f d:_scaleY
-                                         tx:_x - _pivotX * _scaleX
-                                         ty:_y - _pivotY * _scaleY];
+                SPMatrixSet(_transformationMatrix,
+                            _scaleX,
+                            0.0f,
+                            0.0f,
+                            _scaleY,
+                            _x - _pivotX*_scaleX,
+                            _y - _pivotY*_scaleY);
             }
             else
             {
@@ -416,17 +498,17 @@ float square(float value) { return value * value; }
                 float d = _scaleY *  cos;
                 float tx = _x - _pivotX * a - _pivotY * c;
                 float ty = _y - _pivotX * b - _pivotY * d;
-                
-                [_transformationMatrix setA:a b:b c:c d:d tx:tx ty:ty];
+
+                SPMatrixSet(_transformationMatrix, a, b, c, d, tx, ty);
             }
         }
         else
         {
-            [_transformationMatrix identity];
-            [_transformationMatrix scaleXBy:_scaleX yBy:_scaleY];
-            [_transformationMatrix skewXBy:_skewX yBy:_skewY];
-            [_transformationMatrix rotateBy:_rotation];
-            [_transformationMatrix translateXBy:_x yBy:_y];
+            SPMatrixIdentity(_transformationMatrix);
+            SPMatrixScaleBy(_transformationMatrix, _scaleX, _scaleY);
+            SPMatrixSkewBy(_transformationMatrix, _skewX, _skewY);
+            SPMatrixRotateBy(_transformationMatrix, _rotation);
+            SPMatrixTranslateBy(_transformationMatrix, _x, _y);
             
             if (_pivotX != 0.0 || _pivotY != 0.0)
             {
@@ -442,10 +524,10 @@ float square(float value) { return value * value; }
     return _transformationMatrix;
 }
 
-- (void)setTransformationMatrix:(SPMatrix *)matrix
+- (void)setTransformationMatrix:(SPMatrix*)matrix
 {
     _orientationChanged = NO;
-    [_transformationMatrix copyFromMatrix:matrix];
+    SPMatrixCopyFrom(_transformationMatrix, matrix);
     
     _pivotX = 0.0f;
     _pivotY = 0.0f;
@@ -453,7 +535,7 @@ float square(float value) { return value * value; }
     _x = matrix.tx;
     _y = matrix.ty;
     
-    _scaleX = sqrtf(square(matrix.a) + square(matrix.b));
+    _scaleX = sqrtf(SP_SQUARE(matrix.a) + SP_SQUARE(matrix.b));
     _skewY  = acosf(matrix.a / _scaleX);
     
     if (!SP_IS_FLOAT_EQUAL(matrix.b, _scaleX * sinf(_skewY)))
@@ -462,7 +544,7 @@ float square(float value) { return value * value; }
         _skewY = acosf(matrix.a / _scaleX);
     }
     
-    _scaleY = sqrtf(square(matrix.c) + square(matrix.d));
+    _scaleY = sqrtf(SP_SQUARE(matrix.c) + SP_SQUARE(matrix.d));
     _skewX  = acosf(matrix.d / _scaleY);
     
     if (!SP_IS_FLOAT_EQUAL(matrix.c, -_scaleY * sinf(_skewX)))
@@ -493,9 +575,9 @@ float square(float value) { return value * value; }
 
 @implementation SPDisplayObject (Internal)
 
-- (void)setParent:(SPDisplayObjectContainer *)parent 
+- (void)setParent:(SPDisplayObjectContainer*)parent
 { 
-    SPDisplayObject *ancestor = parent;
+    SPDisplayObject* ancestor = parent;
     while (ancestor != self && ancestor != nil)
         ancestor = ancestor->_parent;
     
@@ -506,7 +588,7 @@ float square(float value) { return value * value; }
         _parent = parent; // only assigned, not retained (to avoid a circular reference).
 }
 
-- (void)dispatchEventOnChildren:(SPEvent *)event
+- (void)dispatchEventOnChildren:(SPEvent*)event
 {
     [self dispatchEvent:event];
 }

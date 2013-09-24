@@ -20,11 +20,11 @@
 
 @implementation BenchmarkScene
 {
-    SPButton *_startButton;
-    SPTextField *_resultText;
-    SPTexture *_texture;
+    SPButton* _startButton;
+    SPTextField* _resultText;
+    SPTexture* _texture;
     
-    SPSprite *_container;
+    SPSprite* _container;
     int _frameCount;
     double _elapsed;
     BOOL _started;
@@ -32,7 +32,7 @@
     int _waitFrames;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -44,25 +44,25 @@
                                    // it is more efficient to disable them.
         [self addChild:_container atIndex:0];        
         
-        SPTexture *buttonTexture = [SPTexture textureWithContentsOfFile:@"button_normal.png"];
+        SPTexture* buttonTexture = [SPTexture textureWithContentsOfFile:@"button_normal.png"];
         
         // we create a button that is used to start the benchmark.
         _startButton = [[SPButton alloc] initWithUpState:buttonTexture
                                                     text:@"Start benchmark"];
         [_startButton addEventListener:@selector(onStartButtonPressed:) atObject:self
-                               forType:SP_EVENT_TYPE_TRIGGERED];
+                               forType:kSPEventTypeTriggered];
         _startButton.x = 160 - (int)(_startButton.width / 2);
         _startButton.y = 20;
         [self addChild:_startButton];
         
         _started = NO;
-        
-        [self addEventListener:@selector(onEnterFrame:) atObject:self forType:SP_EVENT_TYPE_ENTER_FRAME];
+
+        [self addEventListener:@selector(onEnterFrame:) atObject:self forType:kSPEventTypeEnterFrame];
     }
     return self;    
 }
 
-- (void)onEnterFrame:(SPEnterFrameEvent *)event
+- (void)onEnterFrame:(SPEnterFrameEvent*)event
 {    
     if (!_started) return;
     
@@ -94,7 +94,7 @@
         _elapsed = _frameCount = 0;
     }
     
-    for (SPDisplayObject *child in _container)    
+    for (SPDisplayObject* child in _container)    
         child.rotation += 0.05f;    
 }
 
@@ -125,7 +125,7 @@
     NSLog(@"fps: %d", frameRate);
     NSLog(@"number of objects: %d", _container.numChildren);
     
-    NSString *resultString = [NSString stringWithFormat:@"Result:\n%d objects\nwith %d fps", 
+    NSString* resultString = [NSString stringWithFormat:@"Result:\n%d objects\nwith %d fps", 
                               _container.numChildren, frameRate];
     
     _resultText = [SPTextField textFieldWithWidth:250 height:200 text:resultString];
@@ -145,7 +145,7 @@
     
     for (int i=0; i<numObjects; ++i)
     {   
-        SPImage *egg = [[SPImage alloc] initWithTexture:_texture];
+        SPImage* egg = [[SPImage alloc] initWithTexture:_texture];
         egg.x = [SPUtils randomIntBetweenMin:border andMax:GAME_WIDTH  - border];
         egg.y = [SPUtils randomIntBetweenMin:border andMax:GAME_HEIGHT - border];
         [_container addChild:egg];
@@ -154,8 +154,8 @@
 
 - (void)dealloc
 {
-    [self removeEventListenersAtObject:self forType:SP_EVENT_TYPE_ENTER_FRAME];
-    [_startButton removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+    [self removeEventListenersAtObject:self forType:kSPEventTypeEnterFrame];
+    [_startButton removeEventListenersAtObject:self forType:kSPEventTypeTriggered];
 }
 
 @end

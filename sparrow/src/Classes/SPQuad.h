@@ -58,7 +58,7 @@
 
 @interface SPQuad : SPDisplayObject
 {
-    SPVertexData *_vertexData;
+    SPVertexData* _vertexData;
 }
 
 /// --------------------
@@ -67,13 +67,13 @@
 
 /// Initializes a quad with a certain size and color. The `pma` parameter indicates how the colors
 /// of the object are stored. _Designated Initializer_.
-- (id)initWithWidth:(float)width height:(float)height color:(uint)color premultipliedAlpha:(BOOL)pma;
+- (instancetype)initWithWidth:(float)width height:(float)height color:(uint)color premultipliedAlpha:(BOOL)pma;
 
 /// Initializes a quad with a certain size and color, using premultiplied alpha values.
-- (id)initWithWidth:(float)width height:(float)height color:(uint)color;
+- (instancetype)initWithWidth:(float)width height:(float)height color:(uint)color;
 
 /// Initializes a white quad with a certain size.
-- (id)initWithWidth:(float)width height:(float)height; 
+- (instancetype)initWithWidth:(float)width height:(float)height; 
 
 /// -------------
 /// @name Methods
@@ -92,19 +92,19 @@
 - (float)alphaOfVertex:(int)vertexID;
 
 /// Copies the raw vertex data to a VertexData instance.
-- (void)copyVertexDataTo:(SPVertexData *)targetData atIndex:(int)targetIndex;
+- (void)copyVertexDataTo:(SPVertexData*)targetData atIndex:(int)targetIndex;
 
 /// Call this method after manually changing the contents of '_vertexData'.
 - (void)vertexDataDidChange;
 
 /// Factory method.
-+ (id)quadWithWidth:(float)width height:(float)height;
++ (instancetype)quadWithWidth:(float)width height:(float)height;
 
 /// Factory method.
-+ (id)quadWithWidth:(float)width height:(float)height color:(uint)color;
++ (instancetype)quadWithWidth:(float)width height:(float)height color:(uint)color;
 
 /// Factory method. Creates a 32x32 quad.
-+ (id)quad;
++ (instancetype)quad;
 
 /// ----------------
 /// @name Properties
@@ -122,6 +122,6 @@
 @property (nonatomic, readonly) BOOL tinted;
 
 /// The texture that is displayed on the quad. For pure quads (no subclasses), this is always nil.
-@property (nonatomic, readonly) SPTexture *texture;
+@property (nonatomic, readonly) SPTexture* texture;
 
 @end

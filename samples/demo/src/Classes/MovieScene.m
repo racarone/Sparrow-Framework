@@ -10,15 +10,15 @@
 
 @implementation MovieScene
 {
-    SPMovieClip *_movie;
+    SPMovieClip* _movie;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init])) 
     {
-        NSString *description = @"[Animation provided by angryanimator.com]";        
-        SPTextField *infoText = [SPTextField textFieldWithWidth:300 height:30 
+        NSString* description = @"[Animation provided by angryanimator.com]";        
+        SPTextField* infoText = [SPTextField textFieldWithWidth:300 height:30 
                                                            text:description fontName:@"Verdana" 
                                                        fontSize:13 color:0x0];    
         infoText.x = infoText.y = 10;
@@ -27,14 +27,14 @@
         [self addChild:infoText];        
         
         // all our animation textures are in the atlas
-        SPTextureAtlas *atlas = [SPTextureAtlas atlasWithContentsOfFile:@"atlas.xml"];
+        SPTextureAtlas* atlas = [SPTextureAtlas atlasWithContentsOfFile:@"atlas.xml"];
         
         // add frames to movie
-        NSArray *frames = [atlas texturesStartingWith:@"walk_"];
+        NSArray* frames = [atlas texturesStartingWith:@"walk_"];
         _movie = [[SPMovieClip alloc] initWithFrames:frames fps:12];
         
         // add sounds
-        SPSound *stepSound = [[SPSound alloc] initWithContentsOfFile:@"step.caf"];        
+        SPSound* stepSound = [[SPSound alloc] initWithContentsOfFile:@"step.caf"];        
         [_movie setSound:[stepSound createChannel] atIndex:1];
         [_movie setSound:[stepSound createChannel] atIndex:7];
         
@@ -45,18 +45,18 @@
 
         // like any animation, the movie needs to be added to the juggler!
         // this is the recommended way to do that.
-        [self addEventListener:@selector(onAddedToStage:) atObject:self forType:SP_EVENT_TYPE_ADDED_TO_STAGE];
-        [self addEventListener:@selector(onRemovedFromStage:) atObject:self forType:SP_EVENT_TYPE_REMOVED_FROM_STAGE];
+        [self addEventListener:@selector(onAddedToStage:) atObject:self forType:kSPEventTypeAddedToStage];
+        [self addEventListener:@selector(onRemovedFromStage:) atObject:self forType:kSPEventTypeRemovedFromStage];
     }
     return self;
 }
 
-- (void)onAddedToStage:(SPEvent *)event
+- (void)onAddedToStage:(SPEvent*)event
 {
     [Sparrow.juggler addObject:_movie];
 }
 
-- (void)onRemovedFromStage:(SPEvent *)event
+- (void)onRemovedFromStage:(SPEvent*)event
 {
     [Sparrow.juggler removeObject:_movie];
 }

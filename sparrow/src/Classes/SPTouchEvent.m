@@ -14,30 +14,38 @@
 #import "SPDisplayObjectContainer.h"
 #import "SPEvent_Internal.h"
 
+NSString* const kSPEventTypeTouch = @"touch";
+
 @implementation SPTouchEvent
 {
-    NSSet *_touches;
+    NSSet*  _touches;
 }
 
 @synthesize touches = _touches;
 
-- (id)initWithType:(NSString*)type bubbles:(BOOL)bubbles touches:(NSSet*)touches
+- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles touches:(NSSet*)touches
 {   
     if ((self = [super initWithType:type bubbles:bubbles]))
-    {        
-        _touches = touches;
+    {
+        _touches = [touches retain];
     }
     return self;
 }
 
-- (id)initWithType:(NSString*)type touches:(NSSet*)touches
+- (instancetype)initWithType:(NSString*)type touches:(NSSet*)touches
 {   
     return [self initWithType:type bubbles:YES touches:touches];
 }
 
-- (id)initWithType:(NSString*)type bubbles:(BOOL)bubbles
+- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles
 {
     return [self initWithType:type bubbles:bubbles touches:[NSSet set]];
+}
+
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_touches);
+    [super dealloc];
 }
 
 - (SPEvent*)clone
@@ -52,8 +60,8 @@
 
 - (NSSet*)touchesWithTarget:(SPDisplayObject*)target
 {
-    NSMutableSet *touchesFound = [NSMutableSet set];
-    for (SPTouch *touch in _touches)
+    NSMutableSet* touchesFound = [NSMutableSet set];
+    for (SPTouch* touch in _touches)
     {
         if ([target isEqual:touch.target] ||
             ([target isKindOfClass:[SPDisplayObjectContainer class]] &&
@@ -67,8 +75,8 @@
 
 - (NSSet*)touchesWithTarget:(SPDisplayObject*)target andPhase:(SPTouchPhase)phase
 {
-    NSMutableSet *touchesFound = [NSMutableSet set];
-    for (SPTouch *touch in _touches)
+    NSMutableSet* touchesFound = [NSMutableSet set];
+    for (SPTouch* touch in _touches)
     {
         if (touch.phase == phase &&
             ([target isEqual:touch.target] || 
@@ -81,9 +89,9 @@
     return touchesFound;    
 }
 
-+ (id)eventWithType:(NSString*)type touches:(NSSet*)touches
++ (instancetype)eventWithType:(NSString*)type touches:(NSSet*)touches
 {
-    return [[self alloc] initWithType:type touches:touches];
+    return [[[self alloc] initWithType:type touches:touches] autorelease];
 }
 
 @end

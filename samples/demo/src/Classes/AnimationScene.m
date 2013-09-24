@@ -18,14 +18,14 @@
 
 @implementation AnimationScene
 {
-    SPButton *_startButton;
-    SPButton *_delayButton;
-    SPImage *_egg;
-    SPTextField *_transitionLabel;
-    NSMutableArray *_transitions;
+    SPButton* _startButton;
+    SPButton* _delayButton;
+    SPImage* _egg;
+    SPTextField* _transitionLabel;
+    NSMutableArray* _transitions;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -40,12 +40,12 @@
 
 - (void)setupScene
 {   
-    SPTexture *buttonTexture = [SPTexture textureWithContentsOfFile:@"button_normal.png"];
+    SPTexture* buttonTexture = [SPTexture textureWithContentsOfFile:@"button_normal.png"];
     
     // we create a button that is used to start the tween.
     _startButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Start animation"];
     [_startButton addEventListener:@selector(onStartButtonPressed:) atObject:self
-                           forType:SP_EVENT_TYPE_TRIGGERED];
+                           forType:kSPEventTypeTriggered];
     _startButton.x = 160 - (int)_startButton.width / 2;
     _startButton.y = 20;
     [self addChild:_startButton];
@@ -53,7 +53,7 @@
     // this button will show you how to call a method with a delay
     _delayButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Delayed call"];
     [_delayButton addEventListener:@selector(onDelayButtonPressed:) atObject:self
-                           forType:SP_EVENT_TYPE_TRIGGERED];
+                           forType:kSPEventTypeTriggered];
     _delayButton.x = _startButton.x;
     _delayButton.y = _startButton.y + 40;    
     [self addChild:_delayButton];
@@ -81,20 +81,20 @@
     _egg.rotation = 0.0f;
 }
 
-- (void)onStartButtonPressed:(SPEvent *)event
+- (void)onStartButtonPressed:(SPEvent*)event
 {
     _startButton.enabled = NO;
     [self resetEgg];
     
     // get next transition style from array and enqueue it at the end
-    NSString *transition = _transitions[0];
+    NSString* transition = _transitions[0];
     [_transitions removeObjectAtIndex:0];
     [_transitions addObject:transition];
     
     // to animate any numeric property of an arbitrary object (not just display objects!), you
     // can create a 'Tween'. One tween object animates one target for a certain time, with
     // a certain transition function.    
-    SPTween *tween = [SPTween tweenWithTarget:_egg time:2.0f transition:transition];
+    SPTween* tween = [SPTween tweenWithTarget:_egg time:2.0f transition:transition];
 
     // you can animate any property as long as it's numeric (float, double, int). 
     // it is animated from it's current value to a target value.
@@ -114,13 +114,13 @@
     // show which tweening function is used
     _transitionLabel.text = transition;
     _transitionLabel.alpha = 1.0f;
-    SPTween *hideTween = [SPTween tweenWithTarget:_transitionLabel time:2.0f
+    SPTween* hideTween = [SPTween tweenWithTarget:_transitionLabel time:2.0f
                                        transition:SP_TRANSITION_EASE_IN];
     [hideTween animateProperty:@"alpha" targetValue:0.0f];
     [Sparrow.juggler addObject:hideTween];
 }
 
-- (void)onDelayButtonPressed:(SPEvent *)event
+- (void)onDelayButtonPressed:(SPEvent*)event
 {
     _delayButton.enabled = NO;
     
@@ -137,7 +137,7 @@
     // the method you would like to call on this proxy object instead of the real method target.
     // In this sample, [self colorizeEgg:] will be called after the specified delay.
     
-    SPJuggler *juggler = Sparrow.juggler;
+    SPJuggler* juggler = Sparrow.juggler;
     
     [[juggler delayInvocationAtTarget:self byTime:1.0f] colorizeEgg:YES];
     [[juggler delayInvocationAtTarget:self byTime:2.0f] colorizeEgg:NO];
@@ -155,8 +155,8 @@
 
 - (void)dealloc
 {
-    [_startButton removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TRIGGERED];
-    [_delayButton removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+    [_startButton removeEventListenersAtObject:self forType:kSPEventTypeTriggered];
+    [_delayButton removeEventListenersAtObject:self forType:kSPEventTypeTriggered];
 }
 
 @end

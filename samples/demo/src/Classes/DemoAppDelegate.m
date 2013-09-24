@@ -10,11 +10,9 @@
 #import "Game.h"
 #import "Sparrow.h"
 
-#import "SPNSExtensions.h"
-
 // --- c functions ---
 
-void onUncaughtException(NSException *exception) 
+void onUncaughtException(NSException* exception)
 {
 	NSLog(@"uncaught exception: %@", exception.description);
 }
@@ -24,20 +22,21 @@ void onUncaughtException(NSException *exception)
 @implementation DemoAppDelegate
 {
     UIWindow *_window;
-    SPViewController *_viewController;
+    SPViewController* _viewController;
 }
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions 
+- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions 
 {
     NSSetUncaughtExceptionHandler(&onUncaughtException);
     
     CGRect screenBounds = [UIScreen mainScreen].bounds;
     _window = [[UIWindow alloc] initWithFrame:screenBounds];
-    
+
     [SPAudioEngine start];
-    
+
     _viewController = [[SPViewController alloc] init];
     _viewController.multitouchEnabled = YES;
+    _viewController.preferredFramesPerSecond = 60;
     [_viewController startWithRoot:[Game class] supportHighResolutions:YES doubleOnPad:YES];
     
     [_window setRootViewController:_viewController];

@@ -12,10 +12,13 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
-@class SPStage;
-@class SPJuggler;
-@class SPProgram;
 @class SPDisplayObject;
+@class SPFramebuffer;
+@class SPJuggler;
+@class SPOpenGLInfo;
+@class SPProgram;
+@class SPRectangle;
+@class SPStage;
 
 typedef void (^SPRootCreatedBlock)(id root);
 
@@ -72,7 +75,7 @@ typedef void (^SPRootCreatedBlock)(id root);
  As a convenience, you can access the view controller through a static method on the `Sparrow`
  class:
  
-	SPViewController *controller = Sparrow.currentController;
+	SPViewController* controller = Sparrow.currentController;
  
  Since the view controller contains pointers to the stage, root, and juggler, you can
  easily access those objects that way.
@@ -103,29 +106,37 @@ typedef void (^SPRootCreatedBlock)(id root);
 /// ------------------------
 
 /// Registers a shader program under a certain name.
-- (void)registerProgram:(SPProgram *)program name:(NSString *)name;
+- (void)registerProgram:(SPProgram*)program name:(NSString*)name;
 
 /// Deletes the vertex- and fragment-programs of a certain name.
-- (void)unregisterProgram:(NSString *)name;
+- (void)unregisterProgram:(NSString*)name;
 
 /// Returns the shader program registered under a certain name.
-- (SPProgram *)programByName:(NSString *)name;
+- (SPProgram*)programByName:(NSString*)name;
 
 /// ----------------
 /// @name Properties
 /// ----------------
 
 /// The instance of the root class provided in `start:`method.
-@property (nonatomic, readonly) SPDisplayObject *root;
+@property (nonatomic, readonly) SPDisplayObject* root;
 
 /// The stage object, i.e. the root of the display tree.
-@property (nonatomic, readonly) SPStage *stage;
+@property (nonatomic, readonly) SPStage* stage;
 
 /// The default juggler of this instance. It is automatically advanced once per frame.
-@property (nonatomic, readonly) SPJuggler *juggler;
+@property (nonatomic, readonly) SPJuggler* juggler;
 
 /// The OpenGL context used for rendering.
-@property (nonatomic, readonly) EAGLContext *context;
+@property (nonatomic, readonly) EAGLContext* context;
+
+/// Returns the actual width (in pixels) of the back buffer. This can differ from the
+/// width of the viewPort rectangle if it is partly outside the default framebuffer.
+@property (nonatomic, readonly) NSInteger backBufferWidth;
+
+/// Returns the actual height (in pixels) of the back buffer. This can differ from the
+/// height of the viewPort rectangle if it is partly outside the default framebuffer.
+@property (nonatomic, readonly) NSInteger backBufferHeight;
 
 /// Indicates if multitouch input is enabled.
 @property (nonatomic, assign) BOOL multitouchEnabled;
@@ -146,6 +157,6 @@ typedef void (^SPRootCreatedBlock)(id root);
 @property (nonatomic, copy) SPRootCreatedBlock onRootCreated;
 
 /// A texture loader object that is initialized with the sharegroup of the current OpenGL context.
-@property (nonatomic, readonly) GLKTextureLoader *textureLoader;
+@property (nonatomic, readonly) GLKTextureLoader* textureLoader;
 
 @end

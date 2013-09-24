@@ -28,8 +28,8 @@
 
 - (void)testStringByAppendingSuffixToFilename
 {    
-    NSString *filename = @"path/file.ext";
-    NSString *expandedFilename = [filename stringByAppendingSuffixToFilename:@"@2x"];
+    NSString* filename = @"path/file.ext";
+    NSString* expandedFilename = [filename stringByAppendingSuffixToFilename:@"@2x"];
     STAssertEqualObjects(@"path/file@2x.ext", expandedFilename, @"Appending suffix did not work!");    
     
     filename = @"path/file.ext.gz";
@@ -39,8 +39,8 @@
 
 - (void)testFullPathExtension
 {
-    NSString *filename = @"test.png";
-    NSString *extension = [filename fullPathExtension];
+    NSString* filename = @"test.png";
+    NSString* extension = [filename fullPathExtension];
     STAssertEqualObjects(@"png", extension, @"wrong path extension on standard filename");
     
     filename = @"test.pvr.gz";
@@ -66,8 +66,8 @@
 
 - (void)testStringByDeletingFullPathExtension
 {
-    NSString *filename = @"/tmp/scratch.tiff";
-    NSString *basename = [filename stringByDeletingFullPathExtension];
+    NSString* filename = @"/tmp/scratch.tiff";
+    NSString* basename = [filename stringByDeletingFullPathExtension];
     STAssertEqualObjects(@"/tmp/scratch", basename, @"wrong base name on standard path");
 
     filename = @"/tmp/test.pvr.gz";
@@ -93,13 +93,13 @@
 
 - (void)testAppBundle
 {
-    NSString *absolutePath = [[NSBundle appBundle] pathForResource:@"pvrtc_image.pvr"];
+    NSString* absolutePath = [[NSBundle appBundle] pathForResource:@"pvrtc_image.pvr"];
     STAssertNotNil(absolutePath, @"path to resource not found");
 }
 
 - (void)testContentScaleFactor
 {
-    NSString *filename = @"/some/folders/filename@2x.png";
+    NSString* filename = @"/some/folders/filename@2x.png";
     STAssertEquals(2.0f, [filename contentScaleFactor], @"wrong scale factor");
     
     filename = @"/some/folders/filename.png";

@@ -27,7 +27,7 @@
  
  Here is an example of a tween that moves an object, rotates it, and fades it out:
  
-	SPTween *tween = [SPTween tweenWithTarget:object time:2.0 transition:SP_TRANSITION_EASE_IN_OUT];
+	SPTween* tween = [SPTween tweenWithTarget:object time:2.0 transition:SP_TRANSITION_EASE_IN_OUT];
 	[tween moveToX:50.0f y:20.0f];
  	[tween animateProperty:@"rotation" targetValue:object.rotation + SP_D2R(45)];
   	[tween fadeTo:0.0f];
@@ -57,17 +57,17 @@
 
 /// Initializes a tween with a target, duration (in seconds) and a transition function. 
 /// _Designated Initializer_.
-- (id)initWithTarget:(id)target time:(double)time transition:(NSString*)transition;
+- (instancetype)initWithTarget:(id)target time:(double)time transition:(NSString*)transition;
 
 /// Initializes a tween with a target, a time (in seconds) and a linear transition 
 /// (`SP_TRANSITION_LINEAR`).
-- (id)initWithTarget:(id)target time:(double)time;
+- (instancetype)initWithTarget:(id)target time:(double)time;
 
 /// Factory method.
-+ (id)tweenWithTarget:(id)target time:(double)time transition:(NSString *)transition;
++ (instancetype)tweenWithTarget:(id)target time:(double)time transition:(NSString*)transition;
 
 /// Factory method.
-+ (id)tweenWithTarget:(id)target time:(double)time;
++ (instancetype)tweenWithTarget:(id)target time:(double)time;
 
 /// -------------
 /// @name Methods
@@ -94,7 +94,7 @@
 @property (nonatomic, readonly) id target;
 
 /// The transition method used for the animation.
-@property (weak, nonatomic, readonly) NSString *transition;
+@property (weak, nonatomic, readonly) NSString* transition;
 
 /// The total time the tween will take (in seconds).
 @property (nonatomic, readonly) double totalTime;

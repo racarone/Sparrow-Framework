@@ -20,10 +20,10 @@
 
 @implementation TouchSheet
 {
-    SPQuad *_quad;
+    SPQuad* _quad;
 }
 
-- (id)initWithQuad:(SPQuad*)quad
+- (instancetype)initWithQuad:(SPQuad*)quad
 {
     if ((self = [super init]))
     {
@@ -31,28 +31,28 @@
         _quad = quad;
         _quad.x = (int)_quad.width/-2;
         _quad.y = (int)_quad.height/-2;        
-        [_quad addEventListener:@selector(onTouchEvent:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+        [_quad addEventListener:@selector(onTouchEvent:) atObject:self forType:kSPEventTypeTouch];
         [self addChild:_quad];
     }
     return self;    
 }
 
-- (id)init
+- (instancetype)init
 {
     // the designated initializer of the base class should always be overridden -- we do that here.
-    SPQuad *quad = [[SPQuad alloc] init];
+    SPQuad* quad = [[SPQuad alloc] init];
     return [self initWithQuad:quad];
 }
 
 - (void)onTouchEvent:(SPTouchEvent*)event
 {
-    NSArray *touches = [[event touchesWithTarget:self andPhase:SPTouchPhaseMoved] allObjects];
+    NSArray* touches = [[event touchesWithTarget:self andPhase:SPTouchPhaseMoved] allObjects];
     
     if (touches.count == 1)
     {                
         // one finger touching -> move
-        SPTouch *touch = touches[0];
-        SPPoint *movement = [touch movementInSpace:self.parent];
+        SPTouch* touch = touches[0];
+        SPPoint* movement = [touch movementInSpace:self.parent];
         
         self.x += movement.x;
         self.y += movement.y;
@@ -60,20 +60,20 @@
     else if (touches.count >= 2)
     {
         // two fingers touching -> rotate and scale
-        SPTouch *touch1 = touches[0];
-        SPTouch *touch2 = touches[1];
+        SPTouch* touch1 = touches[0];
+        SPTouch* touch2 = touches[1];
         
-        SPPoint *touch1PrevPos = [touch1 previousLocationInSpace:self.parent];
-        SPPoint *touch1Pos = [touch1 locationInSpace:self.parent];
-        SPPoint *touch2PrevPos = [touch2 previousLocationInSpace:self.parent];
-        SPPoint *touch2Pos = [touch2 locationInSpace:self.parent];
+        SPPoint* touch1PrevPos = [touch1 previousLocationInSpace:self.parent];
+        SPPoint* touch1Pos = [touch1 locationInSpace:self.parent];
+        SPPoint* touch2PrevPos = [touch2 previousLocationInSpace:self.parent];
+        SPPoint* touch2Pos = [touch2 locationInSpace:self.parent];
         
-        SPPoint *prevVector = [touch1PrevPos subtractPoint:touch2PrevPos];
-        SPPoint *vector = [touch1Pos subtractPoint:touch2Pos];
+        SPPoint* prevVector = [touch1PrevPos subtractPoint:touch2PrevPos];
+        SPPoint* vector = [touch1Pos subtractPoint:touch2Pos];
 
         // update pivot point based on previous center
-        SPPoint *touch1PrevLocalPos = [touch1 previousLocationInSpace:self];
-        SPPoint *touch2PrevLocalPos = [touch2 previousLocationInSpace:self];
+        SPPoint* touch1PrevLocalPos = [touch1 previousLocationInSpace:self];
+        SPPoint* touch2PrevLocalPos = [touch2 previousLocationInSpace:self];
         self.pivotX = (touch1PrevLocalPos.x + touch2PrevLocalPos.x) * 0.5f;
         self.pivotY = (touch1PrevLocalPos.y + touch2PrevLocalPos.y) * 0.5f;
         
@@ -92,7 +92,7 @@
 - (void)dealloc
 {
     // event listeners should always be removed to avoid memory leaks!
-    [_quad removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TOUCH];
+    [_quad removeEventListenersAtObject:self forType:kSPEventTypeTouch];
 }
 
 @end

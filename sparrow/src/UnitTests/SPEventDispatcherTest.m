@@ -41,7 +41,7 @@
 
 - (void)testAddAndRemoveEventListener
 {
-    SPEventDispatcher *dispatcher = [[SPEventDispatcher alloc] init];
+    SPEventDispatcher* dispatcher = [[SPEventDispatcher alloc] init];
     [dispatcher addEventListener:@selector(onEvent:) atObject:self forType:EVENT_TYPE];    
     STAssertTrue([dispatcher hasEventListenerForType:EVENT_TYPE], @"missing event listener");
 
@@ -51,7 +51,7 @@
 
 - (void)testRemoveAllEventListenersOfObject
 {
-    SPEventDispatcher *dispatcher = [[SPEventDispatcher alloc] init];
+    SPEventDispatcher* dispatcher = [[SPEventDispatcher alloc] init];
     [dispatcher addEventListener:@selector(onEvent:) atObject:self forType:EVENT_TYPE];    
     STAssertTrue([dispatcher hasEventListenerForType:EVENT_TYPE], @"missing event listener");
     
@@ -61,7 +61,7 @@
 
 - (void)testSimpleEvent
 {
-    SPEventDispatcher *dispatcher = [[SPEventDispatcher alloc] init];
+    SPEventDispatcher* dispatcher = [[SPEventDispatcher alloc] init];
     [dispatcher addEventListener:@selector(onEvent:) atObject:self forType:EVENT_TYPE];    
     [dispatcher dispatchEventWithType:EVENT_TYPE];
     STAssertEquals(1, _testCounter, @"event listener not called");    
@@ -71,16 +71,16 @@
 
 - (void)testBubblingEvent
 {
-    SPSprite *sprite1 = [[SPSprite alloc] init];
+    SPSprite* sprite1 = [[SPSprite alloc] init];
     [sprite1 addEventListener:@selector(onEvent:) atObject:self forType:EVENT_TYPE];
     
-    SPSprite *sprite2 = [[SPSprite alloc] init];
+    SPSprite* sprite2 = [[SPSprite alloc] init];
     [sprite2 addEventListener:@selector(stopEvent:) atObject:self forType:EVENT_TYPE];
     
-    SPSprite *sprite3 = [[SPSprite alloc] init];
+    SPSprite* sprite3 = [[SPSprite alloc] init];
     [sprite3 addEventListener:@selector(onEvent:) atObject:self forType:EVENT_TYPE];
     
-    SPSprite *sprite4 = [[SPSprite alloc] init];
+    SPSprite* sprite4 = [[SPSprite alloc] init];
     [sprite4 addEventListener:@selector(onEvent:) atObject:self forType:EVENT_TYPE];
     
     [sprite1 addChild:sprite2];
@@ -103,7 +103,7 @@
 
 - (void)testStopImmediatePropagation
 {
-    SPSprite *sprite = [[SPSprite alloc] init];
+    SPSprite* sprite = [[SPSprite alloc] init];
     [sprite addEventListener:@selector(onEvent:) atObject:self forType:EVENT_TYPE];
     [sprite addEventListener:@selector(onEvent2:) atObject:self forType:EVENT_TYPE];
     [sprite addEventListener:@selector(stopEventImmediately:) atObject:self forType:EVENT_TYPE];
@@ -117,15 +117,15 @@
 
 - (void)testAddAndRemoveBlockEventHandlers
 {
-    NSString *eventType = @"eventType";
+    NSString* eventType = @"eventType";
     int __block testCounter = 0;
     
-    SPEventBlock block = ^(SPEvent *event)
+    SPEventBlock block = ^(SPEvent* event)
     {
         testCounter++;
     };
     
-    SPSprite *sprite = [SPSprite sprite];
+    SPSprite* sprite = [SPSprite sprite];
     
     [sprite addEventListenerForType:eventType block:block];
     [sprite dispatchEventWithType:eventType];

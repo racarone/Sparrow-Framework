@@ -63,7 +63,7 @@
 
 - (void)testFileExistsAtPath_Absolute
 {
-    NSString *absolutePath = [[NSBundle appBundle] pathForResource:@"pvrtc_image.pvr"];
+    NSString* absolutePath = [[NSBundle appBundle] pathForResource:@"pvrtc_image.pvr"];
     
     BOOL fileExists = [SPUtils fileExistsAtPath:absolutePath];
     STAssertTrue(fileExists, @"resource file not found");
@@ -71,7 +71,7 @@
     fileExists = [SPUtils fileExistsAtPath:@"/tmp/some_non_existing_file.foo"];
     STAssertFalse(fileExists, @"found non-existing file");
     
-    NSString *folder = [absolutePath stringByDeletingLastPathComponent];
+    NSString* folder = [absolutePath stringByDeletingLastPathComponent];
     BOOL folderExists = [SPUtils fileExistsAtPath:folder];
     STAssertTrue(folderExists, @"folder not found");
 }
@@ -96,8 +96,8 @@
 
 - (void)testAbsolutePathToFile
 {
-    NSString *absolutePath1x = [SPUtils absolutePathToFile:@"pvrtc_image.pvr" withScaleFactor:1.0f];
-    NSString *absolutePath2x = [SPUtils absolutePathToFile:@"pvrtc_image.pvr" withScaleFactor:2.0f];
+    NSString* absolutePath1x = [SPUtils absolutePathToFile:@"pvrtc_image.pvr" withScaleFactor:1.0f];
+    NSString* absolutePath2x = [SPUtils absolutePathToFile:@"pvrtc_image.pvr" withScaleFactor:2.0f];
     
     STAssertNotNil(absolutePath1x, @"resource not found (1x)");
     STAssertNotNil(absolutePath2x, @"resource not found (2x)");
@@ -105,13 +105,13 @@
     NSUInteger suffixLoc = [absolutePath2x rangeOfString:@"@2x.pvr"].location;
     STAssertEquals((int)suffixLoc, (int)absolutePath2x.length - 7, @"did not find correct resource (2x)");
     
-    NSString *nonexistingPath = [SPUtils absolutePathToFile:@"does_not_exist.foo"];
+    NSString* nonexistingPath = [SPUtils absolutePathToFile:@"does_not_exist.foo"];
     STAssertNil(nonexistingPath, @"found non-existing file");
     
     nonexistingPath = [SPUtils absolutePathToFile:@"does_not_exist@2x.foo"];
     STAssertNil(nonexistingPath, @"found non-existing file");
     
-    NSString *nilPath = [SPUtils absolutePathToFile:nil];
+    NSString* nilPath = [SPUtils absolutePathToFile:nil];
     STAssertNil(nilPath, @"found nil-path");
     
     nilPath = [SPUtils absolutePathToFile:nil withScaleFactor:2.0f];
@@ -120,45 +120,45 @@
 
 - (void)testIdiom
 {
-    NSString *filename = @"image_idiom.png";
+    NSString* filename = @"image_idiom.png";
     
-    NSString *absolutePath = [SPUtils absolutePathToFile:filename withScaleFactor:1.0f 
+    NSString* absolutePath = [SPUtils absolutePathToFile:filename withScaleFactor:1.0f 
                                                    idiom:UIUserInterfaceIdiomPhone];
     STAssertTrue([absolutePath hasSuffix:@"image_idiom~iphone.png"], @"idiom image not found");
 }
 
 - (void)testScaledIdiom
 {
-    NSString *filename = @"image_idiom.png";
+    NSString* filename = @"image_idiom.png";
     
-    NSString *absolutePath = [SPUtils absolutePathToFile:filename withScaleFactor:2.0f 
+    NSString* absolutePath = [SPUtils absolutePathToFile:filename withScaleFactor:2.0f 
                                                    idiom:UIUserInterfaceIdiomPhone];
     STAssertTrue([absolutePath hasSuffix:@"image_idiom@2x~iphone.png"], @"idiom image not found");
 }
 
 - (void)testGetSdTextureFallback
 {
-    NSString *filename = @"image_only_sd.png";
+    NSString* filename = @"image_only_sd.png";
     
-    NSString *absolutePath = [SPUtils absolutePathToFile:filename withScaleFactor:2.0f];
+    NSString* absolutePath = [SPUtils absolutePathToFile:filename withScaleFactor:2.0f];
     STAssertTrue([absolutePath hasSuffix:filename], @"1x fallback resource not found");
 }
 
 - (void)testGetHdTextureFallback
 {
-    NSString *filename = @"image_only_hd.png";
+    NSString* filename = @"image_only_hd.png";
     
     // @4x is not available -> @2x should be returned as a fallback
-    NSString *absolutePath = [SPUtils absolutePathToFile:filename withScaleFactor:4.0f];
+    NSString* absolutePath = [SPUtils absolutePathToFile:filename withScaleFactor:4.0f];
     STAssertEquals(2.0f, [absolutePath contentScaleFactor], @"2x fallback not found");
 }
 
 - (void)testOnlyHdTextureAvailable
 {
-    NSString *filename = @"image_only_hd.png";
-    NSString *fullFilename = [filename stringByAppendingSuffixToFilename:@"@2x"];
+    NSString* filename = @"image_only_hd.png";
+    NSString* fullFilename = [filename stringByAppendingSuffixToFilename:@"@2x"];
     
-    NSString *absolutePath = [SPUtils absolutePathToFile:filename withScaleFactor:2.0f];
+    NSString* absolutePath = [SPUtils absolutePathToFile:filename withScaleFactor:2.0f];
     STAssertTrue([absolutePath hasSuffix:fullFilename], @"2x resource not found");
 }
 

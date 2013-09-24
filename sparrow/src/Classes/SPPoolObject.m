@@ -10,8 +10,10 @@
 //
 
 #import "SPPoolObject.h"
+
 #import <malloc/malloc.h>
 #import <objc/runtime.h>
+#import <objc/message.h>
 
 #define COMPLAIN_MISSING_IMP @"Class %@ needs this code:\nSP_IMPLEMENT_MEMORY_POOL();" 
 
@@ -21,36 +23,38 @@
 
 #ifndef DISABLE_MEMORY_POOLING
 
+typedef SPPoolInfo* (*PoolInfoIMP) (id, SEL);
+
 @implementation SPPoolObject
 {
-    SPPoolObject *_poolPredecessor;
-    uint _retainCount;
+    SPPoolObject*   _poolPredecessor;
+    uint            _retainCount;
 }
 
-+ (id)allocWithZone:(NSZone *)zone
+id doAlloc(id self, SEL _cmd, NSZone* zone)
 {
-  #if DEBUG
+#if DEBUG
     // make sure that people don't use pooling from multiple threads
     static id thread = nil;
     if (thread) NSAssert(thread == [NSThread currentThread], @"SPPoolObject is NOT thread safe!");
     else thread = [NSThread currentThread];
-  #endif
+#endif
 
-    SPPoolInfo *poolInfo = [self poolInfo];
-    
+    SPPoolInfo* poolInfo = objc_msgSend(self, @selector(poolInfo));
+
     if (poolInfo->lastElement)
     {
         // recycle element, update poolInfo
-        SPPoolObject *object = poolInfo->lastElement;
+        SPPoolObject* object = poolInfo->lastElement;
         poolInfo->lastElement = object->_poolPredecessor;
-        
+
         // zero out memory. (do not overwrite isa & _poolPredecessor, thus the offset)
-        static uint offset = sizeof(Class) + sizeof(SPPoolObject *);
-        memset((char *)(id)object + offset, 0, malloc_size(object) - offset);
+        //static size_t offset = sizeof(Class) + sizeof(SPPoolObject*);
+        //memset((char*)(id)object + offset, 0, malloc_size(object) - offset);
         object->_retainCount = 1;
         return object;
     }
-    else 
+    else
     {
         // first allocation
         if (!poolInfo->poolClass)
@@ -63,12 +67,22 @@
             [NSException raise:NSGenericException format:COMPLAIN_MISSING_IMP, self];
             return nil;
         }
-        
+
         // pool is empty -> allocate
-        SPPoolObject *object = NSAllocateObject(self, 0, NULL);
+        SPPoolObject* object = NSAllocateObject(self, 0, NULL);
         object->_retainCount = 1;
         return object;
     }
+}
+
++ (instancetype)alloc
+{
+    return doAlloc(self, _cmd, nil);
+}
+
++ (instancetype)allocWithZone:(NSZone*)zone
+{
+    return doAlloc(self, _cmd, nil);
 }
 
 - (NSUInteger)retainCount
@@ -76,7 +90,7 @@
     return _retainCount;
 }
 
-- (id)retain
+- (instancetype)retain
 {
     ++_retainCount;
     return self;
@@ -88,7 +102,7 @@
     
     if (!_retainCount)
     {
-        SPPoolInfo *poolInfo = [object_getClass(self) poolInfo];
+        SPPoolInfo* poolInfo = objc_msgSend(object_getClass(self), @selector(poolInfo));
         self->_poolPredecessor = poolInfo->lastElement;
         poolInfo->lastElement = self;
     }
@@ -102,8 +116,8 @@
 
 + (int)purgePool
 {
-    SPPoolInfo *poolInfo = [self poolInfo];    
-    SPPoolObject *lastElement;    
+    SPPoolInfo* poolInfo = [self poolInfo];    
+    SPPoolObject* lastElement;    
     
     int count=0;
     while ((lastElement = poolInfo->lastElement))
@@ -116,7 +130,7 @@
     return count;
 }
 
-+ (SPPoolInfo *)poolInfo
++ (SPPoolInfo*)poolInfo
 {
     [NSException raise:NSGenericException format:COMPLAIN_MISSING_IMP, self];
     return NULL;
@@ -128,7 +142,7 @@
 
 @implementation SPPoolObject
 
-+ (SPPoolInfo *)poolInfo 
++ (SPPoolInfo*)poolInfo 
 {
     return nil;
 }

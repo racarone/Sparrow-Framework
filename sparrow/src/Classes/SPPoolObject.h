@@ -17,8 +17,8 @@
 @interface SPPoolInfo : NSObject
 {
   @public
-    Class poolClass;
-    SPPoolObject *lastElement;
+    Class           poolClass;
+    SPPoolObject*   lastElement;
 }
 
 @end
@@ -26,9 +26,9 @@
 #ifndef DISABLE_MEMORY_POOLING
 
   #define SP_IMPLEMENT_MEMORY_POOL()                         \
-    + (SPPoolInfo *)poolInfo                                 \
+    + (SPPoolInfo*)poolInfo                                 \
     {                                                        \
-        static SPPoolInfo *poolInfo = nil;                   \
+        static SPPoolInfo* poolInfo = nil;                   \
         if (!poolInfo) poolInfo = [[SPPoolInfo alloc] init]; \
         return poolInfo;                                     \
     }                                                        \
@@ -36,7 +36,7 @@
 #else
 
   #define SP_IMPLEMENT_MEMORY_POOL()                         \
-    + (SPPoolInfo *)poolInfo                                 \
+    + (SPPoolInfo*)poolInfo                                 \
     {                                                        \
         return nil;                                          \
     }                                                        \
@@ -72,7 +72,7 @@
 @interface SPPoolObject : NSObject 
 
 /// The pool info structure needed to access the pool. Needs to be implemented in any inheriting class.
-+ (SPPoolInfo *)poolInfo;
++ (SPPoolInfo*)poolInfo;
 
 /// Purge all unused objects.
 + (int)purgePool;
@@ -84,7 +84,7 @@
 @interface SPPoolObject : NSObject 
 
 /// Dummy implementation of SPPoolObject method to simplify switching between NSObject and SPPoolObject.
-+ (SPPoolInfo *)poolInfo;
++ (SPPoolInfo*)poolInfo;
 
 /// Dummy implementation of SPPoolObject method to simplify switching between NSObject and SPPoolObject.
 + (int)purgePool;

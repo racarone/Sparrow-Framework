@@ -29,13 +29,13 @@
 /// --------------------
 
 /// Initializes a sound with the contents of a file and the known duration.
-- (id)initWithContentsOfFile:(NSString *)path duration:(double)duration;
+- (instancetype)initWithContentsOfFile:(NSString*)path duration:(double)duration;
 
 /// -------------
 /// @name methods
 /// -------------
 
 /// Creates an AVAudioPlayer object from the sound.
-- (AVAudioPlayer *)createPlayer;
+- (AVAudioPlayer*)createPlayer;
 
 @end

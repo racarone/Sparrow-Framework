@@ -16,7 +16,7 @@
 
 @implementation TextScene
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -29,14 +29,14 @@
 {
     int offset = 10;    
     
-    SPTextField *colorTF = [SPTextField textFieldWithWidth:300 height:60 
+    SPTextField* colorTF = [SPTextField textFieldWithWidth:300 height:60 
         text:@"TextFields can have a border and a color."];
     colorTF.x = colorTF.y = offset;
     colorTF.border = YES;
     colorTF.color = 0x333399;
     [self addChild:colorTF];
     
-    SPTextField *leftTF = [SPTextField textFieldWithWidth:145 height:80 
+    SPTextField* leftTF = [SPTextField textFieldWithWidth:145 height:80 
         text:@"Text can be aligned in different ways, e.g. top-left ..."];
     leftTF.x = offset;    
     leftTF.y = colorTF.y + colorTF.height + offset;
@@ -46,7 +46,7 @@
     leftTF.color = 0x993333;
     [self addChild:leftTF];
     
-    SPTextField *rightTF = [SPTextField textFieldWithWidth:145 height:80 
+    SPTextField* rightTF = [SPTextField textFieldWithWidth:145 height:80 
         text:@"... or bottom right ..."];
     rightTF.x = 2*offset + leftTF.width;
     rightTF.y = colorTF.y + colorTF.height + offset;
@@ -56,7 +56,7 @@
     rightTF.border = YES;
     [self addChild:rightTF];
     
-    SPTextField *fontTF = [SPTextField textFieldWithWidth:300 height:100 
+    SPTextField* fontTF = [SPTextField textFieldWithWidth:300 height:100 
         text:@"... or centered. And of course the type of font and the size are arbitrary."];
     fontTF.x = offset;
     fontTF.y = leftTF.y + leftTF.height + offset;
@@ -78,10 +78,10 @@
     //
     // Then, you just have to call the following method:    
     // (the returned font name is the one that is defined in the font XML.)
-    NSString *bmpFontName = [SPTextField registerBitmapFontFromFile:@"desyrel.fnt"];
+    NSString* bmpFontName = [SPTextField registerBitmapFontFromFile:@"desyrel.fnt"];
 
     // That's it! If you use this font now, the textField will be rendered with the bitmap font.
-    SPTextField *bmpFontTF = [SPTextField textFieldWithWidth:300 height:150 
+    SPTextField* bmpFontTF = [SPTextField textFieldWithWidth:300 height:150 
         text:@"It is very easy to use Bitmap fonts, as well!"];
     bmpFontTF.fontSize = SP_NATIVE_FONT_SIZE; // use the native bitmap font size, no scaling
     bmpFontTF.fontName = bmpFontName;

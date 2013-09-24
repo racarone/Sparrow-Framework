@@ -44,7 +44,7 @@
 
 #pragma mark - File Utils
 
-+ (BOOL)fileExistsAtPath:(NSString *)path
++ (BOOL)fileExistsAtPath:(NSString*)path
 {
     if (!path)
         return NO;
@@ -55,7 +55,7 @@
     return stat([path UTF8String], &buffer) == 0;
 }
 
-+ (NSString *)absolutePathToFile:(NSString *)path withScaleFactor:(float)factor 
++ (NSString*)absolutePathToFile:(NSString*)path withScaleFactor:(float)factor 
                            idiom:(UIUserInterfaceIdiom)idiom
 {
     // iOS image resource naming conventions:
@@ -64,15 +64,15 @@
     
     if (factor < 1.0f) factor = 1.0f;
     
-    NSString *originalPath = path;
-    NSString *pathWithScale = [path stringByAppendingScaleSuffixToFilename:factor];
-    NSString *idiomSuffix = (idiom == UIUserInterfaceIdiomPad) ? @"~ipad" : @"~iphone";
-    NSString *pathWithIdiom = [pathWithScale stringByAppendingSuffixToFilename:idiomSuffix];
+    NSString* originalPath = path;
+    NSString* pathWithScale = [path stringByAppendingScaleSuffixToFilename:factor];
+    NSString* idiomSuffix = (idiom == UIUserInterfaceIdiomPad) ? @"~ipad" : @"~iphone";
+    NSString* pathWithIdiom = [pathWithScale stringByAppendingSuffixToFilename:idiomSuffix];
     
     BOOL isAbsolute = [path isAbsolutePath];
-    NSBundle *appBundle = [NSBundle appBundle];
-    NSString *absolutePath = isAbsolute ? pathWithScale : [appBundle pathForResource:pathWithScale];
-    NSString *absolutePathWithIdiom = isAbsolute ? pathWithIdiom : [appBundle pathForResource:pathWithIdiom];
+    NSBundle* appBundle = [NSBundle appBundle];
+    NSString* absolutePath = isAbsolute ? pathWithScale : [appBundle pathForResource:pathWithScale];
+    NSString* absolutePathWithIdiom = isAbsolute ? pathWithIdiom : [appBundle pathForResource:pathWithIdiom];
     
     if ([SPUtils fileExistsAtPath:absolutePathWithIdiom])
         return absolutePathWithIdiom;
@@ -84,13 +84,13 @@
         return nil;
 }
 
-+ (NSString *)absolutePathToFile:(NSString *)path withScaleFactor:(float)factor
++ (NSString*)absolutePathToFile:(NSString*)path withScaleFactor:(float)factor
 {
     UIUserInterfaceIdiom currentIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
     return [SPUtils absolutePathToFile:path withScaleFactor:factor idiom:currentIdiom];
 }
 
-+ (NSString *)absolutePathToFile:(NSString *)path
++ (NSString*)absolutePathToFile:(NSString*)path
 {
     return [SPUtils absolutePathToFile:path withScaleFactor:Sparrow.contentScaleFactor];
 }

@@ -29,17 +29,17 @@
 
 /// Initializes a GLSL program by compiling vertex and fragment shaders from source. In debug
 /// mode, compilation erros are logged into the console. _Designated Initializer_.
-- (id)initWithVertexShader:(NSString *)vertexShader fragmentShader:(NSString *)fragmentShader;
+- (instancetype)initWithVertexShader:(NSString*)vertexShader fragmentShader:(NSString*)fragmentShader;
 
 /// -------------
 /// @name Methods
 /// -------------
 
 /// Returns the index of a uniform with a certain name.
-- (int)uniformByName:(NSString *)name;
+- (int)uniformByName:(NSString*)name;
 
 /// Returns the index of an attribute with a certain name.
-- (int)attributeByName:(NSString *)name;
+- (int)attributeByName:(NSString*)name;
 
 /// ----------------
 /// @name Properties
@@ -49,9 +49,9 @@
 @property (nonatomic, readonly) uint name;
 
 /// The source code of the vertex shader.
-@property (nonatomic, readonly) NSString *vertexShader;
+@property (nonatomic, readonly) NSString* vertexShader;
 
 /// The source code of the fragment shader.
-@property (nonatomic, readonly) NSString *fragmentShader;
+@property (nonatomic, readonly) NSString* fragmentShader;
 
 @end

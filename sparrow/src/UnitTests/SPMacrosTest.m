@@ -48,8 +48,8 @@
     STAssertEquals(5, a, @"int swap did not work");
     STAssertEquals(4, b, @"int swap did not work");
     
-    NSString *u = @"u";
-    NSString *v = @"v";
+    NSString* u = @"u";
+    NSString* v = @"v";
     
     SP_SWAP(u, v, id);
     STAssertEqualObjects(@"v", u, @"string swap did not work");

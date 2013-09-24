@@ -11,10 +11,10 @@
 
 #import "SPDisplayObject.h"
 #import "SPVertexData.h"
+#import "SPTexture.h"
 
 @class SPImage;
 @class SPQuad;
-@class SPTexture;
 
 /** ------------------------------------------------------------------------------------------------
  
@@ -39,75 +39,97 @@
  When you reset the batch, it will accept a new state on the next added quad.
  
 ------------------------------------------------------------------------------------------------- */
-@interface SPQuadBatch : SPDisplayObject
+@interface SPQuadBatch : SPDisplayObject {
+@protected
+
+    /// The raw vertex data of the quad. After modifying its contents, call
+    /// 'onVertexDataChanged:' to upload the changes to the vertex buffers. Don't change the
+    /// size of this object manually; instead, use the 'capacity' property of the QuadBatch.
+    SPVertexData* _vertexData;
+}
+
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initialize a QuadBatch with a certain capacity. The batch will grow dynamically if it exceeds
 /// this value. _Designated Initializer_.
-- (id)initWithCapacity:(int)capacity;
+- (instancetype)initWithCapacity:(int)capacity;
 
 /// Initialize a QuadBatch with a capacity of 16 quads.
-- (id)init;
+- (instancetype)init;
+
+/// -------------
+/// @name Methods
+/// -------------
 
 /// Resets the batch. The vertex- and index-buffers keep their size, so that they can be reused.
 - (void)reset;
 
 /// Adds a quad or image. Make sure you only add quads with an equal state.
-- (void)addQuad:(SPQuad *)quad;
+- (void)addQuad:(SPQuad*)quad;
 
 /// Adds a quad or image using a custom alpha value (ignoring the quad's original alpha).
 /// Make sure you only add quads with an equal state.
-- (void)addQuad:(SPQuad *)quad alpha:(float)alpha;
+- (void)addQuad:(SPQuad*)quad alpha:(float)alpha;
 
 /// Adds a quad or image to the batch, using custom alpha and blend mode values (ignoring the
 /// quad's original values). Make sure you only add quads with an equal state.
-- (void)addQuad:(SPQuad *)quad alpha:(float)alpha blendMode:(uint)blendMode;
+- (void)addQuad:(SPQuad*)quad alpha:(float)alpha blendMode:(uint)blendMode;
 
 /// Adds a quad or image to the batch, using custom alpha and blend mode values (ignoring the
 /// quad's original values) and transforming each vertex by a certain transformation matrix.
 /// Make sure you only add quads with an equal state.
-- (void)addQuad:(SPQuad *)quad alpha:(float)alpha blendMode:(uint)blendMode matrix:(SPMatrix *)matrix;
+- (void)addQuad:(SPQuad*)quad alpha:(float)alpha blendMode:(uint)blendMode matrix:(SPMatrix*)matrix;
 
 /// Adds another quad batch to this batch.
-- (void)addQuadBatch:(SPQuadBatch *)quadBatch;
+- (void)addQuadBatch:(SPQuadBatch*)quadBatch;
 
 /// Adds another quad batch to this batch, using a custom alpha value (ignoring the batch's
 /// original alpha).
-- (void)addQuadBatch:(SPQuadBatch *)quadBatch alpha:(float)alpha;
+- (void)addQuadBatch:(SPQuadBatch*)quadBatch alpha:(float)alpha;
 
 /// Adds another quad batch to this batch, using custom alpha and blend mode values (ignoring the
 /// batch's original values). Just like the `addQuad:` method, you have to make sure that you only
 /// add batches with an equal state.
-- (void)addQuadBatch:(SPQuadBatch *)quadBatch alpha:(float)alpha blendMode:(uint)blendMode;
+- (void)addQuadBatch:(SPQuadBatch*)quadBatch alpha:(float)alpha blendMode:(uint)blendMode;
 
 /// Adds another quad batch to this batch, using custom alpha and blend mode values (ignoring the
 /// batch's original values) and transforming each vertex by a certain transformation matrix. Just
 /// like the `addQuad:` method, you have to make sure that you only add batches with an equal state.
-- (void)addQuadBatch:(SPQuadBatch *)quadBatch alpha:(float)alpha blendMode:(uint)blendMode
-              matrix:(SPMatrix *)matrix;
+- (void)addQuadBatch:(SPQuadBatch*)quadBatch alpha:(float)alpha blendMode:(uint)blendMode
+              matrix:(SPMatrix*)matrix;
 
 /// Indicates if specific quads can be added to the batch without causing a state change.
 /// A state change occurs if the quad uses a different base texture, has a different `smoothing`,
 /// `repeat` or 'tinted' setting, or if the batch is full (one batch can contain up to 8192 quads).
-- (BOOL)isStateChangeWithTinted:(BOOL)tinted texture:(SPTexture *)texture alpha:(float)alpha
+- (BOOL)isStateChangeWithTinted:(BOOL)tinted texture:(SPTexture*)texture alpha:(float)alpha
              premultipliedAlpha:(BOOL)pma blendMode:(uint)blendMode numQuads:(int)numQuads;
 
 /// Renders the batch with custom alpha and blend mode values, as well as a custom mvp matrix.
-- (void)renderWithMvpMatrix:(SPMatrix *)matrix alpha:(float)alpha blendMode:(uint)blendMode;
+- (void)renderWithMvpMatrix:(SPMatrix*)matrix alpha:(float)alpha blendMode:(uint)blendMode;
 
 /// Renders the batch with a custom mvp matrix.
-- (void)renderWithMvpMatrix:(SPMatrix *)matrix;
+- (void)renderWithMvpMatrix:(SPMatrix*)matrix;
+
+/// Call this method after manually changing the contents of '_vertexData'.
+- (void)vertexDataDidChange;
 
 /// Analyses an object that is made up exclusively of quads (or other containers) and creates an
 /// array of `SPQuadBatch` objects representing it. This can be used to render the container very
 /// efficiently. The 'flatten'-method of the `SPSprite` class uses this method internally. */
-+ (NSMutableArray *)compileObject:(SPDisplayObject *)object;
++ (NSMutableArray*)compileObject:(SPDisplayObject*)object;
 
 /// Analyses an object that is made up exclusively of quads (or other containers) and saves the
 /// resulting quad batches into the specified an array; batches inside that array are reused.
-+ (NSMutableArray *)compileObject:(SPDisplayObject *)object intoArray:(NSMutableArray *)quadBatches;
++ (NSMutableArray*)compileObject:(SPDisplayObject*)object intoArray:(NSMutableArray*)quadBatches;
 
 /// Create a new, empty quad batch.
-+ (id)quadBatch;
++ (instancetype)quadBatch;
+
+/// ----------------
+/// @name Properties
+/// ----------------
 
 /// The number of quads that has been added to the batch.
 @property (nonatomic, readonly) int numQuads;
@@ -116,9 +138,15 @@
 @property (nonatomic, readonly) BOOL tinted;
 
 /// The current texture of the batch, if there is one.
-@property (nonatomic, readonly) SPTexture *texture;
+@property (nonatomic, readonly) SPTexture* texture;
 
 /// Indicates if the rgb values are stored premultiplied with the alpha value.
 @property (nonatomic, readonly) BOOL premultipliedAlpha;
+
+/// Indicates the number of quads for which space is allocated (vertex- and index-buffers).
+/// If you add more quads than what fits into the current capacity, the SPQuadBatch is
+/// expanded automatically. However, if you know beforehand how many vertices you need,
+/// you can manually set the right capacity with this method.
+@property (nonatomic) int capacity;
 
 @end

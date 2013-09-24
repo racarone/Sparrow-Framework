@@ -23,7 +23,7 @@
         return nil; 
    
     // get center of button
-    SPRectangle *bounds = self.bounds;    
+    SPRectangle* bounds = self.bounds;    
     float centerX = bounds.width / 2;
     float centerY = bounds.height / 2;    
     

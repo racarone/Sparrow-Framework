@@ -15,24 +15,24 @@
 
 @implementation SPAVSoundChannel
 {
-    SPAVSound *_sound;
-    AVAudioPlayer *_player;
-    BOOL _paused;
-    float _volume;
+    SPAVSound*      _sound;
+    AVAudioPlayer*  _player;
+    BOOL            _paused;
+    float           _volume;
 }
 
-- (id)init
+- (instancetype)init
 {
     return nil;
 }
 
-- (id)initWithSound:(SPAVSound *)sound
+- (instancetype)initWithSound:(SPAVSound*)sound
 {
     if ((self = [super init]))
     {
         _volume = 1.0f;
         _sound = sound;
-        _player = [sound createPlayer];
+        _player = [[sound createPlayer] retain];
         _player.delegate = self;                
         [_player prepareToPlay];
 
@@ -47,6 +47,11 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];    
     _player.delegate = nil;
+
+    SP_RELEASE_AND_NIL(_sound);
+    SP_RELEASE_AND_NIL(_player);
+    
+    [super dealloc];
 }
 
 - (void)play
@@ -109,29 +114,29 @@
     return _player.duration;
 }
 
-- (void)onMasterVolumeChanged:(NSNotification *)notification
+- (void)onMasterVolumeChanged:(NSNotification*)notification
 {    
     self.volume = _volume;    
 }
 
 #pragma mark AVAudioPlayerDelegate
 
-- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer*)player successfully:(BOOL)flag
 {    
-    [self dispatchEventWithType:SP_EVENT_TYPE_COMPLETED];
+    [self dispatchEventWithType:kSPEventTypeCompleted];
 }
 
-- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error
+- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer*)player error:(NSError*)error
 {
     NSLog(@"Error during sound decoding: %@", [error description]);
 }
 
-- (void)audioPlayerBeginInterruption:(AVAudioPlayer *)player
+- (void)audioPlayerBeginInterruption:(AVAudioPlayer*)player
 {
     [player pause];
 }
 
-- (void)audioPlayerEndInterruption:(AVAudioPlayer *)player
+- (void)audioPlayerEndInterruption:(AVAudioPlayer*)player
 {
     [player play];
 }

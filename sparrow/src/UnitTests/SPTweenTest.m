@@ -48,9 +48,9 @@
     _startedCount = _updatedCount = _completedCount = _repeatedCount = 0;
 }
 
-- (SPTween *)tweenWithTarget:(id)target time:(double)time
+- (SPTween*)tweenWithTarget:(id)target time:(double)time
 {
-    SPTween *tween = [SPTween tweenWithTarget:target time:time];
+    SPTween* tween = [SPTween tweenWithTarget:target time:time];
     tween.onStart = ^{ _startedCount++; };
     tween.onUpdate = ^{ _updatedCount++; };
     tween.onRepeat = ^{ _repeatedCount++; };
@@ -68,12 +68,12 @@
     float endAlpha = 0.0f;
     double totalTime = 2.0;
     
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     quad.x = startX;
     quad.y = startY;
     quad.alpha = startAlpha;
     
-    SPTween *tween = [self tweenWithTarget:quad time:totalTime];
+    SPTween* tween = [self tweenWithTarget:quad time:totalTime];
     [tween animateProperty:@"x" targetValue:endX];
     [tween animateProperty:@"y" targetValue:endY];
     [tween animateProperty:@"alpha" targetValue:endAlpha];    
@@ -115,13 +115,13 @@
 {
     float startPos = 0.0f;
     float targetPos = 50.0f;
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     
     // 2 tweens should move object up, then down
-    SPTween *tween1 = [SPTween tweenWithTarget:quad time:1];
+    SPTween* tween1 = [SPTween tweenWithTarget:quad time:1];
     [tween1 animateProperty:@"y" targetValue:targetPos];
     
-    SPTween *tween2 = [SPTween tweenWithTarget:quad time:1];
+    SPTween* tween2 = [SPTween tweenWithTarget:quad time:1];
     [tween2 animateProperty:@"y" targetValue:startPos];
     tween2.delay = 1;
     
@@ -141,9 +141,9 @@
 
 - (void)testTweenFromZero
 {
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     quad.scaleX = 0.0f;
-    SPTween *tween = [SPTween tweenWithTarget:quad time:1.0f];
+    SPTween* tween = [SPTween tweenWithTarget:quad time:1.0f];
     [tween animateProperty:@"scaleX" targetValue:1.0f];
     
     [tween advanceTime:0.0f];    
@@ -162,10 +162,10 @@
     float deltaX = 50.0f;
     float totalTime = 2.0f;
     
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     quad.x = startX;
     
-    SPTween *tween = [self tweenWithTarget:quad time:totalTime];
+    SPTween* tween = [self tweenWithTarget:quad time:totalTime];
     [tween animateProperty:@"x" targetValue:startX + deltaX];
     tween.repeatCount = 5;
     
@@ -202,10 +202,10 @@
     float deltaX = 50.0f;
     float totalTime = 2.0f;
     
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     quad.x = startX;
     
-    SPTween *tween = [self tweenWithTarget:quad time:totalTime];
+    SPTween* tween = [self tweenWithTarget:quad time:totalTime];
     [tween animateProperty:@"x" targetValue:startX + deltaX];
     tween.repeatCount = 5;
     tween.reverse = YES;
@@ -254,10 +254,10 @@
     float deltaX = 100.0f;
     float totalTime = 1.0f;
     
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     quad.x = startX;
     
-    SPTween *tween = [self tweenWithTarget:quad time:totalTime];
+    SPTween* tween = [self tweenWithTarget:quad time:totalTime];
     [tween animateProperty:@"x" targetValue:startX + deltaX];
     
     [tween advanceTime:totalTime / 2.0f];
@@ -287,10 +287,10 @@
     float totalTime = 1.0f;
     float delay = 0.5f;
     
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     quad.x = startX;
     
-    SPTween *tween = [self tweenWithTarget:quad time:totalTime];
+    SPTween* tween = [self tweenWithTarget:quad time:totalTime];
     tween.repeatCount = 2;
     tween.repeatDelay = delay;
     [tween animateProperty:@"x" targetValue:startX + deltaX];
@@ -313,8 +313,8 @@
 
 - (void)testInfiniteRepeat
 {
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
-    SPTween *tween = [self tweenWithTarget:quad time:1.0];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
+    SPTween* tween = [self tweenWithTarget:quad time:1.0];
     tween.repeatCount = 0;
     [tween advanceTime:1000];
     
@@ -323,10 +323,10 @@
 
 - (void)testUnsignedIntTween
 {
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     quad.color = 0;
     
-    SPTween *tween = [SPTween tweenWithTarget:quad time:2.0];
+    SPTween* tween = [SPTween tweenWithTarget:quad time:2.0];
     [tween animateProperty:@"color" targetValue:100];
     
     STAssertEquals((uint)0, quad.color, @"quad starts with wrong color");
@@ -341,7 +341,7 @@
 - (void)testSignedIntTween
 {
     // try positive value
-    SPTween *tween = [SPTween tweenWithTarget:self time:1.0];
+    SPTween* tween = [SPTween tweenWithTarget:self time:1.0];
     [tween animateProperty:@"intProperty" targetValue:100];
     [tween advanceTime:1.0];
     
@@ -358,8 +358,8 @@
 
 - (void)makeTweenWithTime:(double)time andAdvanceBy:(double)advanceTime
 {
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
-    SPTween *tween = [self tweenWithTarget:quad time:time];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
+    SPTween* tween = [self tweenWithTarget:quad time:time];
     [tween animateProperty:@"x" targetValue:100.0f];
     [tween advanceTime:advanceTime];
     

@@ -10,6 +10,7 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "SPDisplayObject.h"
 
 @interface SPDisplayObject (Internal)

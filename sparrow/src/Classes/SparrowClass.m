@@ -11,37 +11,37 @@
 
 #import "SparrowClass.h"
 
-static __weak SPViewController *controller = nil;
+static __weak SPViewController* controller = nil;
 
 @implementation Sparrow
 
-- (id)init
+- (instancetype)init
 {
     [NSException raise:NSGenericException format:@"Static class - do not initialize!"];
     return nil;
 }
 
-+ (SPViewController *)currentController
++ (SPViewController*)currentController
 {
     return controller;
 }
 
-+ (void)setCurrentController:(SPViewController *)value
++ (void)setCurrentController:(SPViewController*)value
 {
     controller = value;
 }
 
-+ (SPJuggler *)juggler
++ (SPJuggler*)juggler
 {
     return controller.juggler;
 }
 
-+ (SPStage *)stage
++ (SPStage*)stage
 {
     return controller.stage;
 }
 
-+ (SPDisplayObject *)root
++ (SPDisplayObject*)root
 {
     return controller.root;
 }

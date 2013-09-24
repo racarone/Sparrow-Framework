@@ -23,10 +23,10 @@
 /// ------------------
 
 /// Initializes a rectangle with the specified components. _Designated Initializer_.
-- (id)initWithX:(float)x y:(float)y width:(float)width height:(float)height;
+- (instancetype)initWithX:(float)x y:(float)y width:(float)width height:(float)height;
 
 /// Factory method.
-+ (id)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height;
++ (instancetype)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height;
 
 /// -------------
 /// @name Methods
@@ -40,6 +40,11 @@
 
 /// Determines if another rectangle is within the rectangle.
 - (BOOL)containsRectangle:(SPRectangle*)rectangle;
+
+/// Increases the size of the Rectangle object by the specified amounts.
+/// The center point of the Rectangle object stays the same, and its size increases
+/// to the left and right by the dx value, and to the top and the bottom by the dy value.
+- (void)inflateWithXBy:(float)dx yBy:(float)dy;
 
 /// Determines if another rectangle contains or intersects the rectangle.
 - (BOOL)intersectsRectangle:(SPRectangle*)rectangle;
@@ -58,10 +63,10 @@
 - (void)setEmpty;
 
 /// Copies the values from another rectangle into the current rectangle.
-- (void)copyFromRectangle:(SPRectangle *)rectangle;
+- (void)copyFromRectangle:(SPRectangle*)rectangle;
 
 /// Compares two points.
-- (BOOL)isEquivalent:(SPRectangle *)other;
+- (BOOL)isEquivalent:(SPRectangle*)other;
 
 /// ----------------
 /// @name Properties
@@ -92,13 +97,13 @@
 @property (nonatomic, assign) float right;
 
 /// The location of the top-left corner, determined by the x and y coordinates of the point.
-@property (nonatomic, copy) SPPoint *topLeft;
+@property (nonatomic, copy) SPPoint* topLeft;
 
 /// The location of the bottom-right corner, determined by the values of the right and bottom properties.
-@property (nonatomic, copy) SPPoint *bottomRight;
+@property (nonatomic, copy) SPPoint* bottomRight;
 
 /// The size of the Rectangle object, determined by the values of the width and height properties.
-@property (nonatomic, copy) SPPoint *size;
+@property (nonatomic, copy) SPPoint* size;
 
 /// Determines if a rectangle has an empty area.
 @property (nonatomic, readonly) BOOL isEmpty;

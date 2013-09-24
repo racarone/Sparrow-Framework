@@ -21,10 +21,10 @@
 
 @implementation SPSound
 {
-    NSMutableSet *_playingChannels;
+    NSMutableSet* _playingChannels;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ([self isMemberOfClass:[SPSound class]])
     {
@@ -36,14 +36,14 @@
     return [super init];
 }
 
-- (id)initWithContentsOfFile:(NSString *)path
+- (instancetype)initWithContentsOfFile:(NSString*)path
 {
     // SPSound is a class factory! We'll return a subclass, not self.
     
-    NSString *fullPath = [SPUtils absolutePathToFile:path withScaleFactor:1.0f];
+    NSString* fullPath = [SPUtils absolutePathToFile:path withScaleFactor:1.0f];
     if (!fullPath) [NSException raise:SP_EXC_FILE_NOT_FOUND format:@"file %@ not found", path];
     
-    NSString *error = nil;
+    NSString* error = nil;
     
     AudioFileID fileID = 0;
     void *soundBuffer = NULL;
@@ -142,39 +142,52 @@
     if (fileID) AudioFileClose(fileID);
     
     if (!error)
-    {    
-        self = [[SPALSound alloc] initWithData:soundBuffer size:soundSize channels:soundChannels
-                                     frequency:soundFrequency duration:soundDuration];            
+    {
+        SP_RELEASE_AND_NIL(self);
+        self = [[SPALSound alloc] initWithData:soundBuffer
+                                          size:soundSize
+                                      channels:soundChannels
+                                     frequency:soundFrequency
+                                      duration:soundDuration];
     }
     else
     {
         NSLog(@"Sound '%@' will be played with AVAudioPlayer [Reason: %@]", path, error);
-        self = [[SPAVSound alloc] initWithContentsOfFile:fullPath duration:soundDuration];
+        SP_RELEASE_AND_NIL(self);
+        self = [[SPAVSound alloc] initWithContentsOfFile:fullPath
+                                                duration:soundDuration];
     }
     
     free(soundBuffer);    
     return self;
 }
 
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_playingChannels);
+    
+    [super dealloc];
+}
+
 - (void)play
 {
-    SPSoundChannel *channel = [self createChannel];
+    SPSoundChannel* channel = [self createChannel];
     [channel addEventListener:@selector(onSoundCompleted:) atObject:self
-                      forType:SP_EVENT_TYPE_COMPLETED];
+                      forType:kSPEventTypeCompleted];
     [channel play];
     
     if (!_playingChannels) _playingChannels = [[NSMutableSet alloc] init];    
     [_playingChannels addObject:channel];
 }
 
-- (void)onSoundCompleted:(SPEvent *)event
+- (void)onSoundCompleted:(SPEvent*)event
 {
-    SPSoundChannel *channel = (SPSoundChannel *)event.target;
+    SPSoundChannel* channel = (SPSoundChannel*)event.target;
     [channel stop];
     [_playingChannels removeObject:channel];
 }
 
-- (SPSoundChannel *)createChannel
+- (SPSoundChannel*)createChannel
 {
     [NSException raise:SP_EXC_ABSTRACT_METHOD format:@"Override 'createChannel' in subclasses."];
     return nil;
@@ -186,9 +199,9 @@
     return 0.0;
 }
 
-+ (SPSound *)soundWithContentsOfFile:(NSString *)path
++ (instancetype)soundWithContentsOfFile:(NSString*)path
 {
-    return [[SPSound alloc] initWithContentsOfFile:path];
+    return [[[SPSound alloc] initWithContentsOfFile:path] autorelease];
 }
 
 

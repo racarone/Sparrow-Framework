@@ -16,26 +16,23 @@
 
 @implementation SPSubTexture
 {
-    SPTexture *_baseTexture;
-    SPRectangle *_clipping;
-    SPRectangle *_rootClipping;
-    SPRectangle *_frame;
+    SPRectangle* _rootClipping;
 }
 
 @synthesize baseTexture = _baseTexture;
-@synthesize clipping = _clipping;
-@synthesize frame = _frame;
+@synthesize clipping    = _clipping;
+@synthesize frame       = _frame;
 
-- (id)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
+- (instancetype)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
 {
     return [self initWithRegion:region frame:nil ofTexture:texture];
 }
 
-- (id)initWithRegion:(SPRectangle *)region frame:(SPRectangle *)frame ofTexture:(SPTexture *)texture
+- (instancetype)initWithRegion:(SPRectangle*)region frame:(SPRectangle*)frame ofTexture:(SPTexture*)texture
 {
     if ((self = [super init]))
     {
-        _baseTexture = texture;
+        _baseTexture = [texture retain];
         _frame = [frame copy];
         
         // convert region to clipping rectangle (which has values between 0 and 1)
@@ -50,24 +47,35 @@
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     return nil;
 }
 
-- (void)setClipping:(SPRectangle *)clipping
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_baseTexture);
+    SP_RELEASE_AND_NIL(_clipping);
+    SP_RELEASE_AND_NIL(_rootClipping);
+    SP_RELEASE_AND_NIL(_frame);
+
+    [super dealloc];
+}
+
+- (void)setClipping:(SPRectangle*)clipping
 {
     // private method! Only called via the constructor - thus we don't need to create a copy.
-    _clipping = clipping;
+    SP_ASSIGN_COPY(_clipping, clipping);
     
     // if the base texture is a sub texture as well, calculate clipping 
-    // in reference to the root texture         
-    _rootClipping = [_clipping copy];
-    SPTexture *baseTexture = _baseTexture;
+    // in reference to the root texture
+    SP_ASSIGN_COPY(_rootClipping, _clipping);
+
+    SPTexture* baseTexture = _baseTexture;
     while ([baseTexture isKindOfClass:[SPSubTexture class]])
     {
-        SPSubTexture *baseSubTexture = (SPSubTexture *)baseTexture;
-        SPRectangle *baseClipping = baseSubTexture->_clipping;
+        SPSubTexture* baseSubTexture = (SPSubTexture*)baseTexture;
+        SPRectangle* baseClipping = baseSubTexture->_clipping;
         
         _rootClipping.x = baseClipping.x + _rootClipping.x * baseClipping.width;
         _rootClipping.y = baseClipping.y + _rootClipping.y * baseClipping.height;
@@ -78,7 +86,7 @@
     } 
 }
 
-- (void)adjustVertexData:(SPVertexData *)vertexData atIndex:(int)index numVertices:(int)count
+- (void)adjustVertexData:(SPVertexData*)vertexData atIndex:(int)index numVertices:(int)count
 {
     if (_frame)
     {
@@ -125,6 +133,16 @@
     return _baseTexture.height * _clipping.height;
 }
 
+- (float)nativeWidth
+{
+    return _baseTexture.nativeWidth * _clipping.width;
+}
+
+- (float)nativeHeight
+{
+    return _baseTexture.nativeHeight * _clipping.height;
+}
+
 - (uint)name
 {
     return _baseTexture.name;
@@ -150,6 +168,11 @@
     _baseTexture.smoothing = value;
 }
 
+- (BOOL)mipmaps
+{
+    return _baseTexture.mipmaps;
+}
+
 - (BOOL)premultipliedAlpha
 {
     return _baseTexture.premultipliedAlpha;
@@ -160,9 +183,9 @@
     return _baseTexture.scale;
 }
 
-+ (id)textureWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
++ (instancetype)textureWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
 {
-    return [[self alloc] initWithRegion:region ofTexture:texture];
+    return [[[self alloc] initWithRegion:region ofTexture:texture] autorelease];
 }
 
 @end

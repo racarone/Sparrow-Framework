@@ -24,7 +24,7 @@
 + (void)beginInterruption;
 + (void)endInterruption;
 
-+ (void)postNotification:(NSString *)name object:(id)object;
++ (void)postNotification:(NSString*)name object:(id)object;
 
 @end
 
@@ -49,7 +49,7 @@ static BOOL interrupted = NO;
 
 // ---
 
-- (id)init
+- (instancetype)init
 {
     [NSException raise:NSGenericException format:@"Static class - do not initialize!"];        
     return nil;
@@ -166,7 +166,7 @@ static BOOL interrupted = NO;
     [SPAudioEngine postNotification:SP_NOTIFICATION_AUDIO_INTERRUPTION_ENDED object:nil];
 }
 
-+ (void)onAppActivated:(NSNotification *)notification
++ (void)onAppActivated:(NSNotification*)notification
 {
     if (interrupted) [self endInterruption];
 }
@@ -183,7 +183,7 @@ static BOOL interrupted = NO;
     [SPAudioEngine postNotification:SP_NOTIFICATION_MASTER_VOLUME_CHANGED object:nil];
 }
 
-+ (void)postNotification:(NSString *)name object:(id)object
++ (void)postNotification:(NSString*)name object:(id)object
 {
     [[NSNotificationCenter defaultCenter] postNotification:
      [NSNotification notificationWithName:name object:object]]; 

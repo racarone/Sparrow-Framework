@@ -55,36 +55,36 @@
 
 /// Initializes a bitmap font by parsing the XML data and using the specified texture.
 /// _Designated Initializer_.
-- (id)initWithContentsOfData:(NSData *)data texture:(SPTexture *)texture;
+- (instancetype)initWithContentsOfData:(NSData*)data texture:(SPTexture*)texture;
 
 /// Initializes a bitmap font by parsing the XML data and loading the texture that is specified there.
-- (id)initWithContentsOfData:(NSData *)data;
+- (instancetype)initWithContentsOfData:(NSData*)data;
 
 /// Initializes a bitmap font by parsing an XML file and using the specified texture.
-- (id)initWithContentsOfFile:(NSString *)path texture:(SPTexture *)texture;
+- (instancetype)initWithContentsOfFile:(NSString*)path texture:(SPTexture*)texture;
 
 /// Initializes a bitmap font by parsing an XML file and loading the texture that is specified there.
-- (id)initWithContentsOfFile:(NSString *)path;
+- (instancetype)initWithContentsOfFile:(NSString*)path;
 
 /// Initializes a bitmap font with an integrated, very small font, which is useful for debug output.
-- (id)initWithMiniFont;
+- (instancetype)initWithMiniFont;
 
 /// -------------
 /// @name Methods
 /// -------------
 
 /// Returns a single bitmap char with a certain character ID.
-- (SPBitmapChar *)charByID:(int)charID;
+- (SPBitmapChar*)charByID:(int)charID;
 
 /// Creates a sprite that contains the given text by arranging individual chars.
-- (SPSprite *)createSpriteWithWidth:(float)width height:(float)height
-                               text:(NSString *)text fontSize:(float)size color:(uint)color
+- (SPSprite*)createSpriteWithWidth:(float)width height:(float)height
+                               text:(NSString*)text fontSize:(float)size color:(uint)color
                              hAlign:(SPHAlign)hAlign vAlign:(SPVAlign)vAlign
                           autoScale:(BOOL)autoScale kerning:(BOOL)kerning;
 
 /// Draws text into a quad batch.
-- (void)fillQuadBatch:(SPQuadBatch *)quadBatch withWidth:(float)width height:(float)height
-                 text:(NSString *)text fontSize:(float)size color:(uint)color
+- (void)fillQuadBatch:(SPQuadBatch*)quadBatch withWidth:(float)width height:(float)height
+                 text:(NSString*)text fontSize:(float)size color:(uint)color
                hAlign:(SPHAlign)hAlign vAlign:(SPVAlign)vAlign
             autoScale:(BOOL)autoScale kerning:(BOOL)kerning;
 
@@ -93,7 +93,7 @@
 /// ----------------
 
 /// The name of the font as it was parsed from the font file.
-@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) NSString* name;
 
 /// The native size of the font.
 @property (nonatomic, readonly) float size;

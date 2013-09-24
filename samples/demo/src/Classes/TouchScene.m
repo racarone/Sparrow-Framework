@@ -20,7 +20,7 @@
 
 @implementation TouchScene
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -31,16 +31,16 @@
 
 - (void)setupScene
 {  
-    NSString *description = @"Touch and drag to move the image, \n"
+    NSString* description = @"Touch and drag to move the image, \n"
                             @"pinch with 2 fingers to scale and rotate.";
     
-    SPTextField *infoText = [SPTextField textFieldWithWidth:300 height:64 
+    SPTextField* infoText = [SPTextField textFieldWithWidth:300 height:64 
                                                        text:description fontName:@"Verdana" 
                                                    fontSize:13 color:0x0];    
     infoText.x = infoText.y = 10;
     [self addChild:infoText];
     
-    SPImage *sparrow = [SPImage imageWithContentsOfFile:@"sparrow_sheet.png"];
+    SPImage* sparrow = [SPImage imageWithContentsOfFile:@"sparrow_sheet.png"];
     
     // to find out how to react to touch events have a look at the TouchSheet class! 
     // It's part of the demo.

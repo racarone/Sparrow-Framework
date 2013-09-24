@@ -15,23 +15,19 @@
 
 @implementation SPGLTexture
 {
-    uint _name;
-    float _width;
-    float _height;
-    float _scale;
-    BOOL _repeat;
-    BOOL _premultipliedAlpha;
-    BOOL _mipmaps;
-    SPTextureSmoothing _smoothing;
+    float   _width;
+    float   _height;
+    float   _scale;
+    BOOL    _mipmaps;
 }
 
-@synthesize name = _name;
-@synthesize repeat = _repeat;
-@synthesize premultipliedAlpha = _premultipliedAlpha;
-@synthesize scale = _scale;
-@synthesize smoothing = _smoothing;
+@synthesize name                = _name;
+@synthesize repeat              = _repeat;
+@synthesize premultipliedAlpha  = _premultipliedAlpha;
+@synthesize scale               = _scale;
+@synthesize smoothing           = _smoothing;
 
-- (id)initWithName:(uint)name width:(float)width height:(float)height
+- (instancetype)initWithName:(uint)name width:(float)width height:(float)height
         containsMipmaps:(BOOL)mipmaps scale:(float)scale premultipliedAlpha:(BOOL)pma
 {
     if ((self = [super init]))
@@ -54,7 +50,7 @@
     return self;
 }
 
-- (id)initWithData:(const void *)imgData width:(float)width height:(float)height
+- (instancetype)initWithData:(const void *)imgData width:(float)width height:(float)height
    generateMipmaps:(BOOL)mipmaps scale:(float)scale premultipliedAlpha:(BOOL)pma
 {
     GLenum glTexType = GL_UNSIGNED_BYTE;
@@ -74,28 +70,34 @@
                              scale:scale premultipliedAlpha:pma];
 }
 
-- (id)initWithTextureInfo:(GLKTextureInfo *)info scale:(float)scale
+- (instancetype)initWithTextureInfo:(GLKTextureInfo*)info scale:(float)scale
 {
     return [self initWithTextureInfo:info scale:scale
                   premultipliedAlpha:info.alphaState == GLKTextureInfoAlphaStatePremultiplied];
 }
 
-- (id)initWithTextureInfo:(GLKTextureInfo *)info scale:(float)scale premultipliedAlpha:(BOOL)pma;
+- (instancetype)initWithTextureInfo:(GLKTextureInfo*)info scale:(float)scale premultipliedAlpha:(BOOL)pma;
 {
     return [self initWithName:info.name width:info.width height:info.height
                    containsMipmaps:info.containsMipmaps scale:scale
                 premultipliedAlpha:pma];
 }
 
-- (id)initWithTextureInfo:(GLKTextureInfo *)info
+- (instancetype)initWithTextureInfo:(GLKTextureInfo*)info
 {
     return [self initWithTextureInfo:info scale:1.0f];
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithData:NULL width:32 height:32 generateMipmaps:NO
                         scale:1.0f premultipliedAlpha:NO];
+}
+
+- (void)dealloc
+{
+    glDeleteTextures(1, &_name);
+    [super dealloc];
 }
 
 - (float)width
@@ -106,6 +108,21 @@
 - (float)height
 {
     return _height / _scale;
+}
+
+- (float)nativeWidth
+{
+    return _width;
+}
+
+- (float)nativeHeight
+{
+    return _height;
+}
+
+- (BOOL)mipmaps
+{
+    return _mipmaps;
 }
 
 - (void)setRepeat:(BOOL)value
@@ -141,11 +158,6 @@
     
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter); 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-}
-
-- (void)dealloc
-{     
-    glDeleteTextures(1, &_name); 
 }
 
 @end

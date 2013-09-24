@@ -18,19 +18,19 @@
 
 @implementation SPALSound
 {
-    uint _bufferID;
-    double _duration;
+    uint    _bufferID;
+    double  _duration;
 }
 
 @synthesize duration = _duration;
 @synthesize bufferID = _bufferID;
 
-- (id)init
+- (instancetype)init
 {
     return nil;
 }
 
-- (id)initWithData:(const void *)data size:(int)size channels:(int)channels frequency:(int)frequency
+- (instancetype)initWithData:(const void *)data size:(int)size channels:(int)channels frequency:(int)frequency
           duration:(double)duration
 {
     if ((self = [super init]))
@@ -38,7 +38,7 @@
         _duration = duration;
         [SPAudioEngine start];
         
-        ALCcontext *const currentContext = alcGetCurrentContext();
+        ALCcontext* const currentContext = alcGetCurrentContext();
         if (!currentContext)
         {
             NSLog(@"Could not get current OpenAL context");
@@ -68,15 +68,17 @@
     return self;
 }
 
-- (SPSoundChannel *)createChannel
+- (SPSoundChannel*)createChannel
 {
-    return [[SPALSoundChannel alloc] initWithSound:self];
+    return [[[SPALSoundChannel alloc] initWithSound:self] autorelease];
 }
 
 - (void) dealloc
 {
     alDeleteBuffers(1, &_bufferID);
     _bufferID = 0;
+
+    [super dealloc];
 }
 
 @end

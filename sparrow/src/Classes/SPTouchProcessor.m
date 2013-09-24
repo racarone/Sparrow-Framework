@@ -25,13 +25,15 @@
 
 @implementation SPTouchProcessor
 {
-    SPDisplayObjectContainer *__weak _root;
-    NSMutableSet *_currentTouches;
+    SPDisplayObjectContainer*   _root;
+    NSMutableSet*               _currentTouches;
+    NSMutableArray*             _queue;
+    double                      _elapsedTime;
 }
 
 @synthesize root = _root;
 
-- (id)initWithRoot:(SPDisplayObjectContainer*)root
+- (instancetype)initWithRoot:(SPDisplayObjectContainer*)root
 {
     if ((self = [super init]))
     {
@@ -44,21 +46,30 @@
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {    
     return [self initWithRoot:nil];
 }
 
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    SP_RELEASE_AND_NIL(_currentTouches);
+
+    [super dealloc];
+}
+
 - (void)processTouches:(NSSet*)touches
 {
-    NSMutableSet *processedTouches = [[NSMutableSet alloc] init];
+    NSMutableSet* processedTouches = [NSMutableSet set];
     
     // process new touches
-    for (SPTouch *touch in touches)
+    for (SPTouch* touch in touches)
     {
-        SPTouch *currentTouch = nil;
+        SPTouch* currentTouch = nil;
         
-        for (SPTouch *existingTouch in _currentTouches)
+        for (SPTouch* existingTouch in _currentTouches)
         {
             if (existingTouch.phase == SPTouchPhaseEnded || existingTouch.phase == SPTouchPhaseCancelled)
                 continue;
@@ -77,7 +88,7 @@
                 if (!existingTouch.target.stage)
                 {
                     // target could have been removed from stage -> find new target in that case
-                    SPPoint *touchPosition = [SPPoint pointWithX:touch.globalX y:touch.globalY];
+                    SPPoint* touchPosition = [SPPoint pointWithX:touch.globalX y:touch.globalY];
                     existingTouch.target = [_root hitTestPoint:touchPosition];       
                 }
                 
@@ -88,7 +99,7 @@
         
         if (!currentTouch) // new touch
         {
-            SPPoint *touchPosition = [SPPoint pointWithX:touch.globalX y:touch.globalY];
+            SPPoint* touchPosition = [SPPoint pointWithX:touch.globalX y:touch.globalY];
             touch.target = [_root hitTestPoint:touchPosition];
             currentTouch = touch;
         }
@@ -97,35 +108,30 @@
     }
     
     // dispatch events         
-    for (SPTouch *touch in processedTouches)
+    for (SPTouch* touch in processedTouches)
     {       
-        SPTouchEvent *touchEvent = [[SPTouchEvent alloc] initWithType:SP_EVENT_TYPE_TOUCH 
-                                                              touches:processedTouches];
+        SPTouchEvent* touchEvent = [[[SPTouchEvent alloc] initWithType:kSPEventTypeTouch touches:processedTouches] autorelease];
         [touch.target dispatchEvent:touchEvent];
     }
-    
-    _currentTouches = processedTouches;
+
+    [_currentTouches release];
+    _currentTouches = [processedTouches retain];
 }
 
-- (void)cancelCurrentTouches:(NSNotification *)notification
+- (void)cancelCurrentTouches:(NSNotification*)notification
 {
     double now = CACurrentMediaTime();
-    
-    for (SPTouch *touch in _currentTouches)
+
+    for (SPTouch* touch in _currentTouches)
     {
         touch.phase = SPTouchPhaseCancelled;
         touch.timestamp = now;
     }
 
-    for (SPTouch *touch in _currentTouches)
-        [touch.target dispatchEvent:[SPTouchEvent eventWithType:SP_EVENT_TYPE_TOUCH touches:_currentTouches]];
+    for (SPTouch* touch in _currentTouches)
+        [touch.target dispatchEvent:[SPTouchEvent eventWithType:kSPEventTypeTouch touches:_currentTouches]];
 
     [_currentTouches removeAllObjects];
-}
-
-- (void) dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

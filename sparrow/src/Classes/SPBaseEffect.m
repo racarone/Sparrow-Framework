@@ -9,14 +9,14 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPBaseEffect.h"
-#import "SPMatrix.h"
-#import "SPTexture.h"
-#import "SPProgram.h"
-#import "SPNSExtensions.h"
 #import "SparrowClass.h"
+#import "SPBaseEffect.h"
+#import "SPMatrix_Internal.h"
+#import "SPNSExtensions.h"
+#import "SPProgram.h"
+#import "SPTexture.h"
 
-NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
+NSString* getProgramName(BOOL hasTexture, BOOL useTinting)
 {
     if (hasTexture)
     {
@@ -32,29 +32,28 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
 
 @implementation SPBaseEffect
 {
-    SPMatrix  *_mvpMatrix;
-    SPTexture *_texture;
-    float _alpha;
-    BOOL _useTinting;
-    BOOL _premultipliedAlpha;
+    SPMatrix*   _mvpMatrix;
+    SPTexture*  _texture;
+    float       _alpha;
+    BOOL        _useTinting;
+    BOOL        _premultipliedAlpha;
     
-    SPProgram *_program;
-    int _aPosition;
-    int _aColor;
-    int _aTexCoords;
-    int _uMvpMatrix;
-    int _uAlpha;
+    SPProgram*  _program;
+    int         _aPosition;
+    int         _aColor;
+    int         _aTexCoords;
+    int         _uMvpMatrix;
+    int         _uAlpha;
 }
 
-@synthesize texture = _texture;
-@synthesize alpha = _alpha;
-@synthesize useTinting = _useTinting;
+@synthesize texture             = _texture;
+@synthesize alpha               = _alpha;
+@synthesize useTinting          = _useTinting;
+@synthesize attribPosition      = _aPosition;
+@synthesize attribColor         = _aColor;
+@synthesize attribTexCoords     = _aTexCoords;
 
-@synthesize attribPosition = _aPosition;
-@synthesize attribColor = _aColor;
-@synthesize attribTexCoords = _aTexCoords;
-
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -66,6 +65,15 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
     return self;
 }
 
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_mvpMatrix);
+    SP_RELEASE_AND_NIL(_texture);
+    SP_RELEASE_AND_NIL(_program);
+
+    [super dealloc];
+}
+
 - (void)prepareToDraw
 {
     BOOL hasTexture = _texture != nil;
@@ -73,13 +81,13 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
 
     if (!_program)
     {
-        NSString *programName = getProgramName(hasTexture, useTinting);
+        NSString* programName = getProgramName(hasTexture, useTinting);
         _program = [Sparrow.currentController programByName:programName];
         
         if (!_program)
         {
-            NSString *vertexShader   = [self vertexShaderForTexture:_texture   useTinting:useTinting];
-            NSString *fragmentShader = [self fragmentShaderForTexture:_texture useTinting:useTinting];
+            NSString* vertexShader   = [self vertexShaderForTexture:_texture useTinting:useTinting];
+            NSString* fragmentShader = [self fragmentShaderForTexture:_texture useTinting:useTinting];
             _program = [[SPProgram alloc] initWithVertexShader:vertexShader fragmentShader:fragmentShader];
             [Sparrow.currentController registerProgram:_program name:programName];
         }
@@ -109,10 +117,10 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
     }
 }
 
-- (NSString *)vertexShaderForTexture:(SPTexture *)texture useTinting:(BOOL)useTinting
+- (NSString*)vertexShaderForTexture:(SPTexture*)texture useTinting:(BOOL)useTinting
 {
     BOOL hasTexture = texture != nil;
-    NSMutableString *source = [NSMutableString string];
+    NSMutableString* source = [NSMutableString string];
     
     // variables
     
@@ -139,10 +147,10 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
     return source;
 }
 
-- (NSString *)fragmentShaderForTexture:(SPTexture *)texture useTinting:(BOOL)useTinting
+- (NSString*)fragmentShaderForTexture:(SPTexture*)texture useTinting:(BOOL)useTinting
 {
     BOOL hasTexture = texture != nil;
-    NSMutableString *source = [NSMutableString string];
+    NSMutableString* source = [NSMutableString string];
     
     // variables
     
@@ -174,15 +182,15 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
     return source;
 }
 
-- (void)setMvpMatrix:(SPMatrix *)value
+- (void)setMvpMatrix:(SPMatrix*)value
 {
-    [_mvpMatrix copyFromMatrix:value];
+    SPMatrixCopyFrom(_mvpMatrix, value);
 }
 
 - (void)setAlpha:(float)value
 {
     if ((value >= 1.0f && _alpha < 1.0f) || (value < 1.0f && _alpha >= 1.0f))
-        _program = nil;
+        SP_RELEASE_AND_NIL(_program);
     
     _alpha = value;
 }
@@ -192,16 +200,16 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
     if (value != _useTinting)
     {
         _useTinting = value;
-        _program = nil;
+        SP_RELEASE_AND_NIL(_program);
     }
 }
 
-- (void)setTexture:(SPTexture *)value
+- (void)setTexture:(SPTexture*)value
 {
     if ((_texture && !value) || (!_texture && value))
-        _program = nil;
-    
-    _texture = value;
+        SP_RELEASE_AND_NIL(_program);
+
+    SP_ASSIGN_RETAIN(_texture, value);
 }
 
 @end

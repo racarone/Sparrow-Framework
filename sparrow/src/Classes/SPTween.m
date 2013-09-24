@@ -19,43 +19,31 @@ typedef float (*FnPtrTransition) (id, SEL, float);
 
 @implementation SPTween
 {
-    id _target;
-    SEL _transition;
-    IMP _transitionFunc;
-    NSMutableArray *_properties;
+    id                  _target;
+    SEL                 _transition;
+    IMP                 _transitionFunc;
+    NSMutableArray*     _properties;
     
-    double _totalTime;
-    double _currentTime;
-    double _delay;
+    double              _totalTime;
+    double              _currentTime;
+    double              _delay;
     
-    int _repeatCount;
-    double _repeatDelay;
-    BOOL _reverse;
-    int _currentCycle;
+    int                 _repeatCount;
+    double              _repeatDelay;
+    BOOL                _reverse;
+    int                 _currentCycle;
     
-    SPCallbackBlock _onStart;
-    SPCallbackBlock _onUpdate;
-    SPCallbackBlock _onRepeat;
-    SPCallbackBlock _onComplete;
+    SPCallbackBlock     _onStart;
+    SPCallbackBlock     _onUpdate;
+    SPCallbackBlock     _onRepeat;
+    SPCallbackBlock     _onComplete;
 }
 
-@synthesize totalTime = _totalTime;
-@synthesize currentTime = _currentTime;
-@synthesize delay = _delay;
-@synthesize target = _target;
-@synthesize repeatCount = _repeatCount;
-@synthesize repeatDelay = _repeatDelay;
-@synthesize reverse = _reverse;
-@synthesize onStart = _onStart;
-@synthesize onUpdate = _onUpdate;
-@synthesize onRepeat = _onRepeat;
-@synthesize onComplete = _onComplete;
-
-- (id)initWithTarget:(id)target time:(double)time transition:(NSString*)transition
+- (instancetype)initWithTarget:(id)target time:(double)time transition:(NSString*)transition
 {
     if ((self = [super init]))
     {
-        _target = target;
+        _target = [target retain];
         _totalTime = MAX(0.0001, time); // zero is not allowed
         _currentTime = 0;
         _delay = 0;
@@ -65,7 +53,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
         _reverse = NO;
 
         // create function pointer for transition
-        NSString *transMethod = [transition stringByAppendingString:TRANS_SUFFIX];
+        NSString* transMethod = [transition stringByAppendingString:TRANS_SUFFIX];
         _transition = NSSelectorFromString(transMethod);    
         if (![SPTransitions respondsToSelector:_transition])
             [NSException raise:SP_EXC_INVALID_OPERATION 
@@ -75,17 +63,29 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     return self;
 }
 
-- (id)initWithTarget:(id)target time:(double)time
+- (instancetype)initWithTarget:(id)target time:(double)time
 {
     return [self initWithTarget:target time:time transition:SP_TRANSITION_LINEAR];
+}
+
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_target);
+    SP_RELEASE_AND_NIL(_properties);
+    
+    SP_RELEASE_AND_NIL(_onStart);
+    SP_RELEASE_AND_NIL(_onUpdate);
+    SP_RELEASE_AND_NIL(_onRepeat);
+    SP_RELEASE_AND_NIL(_onComplete);
+
+    [super dealloc];
 }
 
 - (void)animateProperty:(NSString*)property targetValue:(float)value
 {    
     if (!_target) return; // tweening nil just does nothing.
     
-    SPTweenedProperty *tweenedProp = [[SPTweenedProperty alloc] 
-        initWithTarget:_target name:property endValue:value];
+    SPTweenedProperty* tweenedProp = [[[SPTweenedProperty alloc] initWithTarget:_target name:property endValue:value] autorelease];
     [_properties addObject:tweenedProp];
 }
 
@@ -132,7 +132,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     FnPtrTransition transFunc = (FnPtrTransition) _transitionFunc;
     Class transClass = [SPTransitions class];
     
-    for (SPTweenedProperty *prop in _properties)
+    for (SPTweenedProperty* prop in _properties)
     {
         if (isStarting) prop.startValue = prop.currentValue;
         float transitionValue = reversed ? transFunc(transClass, _transition, 1.0 - ratio) :
@@ -153,7 +153,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
         }
         else
         {
-            [self dispatchEventWithType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+            [self dispatchEventWithType:kSPEventTypeRemoveFromJuggler];
             if (_onComplete) _onComplete();
         }
     }
@@ -164,7 +164,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
 
 - (NSString*)transition
 {
-    NSString *selectorName = NSStringFromSelector(_transition);
+    NSString* selectorName = NSStringFromSelector(_transition);
     return [selectorName substringToIndex:selectorName.length - [TRANS_SUFFIX length]];
 }
 
@@ -179,14 +179,14 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     _delay = delay;
 }
 
-+ (id)tweenWithTarget:(id)target time:(double)time transition:(NSString*)transition
++ (instancetype)tweenWithTarget:(id)target time:(double)time transition:(NSString*)transition
 {
-    return [[self alloc] initWithTarget:target time:time transition:transition];
+    return [[[self alloc] initWithTarget:target time:time transition:transition] autorelease];
 }
 
-+ (id)tweenWithTarget:(id)target time:(double)time
++ (instancetype)tweenWithTarget:(id)target time:(double)time
 {
-    return [[self alloc] initWithTarget:target time:time];
+    return [[[self alloc] initWithTarget:target time:time] autorelease];
 }
 
 @end

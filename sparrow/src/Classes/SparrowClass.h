@@ -23,17 +23,17 @@
 @interface Sparrow : NSObject
 
 /// The currently active SPViewController.
-+ (SPViewController *)currentController;
++ (SPViewController*)currentController;
 
 /// A juggler that is advanced once per frame by the current view controller.
-+ (SPJuggler *)juggler;
++ (SPJuggler*)juggler;
 
 /// The stage that is managed by the current view controller.
-+ (SPStage *)stage;
++ (SPStage*)stage;
 
 /// The root object of your game, i.e. an instance of the class you passed to the 'startWithRoot:'
 /// method of SPViewController.
-+ (SPDisplayObject *)root;
++ (SPDisplayObject*)root;
 
 /// The content scale factor of the current view controller.
 + (float)contentScaleFactor;

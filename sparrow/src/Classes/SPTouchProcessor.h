@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 
 @class SPDisplayObjectContainer;
+@class SPTouch;
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -28,7 +29,7 @@
 /// ------------------
 
 /// Initializes a touch processor with a certain root object.
-- (id)initWithRoot:(SPDisplayObjectContainer*)root;
+- (instancetype)initWithRoot:(SPDisplayObjectContainer*)root;
 
 /// -------------
 /// @name Methods
@@ -42,6 +43,6 @@
 /// ----------------
 
 /// The root display container to check for touched targets.
-@property (nonatomic, weak) SPDisplayObjectContainer *root;
+@property (nonatomic, weak) SPDisplayObjectContainer* root;
 
 @end

@@ -46,12 +46,12 @@
     float fps = 4.0;
     double frameDuration = 1.0 / fps;
     
-    SPTexture *frame0 = [[SPTexture alloc] init];
-    SPTexture *frame1 = [[SPTexture alloc] init];
-    SPTexture *frame2 = [[SPTexture alloc] init];
-    SPTexture *frame3 = [[SPTexture alloc] init];
+    SPTexture* frame0 = [[SPTexture alloc] init];
+    SPTexture* frame1 = [[SPTexture alloc] init];
+    SPTexture* frame2 = [[SPTexture alloc] init];
+    SPTexture* frame3 = [[SPTexture alloc] init];
     
-    SPMovieClip *movie = [SPMovieClip movieWithFrame:frame0 fps:fps];    
+    SPMovieClip* movie = [SPMovieClip movieWithFrame:frame0 fps:fps];    
     
     STAssertEqualsWithAccuracy(frame0.width, movie.width, E, @"wrong size");
     STAssertEqualsWithAccuracy(frame0.height, movie.height, E, @"wrong size");
@@ -122,12 +122,12 @@
     float fps = 4.0;
     double frameDuration = 1.0 / fps;
     
-    SPTexture *frame0 = [[SPTexture alloc] init];
-    SPTexture *frame1 = [[SPTexture alloc] init];
-    SPTexture *frame2 = [[SPTexture alloc] init];
-    SPTexture *frame3 = [[SPTexture alloc] init];
+    SPTexture* frame0 = [[SPTexture alloc] init];
+    SPTexture* frame1 = [[SPTexture alloc] init];
+    SPTexture* frame2 = [[SPTexture alloc] init];
+    SPTexture* frame3 = [[SPTexture alloc] init];
     
-    SPMovieClip *movie = [SPMovieClip movieWithFrame:frame0 fps:fps];
+    SPMovieClip* movie = [SPMovieClip movieWithFrame:frame0 fps:fps];
     
     [movie addFrameWithTexture:frame1];
     [movie addFrameWithTexture:frame2 duration:0.5];
@@ -164,10 +164,10 @@
 
 - (void)testChangeFps
 {
-    NSArray *frames = @[[[SPTexture alloc] init], [[SPTexture alloc] init],
+    NSArray* frames = @[[[SPTexture alloc] init], [[SPTexture alloc] init],
                         [[SPTexture alloc] init]];
         
-    SPMovieClip *movie = [SPMovieClip movieWithFrames:frames fps:4.0f];    
+    SPMovieClip* movie = [SPMovieClip movieWithFrames:frames fps:4.0f];    
     STAssertEquals(4.0f, movie.fps, @"wrong fps");
     
     movie.fps = 3.0f;
@@ -192,13 +192,13 @@
     float fps = 4.0f;
     double frameDuration = 1.0 / fps;
     
-    NSArray *frames = @[[[SPTexture alloc] init], [[SPTexture alloc] init],
+    NSArray* frames = @[[[SPTexture alloc] init], [[SPTexture alloc] init],
                         [[SPTexture alloc] init], [[SPTexture alloc] init]];
     NSInteger numFrames = frames.count;
     
-    SPMovieClip *movie = [SPMovieClip movieWithFrames:frames fps:fps];    
+    SPMovieClip* movie = [SPMovieClip movieWithFrames:frames fps:fps];    
     [movie addEventListener:@selector(onMovieCompleted:) atObject:self 
-                    forType:SP_EVENT_TYPE_COMPLETED];
+                    forType:kSPEventTypeCompleted];
     
     movie.loop = NO;
     

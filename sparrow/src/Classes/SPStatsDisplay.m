@@ -18,20 +18,21 @@
 
 @implementation SPStatsDisplay
 {
-    SPTextField *_textField;
-    int _framesPerSecond;
-    int _numDrawCalls;
+    SPTextField*    _textField;
+    int             _framesPerSecond;
+    int             _numDrawCalls;
     
-    double _totalTime;
-    int _frameCount;
+    double          _totalTime;
+    int             _frameCount;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
-        SPQuad *background = [[SPQuad alloc] initWithWidth:45 height:17 color:0x0];
+        SPQuad* background = [[SPQuad alloc] initWithWidth:45 height:17 color:0x0];
         [self addChild:background];
+        SP_RELEASE_AND_NIL(background);
         
         _framesPerSecond = 0;
         _numDrawCalls = 0;
@@ -39,20 +40,26 @@
         self.blendMode = SP_BLEND_MODE_NONE;
         
         [self addEventListener:@selector(onAddedToStage:) atObject:self
-                       forType:SP_EVENT_TYPE_ADDED_TO_STAGE];
+                       forType:kSPEventTypeAddedToStage];
         [self addEventListener:@selector(onEnterFrame:) atObject:self
-                       forType:SP_EVENT_TYPE_ENTER_FRAME];
+                       forType:kSPEventTypeEnterFrame];
     }
     return self;
 }
 
-- (void)onAddedToStage:(SPEvent *)event
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_textField);
+    [super dealloc];
+}
+
+- (void)onAddedToStage:(SPEvent*)event
 {
     _framesPerSecond = _numDrawCalls = 0;
     [self update];
 }
 
-- (void)onEnterFrame:(SPEnterFrameEvent *)event
+- (void)onEnterFrame:(SPEnterFrameEvent*)event
 {
     _totalTime += event.passedTime;
     _frameCount++;

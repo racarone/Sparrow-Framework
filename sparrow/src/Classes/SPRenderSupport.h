@@ -13,24 +13,35 @@
 
 #import "SPMatrix.h"
 
-@class SPTexture;
 @class SPDisplayObject;
 @class SPQuad;
+@class SPQuadBatch;
+@class SPTexture;
+
+/// ViewPort definition
+struct __SPViewPort
+{
+    int x;
+    int y;
+    int width;
+    int height;
+};
+typedef struct __SPViewPort SPViewPort;
 
 /** ------------------------------------------------------------------------------------------------
 
  A class that contains helper methods simplifying OpenGL rendering.
- 
+
  An SPRenderSupport instance is passed to any render: method. It saves information about the
  current render state, like the alpha value, modelview matrix, and blend mode.
- 
+
  It also keeps a list of quad batches, which can be used to render a high number of quads
  very efficiently; only changes in the state of added quads trigger OpenGL draw calls.
- 
+
  Furthermore, several static helper methods can be used for different needs whenever some
  OpenGL processing is required.
- 
-------------------------------------------------------------------------------------------------- */
+
+ ------------------------------------------------------------------------------------------------- */
 
 @interface SPRenderSupport : NSObject
 
@@ -44,7 +55,13 @@
 /// Adds a quad or image to the current batch of unrendered quads. If there is a state change,
 /// all previous quads are rendered at once, and the batch is reset. Note that the values for
 /// alpha and blend mode are taken from the current render state, not the quad.
-- (void)batchQuad:(SPQuad *)quad;
+- (void)batchQuad:(SPQuad*)quad;
+
+/// Adds a batch of quads to the current batch of unrendered quads. If there is a state
+/// change, all previous quads are rendered at once.Note that you should call this method
+/// only for objects with a small number of quads (we recommend no more than 16). Otherwise,
+/// the additional CPU effort will be more expensive than what you save by avoiding the draw call.
+- (void)batchQuadBatch:(SPQuadBatch*)quadBatch;
 
 /// Renders the current quad batch and resets it.
 - (void)finishQuadBatch;
@@ -79,21 +96,41 @@
 /// Restores the previous render state.
 - (void)popState;
 
+
+/// --------------
+/// @name Clipping
+/// --------------
+
+/// The clipping SPRectangle can be used to limit rendering in the current render target to
+/// a certain area. This method expects the SPRectangle in stage coordinates. Internally,
+/// it uses the 'glScissor' command of OpenGL, which works with pixel coordinates.
+/// FAny pushed SPRectangle is intersected with the previous SPRectangle; the method returns
+/// that intersection.
+- (SPRectangle*)pushClipRect:(SPRectangle*)clipRect;
+
+/// Restores the clipping SPRectangle that was last pushed to the stack.
+- (void)popClipRect;
+
+/// Updates the scissor SPRectangle using the current clipping SPRectangle. This
+/// method is called automatically when either the render target, the projection SPMatrix,
+/// or the clipping SPRectangle changes.
+- (void)applyClipRect;
+
 /// ----------------
 /// @name Properties
 /// ----------------
 
 /// Calculates the product of modelview and projection matrix.
 /// CAUTION: Use with care! Each call returns the same instance.
-@property (nonatomic, readonly) SPMatrix *mvpMatrix;
+@property (nonatomic, readonly) SPMatrix* mvpMatrix;
 
 /// Returns the current modelview matrix.
 /// CAUTION: Use with care! Returns not a copy, but the internally used instance.
-@property (nonatomic, readonly) SPMatrix *modelviewMatrix;
+@property (nonatomic, readonly) SPMatrix* modelviewMatrix;
 
 /// Returns the current projection matrix.
 /// CAUTION: Use with care! Each call returns the same instance.
-@property (nonatomic, readonly) SPMatrix *projectionMatrix;
+@property (nonatomic, readonly) SPMatrix* projectionMatrix;
 
 /// Returns the current (accumulated) alpha value.
 @property (nonatomic, readonly) float alpha;
@@ -105,3 +142,4 @@
 @property (nonatomic, readonly) int numDrawCalls;
 
 @end
+

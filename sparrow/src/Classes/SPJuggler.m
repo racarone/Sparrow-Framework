@@ -16,20 +16,26 @@
 
 @implementation SPJuggler
 {
-    NSMutableArray *_objects;
-    double _elapsedTime;
+    NSMutableOrderedSet*    _objects;
+    double                  _elapsedTime;
 }
 
 @synthesize elapsedTime = _elapsedTime;
 
-- (id)init
+- (instancetype)init
 {    
     if ((self = [super init]))
     {        
-        _objects = [[NSMutableArray alloc] init];
+        _objects = [[NSMutableOrderedSet alloc] init];
         _elapsedTime = 0.0;
     }
     return self;
+}
+
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_objects);
+    [super dealloc];
 }
 
 - (void)advanceTime:(double)seconds
@@ -37,7 +43,8 @@
     _elapsedTime += seconds;
     
     // we need work with a copy, since user-code could modify the collection during the enumeration
-    for (id<SPAnimatable> object in [NSArray arrayWithArray:_objects])
+
+    for (id<SPAnimatable> object in [NSArray arrayWithArray:[_objects array]])
         [object advanceTime:seconds];
 }
 
@@ -48,12 +55,12 @@
         [_objects addObject:object];
         
         if ([(id)object isKindOfClass:[SPEventDispatcher class]])
-            [(SPEventDispatcher *)object addEventListener:@selector(onRemove:) atObject:self
-                                                  forType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+            [(SPEventDispatcher*)object addEventListener:@selector(onRemove:) atObject:self
+                                                  forType:kSPEventTypeRemoveFromJuggler];
     }
 }
 
-- (void)onRemove:(SPEvent *)event
+- (void)onRemove:(SPEvent*)event
 {
     [self removeObject:(id<SPAnimatable>)event.target];
 }
@@ -63,8 +70,8 @@
     [_objects removeObject:object];
     
     if ([(id)object isKindOfClass:[SPEventDispatcher class]])
-        [(SPEventDispatcher *)object removeEventListenersAtObject:self
-                                     forType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+        [(SPEventDispatcher*)object removeEventListenersAtObject:self
+                                     forType:kSPEventTypeRemoveFromJuggler];
 }
 
 - (void)removeAllObjects
@@ -72,8 +79,8 @@
     for (id object in _objects)
     {
         if ([(id)object isKindOfClass:[SPEventDispatcher class]])
-            [(SPEventDispatcher *)object removeEventListenersAtObject:self
-                                         forType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+            [(SPEventDispatcher*)object removeEventListenersAtObject:self
+                                         forType:kSPEventTypeRemoveFromJuggler];
     }
     
     [_objects removeAllObjects];
@@ -82,17 +89,18 @@
 - (void)removeObjectsWithTarget:(id)object
 {
     SEL targetSel = @selector(target);
-    NSMutableArray *remainingObjects = [[NSMutableArray alloc] init];
+    NSMutableOrderedSet* remainingObjects = [[NSMutableOrderedSet alloc] init];
     
     for (id currentObject in _objects)
     {
         if (![currentObject respondsToSelector:targetSel] || ![[currentObject target] isEqual:object])
             [remainingObjects addObject:currentObject];
         else if ([(id)currentObject isKindOfClass:[SPEventDispatcher class]])
-            [(SPEventDispatcher *)currentObject removeEventListenersAtObject:self
-                                                forType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+            [(SPEventDispatcher*)currentObject removeEventListenersAtObject:self
+                                                forType:kSPEventTypeRemoveFromJuggler];
     }
-    
+
+    [_objects release];
     _objects = remainingObjects;
 }
 
@@ -103,21 +111,21 @@
 
 - (id)delayInvocationAtTarget:(id)target byTime:(double)time
 {
-    SPDelayedInvocation *delayedInv = [SPDelayedInvocation invocationWithTarget:target delay:time];
+    SPDelayedInvocation* delayedInv = [SPDelayedInvocation invocationWithTarget:target delay:time];
     [self addObject:delayedInv];
     return delayedInv;    
 }
 
 - (id)delayInvocationByTime:(double)time block:(SPCallbackBlock)block
 {
-    SPDelayedInvocation *delayedInv = [SPDelayedInvocation invocationWithDelay:time block:block];
+    SPDelayedInvocation* delayedInv = [SPDelayedInvocation invocationWithDelay:time block:block];
     [self addObject:delayedInv];
     return delayedInv;
 }
 
-+ (SPJuggler *)juggler
++ (SPJuggler*)juggler
 {
-    return [[SPJuggler alloc] init];
+    return [[[SPJuggler alloc] init] autorelease];
 }
 
 @end

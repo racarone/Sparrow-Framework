@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import "SPEvent.h"
 
-#define SP_EVENT_TYPE_ENTER_FRAME @"enterFrame"
+SP_EXTERN NSString* const kSPEventTypeEnterFrame;
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -32,13 +32,13 @@
 /// ------------------
 
 /// Initializes an enter frame event with the passed time. _Designated Initializer_.
-- (id)initWithType:(NSString*)type bubbles:(BOOL)bubbles passedTime:(double)seconds;
+- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles passedTime:(double)seconds;
 
 /// Initializes an enter frame event that does not bubble (recommended).
-- (id)initWithType:(NSString*)type passedTime:(double)seconds;
+- (instancetype)initWithType:(NSString*)type passedTime:(double)seconds;
 
 /// Factory method.
-+ (id)eventWithType:(NSString*)type passedTime:(double)seconds;
++ (instancetype)eventWithType:(NSString*)type passedTime:(double)seconds;
 
 /// ----------------
 /// @name Properties

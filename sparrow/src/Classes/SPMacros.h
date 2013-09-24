@@ -9,12 +9,25 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Foundation/Foundation.h>
+#if defined(__OBJC__)
+    #import <Foundation/Foundation.h>
+#else
+    #include <CoreFoundation/CoreFoundation.h>
+#endif
+
 #import <math.h>
 
 // typedefs
 
 typedef void (^SPCallbackBlock)();
+
+// defines
+
+#ifdef __cplusplus
+    #define SP_EXTERN       extern "C" __attribute__((visibility ("default")))
+#else
+    #define SP_EXTERN       extern __attribute__((visibility ("default")))
+#endif
 
 // constants
 
@@ -58,6 +71,38 @@ typedef void (^SPCallbackBlock)();
 
 // macros
 
+#if __has_feature(objc_arc)
+    #define SP_AUTORELEASE(_var) _var
+#else
+    #define SP_AUTORELEASE(_var) [_var autorelease]
+#endif
+
+#define SP_RETAIN_BLOCK(_var) \
+    for (id __obj__ = [_var retain]; __obj__; [__obj__ release], __obj__ = nil)
+
+#define SP_RELEASE_AND_NIL(_var) \
+    [_var release]; _var = nil
+
+#define SP_ASSIGN_RETAIN(_old, _new) \
+    do {\
+        if (_old == _new) break; \
+        id tmp = _old;\
+        _old = [_new retain];\
+        [tmp release];\
+    }\
+    while (0)
+
+#define SP_ASSIGN_COPY(_old, _new) \
+    do {\
+        if (_old == _new) break; \
+        id tmp = _old;\
+        _old = [_new copy];\
+        [tmp release];\
+    }\
+while (0)
+
+// macros
+
 #define SP_R2D(rad)                 ((rad) / PI * 180.0f)
 #define SP_D2R(deg)                 ((deg) / 180.0f * PI)
 
@@ -71,6 +116,7 @@ typedef void (^SPCallbackBlock)();
 
 #define SP_IS_FLOAT_EQUAL(f1, f2)   (fabsf((f1)-(f2)) < SP_FLOAT_EPSILON)
 
+#define SP_SQUARE(x)                ((x) * (x))
 #define SP_CLAMP(value, min, max)   MIN((max), MAX((value), (min)))
 
 #define SP_SWAP(x, y, T)            do { T temp##x##y = x; x = y; y = temp##x##y; } while (0)

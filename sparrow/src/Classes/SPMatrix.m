@@ -10,195 +10,130 @@
 //
 
 #import "SPMatrix.h"
+#import "SPMatrix_Internal.h"
 #import "SPPoint.h"
 #import "SPMacros.h"
 
-@implementation SPMatrix
+typedef id(*SPMatrixAllocIMP)(id,SEL);
+
+static id               __SPMatrixAllocClass;
+static SEL              __SPMatrixAllocSEL;
+static SPMatrixAllocIMP __SPMatrixAllocIMP;
+
+SPMatrix* SPMatrixAlloc(void)
 {
-    float _a, _b, _c, _d;
-    float _tx, _ty;
+    return __SPMatrixAllocIMP(__SPMatrixAllocClass, __SPMatrixAllocSEL);
 }
+
+@implementation SPMatrix
 
 @synthesize a=_a, b=_b, c=_c, d=_d, tx=_tx, ty=_ty;
 
-// --- c functions ---
-
-static inline void setValues(SPMatrix *matrix, float a, float b, float c, float d, float tx, float ty)
++ (void)initialize
 {
-    matrix->_a = a;
-    matrix->_b = b;
-    matrix->_c = c;
-    matrix->_d = d;
-    matrix->_tx = tx;
-    matrix->_ty = ty;    
+    __SPMatrixAllocClass    = self;
+    __SPMatrixAllocSEL      = @selector(alloc);
+    __SPMatrixAllocIMP      = (SPMatrixAllocIMP)[self methodForSelector:__SPMatrixAllocSEL];
 }
-
-// ---
 
 - (id)initWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
 {
-    if ((self = [super init]))
-    {
-        _a = a; _b = b; _c = c; _d = d;
-        _tx = tx; _ty = ty;
-    }
+    SPMatrixSet(self, a, b, c, d, tx, ty);
     return self;
 }
 
 - (id)init
 {
-    return [self initWithA:1 b:0 c:0 d:1 tx:0 ty:0];
+    SPMatrixIdentity(self);
+    return self;
 }
 
 - (void)setA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
 {
-    _a = a; _b = b; _c = c; _d = d;
-    _tx = tx; _ty = ty;
+    SPMatrixSet(self, a, b, c, d, tx, ty);
 }
 
 - (float)determinant
 {
-    return _a * _d - _c * _b;
+    return SPMatrixGetDeterminant(self);
 }
 
 - (void)appendMatrix:(SPMatrix*)lhs
 {
-    setValues(self, lhs->_a * _a  + lhs->_c * _b, 
-                    lhs->_b * _a  + lhs->_d * _b, 
-                    lhs->_a * _c  + lhs->_c * _d,
-                    lhs->_b * _c  + lhs->_d * _d,
-                    lhs->_a * _tx + lhs->_c * _ty + lhs->_tx,
-                    lhs->_b * _tx + lhs->_d * _ty + lhs->_ty);
+    SPMatrixAppendMatrix(self, lhs);
 }
 
-- (void)prependMatrix:(SPMatrix *)rhs
+- (void)prependMatrix:(SPMatrix*)rhs
 {
-    setValues(self, _a * rhs->_a + _c * rhs->_b,
-                    _b * rhs->_a + _d * rhs->_b,
-                    _a * rhs->_c + _c * rhs->_d,
-                    _b * rhs->_c + _d * rhs->_d,
-                    _tx + _a * rhs->_tx + _c * rhs->_ty,
-                    _ty + _b * rhs->_tx + _d * rhs->_ty);
+    SPMatrixPrependMatrix(self, rhs);
 }
 
 - (void)translateXBy:(float)dx yBy:(float)dy
 {
-    _tx += dx;
-    _ty += dy;    
+    SPMatrixTranslateBy(self, dx, dy);
 }
 
 - (void)scaleXBy:(float)sx yBy:(float)sy
 {
-    if (sx != 1.0f)
-    {
-        _a  *= sx;
-        _c  *= sx;
-        _tx *= sx;
-    }
-    
-    if (sy != 1.0f)
-    {
-        _b  *= sy;
-        _d  *= sy;
-        _ty *= sy;
-    }
+    SPMatrixScaleBy(self, sx, sy);
 }
 
 - (void)scaleBy:(float)scale
 {
-    [self scaleXBy:scale yBy:scale];
+    SPMatrixScale(self, scale);
 }
 
 - (void)rotateBy:(float)angle
 {
-    if (angle == 0.0f) return;
-    
-    float cos = cosf(angle);
-    float sin = sinf(angle);
-    
-    setValues(self,  _a * cos -  _b * sin,  _a * sin +  _b * cos,
-                     _c * cos -  _d * sin,  _c * sin +  _d * cos,
-                    _tx * cos - _ty * sin, _tx * sin + _ty * cos);
+    SPMatrixRotateBy(self, angle);
 }
 
 - (void)skewXBy:(float)sx yBy:(float)sy
 {
-    float sinX = sinf(sx);
-    float cosX = cosf(sx);
-    float sinY = sinf(sy);
-    float cosY = cosf(sy);
-    
-    setValues(self, _a  * cosY - _b  * sinX,
-                    _a  * sinY + _b  * cosX,
-                    _c  * cosY - _d  * sinX,
-                    _c  * sinY + _d  * cosX,
-                    _tx * cosY - _ty * sinX,
-                    _tx * sinY + _ty * cosX);
+    SPMatrixSkewBy(self, sx, sy);
 }
 
 - (void)identity
 {
-    setValues(self, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+    SPMatrixIdentity(self);
 }
 
 - (SPPoint*)transformPoint:(SPPoint*)point
 {
-    return [SPPoint pointWithX:_a*point.x + _c*point.y + _tx
-                             y:_b*point.x + _d*point.y + _ty];
+    return SPMatrixTransformPoint(self, point);
 }
 
-- (SPPoint *)transformPointWithX:(float)x y:(float)y
+- (SPPoint*)transformPointWithX:(float)x y:(float)y
 {
-    return [SPPoint pointWithX:_a*x + _c*y + _tx
-                             y:_b*x + _d*y + _ty];
+    return SPMatrixTransformPointWith(self, x, y);
 }
 
 - (void)invert
 {
-    float det = self.determinant;
-    setValues(self, _d/det, -_b/det, -_c/det, _a/det, (_c*_ty-_d*_tx)/det, (_b*_tx-_a*_ty)/det);
+    SPMatrixInvert(self);
 }
 
-- (void)copyFromMatrix:(SPMatrix *)matrix
+- (void)copyFromMatrix:(SPMatrix*)matrix
 {
-    setValues(self, matrix->_a, matrix->_b, matrix->_c, matrix->_d, matrix->_tx, matrix->_ty);
+    SPMatrixCopyFrom(self, matrix);
 }
 
 - (GLKMatrix4)convertToGLKMatrix4
 {
-    GLKMatrix4 matrix = GLKMatrix4Identity;
-    
-    matrix.m00 = _a;
-    matrix.m01 = _b;
-    matrix.m10 = _c;
-    matrix.m11 = _d;
-    matrix.m30 = _tx;
-    matrix.m31 = _ty;
-    
-    return matrix;
+    return SPMatrixConvertToGLKMatrix4(self);
 }
 
 - (GLKMatrix3)convertToGLKMatrix3
 {
-    return GLKMatrix3Make(_a,  _b,  0.0f,
-                          _c,  _d,  0.0f,
-                          _tx, _ty, 1.0f);
+    return SPMatrixConvertToGLKMatrix3(self);
 }
 
-- (BOOL)isEquivalent:(SPMatrix *)other
+- (BOOL)isEquivalent:(SPMatrix*)other
 {
-    if (other == self) return YES;
-    else if (!other) return NO;
-    else 
-    {    
-        SPMatrix *matrix = (SPMatrix*)other;
-        return SP_IS_FLOAT_EQUAL(_a, matrix->_a) && SP_IS_FLOAT_EQUAL(_b, matrix->_b) &&
-               SP_IS_FLOAT_EQUAL(_c, matrix->_c) && SP_IS_FLOAT_EQUAL(_d, matrix->_d) &&
-               SP_IS_FLOAT_EQUAL(_tx, matrix->_tx) && SP_IS_FLOAT_EQUAL(_ty, matrix->_ty);
-    }
+    return SPMatrixIsEquivilant(self, other);
 }
 
-- (NSString *)description
+- (NSString*)description
 {
     return [NSString stringWithFormat:@"[SPMatrix: a=%f, b=%f, c=%f, d=%f, tx=%f, ty=%f]", 
             _a, _b, _c, _d, _tx, _ty];
@@ -206,12 +141,12 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 
 + (id)matrixWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
 {
-    return [[self alloc] initWithA:a b:b c:c d:d tx:tx ty:ty];
+    return [[[self alloc] initWithA:a b:b c:c d:d tx:tx ty:ty] autorelease];
 }
 
 + (id)matrixWithIdentity
 {
-    return [[self alloc] init];
+    return [[[self alloc] init] autorelease];
 }
 
 #pragma mark NSCopying

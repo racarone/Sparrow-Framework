@@ -9,10 +9,12 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPStage.h"
 #import "SPDisplayObject_Internal.h"
+#import "SPDisplayObjectContainer_Internal.h"
+#import "SPEnterFrameEvent.h"
 #import "SPMacros.h"
 #import "SPRenderSupport.h"
+#import "SPStage_Internal.h"
 
 #import <UIKit/UIKit.h>
 
@@ -20,29 +22,45 @@
 
 @implementation SPStage
 {
-    float _width;
-    float _height;
-    uint  _color;
+    float           _width;
+    float           _height;
+    uint            _color;
+    NSMutableArray* _enterFrameListeners;
 }
 
-@synthesize width = _width;
-@synthesize height = _height;
-@synthesize color = _color;
+@synthesize width   = _width;
+@synthesize height  = _height;
+@synthesize color   = _color;
 
-- (id)initWithWidth:(float)width height:(float)height
+- (instancetype)initWithWidth:(float)width height:(float)height
 {    
     if ((self = [super init]))
     {
         _width = width;
         _height = height;
+        _enterFrameListeners = [[NSMutableArray alloc] init];
     }
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
     return [self initWithWidth:screenSize.width height:screenSize.height];
+}
+
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_enterFrameListeners);
+
+    [super dealloc];
+}
+
+- (void)advanceTime:(double)seconds
+{
+    SPEnterFrameEvent* enterFrameEvent = [[SPEnterFrameEvent alloc]initWithType:kSPEventTypeEnterFrame passedTime:seconds];
+    [self broadcastEvent:enterFrameEvent];
+    [enterFrameEvent release];
 }
 
 - (SPDisplayObject*)hitTestPoint:(SPPoint*)localPoint
@@ -51,13 +69,13 @@
         return nil;
     
     // if nothing else is hit, the stage returns itself as target
-    SPDisplayObject *target = [super hitTestPoint:localPoint];
+    SPDisplayObject* target = [super hitTestPoint:localPoint];
     if (!target) target = self;
     
     return target;
 }
 
-- (void)render:(SPRenderSupport *)support
+- (void)render:(SPRenderSupport*)support
 {
     [SPRenderSupport clearWithColor:_color alpha:1.0f];
     [support setupOrthographicProjectionWithLeft:0 right:_width top:0 bottom:_height];
@@ -113,3 +131,26 @@
 @end
 
 // -------------------------------------------------------------------------------------------------
+
+@implementation SPStage (Internal)
+
+- (void)addEnterFrameListener:(SPDisplayObject*)listener
+{
+    [_enterFrameListeners addObject:listener];
+}
+
+- (void)removeEnterFrameListener:(SPDisplayObject*)listener
+{
+    NSUInteger index = [_enterFrameListeners indexOfObject:listener];
+    if (index != NSNotFound) [_enterFrameListeners removeObjectAtIndex:index];
+}
+
+- (void)getChildEventListeners:(SPDisplayObject*)object eventType:(NSString*)type listeners:(NSMutableArray*)listeners
+{
+    if ([type isEqualToString:kSPEventTypeEnterFrame] && object == self)
+        [listeners addObjectsFromArray:_enterFrameListeners];
+    else
+        [super getChildEventListeners:object eventType:type listeners:listeners];
+}
+
+@end

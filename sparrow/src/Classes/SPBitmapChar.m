@@ -14,26 +14,20 @@
 
 @implementation SPBitmapChar
 {
-    SPTexture *_texture;
-    int _charID;
-    float _xOffset;
-    float _yOffset;
-    float _xAdvance;
-    NSMutableDictionary *_kernings;
+    SPTexture*              _texture;
+    int                     _charID;
+    float                   _xOffset;
+    float                   _yOffset;
+    float                   _xAdvance;
+    NSMutableDictionary*    _kernings;
 }
 
-@synthesize charID = _charID;
-@synthesize xOffset = _xOffset;
-@synthesize yOffset = _yOffset;
-@synthesize xAdvance = _xAdvance;
-@synthesize texture = _texture;
-
-- (id)initWithID:(int)charID texture:(SPTexture *)texture
+- (instancetype)initWithID:(int)charID texture:(SPTexture*)texture
          xOffset:(float)xOffset yOffset:(float)yOffset xAdvance:(float)xAdvance;
 {
     if ((self = [super init]))
     {
-        _texture = texture;
+        _texture = [texture retain];
         _charID = charID;
         _xOffset = xOffset;
         _yOffset = yOffset;
@@ -43,14 +37,21 @@
     return self;
 }
 
-- (id)initWithTexture:(SPTexture *)texture
+- (instancetype)initWithTexture:(SPTexture*)texture
 {
     return [self initWithID:0 texture:texture xOffset:0 yOffset:0 xAdvance:texture.width];
 }
 
-- (id)init
+- (instancetype)init
 {
     return nil;
+}
+
+- (void)dealloc
+{
+    SP_RELEASE_AND_NIL(_texture);
+    SP_RELEASE_AND_NIL(_kernings);
+    [super dealloc];
 }
 
 - (void)addKerning:(float)amount toChar:(int)charID
@@ -63,11 +64,11 @@
 
 - (float)kerningToChar:(int)charID
 {
-	NSNumber *amount = (NSNumber *)_kernings[@(charID)];
+	NSNumber* amount = (NSNumber*)_kernings[@(charID)];
 	return [amount floatValue];
 }
 
-- (SPImage *)createImage
+- (SPImage*)createImage
 {
     return [SPImage imageWithTexture:_texture];
 }

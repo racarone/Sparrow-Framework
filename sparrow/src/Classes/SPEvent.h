@@ -10,17 +10,18 @@
 //
 
 #import <Foundation/Foundation.h>
-
-#define SP_EVENT_TYPE_ADDED @"added"
-#define SP_EVENT_TYPE_ADDED_TO_STAGE @"addedToStage"
-#define SP_EVENT_TYPE_REMOVED @"removed"
-#define SP_EVENT_TYPE_REMOVED_FROM_STAGE @"removedFromStage"
-#define SP_EVENT_TYPE_REMOVE_FROM_JUGGLER @"removeFromJuggler"
-#define SP_EVENT_TYPE_COMPLETED @"completed"
-#define SP_EVENT_TYPE_TRIGGERED @"triggered"
-#define SP_EVENT_TYPE_FLATTEN @"flatten"
+#import "SPMacros.h"
 
 @class SPEventDispatcher;
+
+SP_EXTERN NSString* const kSPEventTypeAdded;
+SP_EXTERN NSString* const kSPEventTypeAddedToStage;
+SP_EXTERN NSString* const kSPEventTypeRemoved;
+SP_EXTERN NSString* const kSPEventTypeRemovedFromStage;
+SP_EXTERN NSString* const kSPEventTypeRemoveFromJuggler;
+SP_EXTERN NSString* const kSPEventTypeCompleted;
+SP_EXTERN NSString* const kSPEventTypeTriggered;
+SP_EXTERN NSString* const kSPEventTypeFlatten;
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -48,16 +49,16 @@
 /// ------------------
 
 /// Initializes an event object that can be passed to listeners. _Designated Initializer_.
-- (id)initWithType:(NSString*)type bubbles:(BOOL)bubbles;
+- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles;
 
 /// Initializes a non-bubbling event.
-- (id)initWithType:(NSString*)type;
+- (instancetype)initWithType:(NSString*)type;
 
 /// Factory method.
-+ (id)eventWithType:(NSString*)type bubbles:(BOOL)bubbles;
++ (instancetype)eventWithType:(NSString*)type bubbles:(BOOL)bubbles;
 
 /// Factory method.
-+ (id)eventWithType:(NSString*)type;
++ (instancetype)eventWithType:(NSString*)type;
 
 /// -------------
 /// @name Methods
@@ -74,15 +75,15 @@
 /// ----------------
 
 /// A string that identifies the event.
-@property (nonatomic, readonly) NSString *type; 
+@property (nonatomic, readonly) NSString* type; 
 
 /// Indicates if event will bubble.
 @property (nonatomic, readonly) BOOL bubbles; 
 
 /// The object that dispatched the event.
-@property (weak, nonatomic, readonly) SPEventDispatcher *target; 
+@property (weak, nonatomic, readonly) SPEventDispatcher* target; 
 
 /// The object the event is currently bubbling at.
-@property (weak, nonatomic, readonly) SPEventDispatcher *currentTarget; 
+@property (weak, nonatomic, readonly) SPEventDispatcher* currentTarget; 
 
 @end

@@ -65,7 +65,7 @@
 {
     __block int callCount = 0;
     
-    SPDelayedInvocation *delayedInv = [[SPDelayedInvocation alloc] initWithDelay:1.0f block:^
+    SPDelayedInvocation* delayedInv = [[SPDelayedInvocation alloc] initWithDelay:1.0f block:^
     {
         ++callCount;
     }];

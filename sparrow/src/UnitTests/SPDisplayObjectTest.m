@@ -38,9 +38,9 @@
 
 - (void)testBase
 {
-    SPSprite *base = [[SPSprite alloc] init];
-    SPSprite *child = [[SPSprite alloc] init];
-    SPSprite *grandChild = [[SPSprite alloc] init];
+    SPSprite* base = [[SPSprite alloc] init];
+    SPSprite* child = [[SPSprite alloc] init];
+    SPSprite* grandChild = [[SPSprite alloc] init];
     
     [base addChild:child];
     [child addChild:grandChild];
@@ -51,9 +51,9 @@
 - (void)testRoot
 {
     SPStage  *stage = [[SPStage alloc] init];
-    SPSprite *root = [[SPSprite alloc] init];
-    SPSprite *child = [[SPSprite alloc] init];
-    SPSprite *grandChild = [[SPSprite alloc] init];
+    SPSprite* root = [[SPSprite alloc] init];
+    SPSprite* child = [[SPSprite alloc] init];
+    SPSprite* grandChild = [[SPSprite alloc] init];
     
     [stage addChild:root];
     [root addChild:child];
@@ -64,8 +64,8 @@
 
 - (void)testTransformationMatrixToSpace
 {
-    SPSprite *sprite = [SPSprite sprite];
-    SPSprite *child = [SPSprite sprite];
+    SPSprite* sprite = [SPSprite sprite];
+    SPSprite* child = [SPSprite sprite];
     child.x = 30;
     child.y = 20;
     child.scaleX = 1.2f;
@@ -73,8 +73,8 @@
     child.rotation = PI/4.0f;    
     [sprite addChild:child];
     
-    SPMatrix *matrix = [sprite transformationMatrixToSpace:child];    
-    SPMatrix *expectedMatrix = child.transformationMatrix;
+    SPMatrix* matrix = [sprite transformationMatrixToSpace:child];    
+    SPMatrix* expectedMatrix = child.transformationMatrix;
     [expectedMatrix invert];
     STAssertTrue([matrix isEquivalent:expectedMatrix], @"wrong matrix");
 
@@ -86,14 +86,14 @@
 
 - (void)testTransformationMatrix
 {
-    SPSprite *sprite = [[SPSprite alloc] init];
+    SPSprite* sprite = [[SPSprite alloc] init];
     sprite.x = 50;
     sprite.y = 100;
     sprite.rotation = PI / 4;
     sprite.scaleX = 0.5;
     sprite.scaleY = 1.5;
     
-    SPMatrix *matrix = [[SPMatrix alloc] init];
+    SPMatrix* matrix = [[SPMatrix alloc] init];
     [matrix scaleXBy:sprite.scaleX yBy:sprite.scaleY];
     [matrix rotateBy:sprite.rotation];
     [matrix translateXBy:sprite.x yBy:sprite.y];
@@ -109,12 +109,12 @@
     float scaleY = 1.5f;
     float rotation = PI / 4.0f;
     
-    SPMatrix *matrix = [[SPMatrix alloc] init];
+    SPMatrix* matrix = [[SPMatrix alloc] init];
     [matrix scaleXBy:scaleX yBy:scaleY];
     [matrix rotateBy:rotation];
     [matrix translateXBy:x yBy:y];
     
-    SPSprite *sprite = [[SPSprite alloc] init];
+    SPSprite* sprite = [[SPSprite alloc] init];
     sprite.transformationMatrix = matrix;
     
     STAssertEqualsWithAccuracy(x, sprite.x, E, @"wrong x coord");
@@ -126,11 +126,11 @@
 
 - (void)testBounds
 {
-    SPQuad *quad = [[SPQuad alloc] initWithWidth:10 height:20];
+    SPQuad* quad = [[SPQuad alloc] initWithWidth:10 height:20];
     quad.x = -10;
     quad.y = 10;
     quad.rotation = PI_HALF;
-    SPRectangle *bounds = quad.bounds;
+    SPRectangle* bounds = quad.bounds;
     
     STAssertTrue(SP_IS_FLOAT_EQUAL(-30, bounds.x), @"wrong bounds.x: %f", bounds.x);
     STAssertTrue(SP_IS_FLOAT_EQUAL(10, bounds.y), @"wrong bounds.y: %f", bounds.y);
@@ -146,7 +146,7 @@
 
 - (void)testZeroSize
 {
-    SPSprite *sprite = [SPSprite sprite];
+    SPSprite* sprite = [SPSprite sprite];
     STAssertEqualsWithAccuracy(1.0f, sprite.scaleX, E, @"wrong scaleX value");
     STAssertEqualsWithAccuracy(1.0f, sprite.scaleY, E, @"wrong scaleY value");
     
@@ -159,7 +159,7 @@
     STAssertEqualsWithAccuracy(0.0f, sprite.height, E, @"wrong height");
     
     // setting a value to zero should be no problem -- and the original size should be remembered.
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:200];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:200];
     quad.scaleX = 0.0f;
     quad.scaleY = 0.0f;
     STAssertEqualsWithAccuracy(0.0f, quad.width,  E, @"wrong width");
@@ -175,19 +175,19 @@
 
 - (void)testLocalToGlobal
 {
-    SPSprite *root = [[SPSprite alloc] init];
-    SPSprite *sprite = [[SPSprite alloc] init];
+    SPSprite* root = [[SPSprite alloc] init];
+    SPSprite* sprite = [[SPSprite alloc] init];
     sprite.x = 10;
     sprite.y = 20;
     [root addChild:sprite];
-    SPSprite *sprite2 = [[SPSprite alloc] init];
+    SPSprite* sprite2 = [[SPSprite alloc] init];
     sprite2.x = 150;
     sprite2.y = 200;    
     [sprite addChild:sprite2];
     
-    SPPoint *localPoint = [SPPoint pointWithX:0 y:0];
-    SPPoint *globalPoint = [sprite2 localToGlobal:localPoint];
-    SPPoint *expectedPoint = [SPPoint pointWithX:160 y:220];    
+    SPPoint* localPoint = [SPPoint pointWithX:0 y:0];
+    SPPoint* globalPoint = [sprite2 localToGlobal:localPoint];
+    SPPoint* expectedPoint = [SPPoint pointWithX:160 y:220];    
     STAssertTrue([globalPoint isEquivalent:expectedPoint], @"wrong global point");
     
     // the position of the root object should be irrelevant -- we want the coordinates
@@ -199,35 +199,35 @@
 
 - (void)testLocalToGlobalWithPivot
 {
-    SPSprite *sprite = [SPSprite sprite];
-    SPQuad *quad = [SPQuad quadWithWidth:40 height:30];
+    SPSprite* sprite = [SPSprite sprite];
+    SPQuad* quad = [SPQuad quadWithWidth:40 height:30];
     quad.x = 10;
     quad.y = 20;
     quad.pivotX = quad.width;
     quad.pivotY = quad.height;
     [sprite addChild:quad];
-    SPPoint *point = [SPPoint pointWithX:0.0f y:0.0f];
+    SPPoint* point = [SPPoint pointWithX:0.0f y:0.0f];
     
-    SPPoint *globalPoint = [quad localToGlobal:point];
+    SPPoint* globalPoint = [quad localToGlobal:point];
     STAssertEqualsWithAccuracy(-30.0f, globalPoint.x, E, @"wrong global point with pivot");
     STAssertEqualsWithAccuracy(-10.0f, globalPoint.y, E, @"wrong global point with pivot");
 }
 
 - (void)testGlobalToLocal
 {
-    SPSprite *root = [[SPSprite alloc] init];
-    SPSprite *sprite = [[SPSprite alloc] init];
+    SPSprite* root = [[SPSprite alloc] init];
+    SPSprite* sprite = [[SPSprite alloc] init];
     sprite.x = 10;
     sprite.y = 20;
     [root addChild:sprite];
-    SPSprite *sprite2 = [[SPSprite alloc] init];
+    SPSprite* sprite2 = [[SPSprite alloc] init];
     sprite2.x = 150;
     sprite2.y = 200;    
     [sprite addChild:sprite2];
     
-    SPPoint *globalPoint = [SPPoint pointWithX:160 y:220];
-    SPPoint *localPoint = [sprite2 globalToLocal:globalPoint];
-    SPPoint *expectedPoint = [SPPoint pointWithX:0 y:0];    
+    SPPoint* globalPoint = [SPPoint pointWithX:160 y:220];
+    SPPoint* localPoint = [sprite2 globalToLocal:globalPoint];
+    SPPoint* expectedPoint = [SPPoint pointWithX:0 y:0];    
     STAssertTrue([localPoint isEquivalent:expectedPoint], @"wrong local point");
     
     // the position of the root object should be irrelevant -- we want the coordinates
@@ -239,7 +239,7 @@
 
 - (void)testHitTestPoint
 {
-    SPQuad *quad = [[SPQuad alloc] initWithWidth:25 height:10];
+    SPQuad* quad = [[SPQuad alloc] initWithWidth:25 height:10];
     
     STAssertNotNil([quad hitTestPoint:[SPPoint pointWithX:15 y:5]], 
                    @"point should be inside");
@@ -268,7 +268,7 @@
 
 - (void)testRotation
 {
-    SPQuad *quad = [SPQuad quadWithWidth:100 height:100];
+    SPQuad* quad = [SPQuad quadWithWidth:100 height:100];
     
     quad.rotation = SP_D2R(400);  
     STAssertEqualsWithAccuracy(SP_D2R(40.0f), quad.rotation, E, @"wrong angle");    
@@ -298,11 +298,11 @@
     // a quad with a pivot point should behave exactly as a quad without 
     // pivot point inside a sprite
     
-    SPSprite *sprite = [SPSprite sprite];
-    SPQuad *innerQuad = [SPQuad quadWithWidth:width height:height];
+    SPSprite* sprite = [SPSprite sprite];
+    SPQuad* innerQuad = [SPQuad quadWithWidth:width height:height];
     [sprite addChild:innerQuad];
     
-    SPQuad *quad = [SPQuad quadWithWidth:width height:height];
+    SPQuad* quad = [SPQuad quadWithWidth:width height:height];
     
     STAssertTrue([sprite.bounds isEquivalent:quad.bounds], @"Bounds are not equal (no pivot)");
    
@@ -340,7 +340,7 @@
  
 - (void)testName
 {
-    SPSprite *sprite = [SPSprite sprite];
+    SPSprite* sprite = [SPSprite sprite];
     STAssertNil(sprite.name, @"name not nil after initialization");
     
     sprite.name = @"hugo";
