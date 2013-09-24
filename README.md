@@ -1,30 +1,20 @@
-Sparrow Framework
-=================
+Sparrow(S)
+==========
 
-**The Open Source Game Engine for iOS**
+This version of Sparrow has been reverted to MRC (manual retain count) from ARC and has other internal changes in order to improve performance. It also includes features from it's cousin framework Starling such as Sprite clipping.
 
-What is Sparrow?
-----------------
- 
-Sparrow is a pure Objective C library targeted on making game development as easy and hassle-free
-as possible. Sparrow makes it possible to write fast OpenGL applications without having to touch
-OpenGL or pure C (but easily allowing to do so, for those who wish). It uses a tried and tested
-API that is easy to use and hard to misuse.
+Sparrow(S)
+==========
 
-Who is Sparrow for?
--------------------
- 
-Obviously, Sparrow is for iPhone and iPad developers, especially those involved in game development.
-You will need to have a basic understanding of Objective-C – but there’s no way around that on iOS 
-anyway.
+This version of Sparrow has been reverted to MRC (manual retain count) from ARC and has other internal changes in order to improve performance. 
 
-If you have already worked with Adobe™ Flash/AIR technology, you will immediately befriend with
-Sparrow since it uses lots of similar concepts and naming schemes. That said, everything is
-designed to be as intuitive as possible, so any Java™ or .Net™ developer will get the hang of it
-quickly as well.
+**Benchmark Comparison:**
 
-How to start?
--------------
+[iPhone5] Sparrow(S) with MRC @ 60fps 	- ~6640 objects
+[iPhone5] Sparrow(S) with MRC @ 30fps - ~12735 objects
 
-* Read through the file 'BUILDING.md' for a quick start with Sparrow.
-* Visit <http://www.sparrow-framework.org>
+[iPhone5] Sparrow-Framework ARC @ 60fps - ~1815 objects
+[iPhone5] Sparrow-Framework ARC @ 30fps - ~3825 objects
+
+
+

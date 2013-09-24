@@ -36,7 +36,6 @@ void onUncaughtException(NSException* exception)
 
     _viewController = [[SPViewController alloc] init];
     _viewController.multitouchEnabled = YES;
-    _viewController.preferredFramesPerSecond = 60;
     [_viewController startWithRoot:[Game class] supportHighResolutions:YES doubleOnPad:YES];
     
     [_window setRootViewController:_viewController];
