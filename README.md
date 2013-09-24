@@ -1,4 +1,4 @@
-Sparrow(S)
+Sparrow-S
 ==========
 
 This version of Sparrow has been reverted to MRC (manual retain count) from ARC and has other internal changes in order to improve performance. 
