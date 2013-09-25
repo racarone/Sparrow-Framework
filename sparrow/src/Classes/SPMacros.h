@@ -17,14 +17,6 @@
 
 typedef void (^SPCallbackBlock)();
 
-// defines
-
-#ifdef __cplusplus
-    #define SP_EXTERN       extern "C" __attribute__((visibility ("default")))
-#else
-    #define SP_EXTERN       extern __attribute__((visibility ("default")))
-#endif
-
 // constants
 
 #define PI       3.14159265359f
@@ -65,6 +57,20 @@ typedef void (^SPCallbackBlock)();
 #define SP_EXC_DATA_INVALID         @"DataInvalid"
 #define SP_EXC_OPERATION_FAILED     @"OperationFailed"
 
+// old events
+
+#define SP_EVENT_TYPE_ADDED                 kSPEventTypeAdded
+#define SP_EVENT_TYPE_ADDED_TO_STAGE        kSPEventTypeAddedToStage
+#define SP_EVENT_TYPE_REMOVED               kSPEventTypeRemoved
+#define SP_EVENT_TYPE_REMOVED_FROM_STAGE    kSPEventTypeRemovedFromStage
+#define SP_EVENT_TYPE_REMOVE_FROM_JUGGLER   kSPEventTypeRemoveFromJuggler
+#define SP_EVENT_TYPE_COMPLETED             kSPEventTypeCompleted
+#define SP_EVENT_TYPE_TRIGGERED             kSPEventTypeTriggered
+#define SP_EVENT_TYPE_FLATTEN               kSPEventTypeFlatten
+#define SP_EVENT_TYPE_TOUCH                 kSPEventTypeTouch
+#define SP_EVENT_TYPE_ENTER_FRAME           kSPEventTypeEnterFrame
+#define SP_EVENT_TYPE_RESIZE                kSPEventTypeResize
+
 // retain/release/autorelease
 
 #if __has_feature(objc_arc)
@@ -73,24 +79,25 @@ typedef void (^SPCallbackBlock)();
     #define SP_AUTORELEASE(_var) [_var autorelease]
 #endif
 
-#define SP_RETAIN_BLOCK(_var) \
-    for (id __obj__ = [_var retain]; __obj__; [__obj__ release], __obj__ = nil)
-
-#define SP_RELEASE_AND_NIL(_var) \
-    [_var release]; _var = nil
-
-#define SP_ASSIGN_RETAIN(_old, _new) \
+#define SP_RELEASE_AND_NIL(_var)\
     do {\
-        if (_old == _new) break; \
+        [_var release]; \
+        _var = nil; \
+    }\
+    while (0)
+
+#define SP_ASSIGN_RETAIN(_old, _new)\
+    do {\
+        if (_old == _new) break;\
         id tmp = _old;\
         _old = [_new retain];\
         [tmp release];\
     }\
     while (0)
 
-#define SP_ASSIGN_COPY(_old, _new) \
+#define SP_ASSIGN_COPY(_old, _new)\
     do {\
-        if (_old == _new) break; \
+        if (_old == _new) break;\
         id tmp = _old;\
         _old = [_new copy];\
         [tmp release];\
@@ -118,3 +125,9 @@ typedef void (^SPCallbackBlock)();
 #define SP_SWAP(x, y, T)            do { T temp##x##y = x; x = y; y = temp##x##y; } while (0)
 
 #define SP_DEPRECATED               __attribute__((deprecated))
+
+#ifdef __cplusplus
+    #define SP_EXTERN       extern "C" __attribute__((visibility ("default")))
+#else
+    #define SP_EXTERN       extern __attribute__((visibility ("default")))
+#endif
