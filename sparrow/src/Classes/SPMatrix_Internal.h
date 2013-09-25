@@ -14,9 +14,9 @@
     #include <arm_neon.h>
 #endif
 
-@interface SPMatrix ()
-{
+@interface SPMatrix () {
 @public
+    
     float _a, _b, _c, _d;
     float _tx, _ty;
 }

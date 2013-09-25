@@ -54,7 +54,6 @@
     {
         [NSException raise:SP_EXC_FILE_INVALID
                     format:@"Error loading texture: %@", [error localizedDescription]];
-        SP_RELEASE_AND_NIL(self);
     }
     else if (mipmaps && (![SPUtils isPowerOfTwo:info.width] || ![SPUtils isPowerOfTwo:info.height])
              && glGetError() == GL_INVALID_OPERATION)
@@ -62,7 +61,6 @@
         [NSException raise:SP_EXC_INVALID_OPERATION
                     format:@"Mipmapping is only supported for textures with sidelengths that "
                            @"are powers of two."];
-        SP_RELEASE_AND_NIL(self);
     }
 
     SP_RELEASE_AND_NIL(self);

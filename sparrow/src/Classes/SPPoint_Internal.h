@@ -15,9 +15,9 @@
     #include <arm_neon.h>
 #endif
 
-@interface SPPoint ()
-{
+@interface SPPoint () {
 @public
+
     float _x;
     float _y;
 }

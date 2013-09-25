@@ -13,15 +13,15 @@
 #include <TargetConditionals.h>
 
 #if TARGET_OS_IPHONE
-    #define SP_OS_IPHONE                        1
+    #define SP_TARGET_IPHONE                    1
 
     #if TARGET_IPHONE_SIMULATOR
-        #define SP_OS_IPHONE_SIMULATOR          1
+        #define SP_TARGET_IPHONE_SIMULATOR      1
     #else
-        #define SP_OS_IPHONE_DEVICE             1
+        #define SP_TARGET_IPHONE_DEVICE         1
     #endif
 
 #else
-    #define SP_OS_OSX                           1
+    #define SP_TARGET_OSX                       1
 #endif
 
