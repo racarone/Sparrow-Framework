@@ -9,20 +9,20 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import "SparrowClass.h"
 #import "SPBitmapFont.h"
 #import "SPBitmapChar.h"
-#import "SPTexture.h"
-#import "SPRectangle.h"
-#import "SPSubTexture.h"
 #import "SPDisplayObject.h"
-#import "SPSprite.h"
 #import "SPImage.h"
-#import "SPTextField.h"
-#import "SPStage.h"
-#import "SPUtils.h"
-#import "SparrowClass.h"
 #import "SPNSExtensions.h"
+#import "SPRectangle.h"
 #import "SPQuadBatch.h"
+#import "SPSprite.h"
+#import "SPStage.h"
+#import "SPSubTexture.h"
+#import "SPTextField.h"
+#import "SPTexture.h"
+#import "SPUtils.h"
 
 #define CHAR_SPACE           32
 #define CHAR_TAB              9

@@ -9,9 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPEventDispatcher.h"
 #import "SPEvent.h"
 #import "SPEvent_Internal.h"
+#import "SPEventDispatcher.h"
 
 NSString* const kSPEventTypeAdded                   = @"added";
 NSString* const kSPEventTypeAddedToStage            = @"addedToStage";

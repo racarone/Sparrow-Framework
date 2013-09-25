@@ -9,16 +9,16 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPTexture.h"
-#import "SPMacros.h"
-#import "SPUtils.h"
-#import "SPRectangle.h"
-#import "SPGLTexture.h"
-#import "SPSubTexture.h"
-#import "SPNSExtensions.h"
-#import "SPVertexData.h"
-#import "SPStage.h"
 #import "SparrowClass.h"
+#import "SPGLTexture.h"
+#import "SPRectangle.h"
+#import "SPMacros.h"
+#import "SPNSExtensions.h"
+#import "SPStage.h"
+#import "SPSubTexture.h"
+#import "SPTexture.h"
+#import "SPUtils.h"
+#import "SPVertexData.h"
 
 // --- class implementation ------------------------------------------------------------------------
 

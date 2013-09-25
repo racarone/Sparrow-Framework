@@ -9,10 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPQuad.h"
-#import "SPRectangle.h"
 #import "SPMacros.h"
 #import "SPPoint.h"
+#import "SPQuad.h"
+#import "SPRectangle.h"
 #import "SPRenderSupport.h"
 #import "SPVertexData.h"
 

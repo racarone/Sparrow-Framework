@@ -10,13 +10,13 @@
 //
 
 #import "SPButton.h"
-#import "SPTouchEvent.h"
-#import "SPTexture.h"
 #import "SPGLTexture.h"
 #import "SPImage.h"
-#import "SPStage.h"
 #import "SPSprite.h"
+#import "SPStage.h"
 #import "SPTextField.h"
+#import "SPTexture.h"
+#import "SPTouchEvent.h"
 
 #define MAX_DRAG_DIST 40
 

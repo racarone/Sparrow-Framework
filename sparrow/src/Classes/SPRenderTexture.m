@@ -9,12 +9,12 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPRenderTexture.h"
+#import "SparrowClass.h"
 #import "SPGLTexture.h"
 #import "SPMacros.h"
-#import "SPUtils.h"
+#import "SPRenderTexture.h"
 #import "SPStage.h"
-#import "SparrowClass.h"
+#import "SPUtils.h"
 
 @implementation SPRenderTexture
 {

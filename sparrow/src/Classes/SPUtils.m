@@ -9,9 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPUtils.h"
-#import "SPNSExtensions.h"
 #import "SparrowClass.h"
+#import "SPNSExtensions.h"
+#import "SPUtils.h"
 
 #import <GLKit/GLKit.h>
 #import <sys/stat.h>

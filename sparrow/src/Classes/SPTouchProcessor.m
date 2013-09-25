@@ -9,14 +9,14 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPTouchProcessor.h"
+#import "SPDisplayObjectContainer.h"
 #import "SPMacros.h"
-#import "SPTouchEvent.h"
+#import "SPMatrix.h"
+#import "SPPoint.h"
 #import "SPTouch.h"
 #import "SPTouch_Internal.h"
-#import "SPPoint.h"
-#import "SPMatrix.h"
-#import "SPDisplayObjectContainer.h"
+#import "SPTouchEvent.h"
+#import "SPTouchProcessor.h"
 
 #import <UIKit/UIKit.h>
 

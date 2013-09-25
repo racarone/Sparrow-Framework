@@ -9,8 +9,8 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPMovieClip.h"
 #import "SPMacros.h"
+#import "SPMovieClip.h"
 
 // --- class implementation ------------------------------------------------------------------------
 

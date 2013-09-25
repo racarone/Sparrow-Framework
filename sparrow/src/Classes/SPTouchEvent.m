@@ -9,10 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPTouchEvent.h"
 #import "SPDisplayObject.h"
 #import "SPDisplayObjectContainer.h"
 #import "SPEvent_Internal.h"
+#import "SPTouchEvent.h"
 
 NSString* const kSPEventTypeTouch = @"touch";
 

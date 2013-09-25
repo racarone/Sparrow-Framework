@@ -9,11 +9,11 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import "SPDisplayObject.h"
 #import "SPMatrix_Internal.h"
+#import "SPPoint.h"
 #import "SPTouch.h"
 #import "SPTouch_Internal.h"
-#import "SPDisplayObject.h"
-#import "SPPoint.h"
 
 @implementation SPTouch
 {

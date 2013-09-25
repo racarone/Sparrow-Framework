@@ -9,10 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import "SPMacros.h"
 #import "SPMatrix.h"
 #import "SPMatrix_Internal.h"
 #import "SPPoint.h"
-#import "SPMacros.h"
 
 typedef id(*SPMatrixAllocIMP)(id,SEL);
 

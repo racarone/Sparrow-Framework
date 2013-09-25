@@ -9,9 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import "SPMacros.h"
 #import "SPPoint.h"
 #import "SPPoint_Internal.h"
-#import "SPMacros.h"
+
 #import <math.h>
 
 typedef id(*SPPointAllocIMP)(id,SEL);

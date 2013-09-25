@@ -9,8 +9,8 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPTween.h"
 #import "SPTransitions.h"
+#import "SPTween.h"
 #import "SPTweenedProperty.h"
 
 #define TRANS_SUFFIX  @":"

@@ -9,10 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <zlib.h>
-#import "SPNSExtensions.h"
 #import "SPDisplayObject.h"
+#import "SPNSExtensions.h"
 
+#import <zlib.h>
 
 // --- structs and enums ---------------------------------------------------------------------------
 

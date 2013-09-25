@@ -9,9 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPAVSoundChannel.h"
-#import "SPAudioEngine.h"
 #import "SPMacros.h"
+#import "SPAudioEngine.h"
+#import "SPAVSoundChannel.h"
 
 @implementation SPAVSoundChannel
 {
@@ -31,7 +31,7 @@
     if ((self = [super init]))
     {
         _volume = 1.0f;
-        _sound = sound;
+        _sound = [sound retain];
         _player = [[sound createPlayer] retain];
         _player.delegate = self;                
         [_player prepareToPlay];

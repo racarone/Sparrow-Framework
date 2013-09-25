@@ -9,15 +9,15 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPQuadBatch.h"
-#import "SPTexture.h"
-#import "SPImage.h"
-#import "SPRenderSupport.h"
 #import "SPBaseEffect.h"
+#import "SPBlendMode.h"
 #import "SPDisplayObjectContainer.h"
+#import "SPImage.h"
 #import "SPMacros.h"
 #import "SPMatrix_Internal.h"
-#import "SPBlendMode.h"
+#import "SPQuadBatch.h"
+#import "SPRenderSupport.h"
+#import "SPTexture.h"
 
 #import <GLKit/GLKit.h>
 

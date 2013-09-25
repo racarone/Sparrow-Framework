@@ -9,12 +9,12 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPStatsDisplay.h"
-#import "SPEnterFrameEvent.h"
 #import "SPBitmapFont.h"
-#import "SPTextField.h"
-#import "SPQuad.h"
 #import "SPBlendMode.h"
+#import "SPEnterFrameEvent.h"
+#import "SPQuad.h"
+#import "SPStatsDisplay.h"
+#import "SPTextField.h"
 
 @implementation SPStatsDisplay
 {

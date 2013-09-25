@@ -9,10 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPSprite.h"
+#import "SPBlendMode.h"
 #import "SPQuadBatch.h"
 #import "SPRenderSupport.h"
-#import "SPBlendMode.h"
+#import "SPSprite.h"
 #import "SPStage.h"
 
 @implementation SPSprite

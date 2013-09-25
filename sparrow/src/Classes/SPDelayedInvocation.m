@@ -11,7 +11,6 @@
 
 #import "SPDelayedInvocation.h"
 
-
 @implementation SPDelayedInvocation
 {
     id                  _target;

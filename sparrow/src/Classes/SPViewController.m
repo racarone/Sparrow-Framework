@@ -9,18 +9,18 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPViewController.h"
-#import "SPTouchProcessor.h"
-#import "SPRenderSupport.h"
 #import "SparrowClass_Internal.h"
-#import "SPTouch_Internal.h"
 #import "SPEnterFrameEvent.h"
-#import "SPResizeEvent.h"
-#import "SPStage.h"
 #import "SPJuggler.h"
 #import "SPProgram.h"
+#import "SPRenderSupport.h"
+#import "SPResizeEvent.h"
+#import "SPStage.h"
 #import "SPStatsDisplay.h"
 #import "SPTexture.h"
+#import "SPTouch_Internal.h"
+#import "SPTouchProcessor.h"
+#import "SPViewController.h"
 
 // --- private interaface --------------------------------------------------------------------------
 

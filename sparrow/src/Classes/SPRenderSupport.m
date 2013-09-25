@@ -10,16 +10,16 @@
 //
 
 #import "SparrowClass.h"
-#import "SPViewController.h"
-#import "SPRenderSupport.h"
-#import "SPDisplayObject.h"
-#import "SPMatrix_Internal.h"
-#import "SPVertexData.h"
-#import "SPQuadBatch.h"
-#import "SPTexture.h"
-#import "SPMacros.h"
-#import "SPQuad.h"
 #import "SPBlendMode.h"
+#import "SPDisplayObject.h"
+#import "SPMacros.h"
+#import "SPMatrix_Internal.h"
+#import "SPQuad.h"
+#import "SPQuadBatch.h"
+#import "SPRenderSupport.h"
+#import "SPTexture.h"
+#import "SPVertexData.h"
+#import "SPViewController.h"
 
 #import <GLKit/GLKit.h>
 
