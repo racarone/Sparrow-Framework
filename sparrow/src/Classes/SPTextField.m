@@ -9,22 +9,32 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPTextField.h"
-#import "SPImage.h"
-#import "SPTexture.h"
-#import "SPSubTexture.h"
-#import "SPGLTexture.h"
+#import "SparrowClass.h"
+#import "SPBitmapFont.h"
 #import "SPEnterFrameEvent.h"
+#import "SPGLTexture.h"
+#import "SPImage.h"
 #import "SPQuad.h"
 #import "SPQuadBatch.h"
-#import "SPBitmapFont.h"
-#import "SPStage.h"
 #import "SPSprite.h"
-#import "SparrowClass.h"
+#import "SPStage.h"
+#import "SPSubTexture.h"
+#import "SPTextField.h"
+#import "SPTexture.h"
+#import "SPUtils.h"
 
-#import <UIKit/UIKit.h>
+#import <CoreText/CoreText.h>
 
 static NSMutableDictionary* gBitmapFonts = nil;
+
+static CGSize GetSuggestedSizeAndFitForString(CFRange* cfRange, CFAttributedStringRef cfString, CGSize referenceSize)
+{
+    CTFramesetterRef ctFramesetter = CTFramesetterCreateWithAttributedString(cfString);
+    CGSize cgFitSize = CTFramesetterSuggestFrameSizeWithConstraints(ctFramesetter, CFRangeMake(0, CFAttributedStringGetLength(cfString)),
+                                                                    NULL, referenceSize, cfRange);
+    CFRelease(ctFramesetter);
+    return cgFitSize;
+}
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -304,63 +314,164 @@ static NSMutableDictionary* gBitmapFonts = nil;
 
 - (void)createRenderedContents
 {
-    float width  = _hitArea.width;
-    float height = _hitArea.height;    
+    float width    = _hitArea.width;
+    float height   = _hitArea.height;
     float fontSize = _fontSize == SP_NATIVE_FONT_SIZE ? SP_DEFAULT_FONT_SIZE : _fontSize;
-    
-  #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_6_0
-    NSLineBreakMode lbm = NSLineBreakByTruncatingTail;
-  #else
-    UILineBreakMode lbm = UILineBreakModeTailTruncation;
-  #endif
 
-    CGSize textSize;
+    // get cfstring
+    CFAttributedStringRef cfAttributedText = CFAttributedStringCreate(NULL, (CFStringRef)_text, NULL);
+    CFMutableAttributedStringRef cfText = CFAttributedStringCreateMutableCopy(NULL, 0, cfAttributedText);
     
-    if (_autoScale)
+
+    // get font
+    CTFontRef ctFont = CTFontCreateWithName((CFStringRef)_fontName, fontSize, NULL);
+    CFRange cfTextRange = CFRangeMake(0, CFAttributedStringGetLength(cfText));
+    CFAttributedStringSetAttribute(cfText, cfTextRange, kCTFontAttributeName, ctFont);
+
+    float color4f[4] = {
+        SP_COLOR_PART_RED(_color)   / 255.0f,
+        SP_COLOR_PART_GREEN(_color) / 255.0f,
+        SP_COLOR_PART_BLUE(_color)  / 255.0f,
+        1.0f
+    };
+
+    CGColorSpaceRef cgColorSpace = CGColorSpaceCreateDeviceRGB();
+#ifdef SP_TARGET_IPHONE
+    CGColorRef cgColor = CGColorCreate(cgColorSpace, color4f);
+#else
+    CGColorRef cgColor = CGColorCreateGenericRGB(color4f[0], color4f[1], color4f[2], color4f[3]);
+#endif
+
+    CFAttributedStringSetAttribute(cfText, cfTextRange, kCTForegroundColorAttributeName, cgColor);
+
+    CTTextAlignment theAlignment;
+    switch(_hAlign) {
+        case SPHAlignLeft:
+            theAlignment = kCTTextAlignmentLeft;
+            break;
+
+        case SPHAlignCenter:
+            theAlignment = kCTTextAlignmentCenter;
+            break;
+
+        case SPHAlignRight:
+            theAlignment = kCTTextAlignmentRight;
+            break;
+    }
+
+    CTLineBreakMode lineBreakMode = kCTLineBreakByWordWrapping;
+
+#define PARAGRAPH_SETTING_COUNT 2
+    CTParagraphStyleSetting ctSettings[PARAGRAPH_SETTING_COUNT] = {
+        {
+            kCTParagraphStyleSpecifierAlignment,
+            sizeof(CTTextAlignment),
+            &theAlignment
+        },
+        {
+            kCTParagraphStyleSpecifierLineBreakMode,
+            sizeof(CTLineBreakMode),
+            &lineBreakMode
+        }
+    };
+
+    // attributed string paragraph settings
+    CTParagraphStyleRef paragraphStyle = CTParagraphStyleCreate(ctSettings, PARAGRAPH_SETTING_COUNT);
+    CFAttributedStringSetAttribute(cfText, cfTextRange, kCTParagraphStyleAttributeName, paragraphStyle);
+
+    CGSize  cgTextSize;
+    CFRange cfFitRange;
+
+    if(_autoScale)
     {
         CGSize maxSize = CGSizeMake(width, FLT_MAX);
         fontSize += 1.0f;
-        
+
         do
         {
             fontSize -= 1.0f;
-            textSize = [_text sizeWithFont:[UIFont fontWithName:_fontName size:fontSize]
-                         constrainedToSize:maxSize lineBreakMode:lbm];
-        } while (textSize.height > height);
+            CFNumberRef cfNumberSize = CFNumberCreate(NULL, kCFNumberCGFloatType, &fontSize);
+            CFAttributedStringSetAttribute(cfText, cfTextRange, kCTFontSizeAttribute, cfNumberSize);
+            cgTextSize = GetSuggestedSizeAndFitForString(&cfFitRange, cfText, maxSize);
+            CFRelease(cfNumberSize);
+        }
+        while(cgTextSize.height > height);
     }
     else
     {
-        textSize = [_text sizeWithFont:[UIFont fontWithName:_fontName size:fontSize]
-                     constrainedToSize:CGSizeMake(width, height) lineBreakMode:lbm];
+        cgTextSize = GetSuggestedSizeAndFitForString(&cfFitRange, cfText, CGSizeMake(width, height));
     }
-    
+
     float xOffset = 0;
-    if (_hAlign == SPHAlignCenter)      xOffset = (width - textSize.width) / 2.0f;
-    else if (_hAlign == SPHAlignRight)  xOffset =  width - textSize.width;
-    
+    if(_hAlign == SPHAlignCenter)      xOffset = (width - cgTextSize.width) / 2.0f;
+    else if(_hAlign == SPHAlignRight)  xOffset =  width - cgTextSize.width;
+
     float yOffset = 0;
-    if (_vAlign == SPVAlignCenter)      yOffset = (height - textSize.height) / 2.0f;
-    else if (_vAlign == SPVAlignBottom) yOffset =  height - textSize.height;
-    
+    if(_vAlign == SPVAlignCenter)      yOffset = (height - cgTextSize.height) / 2.0f;
+    else if(_vAlign == SPVAlignBottom) yOffset =  height - cgTextSize.height;
+
     if (!_textBounds) _textBounds = [[SPRectangle alloc] init];
-    [_textBounds setX:xOffset y:yOffset width:textSize.width height:textSize.height];
-    
-    SPTexture* texture = [[SPTexture alloc] initWithWidth:width height:height generateMipmaps:YES
-                                                     draw:^(CGContextRef context)
-      {
-          float red   = SP_COLOR_PART_RED(_color)   / 255.0f;
-          float green = SP_COLOR_PART_GREEN(_color) / 255.0f;
-          float blue  = SP_COLOR_PART_BLUE(_color)  / 255.0f;
-          
-          CGContextSetRGBFillColor(context, red, green, blue, 1.0f);
-          
-          [_text drawInRect:CGRectMake(0, yOffset, width, height)
-                   withFont:[UIFont fontWithName:_fontName size:fontSize] 
-              lineBreakMode:lbm alignment:(NSTextAlignment)_hAlign];
-      }];
-    
-    SPImage* image = [[SPImage alloc] initWithTexture:texture];
-    [texture release];
+    [_textBounds setX:xOffset y:yOffset width:cgTextSize.width height:cgTextSize.height];
+
+    // only textures with sidelengths that are powers of 2 support all OpenGL ES features
+    float scale = Sparrow.contentScaleFactor;
+    float legalWidth  = [SPUtils nextPowerOfTwo:width  * scale];
+    float legalHeight = [SPUtils nextPowerOfTwo:height * scale];
+
+    SPGLTexture* glTexture = nil;
+    {
+        CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaPremultipliedLast;
+
+        int bytesPerPixel = 4;
+        void* imageData = calloc(legalWidth * legalHeight * bytesPerPixel, 1);
+
+        CGContextRef context = CGBitmapContextCreate(imageData, legalWidth, legalHeight, 8,
+                                                     bytesPerPixel * legalWidth, cgColorSpace,
+                                                     bitmapInfo);
+
+        // prepare our view for drawing
+        CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+        CGContextScaleCTM(context, scale, scale);
+
+        // create frame
+        CTFramesetterRef ctFramesetter = CTFramesetterCreateWithAttributedString(cfText);
+
+        // path
+        CGMutablePathRef cgPath = CGPathCreateMutable();
+        CGRect cfTextRect = CGRectMake(0, (legalHeight/scale) - height - yOffset, width, height);
+        CGPathAddRect(cgPath, NULL, cfTextRect);
+
+        CTFrameRef ctFrame = CTFramesetterCreateFrame(ctFramesetter, CFRangeMake(0, CFAttributedStringGetLength(cfText)),
+                                                      cgPath, NULL);
+        
+        // draw frame
+        CTFrameDraw(ctFrame, context);
+
+        // create texture
+        glTexture = [[SPGLTexture alloc] initWithData:imageData
+                                                width:legalWidth
+                                               height:legalHeight
+                                      generateMipmaps:NO
+                                                scale:scale
+                                   premultipliedAlpha:YES];
+
+        // release
+        CFRelease(ctFramesetter);
+        CFRelease(cgPath);
+        CFRelease(ctFrame);
+        CGContextRelease(context);
+        free(imageData);
+    }
+
+    CFRelease(paragraphStyle);
+    CFRelease(cfAttributedText);
+    CFRelease(ctFont);
+    CFRelease(cgColor);
+    CFRelease(cgColorSpace);
+    CFRelease(cfText);
+
+    SPImage* image = [[SPImage alloc] initWithTexture:glTexture];
+    [glTexture release];
 
     [_contents addQuad:image];
     [image release];
