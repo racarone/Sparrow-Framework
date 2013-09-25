@@ -126,8 +126,8 @@
 
     if (previousTarget) event.target = previousTarget;
 
-    [self release];
     [listeners release];
+    [self release];
 }
 
 @end

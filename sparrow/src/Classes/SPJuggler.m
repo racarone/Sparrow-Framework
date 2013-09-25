@@ -9,10 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPJuggler.h"
 #import "SPAnimatable.h"
 #import "SPDelayedInvocation.h"
 #import "SPEventDispatcher.h"
+#import "SPJuggler.h"
 
 @implementation SPJuggler
 {
@@ -43,9 +43,12 @@
     _elapsedTime += seconds;
     
     // we need work with a copy, since user-code could modify the collection during the enumeration
+    NSArray* objectsCopy = [[NSArray alloc] initWithArray:[_objects array]];
 
-    for (id<SPAnimatable> object in [NSArray arrayWithArray:[_objects array]])
+    for (id<SPAnimatable> object in objectsCopy)
         [object advanceTime:seconds];
+
+    SP_RELEASE_AND_NIL(objectsCopy);
 }
 
 - (void)addObject:(id<SPAnimatable>)object
@@ -89,7 +92,7 @@
 - (void)removeObjectsWithTarget:(id)object
 {
     SEL targetSel = @selector(target);
-    NSMutableOrderedSet* remainingObjects = [[NSMutableOrderedSet alloc] init];
+    NSMutableOrderedSet* remainingObjects = [NSMutableOrderedSet orderedSet];
     
     for (id currentObject in _objects)
     {
@@ -100,8 +103,7 @@
                                                 forType:kSPEventTypeRemoveFromJuggler];
     }
 
-    [_objects release];
-    _objects = remainingObjects;
+    SP_ASSIGN_RETAIN(_objects, remainingObjects);
 }
 
 - (BOOL)containsObject:(id<SPAnimatable>)object
