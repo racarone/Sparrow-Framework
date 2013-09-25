@@ -78,14 +78,14 @@ SP_IMPLEMENT_MEMORY_POOL();
         if (!data)
         {
             NSData* imgData =  [NSData dataWithBase64EncodedString:MiniFontImgDataBase64];
-            texture = [[SPTexture alloc] initWithContentsOfImage:[UIImage imageWithData:imgData]];
+            texture = [[[SPTexture alloc] initWithContentsOfImage:[UIImage imageWithData:imgData]] autorelease];
             data = [[NSData dataWithBase64EncodedString:MiniFontXmlDataBase64] gzipInflate];
         }
         
         _name = @"unknown";
         _lineHeight = _size = _baseline = SP_DEFAULT_FONT_SIZE;
         _chars = [[NSMutableDictionary alloc] init];
-        _fontTexture = texture ? texture : [self textureReferencedByXmlData:data];
+        _fontTexture = texture ? [texture retain] : [[self textureReferencedByXmlData:data] retain];
         _helperImage = [[SPImage alloc] initWithTexture:_fontTexture];
         
         [self parseFontData:data];
@@ -160,7 +160,7 @@ SP_IMPLEMENT_MEMORY_POOL();
             
             NSString* filename = [attributes valueForKey:@"file"];
             NSString* absolutePath = [folder stringByAppendingPathComponent:filename];
-            texture = [[SPTexture alloc] initWithContentsOfFile:absolutePath];
+            texture = [[[SPTexture alloc] initWithContentsOfFile:absolutePath] autorelease];
             
             // that's all info we need at this time.
             [parser abortParsing];
@@ -193,7 +193,6 @@ SP_IMPLEMENT_MEMORY_POOL();
             region.width = [[attributes valueForKey:@"width"] floatValue] / scale;
             region.height = [[attributes valueForKey:@"height"] floatValue] / scale;
             SPSubTexture* texture = [[SPSubTexture alloc] initWithRegion:region ofTexture:_fontTexture];
-            [region release];
             
             float xOffset = [[attributes valueForKey:@"xoffset"] floatValue] / scale;
             float yOffset = [[attributes valueForKey:@"yoffset"] floatValue] / scale;
@@ -202,9 +201,11 @@ SP_IMPLEMENT_MEMORY_POOL();
             SPBitmapChar* bitmapChar = [[SPBitmapChar alloc] initWithID:charID texture:texture
                                                                 xOffset:xOffset yOffset:yOffset
                                                                xAdvance:xAdvance];
-            [texture release];
             
             _chars[@(charID)] = bitmapChar;
+
+            [region release];
+            [texture release];
             [bitmapChar release];
         }
         else if ([elementName isEqualToString:@"kerning"])
@@ -234,7 +235,6 @@ SP_IMPLEMENT_MEMORY_POOL();
                      parser.parserError.localizedDescription];
 
     [parser release];
-    
     return success;
 }
 
@@ -305,108 +305,111 @@ SP_IMPLEMENT_MEMORY_POOL();
     float containerWidth;
     float containerHeight;
     BOOL finished = NO;
-    
-    while (!finished)
+
+    @autoreleasepool
     {
-        lines = [NSMutableArray array];
-        scale = size / _size;
-        containerWidth  = width  / scale;
-        containerHeight = height / scale;
-        
-        if (_lineHeight <= containerHeight)
+        while (!finished)
         {
-            int lastWhiteSpace = -1;
-            int lastCharID = -1;
-            int numChars = (int)text.length;
-            float currentX = 0;
-            float currentY = 0;
-            NSMutableArray* currentLine = [NSMutableArray array];
-            
-            for (int i=0; i<numChars; i++)
+            SP_ASSIGN_RETAIN(lines, [[NSMutableArray alloc] init]);
+            scale = size / _size;
+            containerWidth  = width  / scale;
+            containerHeight = height / scale;
+
+            if (_lineHeight <= containerHeight)
             {
-                BOOL lineFull = NO;
-                int charID = [text characterAtIndex:i];
-                SPBitmapChar* bitmapChar = [self charByID:charID];
-                
-                if (charID == CHAR_NEWLINE || charID == CHAR_CARRIAGE_RETURN)
+                int lastWhiteSpace = -1;
+                int lastCharID = -1;
+                int numChars = (int)text.length;
+                float currentX = 0;
+                float currentY = 0;
+                NSMutableArray* currentLine = [NSMutableArray array];
+
+                for (int i=0; i<numChars; i++)
                 {
-                    lineFull = YES;
-                }
-                else if (!bitmapChar)
-                {
-                    NSLog(@"Missing character: %d", charID);
-                }
-                else
-                {
-                    if (charID == CHAR_SPACE || charID == CHAR_TAB)
-                        lastWhiteSpace = i;
-                    
-                    if (kerning)
-                        currentX += [bitmapChar kerningToChar:lastCharID];
-                    
-                    SPCharLocation* charLocation = [[SPCharLocation alloc] initWithChar:bitmapChar];
-                    charLocation.x = currentX + bitmapChar.xOffset;
-                    charLocation.y = currentY + bitmapChar.yOffset;
-                    [currentLine addObject:charLocation];
-                    [charLocation release];
-                    
-                    currentX += bitmapChar.xAdvance;
-                    lastCharID = charID;
-                    
-                    if (charLocation.x + bitmapChar.width > containerWidth)
+                    BOOL lineFull = NO;
+                    int charID = [text characterAtIndex:i];
+                    SPBitmapChar* bitmapChar = [self charByID:charID];
+
+                    if (charID == CHAR_NEWLINE || charID == CHAR_CARRIAGE_RETURN)
                     {
-                        // remove characters and add them again to next line
-                        int numCharsToRemove = lastWhiteSpace == -1 ? 1 : i - lastWhiteSpace;
-                        int removeIndex = (int)currentLine.count - numCharsToRemove;
-                        
-                        [currentLine removeObjectsInRange:NSMakeRange(removeIndex, numCharsToRemove)];
-                        
-                        if (currentLine.count == 0)
-                            break;
-                        
-                        i -= numCharsToRemove;
                         lineFull = YES;
                     }
-                }
-                
-                if (i == numChars - 1)
-                {
-                    [lines addObject:currentLine];
-                    finished = YES;
-                }
-                else if (lineFull)
-                {
-                    [lines addObject:currentLine];
-                    
-                    if (lastWhiteSpace == i)
-                        [currentLine removeLastObject];
-                    
-                    if (currentY + 2*_lineHeight <= containerHeight)
+                    else if (!bitmapChar)
                     {
-                        currentLine = [NSMutableArray array];
-                        currentX = 0.0f;
-                        currentY += _lineHeight;
-                        lastWhiteSpace = -1;
-                        lastCharID = -1;
+                        NSLog(@"Missing character: %d", charID);
                     }
                     else
                     {
-                        break;
+                        if (charID == CHAR_SPACE || charID == CHAR_TAB)
+                            lastWhiteSpace = i;
+
+                        if (kerning)
+                            currentX += [bitmapChar kerningToChar:lastCharID];
+
+                        SPCharLocation* charLocation = [[SPCharLocation alloc] initWithChar:bitmapChar];
+                        charLocation.x = currentX + bitmapChar.xOffset;
+                        charLocation.y = currentY + bitmapChar.yOffset;
+                        [currentLine addObject:charLocation];
+                        [charLocation release];
+
+                        currentX += bitmapChar.xAdvance;
+                        lastCharID = charID;
+
+                        if (charLocation.x + bitmapChar.width > containerWidth)
+                        {
+                            // remove characters and add them again to next line
+                            int numCharsToRemove = lastWhiteSpace == -1 ? 1 : i - lastWhiteSpace;
+                            int removeIndex = (int)currentLine.count - numCharsToRemove;
+
+                            [currentLine removeObjectsInRange:NSMakeRange(removeIndex, numCharsToRemove)];
+
+                            if (currentLine.count == 0)
+                                break;
+
+                            i -= numCharsToRemove;
+                            lineFull = YES;
+                        }
                     }
-                }
-            } // for each char
-        } // if (_lineHeight < containerHeight)
-        
-        if (autoScale && !finished)
-        {
-            size -= 1;
-            [lines removeAllObjects];
-        }
-        else
-        {
-            finished = YES;
-        }
-    } // while (!finished)
+
+                    if (i == numChars - 1)
+                    {
+                        [lines addObject:currentLine];
+                        finished = YES;
+                    }
+                    else if (lineFull)
+                    {
+                        [lines addObject:currentLine];
+
+                        if (lastWhiteSpace == i)
+                            [currentLine removeLastObject];
+
+                        if (currentY + 2*_lineHeight <= containerHeight)
+                        {
+                            currentLine = [NSMutableArray array];
+                            currentX = 0.0f;
+                            currentY += _lineHeight;
+                            lastWhiteSpace = -1;
+                            lastCharID = -1;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                } // for each char
+            } // if (_lineHeight < containerHeight)
+            
+            if (autoScale && !finished)
+            {
+                size -= 1;
+                [lines removeAllObjects];
+            }
+            else
+            {
+                finished = YES;
+            }
+        } // while (!finished)
+    } // autoreleasepool
     
     NSMutableArray* finalLocations = [NSMutableArray array];
     int numLines = (int)lines.count;
@@ -439,7 +442,8 @@ SP_IMPLEMENT_MEMORY_POOL();
                 [finalLocations addObject:charLocation];
         }
     }
-    
+
+    SP_RELEASE_AND_NIL(lines);
     return finalLocations;
 }
 
