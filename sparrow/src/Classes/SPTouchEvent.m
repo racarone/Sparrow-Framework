@@ -16,6 +16,8 @@
 
 NSString* const kSPEventTypeTouch = @"touch";
 
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPTouchEvent
 {
     NSSet*  _touches;

@@ -91,7 +91,7 @@ typedef struct __SPViewPort SPViewPort;
 /// Adds a new render state to the stack. The passed matrix is prepended to the modelview matrix;
 /// the alpha value is multiplied with the current alpha; the blend mode replaces the existing
 /// mode (except `BLEND_MODE_AUTO`, which will cause the current mode to prevail).
-- (void)pushStateWithMatrix:(SPMatrix *)matrix alpha:(float)alpha blendMode:(uint)blendMode;
+- (void)pushStateWithMatrix:(SPMatrix*)matrix alpha:(float)alpha blendMode:(uint)blendMode;
 
 /// Restores the previous render state.
 - (void)popState;

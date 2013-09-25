@@ -16,8 +16,6 @@
 
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
-typedef void (*EventIMP) (id,SEL,id);
-
 @implementation SPEventListener
 {
     SPEventBlock    _block;
@@ -38,9 +36,9 @@ typedef void (*EventIMP) (id,SEL,id);
 
         if (target && selector)
         {
+            typedef void (*EventIMP) (id,SEL,id);
             __block EventIMP method = (EventIMP)[_target methodForSelector:_selector];
-            block = ^(id event)
-            {
+            block = ^(id event) {
                 method(target, selector, event);
             };
             _block = Block_copy(block);

@@ -25,8 +25,8 @@
 
 // --- helper macros -------------------------------------------------------------------------------
 
-#define CURRENT_STATE()  ((SPRenderState*)(CFArrayGetValueAtIndex((CFArrayRef)_stateStack, _stateStackIndex)))
-#define CURRENT_BATCH()  ((SPQuadBatch*)(CFArrayGetValueAtIndex((CFArrayRef)_quadBatches, _quadBatchIndex)))
+#define CURRENT_STATE()  ((SPRenderState*)(_stateStack[_stateStackIndex]))
+#define CURRENT_BATCH()  ((SPQuadBatch*)(_quadBatches[_quadBatchIndex]))
 
 // --- helper class --------------------------------------------------------------------------------
 
@@ -362,7 +362,7 @@
 
     if ([currentBatch isStateChangeWithTinted:quadBatch.tinted texture:quadBatch.texture alpha:alpha
                            premultipliedAlpha:quadBatch.premultipliedAlpha blendMode:blendMode
-                                     numQuads:1])
+                                     numQuads:quadBatch.numQuads])
     {
         [self finishQuadBatch];
         currentBatch = CURRENT_BATCH();

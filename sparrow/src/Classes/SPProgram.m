@@ -157,7 +157,7 @@
     for (int i=0; i<numUniforms; ++i)
     {
         glGetActiveUniform(_name, i, MAX_NAME_LENGTH, NULL, NULL, NULL, rawName);
-        NSString* name = [[NSString alloc] initWithCString:rawName encoding:NSUTF8StringEncoding];
+        NSString* name = [[NSString alloc] initWithUTF8String:rawName];
         _uniforms[name] = @(glGetUniformLocation(_name, rawName));
         [name release];
     }
@@ -176,7 +176,7 @@
     for (int i=0; i<numAttributes; ++i)
     {
         glGetActiveAttrib(_name, i, MAX_NAME_LENGTH, NULL, NULL, NULL, rawName);
-        NSString* name = [[NSString alloc] initWithCString:rawName encoding:NSUTF8StringEncoding];
+        NSString* name = [[NSString alloc] initWithUTF8String:rawName];
         _attributes[name] = @(glGetAttribLocation(_name, rawName));
         [name release];
     }

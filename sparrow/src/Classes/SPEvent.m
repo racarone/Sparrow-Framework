@@ -22,6 +22,8 @@ NSString* const kSPEventTypeCompleted               = @"completed";
 NSString* const kSPEventTypeTriggered               = @"triggered";
 NSString* const kSPEventTypeFlatten                 = @"flatten";
 
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPEvent
 {
     SPEventDispatcher*  _target;

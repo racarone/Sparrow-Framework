@@ -13,6 +13,8 @@
 
 NSString* const kSPEventTypeEnterFrame = @"enterFrame";
 
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPEnterFrameEvent
 {
     double _passedTime;

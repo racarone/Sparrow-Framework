@@ -13,6 +13,8 @@
 
 NSString* const kSPEventTypeResize = @"resize";
 
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPResizeEvent
 {
     float   _width;
