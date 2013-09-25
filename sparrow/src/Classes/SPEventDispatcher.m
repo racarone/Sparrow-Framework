@@ -64,13 +64,21 @@
 - (void)dispatchEventWithType:(NSString*)type
 {
     if ([self hasEventListenerForType:type])
-        [self dispatchEvent:[[SPEvent alloc] initWithType:type bubbles:NO]];
+    {
+        SPEvent* event = [[SPEvent alloc] initWithType:type bubbles:NO];
+        [self dispatchEvent:event];
+        [event release];
+    }
 }
 
 - (void)dispatchEventWithType:(NSString*)type bubbles:(BOOL)bubbles
 {
     if (bubbles || [self hasEventListenerForType:type])
-        [self dispatchEvent:[[SPEvent alloc] initWithType:type bubbles:bubbles]];
+    {
+        SPEvent* event = [[SPEvent alloc] initWithType:type bubbles:bubbles];
+        [self dispatchEvent:event];
+        [event release];
+    }
 }
 
 - (void)dispatchEvent:(SPEvent*)event

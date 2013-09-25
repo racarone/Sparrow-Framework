@@ -43,6 +43,8 @@
         [self createFramebuffer];
         [self clearWithColor:argb alpha:SP_COLOR_PART_ALPHA(argb)];
     }
+
+    [glTexture release];
     return self;
 }
 
