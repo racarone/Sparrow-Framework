@@ -36,6 +36,16 @@ static CGSize GetSuggestedSizeAndFitForString(CFRange* cfRange, CFAttributedStri
     return cgFitSize;
 }
 
+static GLKVector4 GLKVector4FromColor(uint color)
+{
+    return (GLKVector4){
+        SP_COLOR_PART_RED(color)   / 255.0f,
+        SP_COLOR_PART_GREEN(color) / 255.0f,
+        SP_COLOR_PART_BLUE(color)  / 255.0f,
+        1.0f
+    };
+}
+
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPTextField
@@ -318,69 +328,42 @@ static CGSize GetSuggestedSizeAndFitForString(CFRange* cfRange, CFAttributedStri
     float height   = _hitArea.height;
     float fontSize = _fontSize == SP_NATIVE_FONT_SIZE ? SP_DEFAULT_FONT_SIZE : _fontSize;
 
-    // get cfstring
+    // text
     CFAttributedStringRef cfAttributedText = CFAttributedStringCreate(NULL, (CFStringRef)_text, NULL);
     CFMutableAttributedStringRef cfText = CFAttributedStringCreateMutableCopy(NULL, 0, cfAttributedText);
-    
 
-    // get font
+    // font
     CTFontRef ctFont = CTFontCreateWithName((CFStringRef)_fontName, fontSize, NULL);
     CFRange cfTextRange = CFRangeMake(0, CFAttributedStringGetLength(cfText));
     CFAttributedStringSetAttribute(cfText, cfTextRange, kCTFontAttributeName, ctFont);
 
-    float color4f[4] = {
-        SP_COLOR_PART_RED(_color)   / 255.0f,
-        SP_COLOR_PART_GREEN(_color) / 255.0f,
-        SP_COLOR_PART_BLUE(_color)  / 255.0f,
-        1.0f
-    };
-
+    // color
+    GLKVector4 glkColor = GLKVector4FromColor(_color);
     CGColorSpaceRef cgColorSpace = CGColorSpaceCreateDeviceRGB();
-#ifdef SP_TARGET_IPHONE
-    CGColorRef cgColor = CGColorCreate(cgColorSpace, color4f);
-#else
-    CGColorRef cgColor = CGColorCreateGenericRGB(color4f[0], color4f[1], color4f[2], color4f[3]);
-#endif
-
+    CGColorRef cgColor = CGColorCreate(cgColorSpace, glkColor.v);
     CFAttributedStringSetAttribute(cfText, cfTextRange, kCTForegroundColorAttributeName, cgColor);
 
-    CTTextAlignment theAlignment;
-    switch(_hAlign) {
-        case SPHAlignLeft:
-            theAlignment = kCTTextAlignmentLeft;
-            break;
-
-        case SPHAlignCenter:
-            theAlignment = kCTTextAlignmentCenter;
-            break;
-
-        case SPHAlignRight:
-            theAlignment = kCTTextAlignmentRight;
-            break;
+    // paragraph settings
+    CTLineBreakMode ctLineBreakMode = kCTLineBreakByWordWrapping;
+    CTTextAlignment ctAlignment;
+    switch(_hAlign)
+    {
+        case SPHAlignLeft:   ctAlignment = kCTTextAlignmentLeft;   break;
+        case SPHAlignCenter: ctAlignment = kCTTextAlignmentCenter; break;
+        case SPHAlignRight:  ctAlignment = kCTTextAlignmentRight;  break;
     }
 
-    CTLineBreakMode lineBreakMode = kCTLineBreakByWordWrapping;
-
-#define PARAGRAPH_SETTING_COUNT 2
-    CTParagraphStyleSetting ctSettings[PARAGRAPH_SETTING_COUNT] = {
-        {
-            kCTParagraphStyleSpecifierAlignment,
-            sizeof(CTTextAlignment),
-            &theAlignment
-        },
-        {
-            kCTParagraphStyleSpecifierLineBreakMode,
-            sizeof(CTLineBreakMode),
-            &lineBreakMode
-        }
+    CTParagraphStyleSetting ctParagraphSettings[] = {
+        { kCTParagraphStyleSpecifierAlignment,     sizeof(CTTextAlignment), &ctAlignment },
+        { kCTParagraphStyleSpecifierLineBreakMode, sizeof(CTLineBreakMode), &ctLineBreakMode }
     };
 
     // attributed string paragraph settings
-    CTParagraphStyleRef paragraphStyle = CTParagraphStyleCreate(ctSettings, PARAGRAPH_SETTING_COUNT);
+    CTParagraphStyleRef paragraphStyle = CTParagraphStyleCreate(ctParagraphSettings, SP_COUNT_OF(ctParagraphSettings));
     CFAttributedStringSetAttribute(cfText, cfTextRange, kCTParagraphStyleAttributeName, paragraphStyle);
 
-    CGSize  cgTextSize;
-    CFRange cfFitRange;
+    CGSize  cgTextSize = CGSizeZero;
+    CFRange cfFitRange = CFRangeMake(0, 0);
 
     if(_autoScale)
     {
@@ -418,6 +401,7 @@ static CGSize GetSuggestedSizeAndFitForString(CFRange* cfRange, CFAttributedStri
     float legalWidth  = [SPUtils nextPowerOfTwo:width  * scale];
     float legalHeight = [SPUtils nextPowerOfTwo:height * scale];
 
+    // draw to texture
     SPGLTexture* glTexture = nil;
     {
         CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaPremultipliedLast;
@@ -433,18 +417,14 @@ static CGSize GetSuggestedSizeAndFitForString(CFRange* cfRange, CFAttributedStri
         CGContextSetTextMatrix(context, CGAffineTransformIdentity);
         CGContextScaleCTM(context, scale, scale);
 
-        // create frame
-        CTFramesetterRef ctFramesetter = CTFramesetterCreateWithAttributedString(cfText);
-
-        // path
-        CGMutablePathRef cgPath = CGPathCreateMutable();
+        // create draw rect path
+        CGMutablePathRef cgRectPath = CGPathCreateMutable();
         CGRect cfTextRect = CGRectMake(0, (legalHeight/scale) - height - yOffset, width, height);
-        CGPathAddRect(cgPath, NULL, cfTextRect);
+        CGPathAddRect(cgRectPath, NULL, cfTextRect);
 
-        CTFrameRef ctFrame = CTFramesetterCreateFrame(ctFramesetter, CFRangeMake(0, CFAttributedStringGetLength(cfText)),
-                                                      cgPath, NULL);
-        
         // draw frame
+        CTFramesetterRef ctFramesetter = CTFramesetterCreateWithAttributedString(cfText);
+        CTFrameRef ctFrame = CTFramesetterCreateFrame(ctFramesetter, cfTextRange, cgRectPath, NULL);
         CTFrameDraw(ctFrame, context);
 
         // create texture
@@ -457,12 +437,13 @@ static CGSize GetSuggestedSizeAndFitForString(CFRange* cfRange, CFAttributedStri
 
         // release
         CFRelease(ctFramesetter);
-        CFRelease(cgPath);
+        CFRelease(cgRectPath);
         CFRelease(ctFrame);
         CGContextRelease(context);
         free(imageData);
     }
 
+    // release
     CFRelease(paragraphStyle);
     CFRelease(cfAttributedText);
     CFRelease(ctFont);

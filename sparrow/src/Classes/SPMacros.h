@@ -106,6 +106,8 @@ typedef void (^SPCallbackBlock)();
 
 // macros
 
+#define SP_COUNT_OF(x)              ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
+
 #define SP_R2D(rad)                 ((rad) / PI * 180.0f)
 #define SP_D2R(deg)                 ((deg) / 180.0f * PI)
 
