@@ -20,15 +20,10 @@
 
 #import <UIKit/UIKit.h>
 
-#define MULTITAP_TIME 0.25f
-#define MULTITAP_DIST 25
-
 @implementation SPTouchProcessor
 {
     SPDisplayObjectContainer*   _root;
     NSMutableSet*               _currentTouches;
-    NSMutableArray*             _queue;
-    double                      _elapsedTime;
 }
 
 @synthesize root = _root;
@@ -39,9 +34,9 @@
     {
         _root = root;
         _currentTouches = [[NSMutableSet alloc] initWithCapacity:2];
-        
+
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cancelCurrentTouches:)
-                                              name:UIApplicationWillResignActiveNotification object:nil];
+                                                     name:UIApplicationWillResignActiveNotification object:nil];
     }
     return self;
 }
@@ -54,9 +49,7 @@
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-
     SP_RELEASE_AND_NIL(_currentTouches);
-
     [super dealloc];
 }
 

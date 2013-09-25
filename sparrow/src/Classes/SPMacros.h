@@ -9,11 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#if defined(__OBJC__)
-    #import <Foundation/Foundation.h>
-#else
-    #include <CoreFoundation/CoreFoundation.h>
-#endif
+#include "SPPlatform.h"
 
 #import <math.h>
 
@@ -69,7 +65,7 @@ typedef void (^SPCallbackBlock)();
 #define SP_EXC_DATA_INVALID         @"DataInvalid"
 #define SP_EXC_OPERATION_FAILED     @"OperationFailed"
 
-// macros
+// retain/release/autorelease
 
 #if __has_feature(objc_arc)
     #define SP_AUTORELEASE(_var) _var
@@ -99,7 +95,7 @@ typedef void (^SPCallbackBlock)();
         _old = [_new copy];\
         [tmp release];\
     }\
-while (0)
+    while (0)
 
 // macros
 

@@ -10,10 +10,15 @@
 //
 
 #import "SPAudioEngine.h"
+#import "SPMacros.h"
 
-#import <AudioToolbox/AudioToolbox.h> 
+#import <AudioUnit/AudioUnit.h>
+#import <AudioToolbox/AudioServices.h>
+#import <AudioToolbox/AudioToolbox.h>
+
 #import <OpenAL/al.h>
 #import <OpenAL/alc.h>
+
 #import <UIKit/UIKit.h>
 
 @interface SPAudioEngine ()
@@ -32,12 +37,12 @@
 
 // --- C functions ---
 
-static void interruptionCallback (void *inUserData, UInt32 interruptionState) 
-{   
-    if (interruptionState == kAudioSessionBeginInterruption)  
-        [SPAudioEngine beginInterruption]; 
+static void interruptionCallback (void* inUserData, UInt32 interruptionState)
+{
+    if (interruptionState == kAudioSessionBeginInterruption)
+        [SPAudioEngine beginInterruption];
     else if (interruptionState == kAudioSessionEndInterruption)
-        [SPAudioEngine endInterruption];      
+        [SPAudioEngine endInterruption];
 } 
 
 // --- static members ---
@@ -61,11 +66,11 @@ static BOOL interrupted = NO;
     {
         if ([SPAudioEngine initAudioSession:category])
             [SPAudioEngine initOpenAL];
-        
+
         // A bug introduced in iOS 4 may lead to 'endInterruption' NOT being called in some
         // situations. Thus, we're resuming the audio session manually via the 'DidBecomeActive'
         // notification. Find more information here: http://goo.gl/mr9KS
-        
+
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppActivated:)
                                                      name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];

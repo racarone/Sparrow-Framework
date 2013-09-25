@@ -13,7 +13,6 @@
 
 #import <malloc/malloc.h>
 #import <objc/runtime.h>
-#import <objc/message.h>
 
 #define COMPLAIN_MISSING_IMP @"Class %@ needs this code:\nSP_IMPLEMENT_MEMORY_POOL();" 
 
@@ -22,8 +21,6 @@
 @end
 
 #ifndef DISABLE_MEMORY_POOLING
-
-typedef SPPoolInfo* (*PoolInfoIMP) (id, SEL);
 
 @implementation SPPoolObject
 {
@@ -40,7 +37,7 @@ id doAlloc(id self, SEL _cmd, NSZone* zone)
     else thread = [NSThread currentThread];
 #endif
 
-    SPPoolInfo* poolInfo = objc_msgSend(self, @selector(poolInfo));
+    SPPoolInfo* poolInfo = [self poolInfo];
 
     if (poolInfo->lastElement)
     {
@@ -48,9 +45,10 @@ id doAlloc(id self, SEL _cmd, NSZone* zone)
         SPPoolObject* object = poolInfo->lastElement;
         poolInfo->lastElement = object->_poolPredecessor;
 
-        // zero out memory. (do not overwrite isa & _poolPredecessor, thus the offset)
+        // is this needed? pool objects can initialize themselves...
         //static size_t offset = sizeof(Class) + sizeof(SPPoolObject*);
         //memset((char*)(id)object + offset, 0, malloc_size(object) - offset);
+
         object->_retainCount = 1;
         return object;
     }
@@ -102,7 +100,7 @@ id doAlloc(id self, SEL _cmd, NSZone* zone)
     
     if (!_retainCount)
     {
-        SPPoolInfo* poolInfo = objc_msgSend(object_getClass(self), @selector(poolInfo));
+        SPPoolInfo* poolInfo = [object_getClass(self) poolInfo];
         self->_poolPredecessor = poolInfo->lastElement;
         poolInfo->lastElement = self;
     }
