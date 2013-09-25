@@ -4,6 +4,8 @@
 //
 //  Created by Robert Carone on 9/20/13.
 //
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the Simplified BSD License.
 //
 
 #import <GLKit/GLKMath.h>
@@ -28,47 +30,47 @@
 #pragma mark Prototypes
 #pragma mark -
 
-GLK_EXTERN SPPoint*         SPPointAlloc(void);
-GLK_INLINE SPPoint*         SPPointCreate(void);
-GLK_INLINE SPPoint*         SPPointCopy(SPPoint* self);
-GLK_INLINE SPPoint*         SPPointAddPoint(SPPoint* self, SPPoint* point);
-GLK_INLINE SPPoint*         SPPointSubtractPoint(SPPoint* self, SPPoint* point);
-GLK_INLINE SPPoint*         SPPointScaleBy(SPPoint* self, float scalar);
-GLK_INLINE SPPoint*         SPPointRotateBy(SPPoint* self, float angle);
-GLK_INLINE SPPoint*         SPPointNormalize(SPPoint* self);
-GLK_INLINE SPPoint*         SPPointInvert(SPPoint* self);
-GLK_INLINE float            SPPointDot(SPPoint* self, SPPoint* other);
-GLK_INLINE bool             SPPointIsEquivalent(SPPoint* self, SPPoint* other);
-GLK_INLINE void             SPPointCopyFromPoint(SPPoint* self, SPPoint* point);
-GLK_INLINE void             SPPointSet(SPPoint* self, float x, float y);
-GLK_INLINE GLKVector2       SPPointConvertToGLKVector2(SPPoint* self);
-GLK_INLINE float            SPPointDistanceFromPoints(SPPoint* p1, SPPoint* p2);
-GLK_INLINE float            SPPointAngleBetweenPoints(SPPoint* p1, SPPoint* p2);
-GLK_INLINE SPPoint*         SPPointInterpolateFromPoints(SPPoint* p1, SPPoint* p2, float ratio);
-GLK_INLINE float            SPPointGetLength(SPPoint* self);
-GLK_INLINE float            SPPointGetLengthSquared(SPPoint* self);
-GLK_INLINE float            SPPointGetAngle(SPPoint* self);
-GLK_INLINE bool             SPPointIsOrigin(SPPoint* self);
+SP_EXTERN SPPoint*          SPPointAlloc(void);
+SP_INLINE SPPoint*          SPPointCreate(void);
+SP_INLINE SPPoint*          SPPointCopy(SPPoint* self);
+SP_INLINE SPPoint*          SPPointAddPoint(SPPoint* self, SPPoint* point);
+SP_INLINE SPPoint*          SPPointSubtractPoint(SPPoint* self, SPPoint* point);
+SP_INLINE SPPoint*          SPPointScaleBy(SPPoint* self, float scalar);
+SP_INLINE SPPoint*          SPPointRotateBy(SPPoint* self, float angle);
+SP_INLINE SPPoint*          SPPointNormalize(SPPoint* self);
+SP_INLINE SPPoint*          SPPointInvert(SPPoint* self);
+SP_INLINE float             SPPointDot(SPPoint* self, SPPoint* other);
+SP_INLINE bool              SPPointIsEquivalent(SPPoint* self, SPPoint* other);
+SP_INLINE void              SPPointCopyFromPoint(SPPoint* self, SPPoint* point);
+SP_INLINE void              SPPointSet(SPPoint* self, float x, float y);
+SP_INLINE GLKVector2        SPPointConvertToGLKVector2(SPPoint* self);
+SP_INLINE float             SPPointDistanceFromPoints(SPPoint* p1, SPPoint* p2);
+SP_INLINE float             SPPointAngleBetweenPoints(SPPoint* p1, SPPoint* p2);
+SP_INLINE SPPoint*          SPPointInterpolateFromPoints(SPPoint* p1, SPPoint* p2, float ratio);
+SP_INLINE float             SPPointGetLength(SPPoint* self);
+SP_INLINE float             SPPointGetLengthSquared(SPPoint* self);
+SP_INLINE float             SPPointGetAngle(SPPoint* self);
+SP_INLINE bool              SPPointIsOrigin(SPPoint* self);
 
 #pragma mark -
 #pragma mark Implementations
 #pragma mark -
 
-GLK_INLINE SPPoint* SPPointCreate(void)
+SP_INLINE SPPoint* SPPointCreate(void)
 {
     SPPoint* point = SPPointAlloc();
     SPPointSet(point, 0, 0);
     return SP_AUTORELEASE(point);
 }
 
-GLK_INLINE SPPoint* SPPointCopy(SPPoint* self)
+SP_INLINE SPPoint* SPPointCopy(SPPoint* self)
 {
     SPPoint* point = SPPointAlloc();
     SPPointCopyFromPoint(point, self);
     return SP_AUTORELEASE(point);
 }
 
-GLK_INLINE SPPoint* SPPointAddPoint(SPPoint* self, SPPoint* point)
+SP_INLINE SPPoint* SPPointAddPoint(SPPoint* self, SPPoint* point)
 {
     SPPoint* result = SPPointAlloc();
 #if defined(__ARM_NEON__)
@@ -80,7 +82,7 @@ GLK_INLINE SPPoint* SPPointAddPoint(SPPoint* self, SPPoint* point)
     return SP_AUTORELEASE(result);
 }
 
-GLK_INLINE SPPoint* SPPointSubtractPoint(SPPoint* self, SPPoint* point)
+SP_INLINE SPPoint* SPPointSubtractPoint(SPPoint* self, SPPoint* point)
 {
     SPPoint* result = SPPointAlloc();
 #if defined(__ARM_NEON__)
@@ -92,7 +94,7 @@ GLK_INLINE SPPoint* SPPointSubtractPoint(SPPoint* self, SPPoint* point)
     return SP_AUTORELEASE(result);
 }
 
-GLK_INLINE SPPoint* SPPointScaleBy(SPPoint* self, float scalar)
+SP_INLINE SPPoint* SPPointScaleBy(SPPoint* self, float scalar)
 {
     SPPoint* result = SPPointAlloc();
 #if defined(__ARM_NEON__)
@@ -104,7 +106,7 @@ GLK_INLINE SPPoint* SPPointScaleBy(SPPoint* self, float scalar)
     return SP_AUTORELEASE(result);
 }
 
-GLK_INLINE SPPoint* SPPointRotateBy(SPPoint* self, float angle)
+SP_INLINE SPPoint* SPPointRotateBy(SPPoint* self, float angle)
 {
     SPPoint* result = SPPointAlloc();
     float sina = sinf(angle);
@@ -114,13 +116,13 @@ GLK_INLINE SPPoint* SPPointRotateBy(SPPoint* self, float angle)
     return result;
 }
 
-GLK_INLINE SPPoint* SPPointNormalize(SPPoint* self)
+SP_INLINE SPPoint* SPPointNormalize(SPPoint* self)
 {
     float inverseLength = 1.0f / SPPointGetLength(self);
     return SPPointScaleBy(self, inverseLength);
 }
 
-GLK_INLINE SPPoint* SPPointInvert(SPPoint* self)
+SP_INLINE SPPoint* SPPointInvert(SPPoint* self)
 {
     SPPoint* result = SPPointAlloc();
 #if defined(__ARM_NEON__)
@@ -132,7 +134,7 @@ GLK_INLINE SPPoint* SPPointInvert(SPPoint* self)
     return SP_AUTORELEASE(result);
 }
 
-GLK_INLINE float SPPointDot(SPPoint* self, SPPoint* other)
+SP_INLINE float SPPointDot(SPPoint* self, SPPoint* other)
 {
 #if defined(__ARM_NEON__)
     float32x2_t v = vmul_f32(*(float32x2_t*)&self->_x, *(float32x2_t*)&other->_x);
@@ -143,7 +145,7 @@ GLK_INLINE float SPPointDot(SPPoint* self, SPPoint* other)
 #endif
 }
 
-GLK_INLINE bool SPPointIsEquivalent(SPPoint* self, SPPoint* other)
+SP_INLINE bool SPPointIsEquivalent(SPPoint* self, SPPoint* other)
 {
     if (other == self) return true;
     else if (!other) return false;
@@ -164,7 +166,7 @@ GLK_INLINE bool SPPointIsEquivalent(SPPoint* self, SPPoint* other)
 #endif
 }
 
-GLK_INLINE void SPPointCopyFromPoint(SPPoint* self, SPPoint* point)
+SP_INLINE void SPPointCopyFromPoint(SPPoint* self, SPPoint* point)
 {
 #if defined(__ARM_NEON__)
     *((float32x2_t*)&self->_x) = *(float32x2_t*)&point->_x;
@@ -174,29 +176,29 @@ GLK_INLINE void SPPointCopyFromPoint(SPPoint* self, SPPoint* point)
 #endif
 }
 
-GLK_INLINE void SPPointSet(SPPoint* self, float x, float y)
+SP_INLINE void SPPointSet(SPPoint* self, float x, float y)
 {
     self->_x = x;
     self->_y = y;
 }
 
-GLK_INLINE GLKVector2 SPPointConvertToGLKVector2(SPPoint* self)
+SP_INLINE GLKVector2 SPPointConvertToGLKVector2(SPPoint* self)
 {
     return GLKVector2MakeWithArray(&self->_x);
 }
 
-GLK_INLINE float SPPointDistanceFromPoints(SPPoint* p1, SPPoint* p2)
+SP_INLINE float SPPointDistanceFromPoints(SPPoint* p1, SPPoint* p2)
 {
     return SPPointGetLength(SPPointSubtractPoint(p1, p2));
 }
 
-GLK_INLINE float SPPointAngleBetweenPoints(SPPoint* p1, SPPoint* p2)
+SP_INLINE float SPPointAngleBetweenPoints(SPPoint* p1, SPPoint* p2)
 {
     float cos = SPPointDot(p1, p2) / (SPPointGetLength(p1) * SPPointGetLength(p2));
     return cos >= 1.0f ? 0.0f : acosf(cos);
 }
 
-GLK_INLINE SPPoint* SPPointInterpolateFromPoints(SPPoint* p1, SPPoint* p2, float ratio)
+SP_INLINE SPPoint* SPPointInterpolateFromPoints(SPPoint* p1, SPPoint* p2, float ratio)
 {
     SPPoint* result = SPPointAlloc();
 #if defined(__ARM_NEON__)
@@ -210,7 +212,7 @@ GLK_INLINE SPPoint* SPPointInterpolateFromPoints(SPPoint* p1, SPPoint* p2, float
     return SP_AUTORELEASE(result);
 }
 
-GLK_INLINE float SPPointGetLength(SPPoint* self)
+SP_INLINE float SPPointGetLength(SPPoint* self)
 {
 #if defined(__ARM_NEON__)
     float32x2_t v = vmul_f32(*(float32x2_t*)&self->_x, *(float32x2_t*)&self->_x);
@@ -221,17 +223,17 @@ GLK_INLINE float SPPointGetLength(SPPoint* self)
 #endif
 }
 
-GLK_INLINE float SPPointGetLengthSquared(SPPoint* self)
+SP_INLINE float SPPointGetLengthSquared(SPPoint* self)
 {
     return SP_SQUARE(self->_x) + SP_SQUARE(self->_y);
 }
 
-GLK_INLINE float SPPointGetAngle(SPPoint* self)
+SP_INLINE float SPPointGetAngle(SPPoint* self)
 {
     return atan2f(self->_y, self->_x);
 }
 
-GLK_INLINE bool SPPointIsOrigin(SPPoint* self)
+SP_INLINE bool SPPointIsOrigin(SPPoint* self)
 {
     return self->_x == 0.0f && self->_y == 0.0f;
 }

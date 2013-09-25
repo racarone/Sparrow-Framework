@@ -127,6 +127,7 @@ typedef void (^SPCallbackBlock)();
 #define SP_SWAP(x, y, T)            do { T temp##x##y = x; x = y; y = temp##x##y; } while (0)
 
 #define SP_DEPRECATED               __attribute__((deprecated))
+#define SP_INLINE                   static __inline__
 
 #ifdef __cplusplus
     #define SP_EXTERN       extern "C" __attribute__((visibility ("default")))

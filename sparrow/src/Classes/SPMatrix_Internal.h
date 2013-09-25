@@ -4,6 +4,8 @@
 //
 //  Created by Robert Carone on 9/20/13.
 //
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the Simplified BSD License.
 //
 
 #import "SPMacros.h"
@@ -27,52 +29,52 @@
 #pragma mark Prototypes
 #pragma mark -
 
-GLK_EXTERN SPMatrix*        SPMatrixAlloc(void);
-GLK_INLINE SPMatrix*        SPMatrixCreate(void);
-GLK_INLINE SPMatrix*        SPMatrixCopy(SPMatrix* self);
-GLK_INLINE void             SPMatrixSet(SPMatrix* self, float a, float b, float c, float d, float tx, float ty);
-GLK_INLINE bool             SPMatrixIsEquivilant(SPMatrix* self, SPMatrix* matrix);
-GLK_INLINE void             SPMatrixAppendMatrix(SPMatrix* self, SPMatrix* lhs);
-GLK_INLINE void             SPMatrixPrependMatrix(SPMatrix* self, SPMatrix* rhs);
-GLK_INLINE void             SPMatrixTranslateBy(SPMatrix* self, float dx, float dy);
-GLK_INLINE void             SPMatrixScaleBy(SPMatrix* self, float sx, float sy);
-GLK_INLINE void             SPMatrixSkewBy(SPMatrix* self, float sx, float sy);
-GLK_INLINE void             SPMatrixScale(SPMatrix* self, float scale);
-GLK_INLINE void             SPMatrixRotateBy(SPMatrix* self, float angle);
-GLK_INLINE void             SPMatrixIdentity(SPMatrix* self);
-GLK_INLINE void             SPMatrixInvert(SPMatrix* self);
-GLK_INLINE void             SPMatrixCopyFrom(SPMatrix* self, SPMatrix* matrix);
-GLK_INLINE GLKMatrix4       SPMatrixConvertToGLKMatrix4(SPMatrix* self);
-GLK_INLINE GLKMatrix3       SPMatrixConvertToGLKMatrix3(SPMatrix* self);
-GLK_INLINE SPPoint*         SPMatrixTransformPoint(SPMatrix* self, SPPoint* point);
-GLK_INLINE SPPoint*         SPMatrixTransformPointWith(SPMatrix* self, float x, float y);
-GLK_INLINE float            SPMatrixGetDeterminant(SPMatrix* self);
+SP_EXTERN SPMatrix*         SPMatrixAlloc(void);
+SP_INLINE SPMatrix*         SPMatrixCreate(void);
+SP_INLINE SPMatrix*         SPMatrixCopy(SPMatrix* self);
+SP_INLINE void              SPMatrixSet(SPMatrix* self, float a, float b, float c, float d, float tx, float ty);
+SP_INLINE bool              SPMatrixIsEquivilant(SPMatrix* self, SPMatrix* matrix);
+SP_INLINE void              SPMatrixAppendMatrix(SPMatrix* self, SPMatrix* lhs);
+SP_INLINE void              SPMatrixPrependMatrix(SPMatrix* self, SPMatrix* rhs);
+SP_INLINE void              SPMatrixTranslateBy(SPMatrix* self, float dx, float dy);
+SP_INLINE void              SPMatrixScaleBy(SPMatrix* self, float sx, float sy);
+SP_INLINE void              SPMatrixSkewBy(SPMatrix* self, float sx, float sy);
+SP_INLINE void              SPMatrixScale(SPMatrix* self, float scale);
+SP_INLINE void              SPMatrixRotateBy(SPMatrix* self, float angle);
+SP_INLINE void              SPMatrixIdentity(SPMatrix* self);
+SP_INLINE void              SPMatrixInvert(SPMatrix* self);
+SP_INLINE void              SPMatrixCopyFrom(SPMatrix* self, SPMatrix* matrix);
+SP_INLINE GLKMatrix4        SPMatrixConvertToGLKMatrix4(SPMatrix* self);
+SP_INLINE GLKMatrix3        SPMatrixConvertToGLKMatrix3(SPMatrix* self);
+SP_INLINE SPPoint*          SPMatrixTransformPoint(SPMatrix* self, SPPoint* point);
+SP_INLINE SPPoint*          SPMatrixTransformPointWith(SPMatrix* self, float x, float y);
+SP_INLINE float             SPMatrixGetDeterminant(SPMatrix* self);
 
 #pragma mark -
 #pragma mark Implementations
 #pragma mark -
 
-GLK_INLINE SPMatrix* SPMatrixCreate(void)
+SP_INLINE SPMatrix* SPMatrixCreate(void)
 {
     SPMatrix* result = SPMatrixAlloc();
     SPMatrixIdentity(result);
     return SP_AUTORELEASE(result);
 }
 
-GLK_INLINE SPMatrix* SPMatrixCopy(SPMatrix* self)
+SP_INLINE SPMatrix* SPMatrixCopy(SPMatrix* self)
 {
     SPMatrix* result = SPMatrixAlloc();
     SPMatrixCopyFrom(result, self);
     return result;
 }
 
-GLK_INLINE void SPMatrixSet(SPMatrix* self, float a, float b, float c, float d, float tx, float ty)
+SP_INLINE void SPMatrixSet(SPMatrix* self, float a, float b, float c, float d, float tx, float ty)
 {
     self->_a = a; self->_b = b; self->_c = c; self->_d = d;
     self->_tx = tx; self->_ty = ty;
 }
 
-GLK_INLINE bool SPMatrixIsEquivilant(SPMatrix* self, SPMatrix* matrix)
+SP_INLINE bool SPMatrixIsEquivilant(SPMatrix* self, SPMatrix* matrix)
 {
     if (matrix == self) return true;
     else if (!matrix) return false;
@@ -84,7 +86,7 @@ GLK_INLINE bool SPMatrixIsEquivilant(SPMatrix* self, SPMatrix* matrix)
     }
 }
 
-GLK_INLINE void SPMatrixAppendMatrix(SPMatrix* self, SPMatrix* lhs)
+SP_INLINE void SPMatrixAppendMatrix(SPMatrix* self, SPMatrix* lhs)
 {
     SPMatrixSet(self, lhs->_a * self->_a  + lhs->_c * self->_b,
                       lhs->_b * self->_a  + lhs->_d * self->_b,
@@ -94,7 +96,7 @@ GLK_INLINE void SPMatrixAppendMatrix(SPMatrix* self, SPMatrix* lhs)
                       lhs->_b * self->_tx + lhs->_d * self->_ty + lhs->_ty);
 }
 
-GLK_INLINE void SPMatrixPrependMatrix(SPMatrix* self, SPMatrix* rhs)
+SP_INLINE void SPMatrixPrependMatrix(SPMatrix* self, SPMatrix* rhs)
 {
     SPMatrixSet(self, self->_a * rhs->_a + self->_c * rhs->_b,
                       self->_b * rhs->_a + self->_d * rhs->_b,
@@ -104,13 +106,13 @@ GLK_INLINE void SPMatrixPrependMatrix(SPMatrix* self, SPMatrix* rhs)
                       self->_ty + self->_b * rhs->_tx + self->_d * rhs->_ty);
 }
 
-GLK_INLINE void SPMatrixTranslateBy(SPMatrix* self, float dx, float dy)
+SP_INLINE void SPMatrixTranslateBy(SPMatrix* self, float dx, float dy)
 {
     self->_tx += dx;
     self->_ty += dy;
 }
 
-GLK_INLINE void SPMatrixScaleBy(SPMatrix* self, float sx, float sy)
+SP_INLINE void SPMatrixScaleBy(SPMatrix* self, float sx, float sy)
 {
     if (sx != 1.0f)
     {
@@ -127,7 +129,7 @@ GLK_INLINE void SPMatrixScaleBy(SPMatrix* self, float sx, float sy)
     }
 }
 
-GLK_INLINE void SPMatrixSkewBy(SPMatrix* self, float sx, float sy)
+SP_INLINE void SPMatrixSkewBy(SPMatrix* self, float sx, float sy)
 {
     float sinX = sinf(sx);
     float cosX = cosf(sx);
@@ -142,12 +144,12 @@ GLK_INLINE void SPMatrixSkewBy(SPMatrix* self, float sx, float sy)
                       self->_tx * sinY + self->_ty * cosX);
 }
 
-GLK_INLINE void SPMatrixScale(SPMatrix* self, float scale)
+SP_INLINE void SPMatrixScale(SPMatrix* self, float scale)
 {
     SPMatrixScaleBy(self, scale, scale);
 }
 
-GLK_INLINE void SPMatrixRotateBy(SPMatrix* self, float angle)
+SP_INLINE void SPMatrixRotateBy(SPMatrix* self, float angle)
 {
     if (angle == 0.0f) return;
 
@@ -159,23 +161,23 @@ GLK_INLINE void SPMatrixRotateBy(SPMatrix* self, float angle)
                       self->_tx * cos - self->_ty * sin, self->_tx * sin + self->_ty * cos);
 }
 
-GLK_INLINE void SPMatrixIdentity(SPMatrix* self)
+SP_INLINE void SPMatrixIdentity(SPMatrix* self)
 {
     SPMatrixSet(self, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
 }
 
-GLK_INLINE void SPMatrixInvert(SPMatrix* self)
+SP_INLINE void SPMatrixInvert(SPMatrix* self)
 {
     float det = SPMatrixGetDeterminant(self);
     SPMatrixSet(self, self->_d/det, -self->_b/det, -self->_c/det, self->_a/det, (self->_c*self->_ty-self->_d*self->_tx)/det, (self->_b*self->_tx-self->_a*self->_ty)/det);
 }
 
-GLK_INLINE void SPMatrixCopyFrom(SPMatrix* self, SPMatrix* matrix)
+SP_INLINE void SPMatrixCopyFrom(SPMatrix* self, SPMatrix* matrix)
 {
     SPMatrixSet(self, matrix->_a, matrix->_b, matrix->_c, matrix->_d, matrix->_tx, matrix->_ty);
 }
 
-GLK_INLINE GLKMatrix4 SPMatrixConvertToGLKMatrix4(SPMatrix* self)
+SP_INLINE GLKMatrix4 SPMatrixConvertToGLKMatrix4(SPMatrix* self)
 {
     GLKMatrix4 matrix = GLKMatrix4Identity;
 
@@ -189,14 +191,14 @@ GLK_INLINE GLKMatrix4 SPMatrixConvertToGLKMatrix4(SPMatrix* self)
     return matrix;
 }
 
-GLK_INLINE GLKMatrix3 SPMatrixConvertToGLKMatrix3(SPMatrix* self)
+SP_INLINE GLKMatrix3 SPMatrixConvertToGLKMatrix3(SPMatrix* self)
 {
     return GLKMatrix3Make(self->_a,  self->_b,  0.0f,
                           self->_c,  self->_d,  0.0f,
                           self->_tx, self->_ty, 1.0f);
 }
 
-GLK_INLINE SPPoint* SPMatrixTransformPoint(SPMatrix* self, SPPoint* point)
+SP_INLINE SPPoint* SPMatrixTransformPoint(SPMatrix* self, SPPoint* point)
 {
     SPPoint* result = SPPointAlloc();
     result->_x = self->_a*point.x + self->_c*point.y + self->_tx;
@@ -204,7 +206,7 @@ GLK_INLINE SPPoint* SPMatrixTransformPoint(SPMatrix* self, SPPoint* point)
     return SP_AUTORELEASE(result);
 }
 
-GLK_INLINE SPPoint* SPMatrixTransformPointWith(SPMatrix* self, float x, float y)
+SP_INLINE SPPoint* SPMatrixTransformPointWith(SPMatrix* self, float x, float y)
 {
     SPPoint* result = SPPointAlloc();
     result->_x = self->_a*x + self->_c*y + self->_tx;
@@ -212,7 +214,7 @@ GLK_INLINE SPPoint* SPMatrixTransformPointWith(SPMatrix* self, float x, float y)
     return SP_AUTORELEASE(result);
 }
 
-GLK_INLINE float SPMatrixGetDeterminant(SPMatrix* self)
+SP_INLINE float SPMatrixGetDeterminant(SPMatrix* self)
 {
     return self->_a * self->_d - self->_c * self->_b;
 }

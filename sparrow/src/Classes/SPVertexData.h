@@ -9,28 +9,30 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
+#import <Foundation/Foundation.h>
 #import <GLKit/GLKit.h>
 
 @class SPRectangle;
 @class SPMatrix;
 @class SPPoint;
 
-typedef struct
+struct __SPVertexColor
 {
     unsigned char r;
     unsigned char g;
     unsigned char b;
     unsigned char a;
-} SPVertexColor;
+};
+typedef struct __SPVertexColor SPVertexColor;
 
-typedef struct
+struct __SPVertex
 {
-    GLKVector2 position;
-    GLKVector2 texCoords;
+    GLKVector2    position;
+    GLKVector2    texCoords;
     SPVertexColor color;
-} SPVertex;
+};
+typedef struct __SPVertex SPVertex;
 
 SPVertexColor SPVertexColorMake(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 SPVertexColor SPVertexColorMakeWithColorAndAlpha(uint rgb, float alpha);

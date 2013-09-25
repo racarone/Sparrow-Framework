@@ -25,6 +25,8 @@ SPMatrix* SPMatrixAlloc(void)
     return __SPMatrixAllocIMP(__SPMatrixAllocClass, __SPMatrixAllocSEL);
 }
 
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPMatrix
 
 @synthesize a=_a, b=_b, c=_c, d=_d, tx=_tx, ty=_ty;

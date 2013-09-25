@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8719FC2C17F3688000AFBA44 /* SPOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8719FC2A17F3688000AFBA44 /* SPOpenGL.h */; };
+		8719FC2D17F3688000AFBA44 /* SPOpenGL.m in Sources */ = {isa = PBXBuildFile; fileRef = 8719FC2B17F3688000AFBA44 /* SPOpenGL.m */; };
+		8719FC3017F36CB200AFBA44 /* SPOpenGL_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8719FC2E17F36CB200AFBA44 /* SPOpenGL_Internal.h */; };
+		8719FC3117F36CB200AFBA44 /* SPOpenGL_Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8719FC2F17F36CB200AFBA44 /* SPOpenGL_Internal.m */; };
 		87C9746817E8C5C600E46C58 /* SPVertexData.m in Sources */ = {isa = PBXBuildFile; fileRef = DE19443116D27E9E00E5CCD9 /* SPVertexData.m */; };
 		DE019C391026360B00ECB0AC /* SPTween.m in Sources */ = {isa = PBXBuildFile; fileRef = DE7044760FB62080007F5ECC /* SPTween.m */; };
 		DE019C3A1026361200ECB0AC /* SPDelayedInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFB1B94100926260022C117 /* SPDelayedInvocation.m */; };
@@ -180,6 +184,10 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		28FD14FF0DC6FC520079059D /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		28FD15070DC6FC5B0079059D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		8719FC2A17F3688000AFBA44 /* SPOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPOpenGL.h; sourceTree = "<group>"; };
+		8719FC2B17F3688000AFBA44 /* SPOpenGL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPOpenGL.m; sourceTree = "<group>"; };
+		8719FC2E17F36CB200AFBA44 /* SPOpenGL_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPOpenGL_Internal.h; sourceTree = "<group>"; };
+		8719FC2F17F36CB200AFBA44 /* SPOpenGL_Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPOpenGL_Internal.m; sourceTree = "<group>"; };
 		8762586117ECDFA40049B8EE /* SPMatrix_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPMatrix_Internal.h; sourceTree = "<group>"; };
 		8762587B17ECEBDE0049B8EE /* SPPoint_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPPoint_Internal.h; sourceTree = "<group>"; };
 		87F3BA0F17F26806000FB6B0 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -448,6 +456,8 @@
 			isa = PBXGroup;
 			children = (
 				8762586117ECDFA40049B8EE /* SPMatrix_Internal.h */,
+				8719FC2E17F36CB200AFBA44 /* SPOpenGL_Internal.h */,
+				8719FC2F17F36CB200AFBA44 /* SPOpenGL_Internal.m */,
 				8762587B17ECEBDE0049B8EE /* SPPoint_Internal.h */,
 			);
 			name = Internal;
@@ -463,6 +473,8 @@
 				DE469D260F9386FD00F56E91 /* SPMatrix.m */,
 				DE68EA150FBB5660004DBC95 /* SPNSExtensions.h */,
 				DE68EA160FBB5660004DBC95 /* SPNSExtensions.m */,
+				8719FC2A17F3688000AFBA44 /* SPOpenGL.h */,
+				8719FC2B17F3688000AFBA44 /* SPOpenGL.m */,
 				87F3BA5D17F26985000FB6B0 /* SPPlatform.h */,
 				DE469D270F9386FD00F56E91 /* SPPoint.h */,
 				DE469D280F9386FD00F56E91 /* SPPoint.m */,
@@ -740,10 +752,12 @@
 				DE611379134F8F6C00AB742E /* SPEvent.h in Headers */,
 				DE61137A134F8F6C00AB742E /* SPEventDispatcher.h in Headers */,
 				DE61137B134F8F6C00AB742E /* SPTouch.h in Headers */,
+				8719FC3017F36CB200AFBA44 /* SPOpenGL_Internal.h in Headers */,
 				DE61137C134F8F6C00AB742E /* SPTouchEvent.h in Headers */,
 				DE61137D134F8F6C00AB742E /* SPEnterFrameEvent.h in Headers */,
 				DE61137F134F8F8300AB742E /* SPRenderSupport.h in Headers */,
 				DE611380134F8F8300AB742E /* SPTextField.h in Headers */,
+				8719FC2C17F3688000AFBA44 /* SPOpenGL.h in Headers */,
 				DE611381134F8F8300AB742E /* SPBitmapFont.h in Headers */,
 				DE611382134F8F8300AB742E /* SPBitmapChar.h in Headers */,
 				DE611383134F8F8300AB742E /* SPDisplayObject.h in Headers */,
@@ -944,6 +958,7 @@
 				DEFE4BCE101B31DF00E22471 /* SPTransitions.m in Sources */,
 				DE019C391026360B00ECB0AC /* SPTween.m in Sources */,
 				DE019C3A1026361200ECB0AC /* SPDelayedInvocation.m in Sources */,
+				8719FC3117F36CB200AFBA44 /* SPOpenGL_Internal.m in Sources */,
 				DE019C3B1026363D00ECB0AC /* SPNSExtensions.m in Sources */,
 				DE019C3C1026364800ECB0AC /* SPJuggler.m in Sources */,
 				DED9B51E10629D9F00989853 /* SPPoolObject.m in Sources */,
@@ -966,6 +981,7 @@
 				DEAAF3D816BC0D21004EB9D5 /* SPResizeEvent.m in Sources */,
 				DEAAF3DC16BC0E46004EB9D5 /* SPOverlayView.m in Sources */,
 				DED29C0816DFB48E000C2BD7 /* SPEventListener.m in Sources */,
+				8719FC2D17F3688000AFBA44 /* SPOpenGL.m in Sources */,
 				DEC87D0816E0CDD80050EA95 /* SPQuadBatch.m in Sources */,
 				DE82240D16EF468E00A172EE /* SPBaseEffect.m in Sources */,
 				DE97B93116F1EA5E00DC1077 /* SPProgram.m in Sources */,
