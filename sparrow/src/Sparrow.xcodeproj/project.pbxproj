@@ -453,17 +453,6 @@
 			name = Internal;
 			sourceTree = "<group>";
 		};
-		87F3BA2417F268CC000FB6B0 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				DEAAF3D916BC0E46004EB9D5 /* SPOverlayView.h */,
-				DEAAF3DA16BC0E46004EB9D5 /* SPOverlayView.m */,
-				DE8E6A8016B430C4007EE8BA /* SPViewController.h */,
-				DE8E6A8116B430C4007EE8BA /* SPViewController.m */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
 		DE469D310F93870A00F56E91 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -616,7 +605,10 @@
 			isa = PBXGroup;
 			children = (
 				DE85779116B58EDF00725EC0 /* Internal */,
-				87F3BA2417F268CC000FB6B0 /* iOS */,
+				DEAAF3D916BC0E46004EB9D5 /* SPOverlayView.h */,
+				DEAAF3DA16BC0E46004EB9D5 /* SPOverlayView.m */,
+				DE8E6A8016B430C4007EE8BA /* SPViewController.h */,
+				DE8E6A8116B430C4007EE8BA /* SPViewController.m */,
 				DE85778C16B58E4B00725EC0 /* SparrowClass.h */,
 				DE85778D16B58E4B00725EC0 /* SparrowClass.m */,
 			);

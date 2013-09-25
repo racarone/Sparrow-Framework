@@ -24,16 +24,6 @@
 
 @implementation SPTexture
 
-- (instancetype)init
-{    
-    if ([self isMemberOfClass:[SPTexture class]]) 
-    {
-        return [self initWithWidth:32 height:32];
-    }
-    
-    return [super init];
-}
-
 - (instancetype)initWithContentsOfFile:(NSString*)path
 {
     return [self initWithContentsOfFile:path generateMipmaps:NO];
@@ -204,7 +194,7 @@
 
 + (instancetype)emptyTexture
 {
-    return [[(SPTexture*)[self alloc] init] autorelease];
+    return [self emptyTextureWithWidth:32 height:32];
 }
 
 + (instancetype)emptyTextureWithWidth:(float)width height:(float)height
@@ -219,13 +209,11 @@
 
 + (instancetype)emptyTextureWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps premultipliedAlpha:(BOOL)pma
 {
-    return [self emptyTextureWithWidth:width height:height generateMipmaps:false premultipliedAlpha:true scale:-1];
+    return [self emptyTextureWithWidth:width height:height generateMipmaps:false premultipliedAlpha:true scale:Sparrow.contentScaleFactor];
 }
 
 + (instancetype)emptyTextureWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps premultipliedAlpha:(BOOL)pma scale:(float)scale
 {
-    if (scale <= 0) scale = [Sparrow contentScaleFactor];
-
     NSInteger actualWidth;
     NSInteger actualHeight;
     SPGLTexture* glTexture;
