@@ -10,6 +10,7 @@
 //
 
 #import "SPMacros.h"
+#import "SPOpenGL.h"
 #import "SPProgram.h"
 
 #import <GLKit/GLKit.h>

@@ -57,3 +57,4 @@
 #import "SPBlendMode.h"
 #import "SPBaseEffect.h"
 #import "SparrowClass.h"
+#import "SPOpenGL.h"

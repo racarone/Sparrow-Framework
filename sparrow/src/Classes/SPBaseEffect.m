@@ -13,6 +13,7 @@
 #import "SPBaseEffect.h"
 #import "SPMatrix_Internal.h"
 #import "SPNSExtensions.h"
+#import "SPOpenGL.h"
 #import "SPProgram.h"
 #import "SPTexture.h"
 

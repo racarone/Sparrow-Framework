@@ -15,6 +15,7 @@
 #import "SPImage.h"
 #import "SPMacros.h"
 #import "SPMatrix_Internal.h"
+#import "SPOpenGL.h"
 #import "SPQuadBatch.h"
 #import "SPRenderSupport.h"
 #import "SPTexture.h"

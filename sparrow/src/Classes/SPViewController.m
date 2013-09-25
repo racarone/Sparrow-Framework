@@ -230,7 +230,7 @@
         [Sparrow setCurrentController:self];
         [EAGLContext setCurrentContext:_context];
         [_support nextFrame];
-        
+
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);

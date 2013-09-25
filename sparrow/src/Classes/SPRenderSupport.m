@@ -14,6 +14,7 @@
 #import "SPDisplayObject.h"
 #import "SPMacros.h"
 #import "SPMatrix_Internal.h"
+#import "SPOpenGL.h"
 #import "SPQuad.h"
 #import "SPQuadBatch.h"
 #import "SPRenderSupport.h"
@@ -278,7 +279,10 @@
         glEnable(GL_SCISSOR_TEST);
         glScissor(clip.x, clip.y, clip.width, clip.height);
     }
-    else glDisable(GL_SCISSOR_TEST);
+    else
+    {
+        glDisable(GL_SCISSOR_TEST);
+    }
 }
 
 #pragma mark - state stack

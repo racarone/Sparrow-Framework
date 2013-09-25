@@ -7,6 +7,7 @@
 //
 
 #import "SPBlendMode.h"
+#import "SPOpenGL.h"
 
 #import <GLKit/GLKit.h>
 

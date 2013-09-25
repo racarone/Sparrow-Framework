@@ -11,6 +11,7 @@
 
 #import "SPGLTexture.h"
 #import "SPMacros.h"
+#import "SPOpenGL.h"
 #import "SPRectangle.h"
 
 @implementation SPGLTexture
