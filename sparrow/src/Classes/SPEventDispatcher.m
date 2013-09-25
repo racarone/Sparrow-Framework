@@ -31,14 +31,16 @@
 
 - (void)addEventListenerForType:(NSString*)eventType block:(SPEventBlock)block
 {
-    SPEventListener *listener = [[SPEventListener alloc] initWithBlock:block];
+    SPEventListener* listener = [[SPEventListener alloc] initWithBlock:block];
     [self addEventListener:listener forType:eventType];
+    [listener release];
 }
 
 - (void)addEventListener:(SEL)selector atObject:(id)object forType:(NSString*)eventType
 {
-    SPEventListener *listener = [[SPEventListener alloc] initWithTarget:object selector:selector];
+    SPEventListener* listener = [[SPEventListener alloc] initWithTarget:object selector:selector];
     [self addEventListener:listener forType:eventType];
+    [listener release];
 }
 
 - (void)removeEventListener:(SEL)selector atObject:(id)object forType:(NSString*)eventType
