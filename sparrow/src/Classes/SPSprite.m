@@ -38,7 +38,7 @@
 - (void)unflatten
 {
     _flattenRequested = NO;
-    _flattenedContents = nil;
+    SP_RELEASE_AND_NIL(_flattenedContents);
 }
 
 - (SPRectangle*)clipRectInSpace:(SPDisplayObject*)targetSpace
@@ -113,7 +113,7 @@
 
     if (_flattenRequested)
     {
-        _flattenedContents = [SPQuadBatch compileObject:self intoArray:_flattenedContents];
+        _flattenedContents = [[SPQuadBatch compileObject:self intoArray:[_flattenedContents autorelease]] retain];
         _flattenRequested = NO;
     }
     
