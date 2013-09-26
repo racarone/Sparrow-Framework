@@ -22,7 +22,7 @@ void onUncaughtException(NSException* exception)
 @implementation DemoAppDelegate
 {
     UIWindow *_window;
-    SPViewController* _viewController;
+    SPViewControllerIOS* _viewController;
 }
 
 - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions 
@@ -34,7 +34,7 @@ void onUncaughtException(NSException* exception)
 
     [SPAudioEngine start];
 
-    _viewController = [[SPViewController alloc] init];
+    _viewController = [[SPViewControllerIOS alloc] init];
     _viewController.multitouchEnabled = YES;
     _viewController.preferredFramesPerSecond = 60;
     [_viewController startWithRoot:[Game class] supportHighResolutions:YES doubleOnPad:YES];

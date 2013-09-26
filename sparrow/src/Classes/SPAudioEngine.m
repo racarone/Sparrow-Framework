@@ -47,10 +47,10 @@ static void interruptionCallback (void* inUserData, UInt32 interruptionState)
 
 // --- static members ---
 
-static ALCdevice  *device  = NULL;
-static ALCcontext *context = NULL;
-static float masterVolume = 1.0f;
-static BOOL interrupted = NO;
+static ALCdevice*   gDevice         = NULL;
+static ALCcontext*  gContext        = NULL;
+static float        gMasterVolume   = 1.0f;
+static BOOL         gInterrupted    = NO;
 
 // ---
 
@@ -62,7 +62,7 @@ static BOOL interrupted = NO;
 
 + (void)start:(SPAudioSessionCategory)category
 {
-    if (!device)
+    if (!gDevice)
     {
         if ([SPAudioEngine initAudioSession:category])
             [SPAudioEngine initOpenAL];
@@ -87,13 +87,13 @@ static BOOL interrupted = NO;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     alcMakeContextCurrent(NULL);
-    alcDestroyContext(context);
-    alcCloseDevice(device);
+    alcDestroyContext(gContext);
+    alcCloseDevice(gDevice);
     AudioSessionSetActive(NO);
     
-    device = NULL;
-    context = NULL;
-    interrupted = NO;
+    gDevice = NULL;
+    gContext = NULL;
+    gInterrupted = NO;
 }
 
 + (BOOL)initAudioSession:(SPAudioSessionCategory)category
@@ -130,21 +130,21 @@ static BOOL interrupted = NO;
 {
     alGetError(); // reset any errors
     
-    device = alcOpenDevice(NULL);
-    if (!device)
+    gDevice = alcOpenDevice(NULL);
+    if (!gDevice)
     {
         NSLog(@"Could not open default OpenAL device");
         return NO;
     }
     
-    context = alcCreateContext(device, 0);
-    if (!context)
+    gContext = alcCreateContext(gDevice, 0);
+    if (!gContext)
     {
         NSLog(@"Could not create OpenAL context for default device");
         return NO;
     }
     
-    BOOL success = alcMakeContextCurrent(context);
+    BOOL success = alcMakeContextCurrent(gContext);
     if (!success)
     {
         NSLog(@"Could not set current OpenAL context");
@@ -159,31 +159,31 @@ static BOOL interrupted = NO;
     [SPAudioEngine postNotification:SP_NOTIFICATION_AUDIO_INTERRUPTION_BEGAN object:nil];
     alcMakeContextCurrent(NULL);
     AudioSessionSetActive(NO);
-    interrupted = YES;
+    gInterrupted = YES;
 }
 
 + (void)endInterruption
 {
-    interrupted = NO;
+    gInterrupted = NO;
     AudioSessionSetActive(YES);
-    alcMakeContextCurrent(context);
-    alcProcessContext(context);
+    alcMakeContextCurrent(gContext);
+    alcProcessContext(gContext);
     [SPAudioEngine postNotification:SP_NOTIFICATION_AUDIO_INTERRUPTION_ENDED object:nil];
 }
 
 + (void)onAppActivated:(NSNotification*)notification
 {
-    if (interrupted) [self endInterruption];
+    if (gInterrupted) [self endInterruption];
 }
 
 + (float)masterVolume
 {
-    return masterVolume;
+    return gMasterVolume;
 }
 
 + (void)setMasterVolume:(float)volume
 {       
-    masterVolume = volume;
+    gMasterVolume = volume;
     alListenerf(AL_GAIN, volume);
     [SPAudioEngine postNotification:SP_NOTIFICATION_MASTER_VOLUME_CHANGED object:nil];
 }

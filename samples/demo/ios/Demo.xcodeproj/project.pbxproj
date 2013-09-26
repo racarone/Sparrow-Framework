@@ -23,6 +23,7 @@
 		25C23B0011EC7FE200A25DF7 /* atlas.png in Resources */ = {isa = PBXBuildFile; fileRef = 25C23AFE11EC7FE200A25DF7 /* atlas.png */; };
 		25C23B0111EC7FE200A25DF7 /* atlas.xml in Resources */ = {isa = PBXBuildFile; fileRef = 25C23AFF11EC7FE200A25DF7 /* atlas.xml */; };
 		871C9BD317F353E20085962E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 871C9BD217F353E20085962E /* CoreText.framework */; };
+		8751FD9B17F3B8F000A25C1C /* libSparrow-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE08354213869D8100023C9E /* libSparrow-iOS.a */; };
 		8762582117EA330D0049B8EE /* DemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* DemoAppDelegate.m */; };
 		87F3B96F17F2405A000FB6B0 /* MaskScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F3B96E17F2405A000FB6B0 /* MaskScene.m */; };
 		DE0240901381B87E008A91B9 /* logo_rect.pvr in Resources */ = {isa = PBXBuildFile; fileRef = DE02408F1381B87E008A91B9 /* logo_rect.pvr */; };
@@ -37,7 +38,6 @@
 		DE0456E2138803E7005FFBCE /* desyrel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DE0456E0138803E7005FFBCE /* desyrel@2x.png */; };
 		DE04EA5F16CA965E00B828E8 /* AsyncTextureScene.m in Sources */ = {isa = PBXBuildFile; fileRef = DE04EA5E16CA965E00B828E8 /* AsyncTextureScene.m */; };
 		DE061A2A119D799900DFF25D /* MovieScene.m in Sources */ = {isa = PBXBuildFile; fileRef = DE061A29119D799900DFF25D /* MovieScene.m */; };
-		DE08354913869D9A00023C9E /* libSparrow.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE08354813869D9A00023C9E /* libSparrow.a */; };
 		DE0F755910641630004F2821 /* BenchmarkScene.m in Sources */ = {isa = PBXBuildFile; fileRef = DE0F755810641630004F2821 /* BenchmarkScene.m */; };
 		DE18FE3711B0839E00D01F04 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE18FE3611B0839E00D01F04 /* AVFoundation.framework */; };
 		DE396AE8104055A100C27DDF /* CustomHitTestScene.m in Sources */ = {isa = PBXBuildFile; fileRef = DE396AE7104055A100C27DDF /* CustomHitTestScene.m */; };
@@ -89,6 +89,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8751FD9917F3B8E900A25C1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DE08353913869D8100023C9E /* Sparrow.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DEFE4BC1101B317600E22471;
+			remoteInfo = "Sparrow-iOS";
+		};
+		87F0FA6F17F3A43100F479F4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DE08353913869D8100023C9E /* Sparrow.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 87F0F9EB17F39DE600F479F4;
+			remoteInfo = "Sparrow-Mac";
+		};
 		DE08354113869D8100023C9E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DE08353913869D8100023C9E /* Sparrow.xcodeproj */;
@@ -102,13 +116,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = DEEA9335101E32A30071DD21;
 			remoteInfo = UnitTests;
-		};
-		DE08354613869D9400023C9E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DE08353913869D8100023C9E /* Sparrow.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = DEFE4BC1101B317600E22471;
-			remoteInfo = Sparrow;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -219,8 +226,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8751FD9B17F3B8F000A25C1C /* libSparrow-iOS.a in Frameworks */,
 				871C9BD317F353E20085962E /* CoreText.framework in Frameworks */,
-				DE08354913869D9A00023C9E /* libSparrow.a in Frameworks */,
 				DE5A7ED913805C4500C6CBBC /* libz.dylib in Frameworks */,
 				DE3DD90816B5C12000ECA3F5 /* GLKit.framework in Frameworks */,
 				DEF171F611B010E500A11DD7 /* CoreGraphics.framework in Frameworks */,
@@ -348,18 +355,18 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				871C9BD217F353E20085962E /* CoreText.framework */,
 				DE08354813869D9A00023C9E /* libSparrow.a */,
 				DE5A7ED813805C4500C6CBBC /* libz.dylib */,
-				DE3DD90716B5C12000ECA3F5 /* GLKit.framework */,
 				DEF1721711B0110200A11DD7 /* AudioToolbox.framework */,
+				DE18FE3611B0839E00D01F04 /* AVFoundation.framework */,
 				DEF171F511B010E500A11DD7 /* CoreGraphics.framework */,
+				871C9BD217F353E20085962E /* CoreText.framework */,
 				DEF171F711B010E500A11DD7 /* Foundation.framework */,
+				DE3DD90716B5C12000ECA3F5 /* GLKit.framework */,
 				DEF171F911B010E500A11DD7 /* OpenAL.framework */,
 				DEF171FB11B010E500A11DD7 /* OpenGLES.framework */,
 				DEF171FD11B010E500A11DD7 /* QuartzCore.framework */,
 				DEF171FF11B010E500A11DD7 /* UIKit.framework */,
-				DE18FE3611B0839E00D01F04 /* AVFoundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -367,7 +374,8 @@
 		DE08353A13869D8100023C9E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DE08354213869D8100023C9E /* libSparrow.a */,
+				DE08354213869D8100023C9E /* libSparrow-iOS.a */,
+				87F0FA7017F3A43100F479F4 /* libSparrow-Mac.a */,
 				DE08354413869D8100023C9E /* UnitTest.octest */,
 			);
 			name = Products;
@@ -465,7 +473,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				DE08354713869D9400023C9E /* PBXTargetDependency */,
+				8751FD9A17F3B8E900A25C1C /* PBXTargetDependency */,
 			);
 			name = Demo;
 			productName = Demo;
@@ -506,10 +514,17 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		DE08354213869D8100023C9E /* libSparrow.a */ = {
+		87F0FA7017F3A43100F479F4 /* libSparrow-Mac.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libSparrow.a;
+			path = "libSparrow-Mac.a";
+			remoteRef = 87F0FA6F17F3A43100F479F4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DE08354213869D8100023C9E /* libSparrow-iOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libSparrow-iOS.a";
 			remoteRef = DE08354113869D8100023C9E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -610,10 +625,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		DE08354713869D9400023C9E /* PBXTargetDependency */ = {
+		8751FD9A17F3B8E900A25C1C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = Sparrow;
-			targetProxy = DE08354613869D9400023C9E /* PBXContainerItemProxy */;
+			name = "Sparrow-iOS";
+			targetProxy = 8751FD9917F3B8E900A25C1C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -669,7 +684,7 @@
 				PRODUCT_NAME = "Sparrow Demo";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
-				USER_HEADER_SEARCH_PATHS = "../../../sparrow/src/** ../../../external/**";
+				USER_HEADER_SEARCH_PATHS = "../../../sparrow/src/**";
 			};
 			name = Debug;
 		};
@@ -703,7 +718,7 @@
 				PRODUCT_NAME = "Sparrow Demo";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
-				USER_HEADER_SEARCH_PATHS = "../../../sparrow/src/** ../../../external/**";
+				USER_HEADER_SEARCH_PATHS = "../../../sparrow/src/**";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

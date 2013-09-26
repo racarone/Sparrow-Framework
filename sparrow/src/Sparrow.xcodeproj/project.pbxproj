@@ -11,7 +11,138 @@
 		8719FC2D17F3688000AFBA44 /* SPOpenGL.m in Sources */ = {isa = PBXBuildFile; fileRef = 8719FC2B17F3688000AFBA44 /* SPOpenGL.m */; };
 		8719FC3017F36CB200AFBA44 /* SPOpenGL_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8719FC2E17F36CB200AFBA44 /* SPOpenGL_Internal.h */; };
 		8719FC3117F36CB200AFBA44 /* SPOpenGL_Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8719FC2F17F36CB200AFBA44 /* SPOpenGL_Internal.m */; };
+		8751FD8517F3A56900A25C1C /* SPContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 87F0F9F017F3A0E900F479F4 /* SPContext.h */; };
+		8751FD8617F3A56C00A25C1C /* SPContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F0F9F117F3A0E900F479F4 /* SPContext.m */; };
+		8751FD8C17F3A9B400A25C1C /* SPViewControllerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 8751FD8A17F3A9B400A25C1C /* SPViewControllerMac.h */; };
+		8751FD8D17F3A9B400A25C1C /* SPViewControllerMac.m in Sources */ = {isa = PBXBuildFile; fileRef = 8751FD8B17F3A9B400A25C1C /* SPViewControllerMac.m */; };
+		8751FD8E17F3AA3300A25C1C /* SPViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 87F0F9EC17F3A04200F479F4 /* SPViewController.h */; };
+		8751FD9017F3AB8500A25C1C /* SPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F0F9ED17F3A04200F479F4 /* SPViewController.m */; };
+		8751FD9417F3AFA300A25C1C /* SPViewMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 8751FD9217F3AFA300A25C1C /* SPViewMac.h */; };
+		8751FD9517F3AFA300A25C1C /* SPViewMac.m in Sources */ = {isa = PBXBuildFile; fileRef = 8751FD9317F3AFA300A25C1C /* SPViewMac.m */; };
 		87C9746817E8C5C600E46C58 /* SPVertexData.m in Sources */ = {isa = PBXBuildFile; fileRef = DE19443116D27E9E00E5CCD9 /* SPVertexData.m */; };
+		87F0F96D17F39DE600F479F4 /* SPRenderTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = DE13D18912AADBF6000C77E6 /* SPRenderTexture.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F96E17F39DE600F479F4 /* SPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DE33072312D2EBCD009CC5E7 /* SPUtils.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F96F17F39DE600F479F4 /* SPAVSound.h in Headers */ = {isa = PBXBuildFile; fileRef = DEF1735A11B075B000A11DD7 /* SPAVSound.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97017F39DE600F479F4 /* SPAVSoundChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = DEF1735E11B075BC00A11DD7 /* SPAVSoundChannel.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97117F39DE600F479F4 /* SPALSound.h in Headers */ = {isa = PBXBuildFile; fileRef = DEF1730C11B0645A00A11DD7 /* SPALSound.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97217F39DE600F479F4 /* SPALSoundChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = DEF1731011B0648B00A11DD7 /* SPALSoundChannel.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97317F39DE600F479F4 /* SPAudioEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = DEE63A4B11AED38100D60321 /* SPAudioEngine.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97417F39DE600F479F4 /* SPSound.h in Headers */ = {isa = PBXBuildFile; fileRef = DEE63A4D11AED38100D60321 /* SPSound.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97517F39DE600F479F4 /* SPSoundChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = DEE63A4F11AED38100D60321 /* SPSoundChannel.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97617F39DE600F479F4 /* SPEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DEE593D10FA6116B00E3AEFC /* SPEvent.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97717F39DE600F479F4 /* SPEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = DEC2B6800F6D51430063AB1D /* SPEventDispatcher.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97817F39DE600F479F4 /* SPTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = DEE4449C0FABA7860085D36D /* SPTouch.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97917F39DE600F479F4 /* SPOpenGL_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8719FC2E17F36CB200AFBA44 /* SPOpenGL_Internal.h */; };
+		87F0F97A17F39DE600F479F4 /* SPTouchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DEE444A80FABABBB0085D36D /* SPTouchEvent.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97B17F39DE600F479F4 /* SPEnterFrameEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DEEEB8C80FAA2C300059D72B /* SPEnterFrameEvent.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97C17F39DE600F479F4 /* SPRenderSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = DE20D9C910713B0C006658C9 /* SPRenderSupport.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97D17F39DE600F479F4 /* SPTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = DED4EFC90FF9439D0093AD29 /* SPTextField.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F97E17F39DE600F479F4 /* SPOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8719FC2A17F3688000AFBA44 /* SPOpenGL.h */; };
+		87F0F97F17F39DE600F479F4 /* SPBitmapFont.h in Headers */ = {isa = PBXBuildFile; fileRef = DEE09D78108364A900ECC896 /* SPBitmapFont.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98017F39DE600F479F4 /* SPBitmapChar.h in Headers */ = {isa = PBXBuildFile; fileRef = DEE09D7C108369AE00ECC896 /* SPBitmapChar.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98117F39DE600F479F4 /* SPDisplayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = DE2ED8040F6D52080012B6BA /* SPDisplayObject.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98217F39DE600F479F4 /* SPDisplayObjectContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = DE2ED8080F6D53020012B6BA /* SPDisplayObjectContainer.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98317F39DE600F479F4 /* SPSprite.h in Headers */ = {isa = PBXBuildFile; fileRef = DE4D6AEA0F75913D0045CBF7 /* SPSprite.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98417F39DE600F479F4 /* SPStage.h in Headers */ = {isa = PBXBuildFile; fileRef = DE2ED8580F6D54AC0012B6BA /* SPStage.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98517F39DE600F479F4 /* SPQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = DE2ED8550F6D54900012B6BA /* SPQuad.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98617F39DE600F479F4 /* SPImage.h in Headers */ = {isa = PBXBuildFile; fileRef = DE08535C0FEC21F500DAF53C /* SPImage.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98717F39DE600F479F4 /* SPButton.h in Headers */ = {isa = PBXBuildFile; fileRef = DED85311100BC9DA0014F729 /* SPButton.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98817F39DE600F479F4 /* SPMovieClip.h in Headers */ = {isa = PBXBuildFile; fileRef = DEE94E8011B43DE60000FE20 /* SPMovieClip.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98917F39DE600F479F4 /* SPTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = DE0853F80FEC2CFF00DAF53C /* SPTexture.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98A17F39DE600F479F4 /* SPGLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = DECF84310FF649D50026A4ED /* SPGLTexture.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98B17F39DE600F479F4 /* SPSubTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = DECF84B90FF681BA0026A4ED /* SPSubTexture.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98C17F39DE600F479F4 /* SPTweenedProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = DEED1737108A50000071438F /* SPTweenedProperty.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98D17F39DE600F479F4 /* SPAnimatable.h in Headers */ = {isa = PBXBuildFile; fileRef = DE70442A0FB618AE007F5ECC /* SPAnimatable.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98E17F39DE600F479F4 /* SPJuggler.h in Headers */ = {isa = PBXBuildFile; fileRef = DE7044260FB61506007F5ECC /* SPJuggler.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F98F17F39DE600F479F4 /* SPTransitions.h in Headers */ = {isa = PBXBuildFile; fileRef = DED859430FB883EE00D3D7D2 /* SPTransitions.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99017F39DE600F479F4 /* SPTween.h in Headers */ = {isa = PBXBuildFile; fileRef = DE7044750FB62080007F5ECC /* SPTween.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99117F39DE600F479F4 /* SPDelayedInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = DEFB1B93100926260022C117 /* SPDelayedInvocation.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99217F39DE600F479F4 /* SPMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = DE469D240F9386FD00F56E91 /* SPMacros.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99317F39DE600F479F4 /* SPMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = DE469D250F9386FD00F56E91 /* SPMatrix.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99417F39DE600F479F4 /* SPPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = DE469D270F9386FD00F56E91 /* SPPoint.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99517F39DE600F479F4 /* SPRectangle.h in Headers */ = {isa = PBXBuildFile; fileRef = DE469D290F9386FD00F56E91 /* SPRectangle.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99617F39DE600F479F4 /* SPNSExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = DE68EA150FBB5660004DBC95 /* SPNSExtensions.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99717F39DE600F479F4 /* SPPoolObject.h in Headers */ = {isa = PBXBuildFile; fileRef = DED9B51B10629D9F00989853 /* SPPoolObject.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99817F39DE600F479F4 /* Sparrow.h in Headers */ = {isa = PBXBuildFile; fileRef = DEEA9402101E44F10071DD21 /* Sparrow.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99917F39DE600F479F4 /* SPTextureAtlas.h in Headers */ = {isa = PBXBuildFile; fileRef = DECF84260FF619150026A4ED /* SPTextureAtlas.h */; settings = {ATTRIBUTES = (); }; };
+		87F0F99B17F39DE600F479F4 /* SparrowClass_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8E6AA516B46C65007EE8BA /* SparrowClass_Internal.h */; };
+		87F0F99C17F39DE600F479F4 /* SparrowClass.h in Headers */ = {isa = PBXBuildFile; fileRef = DE85778C16B58E4B00725EC0 /* SparrowClass.h */; };
+		87F0F99D17F39DE600F479F4 /* SPResizeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DEAAF3D516BC0D21004EB9D5 /* SPResizeEvent.h */; };
+		87F0F99E17F39DE600F479F4 /* SPOverlayView.h in Headers */ = {isa = PBXBuildFile; fileRef = DEAAF3D916BC0E46004EB9D5 /* SPOverlayView.h */; };
+		87F0F99F17F39DE600F479F4 /* SPVertexData.h in Headers */ = {isa = PBXBuildFile; fileRef = DE19443016D27E9E00E5CCD9 /* SPVertexData.h */; };
+		87F0F9A017F39DE600F479F4 /* SPEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = DED29C0516DFB48E000C2BD7 /* SPEventListener.h */; };
+		87F0F9A117F39DE600F479F4 /* SPQuadBatch.h in Headers */ = {isa = PBXBuildFile; fileRef = DEC87D0516E0CDD80050EA95 /* SPQuadBatch.h */; };
+		87F0F9A217F39DE600F479F4 /* SPBaseEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = DE82240A16EF468E00A172EE /* SPBaseEffect.h */; };
+		87F0F9A317F39DE600F479F4 /* SPProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = DE97B92E16F1EA5E00DC1077 /* SPProgram.h */; };
+		87F0F9A417F39DE600F479F4 /* SPStatsDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = DE0BA5D61703513D00637533 /* SPStatsDisplay.h */; };
+		87F0F9A517F39DE600F479F4 /* SPBlendMode.h in Headers */ = {isa = PBXBuildFile; fileRef = DE574D5D1705B83D008B03D7 /* SPBlendMode.h */; };
+		87F0F9A717F39DE600F479F4 /* SPTextureAtlas.m in Sources */ = {isa = PBXBuildFile; fileRef = DECF84270FF619150026A4ED /* SPTextureAtlas.m */; };
+		87F0F9A817F39DE600F479F4 /* SPTouchProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDCD3AD0FADEE280022011C /* SPTouchProcessor.m */; };
+		87F0F9A917F39DE600F479F4 /* SPVertexData.m in Sources */ = {isa = PBXBuildFile; fileRef = DE19443116D27E9E00E5CCD9 /* SPVertexData.m */; };
+		87F0F9AA17F39DE600F479F4 /* SPMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = DE469D260F9386FD00F56E91 /* SPMatrix.m */; };
+		87F0F9AB17F39DE600F479F4 /* SPPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = DE469D280F9386FD00F56E91 /* SPPoint.m */; };
+		87F0F9AC17F39DE600F479F4 /* SPRectangle.m in Sources */ = {isa = PBXBuildFile; fileRef = DE469D2A0F9386FD00F56E91 /* SPRectangle.m */; };
+		87F0F9AD17F39DE600F479F4 /* SPDisplayObject.m in Sources */ = {isa = PBXBuildFile; fileRef = DE2ED8050F6D52080012B6BA /* SPDisplayObject.m */; };
+		87F0F9AE17F39DE600F479F4 /* SPDisplayObjectContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = DE2ED8090F6D53020012B6BA /* SPDisplayObjectContainer.m */; };
+		87F0F9AF17F39DE600F479F4 /* SPSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = DE4D6AEB0F75913D0045CBF7 /* SPSprite.m */; };
+		87F0F9B017F39DE600F479F4 /* SPStage.m in Sources */ = {isa = PBXBuildFile; fileRef = DE2ED8590F6D54AC0012B6BA /* SPStage.m */; };
+		87F0F9B117F39DE600F479F4 /* SPQuad.m in Sources */ = {isa = PBXBuildFile; fileRef = DE2ED8560F6D54900012B6BA /* SPQuad.m */; };
+		87F0F9B217F39DE600F479F4 /* SPImage.m in Sources */ = {isa = PBXBuildFile; fileRef = DE08535D0FEC21F500DAF53C /* SPImage.m */; };
+		87F0F9B317F39DE600F479F4 /* SPTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = DED4EFCA0FF9439D0093AD29 /* SPTextField.m */; };
+		87F0F9B417F39DE600F479F4 /* SPTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = DE0853F90FEC2CFF00DAF53C /* SPTexture.m */; };
+		87F0F9B517F39DE600F479F4 /* SPGLTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = DECF84320FF649D50026A4ED /* SPGLTexture.m */; };
+		87F0F9B617F39DE600F479F4 /* SPSubTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = DECF84BA0FF681BA0026A4ED /* SPSubTexture.m */; };
+		87F0F9B717F39DE600F479F4 /* SPButton.m in Sources */ = {isa = PBXBuildFile; fileRef = DED85312100BC9DA0014F729 /* SPButton.m */; };
+		87F0F9B817F39DE600F479F4 /* SPEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE593D20FA6116B00E3AEFC /* SPEvent.m */; };
+		87F0F9B917F39DE600F479F4 /* SPEventDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = DEC2B6810F6D51430063AB1D /* SPEventDispatcher.m */; };
+		87F0F9BA17F39DE600F479F4 /* SPTouch.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE4449D0FABA7860085D36D /* SPTouch.m */; };
+		87F0F9BB17F39DE600F479F4 /* SPTouchEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE444A90FABABBB0085D36D /* SPTouchEvent.m */; };
+		87F0F9BC17F39DE600F479F4 /* SPEnterFrameEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = DEEEB8C90FAA2C300059D72B /* SPEnterFrameEvent.m */; };
+		87F0F9BD17F39DE600F479F4 /* SPTransitions.m in Sources */ = {isa = PBXBuildFile; fileRef = DED859440FB883EE00D3D7D2 /* SPTransitions.m */; };
+		87F0F9BE17F39DE600F479F4 /* SPTween.m in Sources */ = {isa = PBXBuildFile; fileRef = DE7044760FB62080007F5ECC /* SPTween.m */; };
+		87F0F9BF17F39DE600F479F4 /* SPDelayedInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFB1B94100926260022C117 /* SPDelayedInvocation.m */; };
+		87F0F9C017F39DE600F479F4 /* SPOpenGL_Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8719FC2F17F36CB200AFBA44 /* SPOpenGL_Internal.m */; };
+		87F0F9C117F39DE600F479F4 /* SPNSExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = DE68EA160FBB5660004DBC95 /* SPNSExtensions.m */; };
+		87F0F9C217F39DE600F479F4 /* SPJuggler.m in Sources */ = {isa = PBXBuildFile; fileRef = DE7044270FB61506007F5ECC /* SPJuggler.m */; };
+		87F0F9C317F39DE600F479F4 /* SPPoolObject.m in Sources */ = {isa = PBXBuildFile; fileRef = DED9B51C10629D9F00989853 /* SPPoolObject.m */; };
+		87F0F9C417F39DE600F479F4 /* SPRenderSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = DE20D9CA10713B0C006658C9 /* SPRenderSupport.m */; };
+		87F0F9C517F39DE600F479F4 /* SPBitmapFont.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE09D79108364A900ECC896 /* SPBitmapFont.m */; };
+		87F0F9C617F39DE600F479F4 /* SPBitmapChar.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE09D7D108369AE00ECC896 /* SPBitmapChar.m */; };
+		87F0F9C717F39DE600F479F4 /* SPTweenedProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = DEED1738108A50000071438F /* SPTweenedProperty.m */; };
+		87F0F9C817F39DE600F479F4 /* SPAudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE63A4C11AED38100D60321 /* SPAudioEngine.m */; };
+		87F0F9C917F39DE600F479F4 /* SPSound.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE63A4E11AED38100D60321 /* SPSound.m */; };
+		87F0F9CA17F39DE600F479F4 /* SPSoundChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE63A5011AED38100D60321 /* SPSoundChannel.m */; };
+		87F0F9CB17F39DE600F479F4 /* SPALSound.m in Sources */ = {isa = PBXBuildFile; fileRef = DEF1730D11B0645A00A11DD7 /* SPALSound.m */; };
+		87F0F9CC17F39DE600F479F4 /* SPALSoundChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = DEF1731111B0648B00A11DD7 /* SPALSoundChannel.m */; };
+		87F0F9CD17F39DE600F479F4 /* SPAVSound.m in Sources */ = {isa = PBXBuildFile; fileRef = DEF1735B11B075B000A11DD7 /* SPAVSound.m */; };
+		87F0F9CE17F39DE600F479F4 /* SPAVSoundChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = DEF1735F11B075BC00A11DD7 /* SPAVSoundChannel.m */; };
+		87F0F9CF17F39DE600F479F4 /* SPMovieClip.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE94E8111B43DE60000FE20 /* SPMovieClip.m */; };
+		87F0F9D017F39DE600F479F4 /* SPRenderTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = DE13D18A12AADBF6000C77E6 /* SPRenderTexture.m */; };
+		87F0F9D117F39DE600F479F4 /* SPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = DE33072412D2EBCD009CC5E7 /* SPUtils.m */; };
+		87F0F9D317F39DE600F479F4 /* SparrowClass.m in Sources */ = {isa = PBXBuildFile; fileRef = DE85778D16B58E4B00725EC0 /* SparrowClass.m */; };
+		87F0F9D417F39DE600F479F4 /* SPResizeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAAF3D616BC0D21004EB9D5 /* SPResizeEvent.m */; };
+		87F0F9D517F39DE600F479F4 /* SPOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAAF3DA16BC0E46004EB9D5 /* SPOverlayView.m */; };
+		87F0F9D617F39DE600F479F4 /* SPEventListener.m in Sources */ = {isa = PBXBuildFile; fileRef = DED29C0616DFB48E000C2BD7 /* SPEventListener.m */; };
+		87F0F9D717F39DE600F479F4 /* SPOpenGL.m in Sources */ = {isa = PBXBuildFile; fileRef = 8719FC2B17F3688000AFBA44 /* SPOpenGL.m */; };
+		87F0F9D817F39DE600F479F4 /* SPQuadBatch.m in Sources */ = {isa = PBXBuildFile; fileRef = DEC87D0616E0CDD80050EA95 /* SPQuadBatch.m */; };
+		87F0F9D917F39DE600F479F4 /* SPBaseEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = DE82240B16EF468E00A172EE /* SPBaseEffect.m */; };
+		87F0F9DA17F39DE600F479F4 /* SPProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = DE97B92F16F1EA5E00DC1077 /* SPProgram.m */; };
+		87F0F9DB17F39DE600F479F4 /* SPStatsDisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = DE0BA5D71703513D00637533 /* SPStatsDisplay.m */; };
+		87F0F9DC17F39DE600F479F4 /* SPBlendMode.m in Sources */ = {isa = PBXBuildFile; fileRef = DE574D5E1705B83D008B03D7 /* SPBlendMode.m */; };
+		87F0F9DE17F39DE600F479F4 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DE5A7ED513805C2B00C6CBBC /* libz.dylib */; };
+		87F0F9DF17F39DE600F479F4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE8E6A7D16B4303E007EE8BA /* GLKit.framework */; };
+		87F0F9E017F39DE600F479F4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		87F0F9E117F39DE600F479F4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE9CF1EB0FED3128008A32FF /* CoreGraphics.framework */; };
+		87F0F9E217F39DE600F479F4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD15070DC6FC5B0079059D /* QuartzCore.framework */; };
+		87F0F9E317F39DE600F479F4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD14FF0DC6FC520079059D /* OpenGLES.framework */; };
+		87F0F9E417F39DE600F479F4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		87F0F9E517F39DE600F479F4 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEE63A7111AED4FA00D60321 /* OpenAL.framework */; };
+		87F0F9E617F39DE600F479F4 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEE63A8511AED51400D60321 /* AudioToolbox.framework */; };
+		87F0F9E717F39DE600F479F4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE18FE4411B083B200D01F04 /* AVFoundation.framework */; };
+		87F0F9EE17F3A04200F479F4 /* SPViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 87F0F9EC17F3A04200F479F4 /* SPViewController.h */; };
+		87F0F9EF17F3A04200F479F4 /* SPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F0F9ED17F3A04200F479F4 /* SPViewController.m */; };
+		87F0F9F217F3A0E900F479F4 /* SPContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 87F0F9F017F3A0E900F479F4 /* SPContext.h */; };
+		87F0F9F317F3A0E900F479F4 /* SPContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 87F0F9F117F3A0E900F479F4 /* SPContext.m */; };
 		DE019C391026360B00ECB0AC /* SPTween.m in Sources */ = {isa = PBXBuildFile; fileRef = DE7044760FB62080007F5ECC /* SPTween.m */; };
 		DE019C3A1026361200ECB0AC /* SPDelayedInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFB1B94100926260022C117 /* SPDelayedInvocation.m */; };
 		DE019C3B1026363D00ECB0AC /* SPNSExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = DE68EA160FBB5660004DBC95 /* SPNSExtensions.m */; };
@@ -96,8 +227,8 @@
 		DE85778E16B58E4B00725EC0 /* SparrowClass.h in Headers */ = {isa = PBXBuildFile; fileRef = DE85778C16B58E4B00725EC0 /* SparrowClass.h */; };
 		DE85778F16B58E4B00725EC0 /* SparrowClass.m in Sources */ = {isa = PBXBuildFile; fileRef = DE85778D16B58E4B00725EC0 /* SparrowClass.m */; };
 		DE8E6A7E16B4303E007EE8BA /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE8E6A7D16B4303E007EE8BA /* GLKit.framework */; };
-		DE8E6A8216B430C4007EE8BA /* SPViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8E6A8016B430C4007EE8BA /* SPViewController.h */; };
-		DE8E6A8316B430C4007EE8BA /* SPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DE8E6A8116B430C4007EE8BA /* SPViewController.m */; };
+		DE8E6A8216B430C4007EE8BA /* SPViewControllerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8E6A8016B430C4007EE8BA /* SPViewControllerIOS.h */; };
+		DE8E6A8316B430C4007EE8BA /* SPViewControllerIOS.m in Sources */ = {isa = PBXBuildFile; fileRef = DE8E6A8116B430C4007EE8BA /* SPViewControllerIOS.m */; };
 		DE8E6AA616B46C65007EE8BA /* SparrowClass_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8E6AA516B46C65007EE8BA /* SparrowClass_Internal.h */; };
 		DE97B93016F1EA5E00DC1077 /* SPProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = DE97B92E16F1EA5E00DC1077 /* SPProgram.h */; };
 		DE97B93116F1EA5E00DC1077 /* SPProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = DE97B92F16F1EA5E00DC1077 /* SPProgram.m */; };
@@ -136,7 +267,7 @@
 		DEEA933C101E32E10071DD21 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD14FF0DC6FC520079059D /* OpenGLES.framework */; };
 		DEEA933D101E32E10071DD21 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD15070DC6FC5B0079059D /* QuartzCore.framework */; };
 		DEEA933E101E32E10071DD21 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		DEEA934E101E33F00071DD21 /* libSparrow.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DEFE4BC2101B317600E22471 /* libSparrow.a */; };
+		DEEA934E101E33F00071DD21 /* libSparrow-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DEFE4BC2101B317600E22471 /* libSparrow-iOS.a */; };
 		DEED173A108A50000071438F /* SPTweenedProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = DEED1738108A50000071438F /* SPTweenedProperty.m */; };
 		DEEDE3A111B29908009FD4C8 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEE63A7111AED4FA00D60321 /* OpenAL.framework */; };
 		DEEDE3A211B29908009FD4C8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE18FE4411B083B200D01F04 /* AVFoundation.framework */; };
@@ -188,8 +319,18 @@
 		8719FC2B17F3688000AFBA44 /* SPOpenGL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPOpenGL.m; sourceTree = "<group>"; };
 		8719FC2E17F36CB200AFBA44 /* SPOpenGL_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPOpenGL_Internal.h; sourceTree = "<group>"; };
 		8719FC2F17F36CB200AFBA44 /* SPOpenGL_Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPOpenGL_Internal.m; sourceTree = "<group>"; };
+		8751FD8A17F3A9B400A25C1C /* SPViewControllerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPViewControllerMac.h; sourceTree = "<group>"; };
+		8751FD8B17F3A9B400A25C1C /* SPViewControllerMac.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPViewControllerMac.m; sourceTree = "<group>"; };
+		8751FD8F17F3AA8300A25C1C /* SPViewController_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPViewController_Internal.h; sourceTree = "<group>"; };
+		8751FD9217F3AFA300A25C1C /* SPViewMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPViewMac.h; sourceTree = "<group>"; };
+		8751FD9317F3AFA300A25C1C /* SPViewMac.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPViewMac.m; sourceTree = "<group>"; };
 		8762586117ECDFA40049B8EE /* SPMatrix_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPMatrix_Internal.h; sourceTree = "<group>"; };
 		8762587B17ECEBDE0049B8EE /* SPPoint_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPPoint_Internal.h; sourceTree = "<group>"; };
+		87F0F9EB17F39DE600F479F4 /* libSparrow-Mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libSparrow-Mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		87F0F9EC17F3A04200F479F4 /* SPViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPViewController.h; sourceTree = "<group>"; };
+		87F0F9ED17F3A04200F479F4 /* SPViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPViewController.m; sourceTree = "<group>"; };
+		87F0F9F017F3A0E900F479F4 /* SPContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPContext.h; sourceTree = "<group>"; };
+		87F0F9F117F3A0E900F479F4 /* SPContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPContext.m; sourceTree = "<group>"; };
 		87F3BA0F17F26806000FB6B0 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		87F3BA5D17F26985000FB6B0 /* SPPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPPlatform.h; sourceTree = "<group>"; };
 		87F6B6D517F0FCB200BC95AE /* SPStage_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPStage_Internal.h; sourceTree = "<group>"; };
@@ -257,8 +398,8 @@
 		DE85778C16B58E4B00725EC0 /* SparrowClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SparrowClass.h; sourceTree = "<group>"; };
 		DE85778D16B58E4B00725EC0 /* SparrowClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SparrowClass.m; sourceTree = "<group>"; };
 		DE8E6A7D16B4303E007EE8BA /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
-		DE8E6A8016B430C4007EE8BA /* SPViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPViewController.h; sourceTree = "<group>"; };
-		DE8E6A8116B430C4007EE8BA /* SPViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPViewController.m; sourceTree = "<group>"; };
+		DE8E6A8016B430C4007EE8BA /* SPViewControllerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPViewControllerIOS.h; sourceTree = "<group>"; };
+		DE8E6A8116B430C4007EE8BA /* SPViewControllerIOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPViewControllerIOS.m; sourceTree = "<group>"; };
 		DE8E6AA516B46C65007EE8BA /* SparrowClass_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SparrowClass_Internal.h; sourceTree = "<group>"; };
 		DE8F1E2D0F7C1F3A0085E9E4 /* SPMatrixTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPMatrixTest.m; sourceTree = "<group>"; };
 		DE97B92E16F1EA5E00DC1077 /* SPProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPProgram.h; sourceTree = "<group>"; };
@@ -343,15 +484,32 @@
 		DEF8F2CE12E1CCF50043D2F8 /* SPPoolObjectTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPPoolObjectTest.m; sourceTree = "<group>"; };
 		DEFB1B93100926260022C117 /* SPDelayedInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPDelayedInvocation.h; sourceTree = "<group>"; };
 		DEFB1B94100926260022C117 /* SPDelayedInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPDelayedInvocation.m; sourceTree = "<group>"; };
-		DEFE4BC2101B317600E22471 /* libSparrow.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSparrow.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DEFE4BC2101B317600E22471 /* libSparrow-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libSparrow-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		87F0F9DD17F39DE600F479F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				87F0F9DE17F39DE600F479F4 /* libz.dylib in Frameworks */,
+				87F0F9DF17F39DE600F479F4 /* GLKit.framework in Frameworks */,
+				87F0F9E017F39DE600F479F4 /* Foundation.framework in Frameworks */,
+				87F0F9E117F39DE600F479F4 /* CoreGraphics.framework in Frameworks */,
+				87F0F9E217F39DE600F479F4 /* QuartzCore.framework in Frameworks */,
+				87F0F9E317F39DE600F479F4 /* OpenGLES.framework in Frameworks */,
+				87F0F9E417F39DE600F479F4 /* UIKit.framework in Frameworks */,
+				87F0F9E517F39DE600F479F4 /* OpenAL.framework in Frameworks */,
+				87F0F9E617F39DE600F479F4 /* AudioToolbox.framework in Frameworks */,
+				87F0F9E717F39DE600F479F4 /* AVFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DEEA9332101E32A30071DD21 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DEEA934E101E33F00071DD21 /* libSparrow.a in Frameworks */,
+				DEEA934E101E33F00071DD21 /* libSparrow-iOS.a in Frameworks */,
 				DE02408D13819FAD008A91B9 /* libz.dylib in Frameworks */,
 				DEB796D616BEB23D0082D612 /* GLKit.framework in Frameworks */,
 				DEB5142C14F1848B00066104 /* SenTestingKit.framework in Frameworks */,
@@ -405,8 +563,9 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DEFE4BC2101B317600E22471 /* libSparrow.a */,
+				DEFE4BC2101B317600E22471 /* libSparrow-iOS.a */,
 				DEEA9335101E32A30071DD21 /* UnitTest.octest */,
+				87F0F9EB17F39DE600F479F4 /* libSparrow-Mac.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -450,6 +609,35 @@
 				87F3BA0F17F26806000FB6B0 /* XCTest.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8751FD8717F3A98300A25C1C /* Platform */ = {
+			isa = PBXGroup;
+			children = (
+				8751FD8817F3A98E00A25C1C /* iOS */,
+				8751FD8917F3A99400A25C1C /* Mac */,
+			);
+			name = Platform;
+			sourceTree = "<group>";
+		};
+		8751FD8817F3A98E00A25C1C /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				DE8E6A8016B430C4007EE8BA /* SPViewControllerIOS.h */,
+				DE8E6A8116B430C4007EE8BA /* SPViewControllerIOS.m */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		8751FD8917F3A99400A25C1C /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				8751FD9217F3AFA300A25C1C /* SPViewMac.h */,
+				8751FD9317F3AFA300A25C1C /* SPViewMac.m */,
+				8751FD8A17F3A9B400A25C1C /* SPViewControllerMac.h */,
+				8751FD8B17F3A9B400A25C1C /* SPViewControllerMac.m */,
+			);
+			name = Mac;
 			sourceTree = "<group>";
 		};
 		8762586217ECE1450049B8EE /* Internal */ = {
@@ -506,9 +694,10 @@
 		DE85779116B58EDF00725EC0 /* Internal */ = {
 			isa = PBXGroup;
 			children = (
+				DE8E6AA516B46C65007EE8BA /* SparrowClass_Internal.h */,
 				DE0BA5D61703513D00637533 /* SPStatsDisplay.h */,
 				DE0BA5D71703513D00637533 /* SPStatsDisplay.m */,
-				DE8E6AA516B46C65007EE8BA /* SparrowClass_Internal.h */,
+				8751FD8F17F3AA8300A25C1C /* SPViewController_Internal.h */,
 			);
 			name = Internal;
 			sourceTree = "<group>";
@@ -617,10 +806,13 @@
 			isa = PBXGroup;
 			children = (
 				DE85779116B58EDF00725EC0 /* Internal */,
+				8751FD8717F3A98300A25C1C /* Platform */,
 				DEAAF3D916BC0E46004EB9D5 /* SPOverlayView.h */,
 				DEAAF3DA16BC0E46004EB9D5 /* SPOverlayView.m */,
-				DE8E6A8016B430C4007EE8BA /* SPViewController.h */,
-				DE8E6A8116B430C4007EE8BA /* SPViewController.m */,
+				87F0F9F017F3A0E900F479F4 /* SPContext.h */,
+				87F0F9F117F3A0E900F479F4 /* SPContext.m */,
+				87F0F9EC17F3A04200F479F4 /* SPViewController.h */,
+				87F0F9ED17F3A04200F479F4 /* SPViewController.m */,
 				DE85778C16B58E4B00725EC0 /* SparrowClass.h */,
 				DE85778D16B58E4B00725EC0 /* SparrowClass.m */,
 			);
@@ -736,10 +928,78 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		87F0F96C17F39DE600F479F4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				87F0F96D17F39DE600F479F4 /* SPRenderTexture.h in Headers */,
+				87F0F96E17F39DE600F479F4 /* SPUtils.h in Headers */,
+				87F0F96F17F39DE600F479F4 /* SPAVSound.h in Headers */,
+				87F0F97017F39DE600F479F4 /* SPAVSoundChannel.h in Headers */,
+				87F0F97117F39DE600F479F4 /* SPALSound.h in Headers */,
+				87F0F97217F39DE600F479F4 /* SPALSoundChannel.h in Headers */,
+				87F0F97317F39DE600F479F4 /* SPAudioEngine.h in Headers */,
+				87F0F97417F39DE600F479F4 /* SPSound.h in Headers */,
+				87F0F97517F39DE600F479F4 /* SPSoundChannel.h in Headers */,
+				87F0F97617F39DE600F479F4 /* SPEvent.h in Headers */,
+				87F0F97717F39DE600F479F4 /* SPEventDispatcher.h in Headers */,
+				87F0F97817F39DE600F479F4 /* SPTouch.h in Headers */,
+				87F0F97917F39DE600F479F4 /* SPOpenGL_Internal.h in Headers */,
+				87F0F97A17F39DE600F479F4 /* SPTouchEvent.h in Headers */,
+				87F0F97B17F39DE600F479F4 /* SPEnterFrameEvent.h in Headers */,
+				87F0F97C17F39DE600F479F4 /* SPRenderSupport.h in Headers */,
+				87F0F97D17F39DE600F479F4 /* SPTextField.h in Headers */,
+				87F0F97E17F39DE600F479F4 /* SPOpenGL.h in Headers */,
+				8751FD8E17F3AA3300A25C1C /* SPViewController.h in Headers */,
+				87F0F97F17F39DE600F479F4 /* SPBitmapFont.h in Headers */,
+				87F0F98017F39DE600F479F4 /* SPBitmapChar.h in Headers */,
+				87F0F98117F39DE600F479F4 /* SPDisplayObject.h in Headers */,
+				87F0F98217F39DE600F479F4 /* SPDisplayObjectContainer.h in Headers */,
+				87F0F98317F39DE600F479F4 /* SPSprite.h in Headers */,
+				87F0F98417F39DE600F479F4 /* SPStage.h in Headers */,
+				87F0F98517F39DE600F479F4 /* SPQuad.h in Headers */,
+				87F0F98617F39DE600F479F4 /* SPImage.h in Headers */,
+				87F0F98717F39DE600F479F4 /* SPButton.h in Headers */,
+				87F0F98817F39DE600F479F4 /* SPMovieClip.h in Headers */,
+				87F0F98917F39DE600F479F4 /* SPTexture.h in Headers */,
+				87F0F98A17F39DE600F479F4 /* SPGLTexture.h in Headers */,
+				87F0F98B17F39DE600F479F4 /* SPSubTexture.h in Headers */,
+				87F0F98C17F39DE600F479F4 /* SPTweenedProperty.h in Headers */,
+				8751FD9417F3AFA300A25C1C /* SPViewMac.h in Headers */,
+				87F0F98D17F39DE600F479F4 /* SPAnimatable.h in Headers */,
+				87F0F98E17F39DE600F479F4 /* SPJuggler.h in Headers */,
+				8751FD8C17F3A9B400A25C1C /* SPViewControllerMac.h in Headers */,
+				87F0F98F17F39DE600F479F4 /* SPTransitions.h in Headers */,
+				8751FD8517F3A56900A25C1C /* SPContext.h in Headers */,
+				87F0F99017F39DE600F479F4 /* SPTween.h in Headers */,
+				87F0F99117F39DE600F479F4 /* SPDelayedInvocation.h in Headers */,
+				87F0F99217F39DE600F479F4 /* SPMacros.h in Headers */,
+				87F0F99317F39DE600F479F4 /* SPMatrix.h in Headers */,
+				87F0F99417F39DE600F479F4 /* SPPoint.h in Headers */,
+				87F0F99517F39DE600F479F4 /* SPRectangle.h in Headers */,
+				87F0F99617F39DE600F479F4 /* SPNSExtensions.h in Headers */,
+				87F0F99717F39DE600F479F4 /* SPPoolObject.h in Headers */,
+				87F0F99817F39DE600F479F4 /* Sparrow.h in Headers */,
+				87F0F99917F39DE600F479F4 /* SPTextureAtlas.h in Headers */,
+				87F0F99B17F39DE600F479F4 /* SparrowClass_Internal.h in Headers */,
+				87F0F99C17F39DE600F479F4 /* SparrowClass.h in Headers */,
+				87F0F99D17F39DE600F479F4 /* SPResizeEvent.h in Headers */,
+				87F0F99E17F39DE600F479F4 /* SPOverlayView.h in Headers */,
+				87F0F99F17F39DE600F479F4 /* SPVertexData.h in Headers */,
+				87F0F9A017F39DE600F479F4 /* SPEventListener.h in Headers */,
+				87F0F9A117F39DE600F479F4 /* SPQuadBatch.h in Headers */,
+				87F0F9A217F39DE600F479F4 /* SPBaseEffect.h in Headers */,
+				87F0F9A317F39DE600F479F4 /* SPProgram.h in Headers */,
+				87F0F9A417F39DE600F479F4 /* SPStatsDisplay.h in Headers */,
+				87F0F9A517F39DE600F479F4 /* SPBlendMode.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DEFE4BBE101B317600E22471 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87F0F9F217F3A0E900F479F4 /* SPContext.h in Headers */,
 				DE13D18B12AADBF6000C77E6 /* SPRenderTexture.h in Headers */,
 				DE33072512D2EBCD009CC5E7 /* SPUtils.h in Headers */,
 				DE611371134F8F6C00AB742E /* SPAVSound.h in Headers */,
@@ -765,6 +1025,7 @@
 				DE611385134F8F8300AB742E /* SPSprite.h in Headers */,
 				DE611386134F8F8300AB742E /* SPStage.h in Headers */,
 				DE611387134F8F8300AB742E /* SPQuad.h in Headers */,
+				87F0F9EE17F3A04200F479F4 /* SPViewController.h in Headers */,
 				DE611388134F8F8300AB742E /* SPImage.h in Headers */,
 				DE611389134F8F8300AB742E /* SPButton.h in Headers */,
 				DE61138A134F8F8300AB742E /* SPMovieClip.h in Headers */,
@@ -785,7 +1046,7 @@
 				DE61139B134F8FBD00AB742E /* SPPoolObject.h in Headers */,
 				DE61139C134F8FD400AB742E /* Sparrow.h in Headers */,
 				DEC734811386BC1400234D95 /* SPTextureAtlas.h in Headers */,
-				DE8E6A8216B430C4007EE8BA /* SPViewController.h in Headers */,
+				DE8E6A8216B430C4007EE8BA /* SPViewControllerIOS.h in Headers */,
 				DE8E6AA616B46C65007EE8BA /* SparrowClass_Internal.h in Headers */,
 				DE85778E16B58E4B00725EC0 /* SparrowClass.h in Headers */,
 				DEAAF3D716BC0D21004EB9D5 /* SPResizeEvent.h in Headers */,
@@ -803,6 +1064,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		87F0F96B17F39DE600F479F4 /* Sparrow-Mac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 87F0F9E817F39DE600F479F4 /* Build configuration list for PBXNativeTarget "Sparrow-Mac" */;
+			buildPhases = (
+				87F0F96C17F39DE600F479F4 /* Headers */,
+				87F0F9A617F39DE600F479F4 /* Sources */,
+				87F0F9DD17F39DE600F479F4 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Sparrow-Mac";
+			productName = SparrowLib;
+			productReference = 87F0F9EB17F39DE600F479F4 /* libSparrow-Mac.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		DEEA9334101E32A30071DD21 /* UnitTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DEEA9339101E32A40071DD21 /* Build configuration list for PBXNativeTarget "UnitTests" */;
@@ -822,9 +1100,9 @@
 			productReference = DEEA9335101E32A30071DD21 /* UnitTest.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
-		DEFE4BC1101B317600E22471 /* Sparrow */ = {
+		DEFE4BC1101B317600E22471 /* Sparrow-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DEFE4BCC101B317A00E22471 /* Build configuration list for PBXNativeTarget "Sparrow" */;
+			buildConfigurationList = DEFE4BCC101B317A00E22471 /* Build configuration list for PBXNativeTarget "Sparrow-iOS" */;
 			buildPhases = (
 				DEFE4BBE101B317600E22471 /* Headers */,
 				DEFE4BBF101B317600E22471 /* Sources */,
@@ -834,9 +1112,9 @@
 			);
 			dependencies = (
 			);
-			name = Sparrow;
+			name = "Sparrow-iOS";
 			productName = SparrowLib;
-			productReference = DEFE4BC2101B317600E22471 /* libSparrow.a */;
+			productReference = DEFE4BC2101B317600E22471 /* libSparrow-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -862,7 +1140,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DEFE4BC1101B317600E22471 /* Sparrow */,
+				DEFE4BC1101B317600E22471 /* Sparrow-iOS */,
+				87F0F96B17F39DE600F479F4 /* Sparrow-Mac */,
 				DEEA9334101E32A30071DD21 /* UnitTests */,
 			);
 		};
@@ -901,6 +1180,70 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		87F0F9A617F39DE600F479F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				87F0F9A717F39DE600F479F4 /* SPTextureAtlas.m in Sources */,
+				87F0F9A817F39DE600F479F4 /* SPTouchProcessor.m in Sources */,
+				87F0F9A917F39DE600F479F4 /* SPVertexData.m in Sources */,
+				8751FD9517F3AFA300A25C1C /* SPViewMac.m in Sources */,
+				87F0F9AA17F39DE600F479F4 /* SPMatrix.m in Sources */,
+				87F0F9AB17F39DE600F479F4 /* SPPoint.m in Sources */,
+				87F0F9AC17F39DE600F479F4 /* SPRectangle.m in Sources */,
+				87F0F9AD17F39DE600F479F4 /* SPDisplayObject.m in Sources */,
+				8751FD8D17F3A9B400A25C1C /* SPViewControllerMac.m in Sources */,
+				87F0F9AE17F39DE600F479F4 /* SPDisplayObjectContainer.m in Sources */,
+				87F0F9AF17F39DE600F479F4 /* SPSprite.m in Sources */,
+				87F0F9B017F39DE600F479F4 /* SPStage.m in Sources */,
+				87F0F9B117F39DE600F479F4 /* SPQuad.m in Sources */,
+				87F0F9B217F39DE600F479F4 /* SPImage.m in Sources */,
+				8751FD8617F3A56C00A25C1C /* SPContext.m in Sources */,
+				87F0F9B317F39DE600F479F4 /* SPTextField.m in Sources */,
+				87F0F9B417F39DE600F479F4 /* SPTexture.m in Sources */,
+				87F0F9B517F39DE600F479F4 /* SPGLTexture.m in Sources */,
+				87F0F9B617F39DE600F479F4 /* SPSubTexture.m in Sources */,
+				87F0F9B717F39DE600F479F4 /* SPButton.m in Sources */,
+				87F0F9B817F39DE600F479F4 /* SPEvent.m in Sources */,
+				87F0F9B917F39DE600F479F4 /* SPEventDispatcher.m in Sources */,
+				87F0F9BA17F39DE600F479F4 /* SPTouch.m in Sources */,
+				87F0F9BB17F39DE600F479F4 /* SPTouchEvent.m in Sources */,
+				87F0F9BC17F39DE600F479F4 /* SPEnterFrameEvent.m in Sources */,
+				87F0F9BD17F39DE600F479F4 /* SPTransitions.m in Sources */,
+				87F0F9BE17F39DE600F479F4 /* SPTween.m in Sources */,
+				87F0F9BF17F39DE600F479F4 /* SPDelayedInvocation.m in Sources */,
+				87F0F9C017F39DE600F479F4 /* SPOpenGL_Internal.m in Sources */,
+				87F0F9C117F39DE600F479F4 /* SPNSExtensions.m in Sources */,
+				87F0F9C217F39DE600F479F4 /* SPJuggler.m in Sources */,
+				87F0F9C317F39DE600F479F4 /* SPPoolObject.m in Sources */,
+				8751FD9017F3AB8500A25C1C /* SPViewController.m in Sources */,
+				87F0F9C417F39DE600F479F4 /* SPRenderSupport.m in Sources */,
+				87F0F9C517F39DE600F479F4 /* SPBitmapFont.m in Sources */,
+				87F0F9C617F39DE600F479F4 /* SPBitmapChar.m in Sources */,
+				87F0F9C717F39DE600F479F4 /* SPTweenedProperty.m in Sources */,
+				87F0F9C817F39DE600F479F4 /* SPAudioEngine.m in Sources */,
+				87F0F9C917F39DE600F479F4 /* SPSound.m in Sources */,
+				87F0F9CA17F39DE600F479F4 /* SPSoundChannel.m in Sources */,
+				87F0F9CB17F39DE600F479F4 /* SPALSound.m in Sources */,
+				87F0F9CC17F39DE600F479F4 /* SPALSoundChannel.m in Sources */,
+				87F0F9CD17F39DE600F479F4 /* SPAVSound.m in Sources */,
+				87F0F9CE17F39DE600F479F4 /* SPAVSoundChannel.m in Sources */,
+				87F0F9CF17F39DE600F479F4 /* SPMovieClip.m in Sources */,
+				87F0F9D017F39DE600F479F4 /* SPRenderTexture.m in Sources */,
+				87F0F9D117F39DE600F479F4 /* SPUtils.m in Sources */,
+				87F0F9D317F39DE600F479F4 /* SparrowClass.m in Sources */,
+				87F0F9D417F39DE600F479F4 /* SPResizeEvent.m in Sources */,
+				87F0F9D517F39DE600F479F4 /* SPOverlayView.m in Sources */,
+				87F0F9D617F39DE600F479F4 /* SPEventListener.m in Sources */,
+				87F0F9D717F39DE600F479F4 /* SPOpenGL.m in Sources */,
+				87F0F9D817F39DE600F479F4 /* SPQuadBatch.m in Sources */,
+				87F0F9D917F39DE600F479F4 /* SPBaseEffect.m in Sources */,
+				87F0F9DA17F39DE600F479F4 /* SPProgram.m in Sources */,
+				87F0F9DB17F39DE600F479F4 /* SPStatsDisplay.m in Sources */,
+				87F0F9DC17F39DE600F479F4 /* SPBlendMode.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DEEA9331101E32A30071DD21 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -956,12 +1299,14 @@
 				DEFE4BD5101B31DF00E22471 /* SPTouchEvent.m in Sources */,
 				DEFE4BD6101B31DF00E22471 /* SPEnterFrameEvent.m in Sources */,
 				DEFE4BCE101B31DF00E22471 /* SPTransitions.m in Sources */,
+				87F0F9EF17F3A04200F479F4 /* SPViewController.m in Sources */,
 				DE019C391026360B00ECB0AC /* SPTween.m in Sources */,
 				DE019C3A1026361200ECB0AC /* SPDelayedInvocation.m in Sources */,
 				8719FC3117F36CB200AFBA44 /* SPOpenGL_Internal.m in Sources */,
 				DE019C3B1026363D00ECB0AC /* SPNSExtensions.m in Sources */,
 				DE019C3C1026364800ECB0AC /* SPJuggler.m in Sources */,
 				DED9B51E10629D9F00989853 /* SPPoolObject.m in Sources */,
+				87F0F9F317F3A0E900F479F4 /* SPContext.m in Sources */,
 				DE20D9CC10713B0C006658C9 /* SPRenderSupport.m in Sources */,
 				DEE09D7B108364A900ECC896 /* SPBitmapFont.m in Sources */,
 				DEE09D7F108369AE00ECC896 /* SPBitmapChar.m in Sources */,
@@ -976,7 +1321,7 @@
 				DEE94E8311B43DE60000FE20 /* SPMovieClip.m in Sources */,
 				DE13D18C12AADBF6000C77E6 /* SPRenderTexture.m in Sources */,
 				DE33072612D2EBCD009CC5E7 /* SPUtils.m in Sources */,
-				DE8E6A8316B430C4007EE8BA /* SPViewController.m in Sources */,
+				DE8E6A8316B430C4007EE8BA /* SPViewControllerIOS.m in Sources */,
 				DE85778F16B58E4B00725EC0 /* SparrowClass.m in Sources */,
 				DEAAF3D816BC0D21004EB9D5 /* SPResizeEvent.m in Sources */,
 				DEAAF3DC16BC0E46004EB9D5 /* SPOverlayView.m in Sources */,
@@ -995,12 +1340,40 @@
 /* Begin PBXTargetDependency section */
 		DEEA934D101E33ED0071DD21 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DEFE4BC1101B317600E22471 /* Sparrow */;
+			target = DEFE4BC1101B317600E22471 /* Sparrow-iOS */;
 			targetProxy = DEEA934C101E33ED0071DD21 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		87F0F9E917F39DE600F479F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				PRODUCT_NAME = "Sparrow-Mac";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		87F0F9EA17F39DE600F479F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				PRODUCT_NAME = "Sparrow-Mac";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1022,7 +1395,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-all_load",
@@ -1053,7 +1425,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
@@ -1095,11 +1466,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CLANG_ENABLE_OBJC_ARC = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				PRODUCT_NAME = Sparrow;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				PRODUCT_NAME = "Sparrow-iOS";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
@@ -1110,11 +1481,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
-				CLANG_ENABLE_OBJC_ARC = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				PRODUCT_NAME = Sparrow;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				PRODUCT_NAME = "Sparrow-iOS";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
@@ -1124,6 +1495,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		87F0F9E817F39DE600F479F4 /* Build configuration list for PBXNativeTarget "Sparrow-Mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				87F0F9E917F39DE600F479F4 /* Debug */,
+				87F0F9EA17F39DE600F479F4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Sparrow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1142,7 +1522,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DEFE4BCC101B317A00E22471 /* Build configuration list for PBXNativeTarget "Sparrow" */ = {
+		DEFE4BCC101B317A00E22471 /* Build configuration list for PBXNativeTarget "Sparrow-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DEFE4BC3101B317700E22471 /* Debug */,

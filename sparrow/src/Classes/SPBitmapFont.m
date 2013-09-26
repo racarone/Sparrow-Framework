@@ -96,7 +96,7 @@ SP_IMPLEMENT_MEMORY_POOL();
 
 - (instancetype)initWithContentsOfData:(NSData*)data
 {
-    return [[self initWithContentsOfData:data texture:nil] autorelease];
+    return [self initWithContentsOfData:data texture:nil];
 }
 
 - (instancetype)initWithContentsOfFile:(NSString*)path texture:(SPTexture*)texture
@@ -111,17 +111,17 @@ SP_IMPLEMENT_MEMORY_POOL();
         texture = [self textureReferencedByXmlData:xmlData inFolder:folder];
     }
     
-    return [[self initWithContentsOfData:xmlData texture:texture] autorelease];
+    return [self initWithContentsOfData:xmlData texture:texture];
 }
 
 - (instancetype)initWithContentsOfFile:(NSString*)path
 {
-    return [[self initWithContentsOfFile:path texture:nil] autorelease];
+    return [self initWithContentsOfFile:path texture:nil];
 }
 
 - (instancetype)init
 {
-    return [[self initWithContentsOfData:nil texture:nil] autorelease];
+    return [self initWithContentsOfData:nil texture:nil];
 }
 
 - (instancetype)initWithMiniFont
@@ -160,17 +160,16 @@ SP_IMPLEMENT_MEMORY_POOL();
             
             NSString* filename = [attributes valueForKey:@"file"];
             NSString* absolutePath = [folder stringByAppendingPathComponent:filename];
-            texture = [[[SPTexture alloc] initWithContentsOfFile:absolutePath] autorelease];
+            texture = [[SPTexture alloc] initWithContentsOfFile:absolutePath];
             
             // that's all info we need at this time.
             [parser abortParsing];
         }
     }];
+    [parser release];
     
-    if (!texture)
-        [NSException raise:SP_EXC_DATA_INVALID format:@"Font XML did not contain path to texture"];
-    
-    return texture;
+    if (!texture) [NSException raise:SP_EXC_DATA_INVALID format:@"Font XML did not contain path to texture"];
+    return [texture autorelease];
 }
 
 - (BOOL)parseFontData:(NSData*)data
@@ -297,20 +296,22 @@ SP_IMPLEMENT_MEMORY_POOL();
                                       autoScale:(BOOL)autoScale kerning:(BOOL)kerning
 
 {
-    if (text.length == 0) return [NSMutableArray array];
-    if (size < 0) size *= -_size;
-    
-    NSMutableArray* lines;
-    float scale;
-    float containerWidth;
-    float containerHeight;
-    BOOL finished = NO;
+    NSMutableArray* finalLocations = [NSMutableArray array];
 
     @autoreleasepool
     {
+        if (text.length == 0) return [NSMutableArray array];
+        if (size < 0) size *= -_size;
+
+        NSMutableArray* lines;
+        float scale;
+        float containerWidth;
+        float containerHeight;
+        BOOL finished = NO;
+
         while (!finished)
         {
-            SP_ASSIGN_RETAIN(lines, [[NSMutableArray alloc] init]);
+            lines = [NSMutableArray array];
             scale = size / _size;
             containerWidth  = width  / scale;
             containerHeight = height / scale;
@@ -409,41 +410,39 @@ SP_IMPLEMENT_MEMORY_POOL();
                 finished = YES;
             }
         } // while (!finished)
-    } // autoreleasepool
-    
-    NSMutableArray* finalLocations = [NSMutableArray array];
-    int numLines = (int)lines.count;
-    float bottom = numLines * _lineHeight;
-    int yOffset = 0;
-    
-    if (vAlign == SPVAlignBottom)      yOffset =  containerHeight - bottom;
-    else if (vAlign == SPVAlignCenter) yOffset = (containerHeight - bottom) / 2;
-    
-    for (NSArray* line in lines)
-    {
-        int numChars = (int)line.count;
-        if (!numChars) continue;
-        
-        int xOffset = 0;
-        SPCharLocation* lastLocation = [line lastObject];
-        float right = lastLocation.x - lastLocation.bitmapChar.xOffset
-                                     + lastLocation.bitmapChar.xAdvance;
-        
-        if (hAlign == SPHAlignRight)       xOffset =  containerWidth - right;
-        else if (hAlign == SPHAlignCenter) xOffset = (containerWidth - right) / 2;
-        
-        for (SPCharLocation* charLocation in line)
-        {
-            charLocation.x = scale * (charLocation.x + xOffset);
-            charLocation.y = scale * (charLocation.y + yOffset);
-            charLocation.scale = scale;
-            
-            if (charLocation.bitmapChar.width > 0 && charLocation.bitmapChar.height > 0)
-                [finalLocations addObject:charLocation];
-        }
-    }
 
-    SP_RELEASE_AND_NIL(lines);
+        int numLines = (int)lines.count;
+        float bottom = numLines * _lineHeight;
+        int yOffset = 0;
+
+        if (vAlign == SPVAlignBottom)      yOffset =  containerHeight - bottom;
+        else if (vAlign == SPVAlignCenter) yOffset = (containerHeight - bottom) / 2;
+
+        for (NSArray* line in lines)
+        {
+            int numChars = (int)line.count;
+            if (!numChars) continue;
+
+            int xOffset = 0;
+            SPCharLocation* lastLocation = [line lastObject];
+            float right = lastLocation.x - lastLocation.bitmapChar.xOffset
+            + lastLocation.bitmapChar.xAdvance;
+
+            if (hAlign == SPHAlignRight)       xOffset =  containerWidth - right;
+            else if (hAlign == SPHAlignCenter) xOffset = (containerWidth - right) / 2;
+
+            for (SPCharLocation* charLocation in line)
+            {
+                charLocation.x = scale * (charLocation.x + xOffset);
+                charLocation.y = scale * (charLocation.y + yOffset);
+                charLocation.scale = scale;
+
+                if (charLocation.bitmapChar.width > 0 && charLocation.bitmapChar.height > 0)
+                    [finalLocations addObject:charLocation];
+            }
+        }
+    } // autoreleasepool
+
     return finalLocations;
 }
 

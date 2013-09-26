@@ -18,7 +18,12 @@
 #import "SPTouchEvent.h"
 #import "SPTouchProcessor.h"
 
-#import <UIKit/UIKit.h>
+#ifdef SP_TARGET_IPHONE
+    #import <UIKit/UIKit.h>
+#else
+    #import <Cocoa/Cocoa.h>
+    #define UIApplicationWillResignActiveNotification NSApplicationWillResignActiveNotification
+#endif
 
 @implementation SPTouchProcessor
 {

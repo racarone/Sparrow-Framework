@@ -16,7 +16,13 @@
 #import "SPRenderSupport.h"
 #import "SPStage_Internal.h"
 
-#import <UIKit/UIKit.h>
+#ifdef SP_TARGET_IPHONE
+    #import <UIKit/UIKit.h>
+    #define MAIN_SCREEN_SIZE() [UIScreen mainScreen].bounds.size
+#else
+    #import <Cocoa/Cocoa.h>
+    #define MAIN_SCREEN_SIZE() [NSScreen mainScreen].frame.size
+#endif
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -45,7 +51,7 @@
 
 - (instancetype)init
 {
-    CGSize screenSize = [UIScreen mainScreen].bounds.size;
+    CGSize screenSize = MAIN_SCREEN_SIZE();
     return [self initWithWidth:screenSize.width height:screenSize.height];
 }
 

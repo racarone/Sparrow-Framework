@@ -283,20 +283,26 @@ static GLKVector4 GLKVector4FromColor(uint color)
 
 + (NSString*)registerBitmapFontFromFile:(NSString*)path texture:(SPTexture*)texture name:(NSString*)fontName
 {
-    SPBitmapFont* font = [[[SPBitmapFont alloc] initWithContentsOfFile:path texture:texture] autorelease];
-    return [self registerBitmapFont:font name:fontName];
+    SPBitmapFont* font = [[SPBitmapFont alloc] initWithContentsOfFile:path texture:texture];
+    NSString* name = [self registerBitmapFont:font name:fontName];
+    [font release];
+    return name;
 }
 
 + (NSString*)registerBitmapFontFromFile:(NSString*)path texture:(SPTexture*)texture
 {
-    SPBitmapFont* font = [[[SPBitmapFont alloc] initWithContentsOfFile:path texture:texture] autorelease];
-    return [self registerBitmapFont:font];
+    SPBitmapFont* font = [[SPBitmapFont alloc] initWithContentsOfFile:path texture:texture];
+    NSString* name =  [self registerBitmapFont:font];
+    [font release];
+    return name;
 }
 
 + (NSString*)registerBitmapFontFromFile:(NSString*)path
 {
-    SPBitmapFont* font = [[[SPBitmapFont alloc] initWithContentsOfFile:path] autorelease];
-    return [self registerBitmapFont:font];
+    SPBitmapFont* font = [[SPBitmapFont alloc] initWithContentsOfFile:path];
+    NSString* name =  [self registerBitmapFont:font];
+    [font release];
+    return name;
 }
 
 + (void)unregisterBitmapFont:(NSString*)name

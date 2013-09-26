@@ -9,8 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import <GLKit/GLKMath.h>
 #import <Foundation/Foundation.h>
-#import <GLKit/GLKit.h>
+
 #import "SPPoolObject.h"
 
 /** The SPPoint class describes a two dimensional point or vector. */

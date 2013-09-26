@@ -70,7 +70,7 @@
 
 - (NSString*)description
 {
-    return [NSString stringWithFormat:@"[SPTouch: globalX=%.1f, globalY=%.1f, phase=%d, tapCount=%d]",
+    return [NSString stringWithFormat:@"[SPTouch: globalX=%.1f, globalY=%.1f, phase=%u, tapCount=%d]",
             _globalX, _globalY, _phase, _tapCount];
 }
 

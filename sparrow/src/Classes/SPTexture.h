@@ -9,9 +9,14 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Foundation/Foundation.h>
-#import <QuartzCore/QuartzCore.h>
-#import <UIKit/UIKit.h>
+#import "SPPlatform.h"
+
+#ifdef SP_TARGET_IPHONE
+    #import <QuartzCore/QuartzCore.h>
+    #import <UIKit/UIKit.h>
+#else
+    #import <Cocoa/Cocoa.h>
+#endif
 
 @class SPRectangle;
 @class SPTexture;
@@ -135,6 +140,7 @@ typedef void (^SPTextureLoadingBlock)(SPTexture* texture, NSError* outError);
 - (instancetype)initWithContentsOfFile:(NSString*)path generateMipmaps:(BOOL)mipmaps
           premultipliedAlpha:(BOOL)pma;
 
+#ifdef SP_TARGET_IPHONE
 /// Initializes a texture with the contents of a UIImage; no mip maps will be created. The texture
 /// will have the same scale factor as the image.
 - (instancetype)initWithContentsOfImage:(UIImage*)image;
@@ -142,6 +148,7 @@ typedef void (^SPTextureLoadingBlock)(SPTexture* texture, NSError* outError);
 /// Initializes a texture with the contents of a UIImage. The texture will have the same scale
 /// factor as the image.
 - (instancetype)initWithContentsOfImage:(UIImage*)image generateMipmaps:(BOOL)mipmaps;
+#endif
 
 /// Initializes a texture with a region (in points) of another texture. The new texture will 
 /// reference the base texture; no data is duplicated.

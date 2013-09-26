@@ -16,6 +16,7 @@
 @class SPDisplayObject;
 @class SPQuad;
 @class SPQuadBatch;
+@class SPRectangle;
 @class SPTexture;
 
 /// ViewPort definition
