@@ -83,7 +83,7 @@ NSString* getProgramName(BOOL hasTexture, BOOL useTinting)
     if (!_program)
     {
         NSString* programName = getProgramName(hasTexture, useTinting);
-        _program = [Sparrow.currentController programByName:programName];
+        _program = [[Sparrow.currentController programByName:programName] retain];
         
         if (!_program)
         {

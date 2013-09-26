@@ -12,6 +12,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		B7C8D14117F3F4D800C1821C /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7C8D14017F3F4D800C1821C /* CoreText.framework */; };
 		DE3F093811B7B9DC009D4DB0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE3F093711B7B9DC009D4DB0 /* AVFoundation.framework */; };
 		DE3F093A11B7B9DC009D4DB0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE3F093911B7B9DC009D4DB0 /* AudioToolbox.framework */; };
 		DE3F097811B7BABD009D4DB0 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE3F097711B7BABD009D4DB0 /* OpenAL.framework */; };
@@ -60,6 +61,7 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* App-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "App-Prefix.pch"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* App-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "App-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		B7C8D14017F3F4D800C1821C /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		DE3F093711B7B9DC009D4DB0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		DE3F093911B7B9DC009D4DB0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DE3F097711B7BABD009D4DB0 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
@@ -80,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7C8D14117F3F4D800C1821C /* CoreText.framework in Frameworks */,
 				DE4A3DB910FFB0FE00FDA492 /* libSparrow.a in Frameworks */,
 				DE5C4E6E138ED109004892CA /* libz.dylib in Frameworks */,
 				DE8E6AA416B441A6007EE8BA /* GLKit.framework in Frameworks */,
@@ -152,6 +155,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B7C8D14017F3F4D800C1821C /* CoreText.framework */,
 				DE5C4E6D138ED109004892CA /* libz.dylib */,
 				DE8E6AA316B441A6007EE8BA /* GLKit.framework */,
 				DE3F093711B7B9DC009D4DB0 /* AVFoundation.framework */,
