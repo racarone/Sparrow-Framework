@@ -299,8 +299,7 @@
     
     glEnableVertexAttribArray(attribPosition);
 
-    if (_baseEffect.useTinting)
-        glEnableVertexAttribArray(attribColor);
+    glEnableVertexAttribArray(attribColor);
     
     if (_texture)
         glEnableVertexAttribArray(attribTexCoords);
@@ -311,11 +310,8 @@
     glVertexAttribPointer(attribPosition, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
                           (void*)(offsetof(SPVertex, position)));
 
-    if (_baseEffect.useTinting)
-    {
-        glVertexAttribPointer(attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SPVertex),
-                              (void*)(offsetof(SPVertex, color)));
-    }
+    glVertexAttribPointer(attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SPVertex),
+                          (void*)(offsetof(SPVertex, color)));
     
     if (_texture)
     {
