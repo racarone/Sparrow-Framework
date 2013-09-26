@@ -143,12 +143,12 @@ void __SPGLProgramCacheSetCapacity(SPGLProgramCacheRef cache, uint capacity)
     if (!cache->uniformCaches)
     {
         cache->uniformCachesCap = 4;
-        cache->uniformCaches = calloc(sizeof(SPGLUniformRef)*cache->uniformCachesCap, 1);
+        cache->uniformCaches = calloc(sizeof(SPGLUniformCacheRef)*cache->uniformCachesCap, 1);
     }
     else if (capacity >= cache->uniformCachesCap)
     {
         cache->uniformCachesCap <<= 2;
-        cache->uniformCaches = realloc(cache->uniformCaches, sizeof(SPGLUniformRef)*cache->uniformCachesCap);
+        cache->uniformCaches = realloc(cache->uniformCaches, sizeof(SPGLUniformCacheRef)*cache->uniformCachesCap);
     }
 }
 
@@ -198,5 +198,7 @@ void SPGLProgramCacheDestroyCacheWithProgram(SPGLProgramCacheRef cache, uint pro
 
 SPGLUniformCacheRef SPGLProgramCacheGetUniformCacheForProgram(SPGLProgramCacheRef cache, uint program)
 {
-    return cache->uniformCaches[program];
+    SPGLUniformCacheRef uniformCache = cache->uniformCaches[program];
+    assert(uniformCache);
+    return uniformCache;
 }

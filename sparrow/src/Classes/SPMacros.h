@@ -47,15 +47,15 @@ typedef void (^SPCallbackBlock)();
 
 // exceptions
 
-#define SP_EXC_ABSTRACT_CLASS       @"AbstractClass"
-#define SP_EXC_ABSTRACT_METHOD      @"AbstractMethod"
-#define SP_EXC_NOT_RELATED          @"NotRelated"
-#define SP_EXC_INDEX_OUT_OF_BOUNDS  @"IndexOutOfBounds"
-#define SP_EXC_INVALID_OPERATION    @"InvalidOperation"
-#define SP_EXC_FILE_NOT_FOUND       @"FileNotFound"
-#define SP_EXC_FILE_INVALID         @"FileInvalid"
-#define SP_EXC_DATA_INVALID         @"DataInvalid"
-#define SP_EXC_OPERATION_FAILED     @"OperationFailed"
+#define SP_EXC_ABSTRACT_CLASS               @"AbstractClass"
+#define SP_EXC_ABSTRACT_METHOD              @"AbstractMethod"
+#define SP_EXC_NOT_RELATED                  @"NotRelated"
+#define SP_EXC_INDEX_OUT_OF_BOUNDS          @"IndexOutOfBounds"
+#define SP_EXC_INVALID_OPERATION            @"InvalidOperation"
+#define SP_EXC_FILE_NOT_FOUND               @"FileNotFound"
+#define SP_EXC_FILE_INVALID                 @"FileInvalid"
+#define SP_EXC_DATA_INVALID                 @"DataInvalid"
+#define SP_EXC_OPERATION_FAILED             @"OperationFailed"
 
 // old events
 
@@ -106,28 +106,28 @@ typedef void (^SPCallbackBlock)();
 
 // macros
 
-#define SP_COUNT_OF(x)              ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
+#define SP_COUNT_OF(x)                  ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
 
-#define SP_R2D(rad)                 ((rad) / PI * 180.0f)
-#define SP_D2R(deg)                 ((deg) / 180.0f * PI)
+#define SP_R2D(rad)                     ((rad) / PI * 180.0f)
+#define SP_D2R(deg)                     ((deg) / 180.0f * PI)
 
-#define SP_COLOR_PART_ALPHA(color)  (((color) >> 24) & 0xff)
-#define SP_COLOR_PART_RED(color)    (((color) >> 16) & 0xff)
-#define SP_COLOR_PART_GREEN(color)  (((color) >>  8) & 0xff)
-#define SP_COLOR_PART_BLUE(color)   ( (color)        & 0xff)
+#define SP_COLOR_PART_ALPHA(color)      (((color) >> 24) & 0xff)
+#define SP_COLOR_PART_RED(color)        (((color) >> 16) & 0xff)
+#define SP_COLOR_PART_GREEN(color)      (((color) >>  8) & 0xff)
+#define SP_COLOR_PART_BLUE(color)       ( (color)        & 0xff)
 
-#define SP_COLOR(r, g, b)			(((int)(r) << 16) | ((int)(g) << 8) | (int)(b))
-#define SP_COLOR_ARGB(a, r, g, b)   (((int)(a) << 24) | ((int)(r) << 16) | ((int)(g) << 8) | (int)(b))
+#define SP_COLOR(r, g, b)               (((int)(r) << 16) | ((int)(g) << 8) | (int)(b))
+#define SP_COLOR_ARGB(a, r, g, b)       (((int)(a) << 24) | ((int)(r) << 16) | ((int)(g) << 8) | (int)(b))
 
-#define SP_IS_FLOAT_EQUAL(f1, f2)   (fabsf((f1)-(f2)) < SP_FLOAT_EPSILON)
+#define SP_IS_FLOAT_EQUAL(f1, f2)       (fabsf((f1)-(f2)) < SP_FLOAT_EPSILON)
 
-#define SP_SQUARE(x)                ((x) * (x))
-#define SP_CLAMP(value, min, max)   MIN((max), MAX((value), (min)))
+#define SP_SQUARE(x)                    ((x) * (x))
+#define SP_CLAMP(value, min, max)       MIN((max), MAX((value), (min)))
 
-#define SP_SWAP(x, y, T)            do { T temp##x##y = x; x = y; y = temp##x##y; } while (0)
+#define SP_SWAP(x, y, T)                do { T temp##x##y = x; x = y; y = temp##x##y; } while (0)
 
-#define SP_DEPRECATED               __attribute__((deprecated))
-#define SP_INLINE                   static __inline__
+#define SP_DEPRECATED                   __attribute__((deprecated))
+#define SP_INLINE                       static __inline__
 
 #ifdef __cplusplus
     #define SP_EXTERN       extern "C" __attribute__((visibility ("default")))

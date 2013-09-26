@@ -8,9 +8,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#include <Availability.h>
-#include <AvailabilityMacros.h>
-#include <TargetConditionals.h>
+#import <Availability.h>
+#import <AvailabilityMacros.h>
+#import <Foundation/Foundation.h>
+#import <TargetConditionals.h>
 
 #if TARGET_OS_IPHONE
     #define SP_TARGET_IPHONE                    1

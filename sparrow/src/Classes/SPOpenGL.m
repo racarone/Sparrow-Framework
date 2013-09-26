@@ -69,13 +69,13 @@ struct __SPGLState {
     GLuint      buffer[2];
     GLuint      vao;
     GLboolean   enabledVertexAttribs[32];
-    GLint       enabledCaps[10];
+    GLboolean   enabledCaps[10];
     GLenum      blendSrc;
     GLenum      blendDst;
 };
 typedef struct __SPGLState* SPGLStateRef;
 
-static SPGLStateRef __SPGetGLState(void)
+SP_INLINE SPGLStateRef __SPGetGLState(void)
 {
     static dispatch_once_t  once;
     static SPGLStateRef     globalState;
@@ -88,7 +88,7 @@ static SPGLStateRef __SPGetGLState(void)
     return globalState;
 }
 
-static SPGLProgramCacheRef __SPGetProgramCache(void)
+SP_INLINE SPGLProgramCacheRef __SPGetProgramCache(void)
 {
     static dispatch_once_t      once;
     static SPGLProgramCacheRef  globalProgramCache;
@@ -100,7 +100,7 @@ static SPGLProgramCacheRef __SPGetProgramCache(void)
     return globalProgramCache;
 }
 
-static GLuint __SPGetIndexForCapability(GLuint cap)
+SP_INLINE GLuint __SPGetIndexForCapability(GLuint cap)
 {
     switch (cap) {
         case GL_TEXTURE_2D:                 return 0;
@@ -236,9 +236,7 @@ void sglDeleteProgram(GLuint program)
 {
     SPGLStateRef currentState = __SPGetGLState();
     if (currentState->program == program)
-    {
         currentState->program = 0;
-    }
 
     SPGLProgramCacheDestroyCacheWithProgram(__SPGetProgramCache(), program);
     glDeleteProgram(program);
@@ -301,7 +299,7 @@ void sglEnable(GLenum cap)
     if (currentState->enabledCaps[index] != GL_TRUE)
     {
         currentState->enabledCaps[index] = GL_TRUE;
-        glDisable(cap);
+        glEnable(cap);
     }
 }
 
