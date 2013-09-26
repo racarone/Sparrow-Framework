@@ -85,7 +85,7 @@ SP_IMPLEMENT_MEMORY_POOL();
         _name = @"unknown";
         _lineHeight = _size = _baseline = SP_DEFAULT_FONT_SIZE;
         _chars = [[NSMutableDictionary alloc] init];
-        _fontTexture = texture ? [texture retain] : [[self textureReferencedByXmlData:data] retain];
+        _fontTexture = [(texture ? texture : [self textureReferencedByXmlData:data]) retain];
         _helperImage = [[SPImage alloc] initWithTexture:_fontTexture];
         
         [self parseFontData:data];
@@ -96,7 +96,7 @@ SP_IMPLEMENT_MEMORY_POOL();
 
 - (instancetype)initWithContentsOfData:(NSData*)data
 {
-    return [[self initWithContentsOfData:data texture:nil] autorelease];
+    return [self initWithContentsOfData:data texture:nil];
 }
 
 - (instancetype)initWithContentsOfFile:(NSString*)path texture:(SPTexture*)texture
@@ -111,17 +111,17 @@ SP_IMPLEMENT_MEMORY_POOL();
         texture = [self textureReferencedByXmlData:xmlData inFolder:folder];
     }
     
-    return [[self initWithContentsOfData:xmlData texture:texture] autorelease];
+    return [self initWithContentsOfData:xmlData texture:texture];
 }
 
 - (instancetype)initWithContentsOfFile:(NSString*)path
 {
-    return [[self initWithContentsOfFile:path texture:nil] autorelease];
+    return [self initWithContentsOfFile:path texture:nil];
 }
 
 - (instancetype)init
 {
-    return [[self initWithContentsOfData:nil texture:nil] autorelease];
+    return [self initWithContentsOfData:nil texture:nil];
 }
 
 - (instancetype)initWithMiniFont
@@ -160,7 +160,7 @@ SP_IMPLEMENT_MEMORY_POOL();
             
             NSString* filename = [attributes valueForKey:@"file"];
             NSString* absolutePath = [folder stringByAppendingPathComponent:filename];
-            texture = [[[SPTexture alloc] initWithContentsOfFile:absolutePath] autorelease];
+            texture = [[SPTexture alloc] initWithContentsOfFile:absolutePath];
             
             // that's all info we need at this time.
             [parser abortParsing];
@@ -170,7 +170,7 @@ SP_IMPLEMENT_MEMORY_POOL();
     if (!texture)
         [NSException raise:SP_EXC_DATA_INVALID format:@"Font XML did not contain path to texture"];
     
-    return texture;
+    return [texture autorelease];
 }
 
 - (BOOL)parseFontData:(NSData*)data
@@ -300,7 +300,7 @@ SP_IMPLEMENT_MEMORY_POOL();
     if (text.length == 0) return [NSMutableArray array];
     if (size < 0) size *= -_size;
     
-    NSMutableArray* lines;
+    NSMutableArray* lines = nil;
     float scale;
     float containerWidth;
     float containerHeight;
@@ -310,7 +310,7 @@ SP_IMPLEMENT_MEMORY_POOL();
     {
         while (!finished)
         {
-            SP_ASSIGN_RETAIN(lines, [[NSMutableArray alloc] init]);
+            SP_ASSIGN_RETAIN(lines, [NSMutableArray array]);
             scale = size / _size;
             containerWidth  = width  / scale;
             containerHeight = height / scale;
