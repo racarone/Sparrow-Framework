@@ -310,7 +310,7 @@ SP_IMPLEMENT_MEMORY_POOL();
     {
         while (!finished)
         {
-            SP_ASSIGN_RETAIN(lines, [[NSMutableArray alloc] init]);
+            SP_ASSIGN_RETAIN(lines, [NSMutableArray array]);
             scale = size / _size;
             containerWidth  = width  / scale;
             containerHeight = height / scale;
