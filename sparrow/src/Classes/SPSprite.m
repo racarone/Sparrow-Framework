@@ -113,11 +113,7 @@
 
     if (_flattenRequested)
     {
-<<<<<<< HEAD
-        SP_ASSIGN_RETAIN(_flattenedContents, [SPQuadBatch compileObject:self intoArray:_flattenedContents]);
-=======
         _flattenedContents = [[SPQuadBatch compileObject:self intoArray:[_flattenedContents autorelease]] retain];
->>>>>>> b305fd3e78c9179619c393b3a111b436eb549e5e
         _flattenRequested = NO;
     }
     

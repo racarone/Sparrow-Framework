@@ -167,14 +167,10 @@ SP_IMPLEMENT_MEMORY_POOL();
         }
     }];
     [parser release];
-    
-<<<<<<< HEAD
-    if (!texture) [NSException raise:SP_EXC_DATA_INVALID format:@"Font XML did not contain path to texture"];
-=======
+
     if (!texture)
         [NSException raise:SP_EXC_DATA_INVALID format:@"Font XML did not contain path to texture"];
-    
->>>>>>> b305fd3e78c9179619c393b3a111b436eb549e5e
+
     return [texture autorelease];
 }
 
@@ -302,22 +298,11 @@ SP_IMPLEMENT_MEMORY_POOL();
                                       autoScale:(BOOL)autoScale kerning:(BOOL)kerning
 
 {
-<<<<<<< HEAD
     NSMutableArray* finalLocations = [NSMutableArray array];
-=======
-    if (text.length == 0) return [NSMutableArray array];
-    if (size < 0) size *= -_size;
-    
-    NSMutableArray* lines = nil;
-    float scale;
-    float containerWidth;
-    float containerHeight;
-    BOOL finished = NO;
->>>>>>> b305fd3e78c9179619c393b3a111b436eb549e5e
 
     @autoreleasepool
     {
-        if (text.length == 0) return [NSMutableArray array];
+        if (text.length == 0) return finalLocations;
         if (size < 0) size *= -_size;
 
         NSMutableArray* lines;
@@ -328,11 +313,7 @@ SP_IMPLEMENT_MEMORY_POOL();
 
         while (!finished)
         {
-<<<<<<< HEAD
             lines = [NSMutableArray array];
-=======
-            SP_ASSIGN_RETAIN(lines, [NSMutableArray array]);
->>>>>>> b305fd3e78c9179619c393b3a111b436eb549e5e
             scale = size / _size;
             containerWidth  = width  / scale;
             containerHeight = height / scale;
