@@ -94,7 +94,6 @@
 		DE8E6A7E16B4303E007EE8BA /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE8E6A7D16B4303E007EE8BA /* GLKit.framework */; };
 		DE8E6A8216B430C4007EE8BA /* SPViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8E6A8016B430C4007EE8BA /* SPViewController.h */; };
 		DE8E6A8316B430C4007EE8BA /* SPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DE8E6A8116B430C4007EE8BA /* SPViewController.m */; };
-		DE8E6AA616B46C65007EE8BA /* SparrowClass_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8E6AA516B46C65007EE8BA /* SparrowClass_Internal.h */; };
 		DE97B93016F1EA5E00DC1077 /* SPProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = DE97B92E16F1EA5E00DC1077 /* SPProgram.h */; };
 		DE97B93116F1EA5E00DC1077 /* SPProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = DE97B92F16F1EA5E00DC1077 /* SPProgram.m */; };
 		DE996B25170DAFAB0002E2C8 /* SPTextureAtlasTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DE996B24170DAFAB0002E2C8 /* SPTextureAtlasTest.m */; };
@@ -102,6 +101,7 @@
 		DEAAF3D816BC0D21004EB9D5 /* SPResizeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAAF3D616BC0D21004EB9D5 /* SPResizeEvent.m */; };
 		DEAAF3DB16BC0E46004EB9D5 /* SPOverlayView.h in Headers */ = {isa = PBXBuildFile; fileRef = DEAAF3D916BC0E46004EB9D5 /* SPOverlayView.h */; };
 		DEAAF3DC16BC0E46004EB9D5 /* SPOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAAF3DA16BC0E46004EB9D5 /* SPOverlayView.m */; };
+		DEB057861801D20800A8F726 /* SparrowClass_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DEB057851801D20800A8F726 /* SparrowClass_Internal.h */; };
 		DEB5142C14F1848B00066104 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEB5142B14F1848B00066104 /* SenTestingKit.framework */; };
 		DEB796D616BEB23D0082D612 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE8E6A7D16B4303E007EE8BA /* GLKit.framework */; };
 		DEB9E80A16D3B26300D2C8C7 /* SPVertexDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DEB9E80916D3B26300D2C8C7 /* SPVertexDataTest.m */; };
@@ -243,7 +243,6 @@
 		DE8E6A7D16B4303E007EE8BA /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		DE8E6A8016B430C4007EE8BA /* SPViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPViewController.h; sourceTree = "<group>"; };
 		DE8E6A8116B430C4007EE8BA /* SPViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPViewController.m; sourceTree = "<group>"; };
-		DE8E6AA516B46C65007EE8BA /* SparrowClass_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SparrowClass_Internal.h; sourceTree = "<group>"; };
 		DE8F1E2D0F7C1F3A0085E9E4 /* SPMatrixTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPMatrixTest.m; sourceTree = "<group>"; };
 		DE97B92E16F1EA5E00DC1077 /* SPProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPProgram.h; sourceTree = "<group>"; };
 		DE97B92F16F1EA5E00DC1077 /* SPProgram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPProgram.m; sourceTree = "<group>"; };
@@ -254,6 +253,7 @@
 		DEAAF3D916BC0E46004EB9D5 /* SPOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPOverlayView.h; sourceTree = "<group>"; };
 		DEAAF3DA16BC0E46004EB9D5 /* SPOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPOverlayView.m; sourceTree = "<group>"; };
 		DEABCF5B0F7AE187003B6C9D /* SPPointTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPPointTest.m; sourceTree = "<group>"; };
+		DEB057851801D20800A8F726 /* SparrowClass_Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SparrowClass_Internal.h; sourceTree = "<group>"; };
 		DEB21CF80F93C9780080D5C2 /* SPDisplayObjectContainerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPDisplayObjectContainerTest.m; sourceTree = "<group>"; };
 		DEB5142B14F1848B00066104 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		DEB9E80916D3B26300D2C8C7 /* SPVertexDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPVertexDataTest.m; sourceTree = "<group>"; };
@@ -473,9 +473,9 @@
 		DE85779116B58EDF00725EC0 /* Internal */ = {
 			isa = PBXGroup;
 			children = (
+				DEB057851801D20800A8F726 /* SparrowClass_Internal.h */,
 				DE0BA5D61703513D00637533 /* SPStatsDisplay.h */,
 				DE0BA5D71703513D00637533 /* SPStatsDisplay.m */,
-				DE8E6AA516B46C65007EE8BA /* SparrowClass_Internal.h */,
 			);
 			name = Internal;
 			sourceTree = "<group>";
@@ -719,6 +719,7 @@
 				DE61137C134F8F6C00AB742E /* SPTouchEvent.h in Headers */,
 				DE61137D134F8F6C00AB742E /* SPEnterFrameEvent.h in Headers */,
 				DE61137F134F8F8300AB742E /* SPRenderSupport.h in Headers */,
+				DEB057861801D20800A8F726 /* SparrowClass_Internal.h in Headers */,
 				DE611380134F8F8300AB742E /* SPTextField.h in Headers */,
 				DE611381134F8F8300AB742E /* SPBitmapFont.h in Headers */,
 				DE611382134F8F8300AB742E /* SPBitmapChar.h in Headers */,
@@ -748,7 +749,6 @@
 				DE61139C134F8FD400AB742E /* Sparrow.h in Headers */,
 				DEC734811386BC1400234D95 /* SPTextureAtlas.h in Headers */,
 				DE8E6A8216B430C4007EE8BA /* SPViewController.h in Headers */,
-				DE8E6AA616B46C65007EE8BA /* SparrowClass_Internal.h in Headers */,
 				DE85778E16B58E4B00725EC0 /* SparrowClass.h in Headers */,
 				DEAAF3D716BC0D21004EB9D5 /* SPResizeEvent.h in Headers */,
 				DEAAF3DB16BC0E46004EB9D5 /* SPOverlayView.h in Headers */,

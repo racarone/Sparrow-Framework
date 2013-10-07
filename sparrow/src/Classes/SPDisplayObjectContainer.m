@@ -79,16 +79,10 @@ static void getChildEventListeners(SPDisplayObject *object, NSString *eventType,
         [_children insertObject:child atIndex:MIN(_children.count, index)];
         child.parent = self;
 
-        SPEvent* addedEvent = [[SPEvent alloc] initWithType:SP_EVENT_TYPE_ADDED];
-        [child dispatchEvent:addedEvent];
-        [addedEvent release];
+        [child dispatchEventWithType:SP_EVENT_TYPE_ADDED];
 
         if (self.stage)
-        {
-            SPEvent* addedToStageEvent = [[SPEvent alloc] initWithType:SP_EVENT_TYPE_ADDED_TO_STAGE];
-            [child broadcastEvent:addedToStageEvent];
-            [addedToStageEvent release];
-        }
+            [child broadcastEventWithType:SP_EVENT_TYPE_ADDED_TO_STAGE];
 
         [child release];
     }
@@ -152,17 +146,10 @@ static void getChildEventListeners(SPDisplayObject *object, NSString *eventType,
     if (index >= 0 && index < [_children count])
     {
         SPDisplayObject *child = _children[index];
-
-        SPEvent* remEvent = [[SPEvent alloc] initWithType:SP_EVENT_TYPE_REMOVED];
-        [child dispatchEvent:remEvent];
-        [remEvent release];
+        [child dispatchEventWithType:SP_EVENT_TYPE_REMOVED];
 
         if (self.stage)
-        {
-            SPEvent* remFromStageEvent = [[SPEvent alloc] initWithType:SP_EVENT_TYPE_REMOVED_FROM_STAGE];
-            [child broadcastEvent:remFromStageEvent];
-            [remFromStageEvent release];
-        }
+            [child broadcastEventWithType:SP_EVENT_TYPE_REMOVED_FROM_STAGE];
         
         child.parent = nil; 
         NSUInteger newIndex = (int)[_children indexOfObject:child]; // index might have changed in event handler

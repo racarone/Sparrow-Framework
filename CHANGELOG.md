@@ -1,6 +1,21 @@
 Sparrow: Changelog
 ==================
 
+version 2.0.1 - 2013-10-03
+--------------------------
+
+- added compatibility with iOS 7
+- added compatibility with 64 bit compilation
+- added 'setCurrentController:' method to 'Sparrow' class
+- added workaround for 'GLKTextureLoader' bug (caused exception when GL error flag was dirty)
+- added 'texture' property to 'SPTextureAtlas'
+- added 'regionByName:' and 'frameByName:' to 'SPTextureAtlas'
+- fixed compiler warnings in Xcode 5
+- fixed bug in SPDisplayObject that might prevent proper releasing of objects (thanks to Ariel!)
+- optimized performance of async texture loading by using a shared texture loader
+- optimized text handling of 'SPButton' (now removing textfield when its empty)
+- optimized some matrix calculations
+
 version 2.0 - 2013-05-31
 ------------------------
 
