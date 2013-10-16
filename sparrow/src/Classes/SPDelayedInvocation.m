@@ -19,17 +19,20 @@
     double _currentTime;
     
     SPCallbackBlock _block;
+    dispatch_queue_t _queue;
     NSMutableArray *_invocations;
 }
 
-- (instancetype)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block
+- (instancetype)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block queue:(dispatch_queue_t)queue
 {
     if ((self = [super init]))
     {
         _totalTime = MAX(0.0001, time); // zero is not allowed
         _currentTime = 0;
         _block = [block copy];
-        
+        _queue = queue;
+        if (_queue) dispatch_retain(queue);
+
         if (target)
         {
             _target = [target retain];
@@ -39,9 +42,19 @@
     return self;
 }
 
+- (instancetype)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block
+{
+    return [self initWithTarget:target delay:time block:block queue:nil];
+}
+
 - (instancetype)initWithTarget:(id)target delay:(double)time
 {
     return [self initWithTarget:target delay:time block:NULL];
+}
+
+- (instancetype)initWithDelay:(double)time block:(SPCallbackBlock)block queue:(dispatch_queue_t)queue
+{
+    return [self initWithTarget:nil delay:time block:block queue:queue];
 }
 
 - (instancetype)initWithDelay:(double)time block:(SPCallbackBlock)block
@@ -56,9 +69,10 @@
 
 - (void)dealloc
 {
-    [_target release];
+    if (_queue) dispatch_release(_queue);
     [_block release];
     [_invocations release];
+    [_target release];
     [super dealloc];
 }
 
@@ -92,7 +106,11 @@
     if (previousTime < _totalTime && _currentTime >= _totalTime)
     {
         if (_invocations) [_invocations makeObjectsPerformSelector:@selector(invoke)];
-        if (_block) _block();
+        if (_block)
+        {
+            if (_queue) dispatch_async(_queue, _block);
+            else        _block();
+        }
         
         [self dispatchEventWithType:SPEventTypeRemoveFromJuggler];
     }
@@ -111,6 +129,11 @@
 + (instancetype)invocationWithDelay:(double)time block:(SPCallbackBlock)block
 {
     return [[[self alloc] initWithDelay:time block:block] autorelease];
+}
+
++ (instancetype)invocationWithDelay:(double)time block:(SPCallbackBlock)block queue:(dispatch_queue_t)queue
+{
+    return [[[self alloc] initWithDelay:time block:block queue:queue] autorelease];
 }
 
 @end

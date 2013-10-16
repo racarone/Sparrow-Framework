@@ -80,6 +80,9 @@
 /// Delays the execution of a block by a certain time in seconds.
 - (id)delayInvocationByTime:(double)time block:(SPCallbackBlock)block;
 
+/// Delays the execution of an asynchronous block by a certain time in seconds.
+- (id)delayInvocationByTime:(double)time block:(SPCallbackBlock)block queue:(dispatch_queue_t)queue;
+
 /// ----------------
 /// @name Properties
 /// ----------------

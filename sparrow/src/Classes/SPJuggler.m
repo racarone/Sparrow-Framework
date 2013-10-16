@@ -126,6 +126,13 @@
     return delayedInv;
 }
 
+- (id)delayInvocationByTime:(double)time block:(SPCallbackBlock)block queue:(dispatch_queue_t)queue
+{
+    SPDelayedInvocation *delayedInv = [SPDelayedInvocation invocationWithDelay:time block:block queue:queue];
+    [self addObject:delayedInv];
+    return delayedInv;
+}
+
 + (instancetype)juggler
 {
     return [[[SPJuggler alloc] init] autorelease];
