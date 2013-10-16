@@ -18,6 +18,7 @@
 {
     NSMutableArray *_objects;
     double _elapsedTime;
+    double _speed;
 }
 
 - (instancetype)init
@@ -38,6 +39,7 @@
 
 - (void)advanceTime:(double)seconds
 {
+    seconds *= _speed;
     _elapsedTime += seconds;
     
     // we need work with a copy, since user-code could modify the collection during the enumeration

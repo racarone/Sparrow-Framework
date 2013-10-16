@@ -87,4 +87,8 @@
 /// The total life time of the juggler.
 @property (nonatomic, readonly) double elapsedTime;
 
+/// The speed factor adjusts how fast a juggler's animatables run.
+/// For example, a speed factor of 2.0 means the juggler runs twice as fast.
+@property (nonatomic, assign) double speed;
+
 @end
