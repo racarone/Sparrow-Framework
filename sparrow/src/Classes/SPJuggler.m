@@ -16,7 +16,7 @@
 
 @implementation SPJuggler
 {
-    NSMutableArray *_objects;
+    NSMutableOrderedSet *_objects;
     double _elapsedTime;
     double _speed;
 }
@@ -25,7 +25,7 @@
 {    
     if ((self = [super init]))
     {        
-        _objects = [[NSMutableArray alloc] init];
+        _objects = [[NSMutableOrderedSet alloc] init];
         _elapsedTime = 0.0;
     }
     return self;
@@ -43,8 +43,12 @@
     _elapsedTime += seconds;
     
     // we need work with a copy, since user-code could modify the collection during the enumeration
-    for (id<SPAnimatable> object in [NSArray arrayWithArray:_objects])
+    NSArray* objectsCopy = [[_objects array] copy];
+
+    for (id<SPAnimatable> object in objectsCopy)
         [object advanceTime:seconds];
+
+    [objectsCopy release];
 }
 
 - (void)addObject:(id<SPAnimatable>)object
@@ -88,7 +92,7 @@
 - (void)removeObjectsWithTarget:(id)object
 {
     SEL targetSel = @selector(target);
-    NSMutableArray *remainingObjects = [[NSMutableArray alloc] init];
+    NSMutableOrderedSet *remainingObjects = [[NSMutableOrderedSet alloc] init];
     
     for (id currentObject in _objects)
     {
