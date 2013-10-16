@@ -16,7 +16,7 @@
 
 @implementation TextScene
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {

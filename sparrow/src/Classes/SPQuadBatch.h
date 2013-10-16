@@ -41,12 +41,23 @@
 ------------------------------------------------------------------------------------------------- */
 @interface SPQuadBatch : SPDisplayObject
 
+/// --------------------
+/// @name Initialization
+/// --------------------
+
 /// Initialize a QuadBatch with a certain capacity. The batch will grow dynamically if it exceeds
 /// this value. _Designated Initializer_.
-- (id)initWithCapacity:(int)capacity;
+- (instancetype)initWithCapacity:(int)capacity;
 
 /// Initialize a QuadBatch with a capacity of 16 quads.
-- (id)init;
+- (instancetype)init;
+
+/// Create a new, empty quad batch.
++ (instancetype)quadBatch;
+
+/// -------------
+/// @name Methods
+/// -------------
 
 /// Resets the batch. The vertex- and index-buffers keep their size, so that they can be reused.
 - (void)reset;
@@ -106,8 +117,9 @@
 /// resulting quad batches into the specified an array; batches inside that array are reused.
 + (NSMutableArray *)compileObject:(SPDisplayObject *)object intoArray:(NSMutableArray *)quadBatches;
 
-/// Create a new, empty quad batch.
-+ (id)quadBatch;
+/// ----------------
+/// @name Properties
+/// ----------------
 
 /// The number of quads that has been added to the batch.
 @property (nonatomic, readonly) int numQuads;

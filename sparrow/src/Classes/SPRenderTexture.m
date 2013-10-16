@@ -24,7 +24,7 @@
     SPRenderSupport *_renderSupport;
 }
 
-- (id)initWithWidth:(float)width height:(float)height fillColor:(uint)argb scale:(float)scale
+- (instancetype)initWithWidth:(float)width height:(float)height fillColor:(uint)argb scale:(float)scale
 {
     int legalWidth  = [SPUtils nextPowerOfTwo:width  * scale];
     int legalHeight = [SPUtils nextPowerOfTwo:height * scale];
@@ -49,17 +49,17 @@
     return self;
 }
 
-- (id)initWithWidth:(float)width height:(float)height fillColor:(uint)argb
+- (instancetype)initWithWidth:(float)width height:(float)height fillColor:(uint)argb
 {
     return [self initWithWidth:width height:height fillColor:argb scale:Sparrow.contentScaleFactor];
 }
 
-- (id)initWithWidth:(float)width height:(float)height
+- (instancetype)initWithWidth:(float)width height:(float)height
 {
     return [self initWithWidth:width height:height fillColor:0x0];
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithWidth:256 height:256];    
 }
@@ -171,12 +171,12 @@
      }];
 }
 
-+ (id)textureWithWidth:(float)width height:(float)height
++ (instancetype)textureWithWidth:(float)width height:(float)height
 {
     return [[[self alloc] initWithWidth:width height:height] autorelease];
 }
 
-+ (id)textureWithWidth:(float)width height:(float)height fillColor:(uint)argb
++ (instancetype)textureWithWidth:(float)width height:(float)height fillColor:(uint)argb
 {
     return [[[self alloc] initWithWidth:width height:height fillColor:argb] autorelease];
 }

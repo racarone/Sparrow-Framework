@@ -42,10 +42,10 @@
 /// ------------------
 
 /// Initializes a sound 
-- (id)initWithContentsOfFile:(NSString *)path;
+- (instancetype)initWithContentsOfFile:(NSString *)path;
 
 /// Factory method.
-+ (SPSound *)soundWithContentsOfFile:(NSString *)path;
++ (instancetype)soundWithContentsOfFile:(NSString *)path;
 
 /// -------------
 /// @name Methods

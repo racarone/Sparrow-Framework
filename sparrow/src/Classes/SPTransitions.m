@@ -16,9 +16,36 @@
 #import "SPMacros.h"
 #import "SPUtils.h"
 
+// --- transition keys -----------------------------------------------------------------------------
+
+NSString *const SPTransitionLinear                  = @"linear";
+NSString *const SPTransitionRandomize               = @"randomize";
+
+NSString *const SPTransitionEaseIn                  = @"easeIn";
+NSString *const SPTransitionEaseOut                 = @"easeOut";
+NSString *const SPTransitionEaseInOut               = @"easeInOut";
+NSString *const SPTransitionEaseOutIn               = @"easeOutIn";
+
+NSString *const SPTransitionEaseInBack              = @"easeInBack";
+NSString *const SPTransitionEaseOutBack             = @"easeOutBack";
+NSString *const SPTransitionEaseInOutBack           = @"easeInOutBack";
+NSString *const SPTransitionEaseOutInBack           = @"easeOutInBack";
+
+NSString *const SPTransitionEaseInElastic           = @"easeInElastic";
+NSString *const SPTransitionEaseOutElastic          = @"easeOutElastic";
+NSString *const SPTransitionEaseInOutElastic        = @"easeInOutElastic";
+NSString *const SPTransitionEaseOutInElastic        = @"easeOutInElastic";
+
+NSString *const SPTransitionEaseInBounce            = @"easeInBounce";
+NSString *const SPTransitionEaseOutBounce           = @"easeOutBounce";
+NSString *const SPTransitionEaseInOutBounce         = @"easeInOutBounce";
+NSString *const SPTransitionEaseOutInBounce         = @"easeOutInBounce";
+
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPTransitions
 
-- (id)init
+- (instancetype)init
 {
     [NSException raise:NSGenericException format:@"Static class - do not initialize!"];        
     return nil;

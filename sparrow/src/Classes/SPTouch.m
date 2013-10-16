@@ -23,22 +23,19 @@
     float _previousGlobalY;
     int _tapCount;
     SPTouchPhase _phase;
-    SPDisplayObject *__weak _target;
+    SPDisplayObject *_target;
     id _nativeTouch;
 }
 
-@synthesize timestamp = _timestamp;
-@synthesize globalX = _globalX;
-@synthesize globalY = _globalY;
-@synthesize previousGlobalX = _previousGlobalX;
-@synthesize previousGlobalY = _previousGlobalY;
-@synthesize tapCount = _tapCount;
-@synthesize phase = _phase;
-@synthesize target = _target;
-
-- (id)init
+- (instancetype)init
 {
     return [super init];
+}
+
+- (void)dealloc
+{
+    [_target release];
+    [super dealloc];
 }
 
 - (SPPoint *)locationInSpace:(SPDisplayObject *)space
@@ -110,8 +107,7 @@
 
 - (void)setTarget:(SPDisplayObject *)target
 {
-    if (_target != target)
-        _target = target;
+    SP_RELEASE_AND_RETAIN(_target, target);
 }
 
 + (SPTouch *)touch

@@ -15,7 +15,7 @@
 
 @class SPDisplayObject;
 
-#define SP_EVENT_TYPE_TOUCH @"touch"
+SP_EXTERN NSString *const SPEventTypeTouch;
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@
  Here is an example of how to react on touch events at 'self', which could be a subclass of SPSprite:
 
 	// e.g. in 'init'
-	[self addEventListener:@selector(onTouch:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+	[self addEventListener:@selector(onTouch:) atObject:self forType:SPEventTypeTouch];
 	
 	// the corresponding listener:
 	- (void)onTouch:(SPTouchEvent*)event
@@ -63,13 +63,13 @@
 /// ------------------
 
 /// Creates a touch event with a set of touches. _Designated Initializer_.
-- (id)initWithType:(NSString*)type bubbles:(BOOL)bubbles touches:(NSSet*)touches;
+- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles touches:(NSSet*)touches;
 
 /// Creates a touch event with a set of touches.
-- (id)initWithType:(NSString*)type touches:(NSSet*)touches;
+- (instancetype)initWithType:(NSString*)type touches:(NSSet*)touches;
 
 /// Factory method.
-+ (id)eventWithType:(NSString*)type touches:(NSSet*)touches;
++ (instancetype)eventWithType:(NSString*)type touches:(NSSet*)touches;
 
 /// -------------
 /// @name Methods

@@ -22,10 +22,7 @@
     SEL _selector;
 }
 
-@synthesize target = _target;
-@synthesize selector = _selector;
-
-- (id)initWithTarget:(id)target selector:(SEL)selector block:(SPEventBlock)block
+- (instancetype)initWithTarget:(id)target selector:(SEL)selector block:(SPEventBlock)block
 {
     if ((self = [super init]))
     {
@@ -37,7 +34,7 @@
     return self;
 }
 
-- (id)initWithTarget:(id)target selector:(SEL)selector
+- (instancetype)initWithTarget:(id)target selector:(SEL)selector
 {
     __block id weakTarget = target;
     
@@ -53,7 +50,7 @@
     [super dealloc];
 }
 
-- (id)initWithBlock:(SPEventBlock)block
+- (instancetype)initWithBlock:(SPEventBlock)block
 {
     return [self initWithTarget:nil selector:nil block:block];
 }

@@ -47,16 +47,7 @@ static NSMutableDictionary *bitmapFonts = nil;
     SPSprite *_border;
 }
 
-@synthesize text = _text;
-@synthesize fontName = _fontName;
-@synthesize fontSize = _fontSize;
-@synthesize hAlign = _hAlign;
-@synthesize vAlign = _vAlign;
-@synthesize color = _color;
-@synthesize kerning = _kerning;
-@synthesize autoScale = _autoScale;
-
-- (id)initWithWidth:(float)width height:(float)height text:(NSString*)text fontName:(NSString*)name 
+- (instancetype)initWithWidth:(float)width height:(float)height text:(NSString*)text fontName:(NSString*)name 
           fontSize:(float)size color:(uint)color 
 {
     if ((self = [super init]))
@@ -79,28 +70,28 @@ static NSMutableDictionary *bitmapFonts = nil;
         _contents.touchable = NO;
         [self addChild:_contents];
         
-        [self addEventListener:@selector(onFlatten:) atObject:self forType:SP_EVENT_TYPE_FLATTEN];
+        [self addEventListener:@selector(onFlatten:) atObject:self forType:SPEventTypeFlatten];
     }
     return self;
 } 
 
-- (id)initWithWidth:(float)width height:(float)height text:(NSString*)text
+- (instancetype)initWithWidth:(float)width height:(float)height text:(NSString*)text
 {
     return [self initWithWidth:width height:height text:text fontName:SP_DEFAULT_FONT_NAME
                      fontSize:SP_DEFAULT_FONT_SIZE color:SP_DEFAULT_FONT_COLOR];   
 }
 
-- (id)initWithWidth:(float)width height:(float)height
+- (instancetype)initWithWidth:(float)width height:(float)height
 {
     return [self initWithWidth:width height:height text:@""];
 }
 
-- (id)initWithText:(NSString *)text
+- (instancetype)initWithText:(NSString *)text
 {
     return [self initWithWidth:128 height:128 text:text];
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithText:@""];
 }
@@ -234,19 +225,19 @@ static NSMutableDictionary *bitmapFonts = nil;
     }
 }
 
-+ (id)textFieldWithWidth:(float)width height:(float)height text:(NSString*)text
++ (instancetype)textFieldWithWidth:(float)width height:(float)height text:(NSString*)text
                           fontName:(NSString*)name fontSize:(float)size color:(uint)color
 {
     return [[[self alloc] initWithWidth:width height:height text:text fontName:name
                                      fontSize:size color:color] autorelease];
 }
 
-+ (id)textFieldWithWidth:(float)width height:(float)height text:(NSString*)text
++ (instancetype)textFieldWithWidth:(float)width height:(float)height text:(NSString*)text
 {
     return [[[self alloc] initWithWidth:width height:height text:text] autorelease];
 }
 
-+ (id)textFieldWithText:(NSString*)text
++ (instancetype)textFieldWithText:(NSString*)text
 {
     return [[[self alloc] initWithText:text] autorelease];
 }
@@ -374,7 +365,7 @@ static NSMutableDictionary *bitmapFonts = nil;
 {
     SPBitmapFont *bitmapFont = bitmapFonts[_fontName];
     if (!bitmapFont)
-        [NSException raise:SP_EXC_INVALID_OPERATION 
+        [NSException raise:SPExceptionInvalidOperation 
                     format:@"bitmap font %@ not registered!", _fontName];
     
     [bitmapFont fillQuadBatch:_contents withWidth:_hitArea.width height:_hitArea.height

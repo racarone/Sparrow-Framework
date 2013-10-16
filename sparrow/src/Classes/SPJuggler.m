@@ -20,9 +20,7 @@
     double _elapsedTime;
 }
 
-@synthesize elapsedTime = _elapsedTime;
-
-- (id)init
+- (instancetype)init
 {    
     if ((self = [super init]))
     {        
@@ -55,7 +53,7 @@
         
         if ([(id)object isKindOfClass:[SPEventDispatcher class]])
             [(SPEventDispatcher *)object addEventListener:@selector(onRemove:) atObject:self
-                                                  forType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+                                                  forType:SPEventTypeRemoveFromJuggler];
     }
 }
 
@@ -70,7 +68,7 @@
     
     if ([(id)object isKindOfClass:[SPEventDispatcher class]])
         [(SPEventDispatcher *)object removeEventListenersAtObject:self
-                                     forType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+                                     forType:SPEventTypeRemoveFromJuggler];
 }
 
 - (void)removeAllObjects
@@ -79,7 +77,7 @@
     {
         if ([(id)object isKindOfClass:[SPEventDispatcher class]])
             [(SPEventDispatcher *)object removeEventListenersAtObject:self
-                                         forType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+                                         forType:SPEventTypeRemoveFromJuggler];
     }
     
     [_objects removeAllObjects];
@@ -96,7 +94,7 @@
             [remainingObjects addObject:currentObject];
         else if ([(id)currentObject isKindOfClass:[SPEventDispatcher class]])
             [(SPEventDispatcher *)currentObject removeEventListenersAtObject:self
-                                                forType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+                                                forType:SPEventTypeRemoveFromJuggler];
     }
 
     SP_RELEASE_AND_RETAIN(_objects, remainingObjects);
@@ -122,7 +120,7 @@
     return delayedInv;
 }
 
-+ (SPJuggler *)juggler
++ (instancetype)juggler
 {
     return [[[SPJuggler alloc] init] autorelease];
 }

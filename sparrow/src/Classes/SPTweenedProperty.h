@@ -27,7 +27,7 @@
 /// ------------------
 
 /// Initializes a tween property on a certain target. The start value will be zero.
-- (id)initWithTarget:(id)target name:(NSString *)name endValue:(float)endValue;
+- (instancetype)initWithTarget:(id)target name:(NSString *)name endValue:(float)endValue;
 
 /// ----------------
 /// @name Properties

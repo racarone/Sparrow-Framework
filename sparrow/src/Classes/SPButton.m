@@ -46,16 +46,9 @@
     BOOL _isDown;
 }
 
-@synthesize scaleWhenDown = _scaleWhenDown;
-@synthesize alphaWhenDisabled = _alphaWhenDisabled;
-@synthesize enabled = _enabled;
-@synthesize upState = _upState;
-@synthesize downState = _downState;
-@synthesize textBounds = _textBounds;
-
 #define MAX_DRAG_DIST 40
 
-- (id)initWithUpState:(SPTexture*)upState downState:(SPTexture*)downState
+- (instancetype)initWithUpState:(SPTexture*)upState downState:(SPTexture*)downState
 {
     if ((self = [super init]))
     {
@@ -72,26 +65,26 @@
         
         [_contents addChild:_background];
         [self addChild:_contents];
-        [self addEventListener:@selector(onTouch:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+        [self addEventListener:@selector(onTouch:) atObject:self forType:SPEventTypeTouch];
     }
     return self;
 }
 
-- (id)initWithUpState:(SPTexture*)upState text:(NSString*)text
+- (instancetype)initWithUpState:(SPTexture*)upState text:(NSString*)text
 {
     self = [self initWithUpState:upState];
     self.text = text;
     return self;
 }
 
-- (id)initWithUpState:(SPTexture*)upState
+- (instancetype)initWithUpState:(SPTexture*)upState
 {
     self = [self initWithUpState:upState downState:upState];
     _scaleWhenDown = 0.9f;
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     SPTexture *texture = [[[SPGLTexture alloc] init] autorelease];
     return [self initWithUpState:texture];   
@@ -99,7 +92,7 @@
 
 - (void)dealloc
 {
-    [self removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TOUCH];
+    [self removeEventListenersAtObject:self forType:SPEventTypeTouch];
 
     [_upState release];
     [_downState release];
@@ -138,7 +131,7 @@
     else if (touch.phase == SPTouchPhaseEnded && _isDown)
     {
         [self resetContents];
-        [self dispatchEventWithType:SP_EVENT_TYPE_TRIGGERED bubbles:YES];
+        [self dispatchEventWithType:SPEventTypeTriggered bubbles:YES];
     }    
     else if (touch.phase == SPTouchPhaseCancelled && _isDown)
     {
@@ -305,17 +298,17 @@
     return _background.height;
 }
  
-+ (id)buttonWithUpState:(SPTexture*)upState downState:(SPTexture*)downState
++ (instancetype)buttonWithUpState:(SPTexture*)upState downState:(SPTexture*)downState
 {
     return [[[self alloc] initWithUpState:upState downState:downState] autorelease];
 }
 
-+ (id)buttonWithUpState:(SPTexture*)upState text:(NSString*)text
++ (instancetype)buttonWithUpState:(SPTexture*)upState text:(NSString*)text
 {
     return [[[self alloc] initWithUpState:upState text:text] autorelease];
 }
 
-+ (id)buttonWithUpState:(SPTexture*)upState
++ (instancetype)buttonWithUpState:(SPTexture*)upState
 {
     return [[[self alloc] initWithUpState:upState] autorelease];
 }

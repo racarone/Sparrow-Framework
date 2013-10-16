@@ -62,16 +62,16 @@
 /// ------------------
 
 /// Initializes a texture atlas from an XML file and a custom texture. _Designated Initializer_.
-- (id)initWithContentsOfFile:(NSString *)path texture:(SPTexture *)texture;
+- (instancetype)initWithContentsOfFile:(NSString *)path texture:(SPTexture *)texture;
 
 /// Initializes a texture atlas from an XML file, loading the texture that is specified in the XML.
-- (id)initWithContentsOfFile:(NSString *)path;
+- (instancetype)initWithContentsOfFile:(NSString *)path;
 
 /// Initializes a teture atlas from a texture. Add the regions manually with `addName:forRegion:`.
-- (id)initWithTexture:(SPTexture *)texture;
+- (instancetype)initWithTexture:(SPTexture *)texture;
 
 /// Factory Method.
-+ (id)atlasWithContentsOfFile:(NSString *)path;
++ (instancetype)atlasWithContentsOfFile:(NSString *)path;
 
 /// -------------
 /// @name Methods

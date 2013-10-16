@@ -17,7 +17,7 @@
     SPTextField *_logText;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -27,14 +27,14 @@
         _fileButton.x = 20;
         _fileButton.y = 20;
         [_fileButton addEventListener:@selector(onFileButtonTriggered:) atObject:self
-                              forType:SP_EVENT_TYPE_TRIGGERED];
+                              forType:SPEventTypeTriggered];
         [self addChild:_fileButton];
         
         _urlButton = [SPButton buttonWithUpState:buttonTexture text:@"Load from Web"];
         _urlButton.x = 300 - _urlButton.width;
         _urlButton.y = 20;
         [_urlButton addEventListener:@selector(onUrlButtonTriggered:) atObject:self
-                              forType:SP_EVENT_TYPE_TRIGGERED];
+                              forType:SPEventTypeTriggered];
         [self addChild:_urlButton];
 
         _logText = [SPTextField textFieldWithWidth:280 height:50 text:@""

@@ -36,16 +36,16 @@
 /// -----------------
 
 /// Initializes a matrix with the specified components. _Designated Initializer_.
-- (id)initWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;
+- (instancetype)initWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;
 
 /// Initializes an identity matrix.
-- (id)init;
+- (instancetype)init;
 
 /// Factory method.
-+ (id)matrixWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;
++ (instancetype)matrixWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;
 
 /// Factory method.
-+ (id)matrixWithIdentity;
++ (instancetype)matrixWithIdentity;
 
 /// -------------
 /// @name Methods

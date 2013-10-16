@@ -41,8 +41,6 @@
 
 @implementation SPTweenTest
 
-@synthesize intProperty = _intProperty;
-
 - (void) setUp
 {
     _startedCount = _updatedCount = _completedCount = _repeatedCount = 0;

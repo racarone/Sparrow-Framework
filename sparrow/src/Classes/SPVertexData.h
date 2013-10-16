@@ -71,14 +71,14 @@ SPVertexColor SPVertexColorMakeWithColorAndAlpha(uint rgb, float alpha);
 /// ------------------
 
 /// Initializes a VertexData instance with a certain size. _Designated Initializer_.
-- (id)initWithSize:(int)numVertices premultipliedAlpha:(BOOL)pma;
+- (instancetype)initWithSize:(int)numVertices premultipliedAlpha:(BOOL)pma;
 
 /// Initializes a VertexData instance with a certain size, disabling premultiplied alpha.
-- (id)initWithSize:(int)numVertices;
+- (instancetype)initWithSize:(int)numVertices;
 
 /// Initializes an empty VertexData object. Use the `appendVertex:` method and the `numVertices`
 /// property to change its size later.
-- (id)init;
+- (instancetype)init;
 
 /// -------------
 /// @name Methods

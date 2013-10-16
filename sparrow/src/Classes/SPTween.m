@@ -39,19 +39,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     SPCallbackBlock _onComplete;
 }
 
-@synthesize totalTime = _totalTime;
-@synthesize currentTime = _currentTime;
-@synthesize delay = _delay;
-@synthesize target = _target;
-@synthesize repeatCount = _repeatCount;
-@synthesize repeatDelay = _repeatDelay;
-@synthesize reverse = _reverse;
-@synthesize onStart = _onStart;
-@synthesize onUpdate = _onUpdate;
-@synthesize onRepeat = _onRepeat;
-@synthesize onComplete = _onComplete;
-
-- (id)initWithTarget:(id)target time:(double)time transition:(NSString*)transition
+- (instancetype)initWithTarget:(id)target time:(double)time transition:(NSString*)transition
 {
     if ((self = [super init]))
     {
@@ -68,16 +56,16 @@ typedef float (*FnPtrTransition) (id, SEL, float);
         NSString *transMethod = [transition stringByAppendingString:TRANS_SUFFIX];
         _transition = NSSelectorFromString(transMethod);    
         if (![SPTransitions respondsToSelector:_transition])
-            [NSException raise:SP_EXC_INVALID_OPERATION 
+            [NSException raise:SPExceptionInvalidOperation 
                         format:@"transition not found: '%@'", transition];
         _transitionFunc = [SPTransitions methodForSelector:_transition];
     }
     return self;
 }
 
-- (id)initWithTarget:(id)target time:(double)time
+- (instancetype)initWithTarget:(id)target time:(double)time
 {
-    return [self initWithTarget:target time:time transition:SP_TRANSITION_LINEAR];
+    return [self initWithTarget:target time:time transition:SPTransitionLinear];
 }
 
 - (void)dealloc
@@ -165,7 +153,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
         }
         else
         {
-            [self dispatchEventWithType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+            [self dispatchEventWithType:SPEventTypeRemoveFromJuggler];
             if (_onComplete) _onComplete();
         }
     }
@@ -191,12 +179,12 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     _delay = delay;
 }
 
-+ (id)tweenWithTarget:(id)target time:(double)time transition:(NSString*)transition
++ (instancetype)tweenWithTarget:(id)target time:(double)time transition:(NSString*)transition
 {
     return [[[self alloc] initWithTarget:target time:time transition:transition] autorelease];
 }
 
-+ (id)tweenWithTarget:(id)target time:(double)time
++ (instancetype)tweenWithTarget:(id)target time:(double)time
 {
     return [[[self alloc] initWithTarget:target time:time] autorelease];
 }

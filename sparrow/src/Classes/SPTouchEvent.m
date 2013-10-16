@@ -15,14 +15,14 @@
 #import "SPEvent_Internal.h"
 #import "SPMacros.h"
 
+NSString *const SPEventTypeTouch = @"touch";
+
 @implementation SPTouchEvent
 {
     NSSet *_touches;
 }
 
-@synthesize touches = _touches;
-
-- (id)initWithType:(NSString*)type bubbles:(BOOL)bubbles touches:(NSSet*)touches
+- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles touches:(NSSet*)touches
 {   
     if ((self = [super initWithType:type bubbles:bubbles]))
     {        
@@ -31,12 +31,12 @@
     return self;
 }
 
-- (id)initWithType:(NSString*)type touches:(NSSet*)touches
+- (instancetype)initWithType:(NSString*)type touches:(NSSet*)touches
 {   
     return [self initWithType:type bubbles:YES touches:touches];
 }
 
-- (id)initWithType:(NSString*)type bubbles:(BOOL)bubbles
+- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles
 {
     return [self initWithType:type bubbles:bubbles touches:[NSSet set]];
 }
@@ -88,7 +88,7 @@
     return touchesFound;    
 }
 
-+ (id)eventWithType:(NSString*)type touches:(NSSet*)touches
++ (instancetype)eventWithType:(NSString*)type touches:(NSSet*)touches
 {
     return [[[self alloc] initWithType:type touches:touches] autorelease];
 }

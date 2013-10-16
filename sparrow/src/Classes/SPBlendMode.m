@@ -61,7 +61,7 @@ static NSString *getNameOfMode(uint mode)
 
 @implementation SPBlendMode
 
-- (id)init
+- (instancetype)init
 {
     return nil;
 }

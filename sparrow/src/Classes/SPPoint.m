@@ -23,11 +23,8 @@
     float _y;
 }
 
-@synthesize x = _x;
-@synthesize y = _y;
-
 // designated initializer
-- (id)initWithX:(float)x y:(float)y
+- (instancetype)initWithX:(float)x y:(float)y
 {
     if ((self = [super init]))
     {
@@ -37,12 +34,12 @@
     return self;
 }
 
-- (id)initWithPolarLength:(float)length angle:(float)angle
+- (instancetype)initWithPolarLength:(float)length angle:(float)angle
 {
     return [self initWithX:cosf(angle)*length y:sinf(angle)*length];
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithX:0.0f y:0.0f];
 }
@@ -97,7 +94,7 @@
 - (SPPoint *)normalize
 {
     if (_x == 0 && _y == 0)
-        [NSException raise:SP_EXC_INVALID_OPERATION format:@"Cannot normalize point in the origin"];
+        [NSException raise:SPExceptionInvalidOperation format:@"Cannot normalize point in the origin"];
         
     float inverseLength = 1.0f / self.length;
     return [SPPoint pointWithX:_x * inverseLength y:_y * inverseLength];
@@ -159,24 +156,24 @@
     return cos >= 1.0f ? 0.0f : acosf(cos);
 }
 
-+ (id)pointWithPolarLength:(float)length angle:(float)angle
++ (instancetype)pointWithPolarLength:(float)length angle:(float)angle
 {
     return [[[self allocWithZone:nil] initWithPolarLength:length angle:angle] autorelease];
 }
 
-+ (id)pointWithX:(float)x y:(float)y
++ (instancetype)pointWithX:(float)x y:(float)y
 {
     return [[[self allocWithZone:nil] initWithX:x y:y] autorelease];
 }
 
-+ (id)point
++ (instancetype)point
 {
     return [[[self allocWithZone:nil] init] autorelease];
 }
 
 #pragma mark NSCopying
 
-- (id)copyWithZone:(NSZone*)zone
+- (instancetype)copyWithZone:(NSZone*)zone
 {
     return [[[self class] allocWithZone:zone] initWithX:_x y:_y];
 }

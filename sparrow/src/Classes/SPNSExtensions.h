@@ -18,7 +18,7 @@ typedef void (^SPXMLElementHandler)(NSString *elementName, NSDictionary *attribu
 @interface NSInvocation (SPNSExtensions)
 
 /// Creates an invocation with a specified target and selector.
-+ (NSInvocation *)invocationWithTarget:(id)target selector:(SEL)selector;
++ (instancetype)invocationWithTarget:(id)target selector:(SEL)selector;
 
 @end
 
@@ -28,16 +28,16 @@ typedef void (^SPXMLElementHandler)(NSString *elementName, NSDictionary *attribu
 
 /// Interprets the receiver as a path and returns its extension, if any (not including the extension
 /// divider). Supports multiple extensions, like 'file.tar.gz'.
-- (NSString *)fullPathExtension;
+- (instancetype)fullPathExtension;
 
 /// Returns a new string made by deleting the full extension (if any) from the receiver.
-- (NSString *)stringByDeletingFullPathExtension;
+- (instancetype)stringByDeletingFullPathExtension;
 
 /// Creates a string by appending a suffix to a filename in front of its extension.
-- (NSString *)stringByAppendingSuffixToFilename:(NSString *)suffix;
+- (instancetype)stringByAppendingSuffixToFilename:(NSString *)suffix;
 
 /// Creates a string by appending a scale suffix (e.g. `@2x`) to a filename in front of its extension.
-- (NSString *)stringByAppendingScaleSuffixToFilename:(float)scale;
+- (instancetype)stringByAppendingScaleSuffixToFilename:(float)scale;
 
 /// Expects the string to be a filename/path and returns the scale factor ('@2x' -> 2).
 - (float)contentScaleFactor;
@@ -68,7 +68,7 @@ typedef void (^SPXMLElementHandler)(NSString *elementName, NSDictionary *attribu
 
 /// Returns the NSBundle object of the current application. Different to `[NSBundle mainBundle]`,
 /// this works in unit tests, as well.
-+ (NSBundle *)appBundle;
++ (instancetype)appBundle;
 
 @end
 
@@ -89,10 +89,10 @@ typedef void (^SPXMLElementHandler)(NSString *elementName, NSDictionary *attribu
 // -------------------------------------------------------------------------------------------------
 
 /// Creates an NSData object by parsing a Base64 encoded String.
-+ (NSData *)dataWithBase64EncodedString:(NSString *)string;
++ (instancetype)dataWithBase64EncodedString:(NSString *)string;
 
 /// Creates an NSData object by parsing a Base64 encoded String.
-- (id)initWithBase64EncodedString:(NSString *)string;
+- (instancetype)initWithBase64EncodedString:(NSString *)string;
 
 /// Returns the Base64 representation of the NSData object.
 - (NSString *)base64Encoding;
@@ -108,13 +108,13 @@ typedef void (^SPXMLElementHandler)(NSString *elementName, NSDictionary *attribu
 
 /// If the file has the extension '.gz', returns the uncompressed contents of the GZip-compressed
 /// file; otherwise, returns the unprocessed contents.
-+ (NSData *)dataWithUncompressedContentsOfFile:(NSString *)file;
++ (instancetype)dataWithUncompressedContentsOfFile:(NSString *)file;
 
 /// Gzip-compresses the contents of this NSData object into a new NSData instance.
-- (NSData *)gzipDeflate;
+- (instancetype)gzipDeflate;
 
 /// Uncompresses the GZip-compressed contents of this NSData object into a new NSData instance.
-- (NSData *)gzipInflate;
+- (instancetype)gzipInflate;
 
 @end
 

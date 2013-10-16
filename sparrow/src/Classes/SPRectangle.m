@@ -20,12 +20,7 @@
     float _height;
 }
 
-@synthesize x = _x;
-@synthesize y = _y;
-@synthesize width = _width;
-@synthesize height = _height;
-
-- (id)initWithX:(float)x y:(float)y width:(float)width height:(float)height
+- (instancetype)initWithX:(float)x y:(float)y width:(float)width height:(float)height
 {
     if ((self = [super init]))
     {
@@ -38,7 +33,7 @@
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithX:0.0f y:0.0f width:0.0f height:0.0f];
 }
@@ -172,14 +167,14 @@
             _x, _y, _width, _height];
 }
 
-+ (id)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height
++ (instancetype)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height
 {
     return [[[self allocWithZone:nil] initWithX:x y:y width:width height:height] autorelease];
 }
 
 #pragma mark NSCopying
 
-- (id)copyWithZone:(NSZone*)zone
+- (instancetype)copyWithZone:(NSZone*)zone
 {
     return [[[self class] allocWithZone:zone] initWithX:_x y:_y width:_width height:_height];
 }

@@ -36,23 +36,23 @@
 
 /// Initializes a texture with the given properties. Width and height are expected pixel dimensions.
 /// _Designated Initializer_.
-- (id)initWithName:(uint)name width:(float)width height:(float)height
+- (instancetype)initWithName:(uint)name width:(float)width height:(float)height
    containsMipmaps:(BOOL)mipmaps scale:(float)scaleFactor premultipliedAlpha:(BOOL)pma;
 
 /// Initializes an uncompressed texture with with raw pixel data and a set of properties.
 /// Width and height are expected pixel dimensions.
-- (id)initWithData:(const void *)imgData width:(float)width height:(float)height
+- (instancetype)initWithData:(const void *)imgData width:(float)width height:(float)height
    generateMipmaps:(BOOL)mipmaps scale:(float)scale premultipliedAlpha:(BOOL)pma;
 
 /// Initializes a texture with a GLKit texture info object and a certain scale factor.
-- (id)initWithTextureInfo:(GLKTextureInfo *)info scale:(float)scale;
+- (instancetype)initWithTextureInfo:(GLKTextureInfo *)info scale:(float)scale;
 
 /// Initializes a texture with a GLKit texture info object and a certain scale factor.
 /// Since the `alphaState` of the texture info only indicates if the alpha value was multiplied
 /// during the loading process (not the actual state), you can override that value.
-- (id)initWithTextureInfo:(GLKTextureInfo *)info scale:(float)scale premultipliedAlpha:(BOOL)pma;
+- (instancetype)initWithTextureInfo:(GLKTextureInfo *)info scale:(float)scale premultipliedAlpha:(BOOL)pma;
 
 /// Initializes a texture with a GLKit texture info object and a scale factor of 1.
-- (id)initWithTextureInfo:(GLKTextureInfo *)info;
+- (instancetype)initWithTextureInfo:(GLKTextureInfo *)info;
 
 @end

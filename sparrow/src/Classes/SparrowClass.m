@@ -15,7 +15,7 @@ static __weak SPViewController *controller = nil;
 
 @implementation Sparrow
 
-- (id)init
+- (instancetype)init
 {
     [NSException raise:NSGenericException format:@"Static class - do not initialize!"];
     return nil;

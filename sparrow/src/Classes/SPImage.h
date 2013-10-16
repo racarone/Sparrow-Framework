@@ -42,19 +42,19 @@
 /// --------------------
 
 /// Initialize a quad with a texture mapped onto it. _Designated Initializer_.
-- (id)initWithTexture:(SPTexture*)texture;
+- (instancetype)initWithTexture:(SPTexture*)texture;
 
 /// Initialize a quad with a texture loaded from a file. No mipmaps will be created.
-- (id)initWithContentsOfFile:(NSString*)path;
+- (instancetype)initWithContentsOfFile:(NSString*)path;
 
 /// Initialize a quad with a texture loaded from a file.
-- (id)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps;
+- (instancetype)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps;
 
 /// Factory method.
-+ (id)imageWithTexture:(SPTexture*)texture;
++ (instancetype)imageWithTexture:(SPTexture*)texture;
 
 /// Factory method.
-+ (id)imageWithContentsOfFile:(NSString*)path;
++ (instancetype)imageWithContentsOfFile:(NSString*)path;
 
 /// -------------
 /// @name Methods

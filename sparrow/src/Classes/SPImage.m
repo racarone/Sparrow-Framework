@@ -25,9 +25,9 @@
 
 @synthesize texture = _texture;
 
-- (id)initWithTexture:(SPTexture*)texture
+- (instancetype)initWithTexture:(SPTexture*)texture
 {
-    if (!texture) [NSException raise:SP_EXC_INVALID_OPERATION format:@"texture cannot be nil!"];
+    if (!texture) [NSException raise:SPExceptionInvalidOperation format:@"texture cannot be nil!"];
     
     SPRectangle *frame = texture.frame;    
     float width  = frame ? frame.width  : texture.width;
@@ -48,17 +48,17 @@
     return self;
 }
 
-- (id)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
+- (instancetype)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
 {
     return [self initWithTexture:[SPTexture textureWithContentsOfFile:path generateMipmaps:mipmaps]];
 }
 
-- (id)initWithContentsOfFile:(NSString*)path
+- (instancetype)initWithContentsOfFile:(NSString*)path
 {
     return [self initWithContentsOfFile:path generateMipmaps:NO];
 }
 
-- (id)initWithWidth:(float)width height:(float)height
+- (instancetype)initWithWidth:(float)width height:(float)height
 {
     return [self initWithTexture:[SPTexture textureWithWidth:width height:height draw:NULL]];
 }
@@ -122,7 +122,7 @@
 {
     if (value == nil)
     {
-        [NSException raise:SP_EXC_INVALID_OPERATION format:@"texture cannot be nil!"];
+        [NSException raise:SPExceptionInvalidOperation format:@"texture cannot be nil!"];
     }
     else if (value != _texture)
     {
@@ -133,12 +133,12 @@
     }
 }
 
-+ (id)imageWithTexture:(SPTexture*)texture
++ (instancetype)imageWithTexture:(SPTexture*)texture
 {
     return [[[self alloc] initWithTexture:texture] autorelease];
 }
 
-+ (id)imageWithContentsOfFile:(NSString*)path
++ (instancetype)imageWithContentsOfFile:(NSString*)path
 {
     return [[[self alloc] initWithContentsOfFile:path] autorelease];
 }

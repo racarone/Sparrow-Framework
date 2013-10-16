@@ -39,12 +39,12 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
     NSMutableArray *_children;
 }
 
-- (id)init
+- (instancetype)init
 {    
     #if DEBUG    
     if ([[self class] isEqual:[SPDisplayObjectContainer class]]) 
     { 
-        [NSException raise:SP_EXC_ABSTRACT_CLASS 
+        [NSException raise:SPExceptionAbstractClass
                     format:@"Attempting to instantiate SPDisplayObjectContainer directly."];
         return nil; 
     }    
@@ -79,14 +79,14 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
         [_children insertObject:child atIndex:MIN(_children.count, index)];
         child.parent = self;
 
-        [child dispatchEventWithType:SP_EVENT_TYPE_ADDED];
+        [child dispatchEventWithType:SPEventTypeAdded];
 
         if (self.stage)
-            [child broadcastEventWithType:SP_EVENT_TYPE_ADDED_TO_STAGE];
+            [child broadcastEventWithType:SPEventTypeAddedToStage];
 
         [child release];
     }
-    else [NSException raise:SP_EXC_INDEX_OUT_OF_BOUNDS format:@"Invalid child index"]; 
+    else [NSException raise:SPExceptionIndexOutOfBounds format:@"Invalid child index"]; 
 }
 
 - (BOOL)containsChild:(SPDisplayObject *)child
@@ -124,7 +124,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
 {
     NSUInteger oldIndex = [_children indexOfObject:child];
     if (oldIndex == NSNotFound) 
-        [NSException raise:SP_EXC_INVALID_OPERATION format:@"Not a child of this container"];
+        [NSException raise:SPExceptionInvalidOperation format:@"Not a child of this container"];
     else
     {
         [child retain];
@@ -146,16 +146,16 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
     if (index >= 0 && index < [_children count])
     {
         SPDisplayObject *child = _children[index];
-        [child dispatchEventWithType:SP_EVENT_TYPE_REMOVED];
+        [child dispatchEventWithType:SPEventTypeRemoved];
 
         if (self.stage)
-            [child broadcastEventWithType:SP_EVENT_TYPE_REMOVED_FROM_STAGE];
+            [child broadcastEventWithType:SPEventTypeRemovedFromStage];
         
         child.parent = nil; 
         NSUInteger newIndex = (int)[_children indexOfObject:child]; // index might have changed in event handler
         if (newIndex != NSNotFound) [_children removeObjectAtIndex:newIndex];
     }
-    else [NSException raise:SP_EXC_INDEX_OUT_OF_BOUNDS format:@"Invalid child index"];        
+    else [NSException raise:SPExceptionIndexOutOfBounds format:@"Invalid child index"];        
 }
 
 - (void)swapChild:(SPDisplayObject*)child1 withChild:(SPDisplayObject*)child2
@@ -169,7 +169,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
 {    
     int numChildren = (int)[_children count];
     if (index1 < 0 || index1 >= numChildren || index2 < 0 || index2 >= numChildren)
-        [NSException raise:SP_EXC_INVALID_OPERATION format:@"invalid child indices"];
+        [NSException raise:SPExceptionInvalidOperation format:@"invalid child indices"];
     [_children exchangeObjectAtIndex:index1 withObjectAtIndex:index2];
 }
 
@@ -178,7 +178,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
     if ([_children respondsToSelector:@selector(sortWithOptions:usingComparator:)])
         [_children sortWithOptions:NSSortStable usingComparator:comparator];
     else
-        [NSException raise:SP_EXC_INVALID_OPERATION 
+        [NSException raise:SPExceptionInvalidOperation 
                     format:@"sortChildren is only available in iOS 4 and above"];
 }
 
@@ -243,7 +243,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
 - (void)broadcastEvent:(SPEvent *)event
 {
     if (event.bubbles) 
-        [NSException raise:SP_EXC_INVALID_OPERATION 
+        [NSException raise:SPExceptionInvalidOperation 
                     format:@"Broadcast of bubbling events is prohibited"];
     
     // the event listeners might modify the display tree, which could make the loop crash. 

@@ -47,15 +47,11 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
     int _uAlpha;
 }
 
-@synthesize texture = _texture;
-@synthesize alpha = _alpha;
-@synthesize useTinting = _useTinting;
-
 @synthesize attribPosition = _aPosition;
 @synthesize attribColor = _aColor;
 @synthesize attribTexCoords = _aTexCoords;
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {

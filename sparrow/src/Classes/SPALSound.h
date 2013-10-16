@@ -27,7 +27,7 @@
 /// --------------------
 
 /// Initializes a sound with its known properties.
-- (id)initWithData:(const void *)data size:(int)size channels:(int)channels frequency:(int)frequency
+- (instancetype)initWithData:(const void *)data size:(int)size channels:(int)channels frequency:(int)frequency
           duration:(double)duration;
 
 /// ----------------

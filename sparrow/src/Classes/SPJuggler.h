@@ -20,7 +20,7 @@
  A juggler is a simple object. It does no more than saving a list of objects implementing 
  `SPAnimatable` and advancing their time if it is told to do so (by calling its own `advanceTime:`
  method). Furthermore, an object can request to be removed from the juggler by dispatching an
- `SP_EVENT_TYPE_REMOVE_FROM_JUGGLER` event.
+ `SPEventTypeRemoveFromJuggler` event.
  
  There is a default juggler that you can access from anywhere with the following code:
  
@@ -51,7 +51,7 @@
 /// ------------------
 
 /// Factory method.
-+ (SPJuggler *)juggler;
++ (instancetype)juggler;
 
 /// -------------
 /// @name Methods

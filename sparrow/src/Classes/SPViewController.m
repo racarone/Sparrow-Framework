@@ -53,17 +53,7 @@
     BOOL _doubleOnPad;
 }
 
-@synthesize stage = _stage;
-@synthesize juggler = _juggler;
-@synthesize root = _root;
-@synthesize context = _context;
-@synthesize supportHighResolutions = _supportHighResolutions;
-@synthesize doubleOnPad = _doubleOnPad;
-@synthesize contentScaleFactor = _contentScaleFactor;
-@synthesize onRootCreated = _onRootCreated;
-@synthesize textureLoader = _textureLoader;
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
     {
@@ -72,7 +62,7 @@
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if ((self = [super initWithCoder:aDecoder]))
     {
@@ -81,7 +71,7 @@
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithNibName:nil bundle:nil];
 }
@@ -156,7 +146,7 @@
 - (void)startWithRoot:(Class)rootClass supportHighResolutions:(BOOL)hd doubleOnPad:(BOOL)doubleOnPad
 {
     if (_rootClass)
-        [NSException raise:SP_EXC_INVALID_OPERATION
+        [NSException raise:SPExceptionInvalidOperation
                     format:@"Sparrow has already been started"];
 
     BOOL isPad = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad);
@@ -175,7 +165,7 @@
         _root = [[_rootClass alloc] init];
         
         if ([_root isKindOfClass:[SPStage class]])
-            [NSException raise:SP_EXC_INVALID_OPERATION
+            [NSException raise:SPExceptionInvalidOperation
                         format:@"Root extends 'SPStage' but is expected to extend 'SPSprite' "
                                @"instead (different to Sparrow 1.x)"];
         else
@@ -382,7 +372,7 @@
         _stage.width  = newWidth;
         _stage.height = newHeight;
         
-        SPEvent *resizeEvent = [[SPResizeEvent alloc] initWithType:SP_EVENT_TYPE_RESIZE
+        SPEvent *resizeEvent = [[SPResizeEvent alloc] initWithType:SPEventTypeResize
                                width:newWidth height:newHeight animationTime:duration];
         [_stage broadcastEvent:resizeEvent];
         [resizeEvent release];

@@ -31,6 +31,6 @@
 /// ------------------
 
 /// Initializes a sound channel from an SPAVSound object.
-- (id)initWithSound:(SPAVSound *)sound;
+- (instancetype)initWithSound:(SPAVSound *)sound;
 
 @end

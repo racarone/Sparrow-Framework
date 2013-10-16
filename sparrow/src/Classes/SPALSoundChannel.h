@@ -30,6 +30,6 @@
 /// ------------------
 
 /// Initializes a sound channel from an SPALSound object.
-- (id)initWithSound:(SPALSound *)sound;
+- (instancetype)initWithSound:(SPALSound *)sound;
 
 @end

@@ -39,7 +39,7 @@
 
 @synthesize texture=_atlasTexture;
 
-- (id)initWithContentsOfFile:(NSString *)path texture:(SPTexture *)texture
+- (instancetype)initWithContentsOfFile:(NSString *)path texture:(SPTexture *)texture
 {
     if ((self = [super init]))
     {
@@ -51,17 +51,17 @@
     return self;    
 }
 
-- (id)initWithContentsOfFile:(NSString *)path
+- (instancetype)initWithContentsOfFile:(NSString *)path
 {
     return [self initWithContentsOfFile:path texture:nil];
 }
 
-- (id)initWithTexture:(SPTexture *)texture
+- (instancetype)initWithTexture:(SPTexture *)texture
 {
     return [self initWithContentsOfFile:nil texture:(SPTexture *)texture];
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithContentsOfFile:nil texture:nil];
 }
@@ -80,7 +80,7 @@
     if (!path) return;
 
     _path = [[SPUtils absolutePathToFile:path] retain];
-    if (!_path) [NSException raise:SP_EXC_FILE_NOT_FOUND format:@"file not found: %@", path];
+    if (!_path) [NSException raise:SPExceptionFileNotFound format:@"file not found: %@", path];
     
     NSData *xmlData = [[NSData alloc] initWithContentsOfFile:_path];
     NSXMLParser *parser = [[NSXMLParser alloc] initWithData:xmlData];
@@ -123,7 +123,7 @@
     [parser release];
     
     if (!success)
-        [NSException raise:SP_EXC_FILE_INVALID format:@"could not parse texture atlas %@. Error: %@",
+        [NSException raise:SPExceptionFileInvalid format:@"could not parse texture atlas %@. Error: %@",
                            path, parser.parserError.localizedDescription];
 }
 
@@ -206,7 +206,7 @@
     [_textureFrames  removeObjectForKey:name];
 }
 
-+ (id)atlasWithContentsOfFile:(NSString *)path
++ (instancetype)atlasWithContentsOfFile:(NSString *)path
 {
     return [[[self alloc] initWithContentsOfFile:path] autorelease];
 }

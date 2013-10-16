@@ -51,19 +51,19 @@ typedef void (^SPDrawingBlock)();
 /// ------------------
 
 /// Initializes a transparent render texture with the scale factor of the stage.
-- (id)initWithWidth:(float)width height:(float)height;
+- (instancetype)initWithWidth:(float)width height:(float)height;
 
 /// Initializes a render texture with a certain ARGB color (0xAARRGGBB).
-- (id)initWithWidth:(float)width height:(float)height fillColor:(uint)argb;
+- (instancetype)initWithWidth:(float)width height:(float)height fillColor:(uint)argb;
 
 /// Initializes a render texture with a certain ARGB color (0xAARRGGBB) and a scale factor.
-- (id)initWithWidth:(float)width height:(float)height fillColor:(uint)argb scale:(float)scale;
+- (instancetype)initWithWidth:(float)width height:(float)height fillColor:(uint)argb scale:(float)scale;
 
 /// Factory method.
-+ (id)textureWithWidth:(float)width height:(float)height;
++ (instancetype)textureWithWidth:(float)width height:(float)height;
 
 /// Factory method.
-+ (id)textureWithWidth:(float)width height:(float)height fillColor:(uint)argb;
++ (instancetype)textureWithWidth:(float)width height:(float)height fillColor:(uint)argb;
 
 /// -------------
 /// @name Methods

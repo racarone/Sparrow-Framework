@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		87C7DCC2180480A7005E8CFB /* SPOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 87C7DCC0180480A7005E8CFB /* SPOpenGL.h */; };
 		87C7DCC3180480A7005E8CFB /* SPOpenGL.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C7DCC1180480A7005E8CFB /* SPOpenGL.m */; };
+		87C7DCF118061354005E8CFB /* SPMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C7DCF018061354005E8CFB /* SPMacros.m */; };
 		DE019C391026360B00ECB0AC /* SPTween.m in Sources */ = {isa = PBXBuildFile; fileRef = DE7044760FB62080007F5ECC /* SPTween.m */; };
 		DE019C3A1026361200ECB0AC /* SPDelayedInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFB1B94100926260022C117 /* SPDelayedInvocation.m */; };
 		DE019C3B1026363D00ECB0AC /* SPNSExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = DE68EA160FBB5660004DBC95 /* SPNSExtensions.m */; };
@@ -187,6 +188,7 @@
 		87C7DCA2180336A9005E8CFB /* SPStage_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPStage_Internal.h; sourceTree = "<group>"; };
 		87C7DCC0180480A7005E8CFB /* SPOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPOpenGL.h; sourceTree = "<group>"; };
 		87C7DCC1180480A7005E8CFB /* SPOpenGL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPOpenGL.m; sourceTree = "<group>"; };
+		87C7DCF018061354005E8CFB /* SPMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPMacros.m; sourceTree = "<group>"; };
 		DE0456E413882A27005FFBCE /* SPButtonTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPButtonTest.m; sourceTree = "<group>"; };
 		DE05748611E915A900F3A8A4 /* SPNSExtensionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPNSExtensionsTest.m; sourceTree = "<group>"; };
 		DE08535C0FEC21F500DAF53C /* SPImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPImage.h; sourceTree = "<group>"; };
@@ -446,6 +448,7 @@
 			isa = PBXGroup;
 			children = (
 				DE469D240F9386FD00F56E91 /* SPMacros.h */,
+				87C7DCF018061354005E8CFB /* SPMacros.m */,
 				DE469D250F9386FD00F56E91 /* SPMatrix.h */,
 				DE469D260F9386FD00F56E91 /* SPMatrix.m */,
 				DE68EA150FBB5660004DBC95 /* SPNSExtensions.h */,
@@ -950,6 +953,7 @@
 				DE33072612D2EBCD009CC5E7 /* SPUtils.m in Sources */,
 				DE8E6A8316B430C4007EE8BA /* SPViewController.m in Sources */,
 				DE85778F16B58E4B00725EC0 /* SparrowClass.m in Sources */,
+				87C7DCF118061354005E8CFB /* SPMacros.m in Sources */,
 				DEAAF3D816BC0D21004EB9D5 /* SPResizeEvent.m in Sources */,
 				DEAAF3DC16BC0E46004EB9D5 /* SPOverlayView.m in Sources */,
 				DE19443316D27E9E00E5CCD9 /* SPVertexData.m in Sources */,

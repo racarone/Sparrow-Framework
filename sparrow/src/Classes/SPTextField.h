@@ -24,20 +24,20 @@
 #define SP_NATIVE_FONT_SIZE -1.0f
 
 /// Horizontal Alignment
-typedef enum 
+typedef NS_ENUM(NSInteger, SPHAlign)
 {
-    SPHAlignLeft = 0,
+    SPHAlignLeft,
     SPHAlignCenter,
     SPHAlignRight
-} SPHAlign;
+};
 
 /// Vertical Alignment
-typedef enum 
+typedef NS_ENUM(NSInteger, SPVAlign)
 {
-    SPVAlignTop = 0,
+    SPVAlignTop,
     SPVAlignCenter,
     SPVAlignBottom
-} SPVAlign;
+};
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -94,27 +94,27 @@ typedef enum
 /// ------------------
 
 /// Initialize a text field with all important font properties. _Designated Initializer_.
-- (id)initWithWidth:(float)width height:(float)height text:(NSString*)text fontName:(NSString*)name
+- (instancetype)initWithWidth:(float)width height:(float)height text:(NSString*)text fontName:(NSString*)name
            fontSize:(float)size color:(uint)color;
 
 /// Initialize a text field with default settings (Helvetica, 14pt, black).
-- (id)initWithWidth:(float)width height:(float)height text:(NSString*)text;
+- (instancetype)initWithWidth:(float)width height:(float)height text:(NSString*)text;
 
 /// Initialize a text field with default settings (Helvetica, 14pt, black) and an empty string.
-- (id)initWithWidth:(float)width height:(float)height;
+- (instancetype)initWithWidth:(float)width height:(float)height;
 
 /// Initialize a 128x128 textField (Helvetica, 14pt, black).
-- (id)initWithText:(NSString *)text;
+- (instancetype)initWithText:(NSString *)text;
 
 /// Factory method.
-+ (id)textFieldWithWidth:(float)width height:(float)height text:(NSString*)text
++ (instancetype)textFieldWithWidth:(float)width height:(float)height text:(NSString*)text
                           fontName:(NSString*)name fontSize:(float)size color:(uint)color;
 
 /// Factory method.
-+ (id)textFieldWithWidth:(float)width height:(float)height text:(NSString*)text;
++ (instancetype)textFieldWithWidth:(float)width height:(float)height text:(NSString*)text;
 
 /// Factory method.
-+ (id)textFieldWithText:(NSString *)text;
++ (instancetype)textFieldWithText:(NSString *)text;
 
 /// -------------
 /// @name Methods

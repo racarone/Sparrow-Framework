@@ -23,15 +23,14 @@
 }
 
 @synthesize duration = _duration;
-@synthesize bufferID = _bufferID;
 
-- (id)init
+- (instancetype)init
 {
     [self release];
     return nil;
 }
 
-- (id)initWithData:(const void *)data size:(int)size channels:(int)channels frequency:(int)frequency
+- (instancetype)initWithData:(const void *)data size:(int)size channels:(int)channels frequency:(int)frequency
           duration:(double)duration
 {
     if ((self = [super init]))

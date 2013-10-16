@@ -21,13 +21,13 @@
     float _volume;
 }
 
-- (id)init
+- (instancetype)init
 {
     [self release];
     return nil;
 }
 
-- (id)initWithSound:(SPAVSound *)sound
+- (instancetype)initWithSound:(SPAVSound *)sound
 {
     if ((self = [super init]))
     {
@@ -39,7 +39,7 @@
 
         [[NSNotificationCenter defaultCenter] addObserver:self 
             selector:@selector(onMasterVolumeChanged:)
-                name:SP_NOTIFICATION_MASTER_VOLUME_CHANGED object:nil];
+                name:SPNotificationMasterVolumeChanged object:nil];
     }
     return self;
 }
@@ -123,7 +123,7 @@
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {    
-    [self dispatchEventWithType:SP_EVENT_TYPE_COMPLETED];
+    [self dispatchEventWithType:SPEventTypeCompleted];
 }
 
 - (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error

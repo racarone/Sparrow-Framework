@@ -25,14 +25,14 @@
     NSMutableArray *_transitions;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
         // define some sample transitions for the animation demo. There are more available!
         _transitions = [[NSMutableArray alloc] initWithObjects:
-                        SP_TRANSITION_LINEAR, SP_TRANSITION_EASE_IN_OUT, SP_TRANSITION_EASE_OUT_BACK,
-                        SP_TRANSITION_EASE_OUT_BOUNCE, SP_TRANSITION_EASE_OUT_ELASTIC, nil];
+                        SPTransitionLinear, SPTransitionEaseInOut, SPTransitionEaseOutBack,
+                        SPTransitionEaseOutBounce, SPTransitionEaseOutElastic, nil];
         [self setupScene];
     }
     return self;
@@ -45,7 +45,7 @@
     // we create a button that is used to start the tween.
     _startButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Start animation"];
     [_startButton addEventListener:@selector(onStartButtonPressed:) atObject:self
-                           forType:SP_EVENT_TYPE_TRIGGERED];
+                           forType:SPEventTypeTriggered];
     _startButton.x = 160 - (int)_startButton.width / 2;
     _startButton.y = 20;
     [self addChild:_startButton];
@@ -53,7 +53,7 @@
     // this button will show you how to call a method with a delay
     _delayButton = [[SPButton alloc] initWithUpState:buttonTexture text:@"Delayed call"];
     [_delayButton addEventListener:@selector(onDelayButtonPressed:) atObject:self
-                           forType:SP_EVENT_TYPE_TRIGGERED];
+                           forType:SPEventTypeTriggered];
     _delayButton.x = _startButton.x;
     _delayButton.y = _startButton.y + 40;    
     [self addChild:_delayButton];
@@ -155,8 +155,8 @@
 
 - (void)dealloc
 {
-    [_startButton removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TRIGGERED];
-    [_delayButton removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+    [_startButton removeEventListenersAtObject:self forType:SPEventTypeTriggered];
+    [_delayButton removeEventListenersAtObject:self forType:SPEventTypeTriggered];
 }
 
 @end

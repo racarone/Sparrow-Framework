@@ -32,14 +32,14 @@
 @synthesize scale = _scale;
 @synthesize smoothing = _smoothing;
 
-- (id)initWithName:(uint)name width:(float)width height:(float)height
+- (instancetype)initWithName:(uint)name width:(float)width height:(float)height
         containsMipmaps:(BOOL)mipmaps scale:(float)scale premultipliedAlpha:(BOOL)pma
 {
     if ((self = [super init]))
     {
-        if (width <= 0.0f)  [NSException raise:SP_EXC_INVALID_OPERATION format:@"invalid width"];
-        if (height <= 0.0f) [NSException raise:SP_EXC_INVALID_OPERATION format:@"invalid height"];
-        if (scale <= 0.0f)  [NSException raise:SP_EXC_INVALID_OPERATION format:@"invalid scale"];
+        if (width <= 0.0f)  [NSException raise:SPExceptionInvalidOperation format:@"invalid width"];
+        if (height <= 0.0f) [NSException raise:SPExceptionInvalidOperation format:@"invalid height"];
+        if (scale <= 0.0f)  [NSException raise:SPExceptionInvalidOperation format:@"invalid scale"];
         
         _name = name;
         _width = width;
@@ -55,7 +55,7 @@
     return self;
 }
 
-- (id)initWithData:(const void *)imgData width:(float)width height:(float)height
+- (instancetype)initWithData:(const void *)imgData width:(float)width height:(float)height
    generateMipmaps:(BOOL)mipmaps scale:(float)scale premultipliedAlpha:(BOOL)pma
 {
     GLenum glTexType = GL_UNSIGNED_BYTE;
@@ -75,25 +75,25 @@
                              scale:scale premultipliedAlpha:pma];
 }
 
-- (id)initWithTextureInfo:(GLKTextureInfo *)info scale:(float)scale
+- (instancetype)initWithTextureInfo:(GLKTextureInfo *)info scale:(float)scale
 {
     return [self initWithTextureInfo:info scale:scale
                   premultipliedAlpha:info.alphaState == GLKTextureInfoAlphaStatePremultiplied];
 }
 
-- (id)initWithTextureInfo:(GLKTextureInfo *)info scale:(float)scale premultipliedAlpha:(BOOL)pma;
+- (instancetype)initWithTextureInfo:(GLKTextureInfo *)info scale:(float)scale premultipliedAlpha:(BOOL)pma;
 {
     return [self initWithName:info.name width:info.width height:info.height
                    containsMipmaps:info.containsMipmaps scale:scale
                 premultipliedAlpha:pma];
 }
 
-- (id)initWithTextureInfo:(GLKTextureInfo *)info
+- (instancetype)initWithTextureInfo:(GLKTextureInfo *)info
 {
     return [self initWithTextureInfo:info scale:1.0f];
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithData:NULL width:32 height:32 generateMipmaps:NO
                         scale:1.0f premultipliedAlpha:NO];

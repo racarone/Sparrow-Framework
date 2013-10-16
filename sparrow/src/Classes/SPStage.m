@@ -30,9 +30,8 @@
 
 @synthesize width = _width;
 @synthesize height = _height;
-@synthesize color = _color;
 
-- (id)initWithWidth:(float)width height:(float)height
+- (instancetype)initWithWidth:(float)width height:(float)height
 {    
     if ((self = [super init]))
     {
@@ -43,7 +42,7 @@
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
     return [self initWithWidth:screenSize.width height:screenSize.height];
@@ -71,47 +70,47 @@
 
 - (void)setX:(float)value
 {
-    [NSException raise:SP_EXC_INVALID_OPERATION format:@"cannot set x-coordinate of stage"];
+    [NSException raise:SPExceptionInvalidOperation format:@"cannot set x-coordinate of stage"];
 }
 
 - (void)setY:(float)value
 {
-    [NSException raise:SP_EXC_INVALID_OPERATION format:@"cannot set y-coordinate of stage"];
+    [NSException raise:SPExceptionInvalidOperation format:@"cannot set y-coordinate of stage"];
 }
 
 - (void)setPivotX:(float)value
 {
-    [NSException raise:SP_EXC_INVALID_OPERATION format:@"cannot set pivot coordinates of stage"];
+    [NSException raise:SPExceptionInvalidOperation format:@"cannot set pivot coordinates of stage"];
 }
 
 - (void)setPivotY:(float)value
 {
-    [NSException raise:SP_EXC_INVALID_OPERATION format:@"cannot set pivot coordinates of stage"];
+    [NSException raise:SPExceptionInvalidOperation format:@"cannot set pivot coordinates of stage"];
 }
 
 - (void)setScaleX:(float)value
 {
-    [NSException raise:SP_EXC_INVALID_OPERATION format:@"cannot scale stage"];
+    [NSException raise:SPExceptionInvalidOperation format:@"cannot scale stage"];
 }
 
 - (void)setScaleY:(float)value
 {
-    [NSException raise:SP_EXC_INVALID_OPERATION format:@"cannot scale stage"];
+    [NSException raise:SPExceptionInvalidOperation format:@"cannot scale stage"];
 }
 
 - (void)setSkewX:(float)skewX
 {
-    [NSException raise:SP_EXC_INVALID_OPERATION format:@"cannot skew stage"];
+    [NSException raise:SPExceptionInvalidOperation format:@"cannot skew stage"];
 }
 
 - (void)setSkewY:(float)skewY
 {
-    [NSException raise:SP_EXC_INVALID_OPERATION format:@"cannot skew stage"];
+    [NSException raise:SPExceptionInvalidOperation format:@"cannot skew stage"];
 }
 
 - (void)setRotation:(float)value
 {
-    [NSException raise:SP_EXC_INVALID_OPERATION format:@"cannot rotate stage"];
+    [NSException raise:SPExceptionInvalidOperation format:@"cannot rotate stage"];
 }
 
 @end
@@ -122,7 +121,7 @@
 
 - (void)advanceTime:(double)passedTime
 {
-    SPEnterFrameEvent* enterFrameEvent = [[SPEnterFrameEvent alloc] initWithType:SP_EVENT_TYPE_ENTER_FRAME passedTime:passedTime];
+    SPEnterFrameEvent* enterFrameEvent = [[SPEnterFrameEvent alloc] initWithType:SPEventTypeEnterFrame passedTime:passedTime];
     [self broadcastEvent:enterFrameEvent];
     [enterFrameEvent release];
 }
@@ -141,7 +140,7 @@
 - (void)appendDescendantEventListenersOfObject:(SPDisplayObject*)object withEventType:(NSString*)type
                                        toArray:(NSMutableArray*)listeners
 {
-    if (object == self && [type isEqualToString:SP_EVENT_TYPE_ENTER_FRAME])
+    if (object == self && [type isEqualToString:SPEventTypeEnterFrame])
         [listeners addObjectsFromArray:_enterFrameListeners];
     else
         [super appendDescendantEventListenersOfObject:object withEventType:type toArray:listeners];

@@ -21,18 +21,14 @@
 
 #import <GLKit/GLKit.h>
 
-// --- helper macros -------------------------------------------------------------------------------
-
-#define CURRENT_STATE()  ((SPRenderState *)(_stateStack[_stateStackIndex]))
-#define CURRENT_BATCH()  ((SPQuadBatch *)(_quadBatches[_quadBatchIndex]))
-
 // --- helper class --------------------------------------------------------------------------------
 
-@interface SPRenderState : NSObject
-
-@property (nonatomic, readonly) SPMatrix *modelviewMatrix;
-@property (nonatomic, readonly) float alpha;
-@property (nonatomic, readonly) uint blendMode;
+@interface SPRenderState : NSObject {
+@public
+    SPMatrix *_modelviewMatrix;
+    float _alpha;
+    uint _blendMode;
+}
 
 + (instancetype)renderState;
 
@@ -43,11 +39,7 @@
 
 @implementation SPRenderState
 
-@synthesize modelviewMatrix = _modelviewMatrix;
-@synthesize alpha = _alpha;
-@synthesize blendMode = _blendMode;
-
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -69,12 +61,12 @@
 {
     _alpha = alpha * state->_alpha;
     _blendMode = blendMode == SP_BLEND_MODE_AUTO ? state->_blendMode : blendMode;
-    
+
     [_modelviewMatrix copyFromMatrix:state->_modelviewMatrix];
     [_modelviewMatrix prependMatrix:matrix];
 }
 
-+ (id)renderState
++ (instancetype)renderState
 {
     return [[[self alloc] init] autorelease];
 }
@@ -88,12 +80,14 @@
     SPMatrix *_projectionMatrix;
     SPMatrix *_mvpMatrix;
     int _numDrawCalls;
-    
+
     NSMutableArray *_stateStack;
+    SPRenderState* _stateStackTop;
     int _stateStackIndex;
     int _stateStackSize;
-    
+
     NSMutableArray *_quadBatches;
+    SPQuadBatch* _quadBatchTop;
     int _quadBatchIndex;
     int _quadBatchSize;
 }
@@ -102,21 +96,23 @@
 @synthesize mvpMatrix = _mvpMatrix;
 @synthesize numDrawCalls = _numDrawCalls;
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
         _projectionMatrix = [[SPMatrix alloc] init];
         _mvpMatrix        = [[SPMatrix alloc] init];
-        
+
         _stateStack = [[NSMutableArray alloc] initWithObjects:[SPRenderState renderState], nil];
         _stateStackIndex = 0;
         _stateStackSize = 1;
-        
+        _stateStackTop = _stateStack[0];
+
         _quadBatches = [[NSMutableArray alloc] initWithObjects:[SPQuadBatch quadBatch], nil];
         _quadBatchIndex = 0;
         _quadBatchSize = 1;
-        
+        _quadBatchTop = _quadBatches[0];
+
         [self setupOrthographicProjectionWithLeft:0 right:320 top:0 bottom:480];
     }
     return self;
@@ -136,14 +132,19 @@
     _stateStackIndex = 0;
     _quadBatchIndex = 0;
     _numDrawCalls = 0;
+    _quadBatchTop = _quadBatches[0];
+    _stateStackTop = _stateStack[0];
 }
 
 - (void)purgeBuffers
 {
     [_quadBatches removeAllObjects];
-    [_quadBatches addObject:[SPQuadBatch quadBatch]];
-     _quadBatchIndex = 0;
-     _quadBatchSize = 1;
+
+    _quadBatchTop = [SPQuadBatch quadBatch];
+    [_quadBatches addObject:_quadBatchTop];
+
+    _quadBatchIndex = 0;
+    _quadBatchSize = 1;
 }
 
 + (void)clearWithColor:(uint)color alpha:(float)alpha;
@@ -151,7 +152,7 @@
     float red   = SP_COLOR_PART_RED(color)   / 255.0f;
     float green = SP_COLOR_PART_GREEN(color) / 255.0f;
     float blue  = SP_COLOR_PART_BLUE(color)  / 255.0f;
-    
+
     glClearColor(red, green, blue, alpha);
     glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -180,96 +181,89 @@
 
 - (void)pushStateWithMatrix:(SPMatrix *)matrix alpha:(float)alpha blendMode:(uint)blendMode
 {
-    SPRenderState *previousState = CURRENT_STATE();
-    
+    SPRenderState *previousState = _stateStackTop;
+
     if (_stateStackSize == _stateStackIndex + 1)
     {
         [_stateStack addObject:[SPRenderState renderState]];
         ++_stateStackSize;
     }
-    
-    ++_stateStackIndex;
-    
-    [CURRENT_STATE() setupDerivedFromState:previousState withModelviewMatrix:matrix
-                                     alpha:alpha blendMode:blendMode];
+
+    _stateStackTop = _stateStack[++_stateStackIndex];
+
+    [_stateStackTop setupDerivedFromState:previousState withModelviewMatrix:matrix
+                                    alpha:alpha blendMode:blendMode];
 }
 
 - (void)popState
 {
     if (_stateStackIndex == 0)
-        [NSException raise:SP_EXC_INVALID_OPERATION format:@"The state stack must not be empty"];
-        
-    --_stateStackIndex;
+        [NSException raise:SPExceptionInvalidOperation format:@"The state stack must not be empty"];
+
+    _stateStackTop = _stateStack[--_stateStackIndex];
 }
 
 - (float)alpha
 {
-    return CURRENT_STATE().alpha;
+    return _stateStackTop->_alpha;
 }
 
 - (uint)blendMode
 {
-    return CURRENT_STATE().blendMode;
+    return _stateStackTop->_blendMode;
 }
 
 - (SPMatrix *)modelviewMatrix
 {
-    return CURRENT_STATE().modelviewMatrix;
+    return _stateStackTop->_modelviewMatrix;
 }
 
 - (SPMatrix *)mvpMatrix
 {
-    [_mvpMatrix copyFromMatrix:CURRENT_STATE().modelviewMatrix];
+    [_mvpMatrix copyFromMatrix:_stateStackTop->_modelviewMatrix];
     [_mvpMatrix appendMatrix:_projectionMatrix];
     return _mvpMatrix;
 }
 
 - (void)applyBlendModeForPremultipliedAlpha:(BOOL)pma
 {
-    [SPBlendMode applyBlendFactorsForBlendMode:CURRENT_STATE().blendMode premultipliedAlpha:pma];
+    [SPBlendMode applyBlendFactorsForBlendMode:_stateStackTop->_blendMode premultipliedAlpha:pma];
 }
 
 #pragma mark - rendering
 
 - (void)batchQuad:(SPQuad *)quad
 {
-    SPRenderState *currentState = CURRENT_STATE();
-    SPQuadBatch *currentBatch = CURRENT_BATCH();
-    
-    float alpha = currentState.alpha;
-    uint blendMode = currentState.blendMode;
-    SPMatrix *modelviewMatrix = currentState.modelviewMatrix;
-    
-    if ([currentBatch isStateChangeWithTinted:quad.tinted texture:quad.texture alpha:alpha
-                           premultipliedAlpha:quad.premultipliedAlpha blendMode:blendMode
-                                     numQuads:1])
+    float alpha = _stateStackTop->_alpha;
+    uint blendMode = _stateStackTop->_blendMode;
+    SPMatrix *modelviewMatrix = _stateStackTop->_modelviewMatrix;
+
+    if ([_quadBatchTop isStateChangeWithTinted:quad.tinted texture:quad.texture alpha:alpha
+                            premultipliedAlpha:quad.premultipliedAlpha blendMode:blendMode
+                                      numQuads:1])
     {
-        [self finishQuadBatch];
-        currentBatch = CURRENT_BATCH();
+        [self finishQuadBatch]; // next batch
     }
-    
-    [currentBatch addQuad:quad alpha:alpha blendMode:blendMode matrix:modelviewMatrix];
+
+    [_quadBatchTop addQuad:quad alpha:alpha blendMode:blendMode matrix:modelviewMatrix];
 }
 
 - (void)finishQuadBatch
 {
-    SPQuadBatch *currentBatch = CURRENT_BATCH();
-    
-    if (currentBatch.numQuads)
+    if (_quadBatchTop.numQuads)
     {
-        [currentBatch renderWithMvpMatrix:_projectionMatrix];
-        [currentBatch reset];
-        
-        ++_quadBatchIndex;
-        ++_numDrawCalls;
-        
-        if (_quadBatchSize <= _quadBatchIndex)
+        [_quadBatchTop renderWithMvpMatrix:_projectionMatrix];
+        [_quadBatchTop reset];
+
+        if (_quadBatchSize == _quadBatchIndex + 1)
         {
             [_quadBatches addObject:[SPQuadBatch quadBatch]];
             ++_quadBatchSize;
         }
+
+        ++_numDrawCalls;
+        _quadBatchTop = _quadBatches[++_quadBatchIndex];
     }
 }
 
 @end
-

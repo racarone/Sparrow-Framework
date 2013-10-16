@@ -50,7 +50,18 @@
  
 ------------------------------------------------------------------------------------------------- */
 
-@interface SPSprite : SPDisplayObjectContainer 
+@interface SPSprite : SPDisplayObjectContainer
+
+/// --------------------
+/// @name Initialization
+/// --------------------
+
+/// Create a new, empty sprite.
++ (instancetype)sprite;
+
+/// -------------
+/// @name Methods
+/// -------------
 
 /// Optimizes the sprite for optimal rendering performance. Changes in the children of a flattened
 /// sprite will not be displayed any longer. For this to happen, either call `flatten` again, or
@@ -62,8 +73,9 @@
 /// Changes to the sprite's children will immediately become visible again.
 - (void)unflatten;
 
-/// Create a new, empty sprite.
-+ (id)sprite;
+/// ----------------
+/// @name Properties
+/// ----------------
 
 @property (nonatomic, readonly) BOOL isFlattened;
 

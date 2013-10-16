@@ -23,7 +23,7 @@
     BOOL _tinted;
 }
 
-- (id)initWithWidth:(float)width height:(float)height color:(uint)color premultipliedAlpha:(BOOL)pma;
+- (instancetype)initWithWidth:(float)width height:(float)height color:(uint)color premultipliedAlpha:(BOOL)pma;
 {
     if ((self = [super init]))
     {
@@ -46,17 +46,17 @@
     return self;
 }
 
-- (id)initWithWidth:(float)width height:(float)height color:(uint)color
+- (instancetype)initWithWidth:(float)width height:(float)height color:(uint)color
 {
     return [self initWithWidth:width height:height color:color premultipliedAlpha:YES];
 }
 
-- (id)initWithWidth:(float)width height:(float)height
+- (instancetype)initWithWidth:(float)width height:(float)height
 {
     return [self initWithWidth:width height:height color:SP_WHITE];
 }
 
-- (id)init
+- (instancetype)init
 {    
     return [self initWithWidth:32 height:32];
 }
@@ -185,17 +185,17 @@
     [support batchQuad:self];
 }
 
-+ (id)quadWithWidth:(float)width height:(float)height
++ (instancetype)quadWithWidth:(float)width height:(float)height
 {
     return [[[self alloc] initWithWidth:width height:height] autorelease];
 }
 
-+ (id)quadWithWidth:(float)width height:(float)height color:(uint)color
++ (instancetype)quadWithWidth:(float)width height:(float)height color:(uint)color
 {
     return [[[self alloc] initWithWidth:width height:height color:color] autorelease];
 }
 
-+ (id)quad
++ (instancetype)quad
 {
     return [[[self alloc] init] autorelease];
 }

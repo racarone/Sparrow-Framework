@@ -26,7 +26,7 @@
     int _frameCount;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -40,9 +40,9 @@
         self.blendMode = SP_BLEND_MODE_NONE;
         
         [self addEventListener:@selector(onAddedToStage:) atObject:self
-                       forType:SP_EVENT_TYPE_ADDED_TO_STAGE];
+                       forType:SPEventTypeAddedToStage];
         [self addEventListener:@selector(onEnterFrame:) atObject:self
-                       forType:SP_EVENT_TYPE_ENTER_FRAME];
+                       forType:SPEventTypeEnterFrame];
     }
     return self;
 }

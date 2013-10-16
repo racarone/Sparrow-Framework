@@ -17,12 +17,12 @@
 @class SPTexture;
 @class SPVertexData;
 
-typedef enum 
+typedef NS_ENUM(NSInteger, SPTextureSmoothing)
 {
     SPTextureSmoothingNone,
     SPTextureSmoothingBilinear,
     SPTextureSmoothingTrilinear
-} SPTextureSmoothing;
+};
 
 typedef void (^SPTextureDrawingBlock)(CGContextRef context);
 typedef void (^SPTextureLoadingBlock)(SPTexture *texture, NSError *outError);
@@ -101,71 +101,71 @@ typedef void (^SPTextureLoadingBlock)(SPTexture *texture, NSError *outError);
 /// ------------------
 
 /// Initializes an empty texture with a certain size (in points).
-- (id)initWithWidth:(float)width height:(float)height;
+- (instancetype)initWithWidth:(float)width height:(float)height;
 
 /// Initializes a texture with a certain size (in points), as well as a block containing Core
 /// Graphics commands. The texture will have the current scale factor of the stage; no mipmaps
 /// will be created.
-- (id)initWithWidth:(float)width height:(float)height draw:(SPTextureDrawingBlock)drawingBlock;
+- (instancetype)initWithWidth:(float)width height:(float)height draw:(SPTextureDrawingBlock)drawingBlock;
 
 /// Initializes a texture with a certain size (in points), as well as a block containing Core
 /// Graphics commands. The texture will have the current scale factor of the stage.
-- (id)initWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
+- (instancetype)initWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
                draw:(SPTextureDrawingBlock)drawingBlock;
 
 /// Initializes a texture with a certain size (in points), as well as a block containing Core
 /// Graphics commands.
-- (id)initWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
+- (instancetype)initWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
               scale:(float)scale draw:(SPTextureDrawingBlock)drawingBlock;
 
 /// Initializes a texture with the contents of a file (supported formats: png, jpg, pvr);
 /// no mip maps will be created. Sparrow will automatically pick the optimal file for the current
 /// system, using standard iOS naming conventions ("@2x", "~ipad" etc). If the file name ends with
 /// ".gz", the file will be uncompressed automatically.
-- (id)initWithContentsOfFile:(NSString *)path;
+- (instancetype)initWithContentsOfFile:(NSString *)path;
 
 /// Initializes a texture with the contents of a file (supported formats: png, jpg, pvr). Sparrow
 /// will automatically pick the optimal file for the current system, using standard iOS naming
 /// conventions ("@2x", "~ipad" etc). If the file name ends with ".gz", the file will be
 /// uncompressed automatically.
-- (id)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps;
+- (instancetype)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps;
 
 /// Initializes a texture with the contents of a file. You can specify if the pixel data contains
 /// premultiplied alpha. (The other methods guess the pma setting from the file type and path.)
-- (id)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
+- (instancetype)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
           premultipliedAlpha:(BOOL)pma;
 
 /// Initializes a texture with the contents of a UIImage; no mip maps will be created. The texture
 /// will have the same scale factor as the image.
-- (id)initWithContentsOfImage:(UIImage *)image;
+- (instancetype)initWithContentsOfImage:(UIImage *)image;
 
 /// Initializes a texture with the contents of a UIImage. The texture will have the same scale
 /// factor as the image.
-- (id)initWithContentsOfImage:(UIImage *)image generateMipmaps:(BOOL)mipmaps;
+- (instancetype)initWithContentsOfImage:(UIImage *)image generateMipmaps:(BOOL)mipmaps;
 
 /// Initializes a texture with a region (in points) of another texture. The new texture will 
 /// reference the base texture; no data is duplicated.
-- (id)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture;
+- (instancetype)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture;
 
 /// Initializes a texture with a region (in points) of another texture, as well as a frame rectangle
 /// that makes up for trimmed parts (see class description). The new texture will reference the base
 /// texture; no data is duplicated.
-- (id)initWithRegion:(SPRectangle*)region frame:(SPRectangle *)frame ofTexture:(SPTexture*)texture;
+- (instancetype)initWithRegion:(SPRectangle*)region frame:(SPRectangle *)frame ofTexture:(SPTexture*)texture;
 
 /// Factory method.
-+ (id)textureWithContentsOfFile:(NSString*)path;
++ (instancetype)textureWithContentsOfFile:(NSString*)path;
 
 /// Factory method.
-+ (id)textureWithContentsOfFile:(NSString*)path generateMipmaps:(BOOL)mipmaps;
++ (instancetype)textureWithContentsOfFile:(NSString*)path generateMipmaps:(BOOL)mipmaps;
 
 /// Factory method.
-+ (id)textureWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture;
++ (instancetype)textureWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture;
 
 /// Factory method.
-+ (id)textureWithWidth:(float)width height:(float)height draw:(SPTextureDrawingBlock)drawingBlock;
++ (instancetype)textureWithWidth:(float)width height:(float)height draw:(SPTextureDrawingBlock)drawingBlock;
 
 /// Factory method. Creates an empty (transparent) texture.
-+ (id)emptyTexture;
++ (instancetype)emptyTexture;
 
 /// -------------
 /// @name Methods

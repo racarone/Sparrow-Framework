@@ -24,7 +24,7 @@
     NSMutableDictionary *_colors;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -49,7 +49,7 @@
     
     // the canvas image will display the render texture
     SPImage *canvas = [SPImage imageWithTexture:_renderTexture];
-    [canvas addEventListener:@selector(onTouch:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+    [canvas addEventListener:@selector(onTouch:) atObject:self forType:SPEventTypeTouch];
     [self addChild:canvas];
     
     // we draw a text into that canvas
@@ -67,7 +67,7 @@
     _button.x = (int)(CENTER_X - _button.width / 2);
     _button.y = 15;
     [_button addEventListener:@selector(onButtonTriggered:) atObject:self
-                      forType:SP_EVENT_TYPE_TRIGGERED];
+                      forType:SPEventTypeTriggered];
     [self addChild:_button];
 }
 

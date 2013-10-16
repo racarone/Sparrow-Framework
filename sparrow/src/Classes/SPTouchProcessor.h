@@ -28,7 +28,7 @@
 /// ------------------
 
 /// Initializes a touch processor with a certain root object.
-- (id)initWithRoot:(SPDisplayObjectContainer*)root;
+- (instancetype)initWithRoot:(SPDisplayObjectContainer*)root;
 
 /// -------------
 /// @name Methods

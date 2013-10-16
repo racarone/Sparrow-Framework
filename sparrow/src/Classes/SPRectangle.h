@@ -23,10 +23,10 @@
 /// ------------------
 
 /// Initializes a rectangle with the specified components. _Designated Initializer_.
-- (id)initWithX:(float)x y:(float)y width:(float)width height:(float)height;
+- (instancetype)initWithX:(float)x y:(float)y width:(float)width height:(float)height;
 
 /// Factory method.
-+ (id)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height;
++ (instancetype)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height;
 
 /// -------------
 /// @name Methods

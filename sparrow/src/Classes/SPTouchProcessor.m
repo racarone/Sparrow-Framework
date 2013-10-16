@@ -29,9 +29,7 @@
     NSMutableSet *_currentTouches;
 }
 
-@synthesize root = _root;
-
-- (id)initWithRoot:(SPDisplayObjectContainer*)root
+- (instancetype)initWithRoot:(SPDisplayObjectContainer*)root
 {
     if ((self = [super init]))
     {
@@ -44,7 +42,7 @@
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {    
     return [self initWithRoot:nil];
 }
@@ -107,7 +105,7 @@
     // dispatch events         
     for (SPTouch *touch in processedTouches)
     {       
-        SPTouchEvent *touchEvent = [[SPTouchEvent alloc] initWithType:SP_EVENT_TYPE_TOUCH 
+        SPTouchEvent *touchEvent = [[SPTouchEvent alloc] initWithType:SPEventTypeTouch 
                                                               touches:processedTouches];
         [touch.target dispatchEvent:touchEvent];
         [touchEvent release];
@@ -129,7 +127,7 @@
 
     for (SPTouch *touch in _currentTouches)
     {
-        SPTouchEvent *touchEvent = [[SPTouchEvent alloc] initWithType:SP_EVENT_TYPE_TOUCH
+        SPTouchEvent *touchEvent = [[SPTouchEvent alloc] initWithType:SPEventTypeTouch
                                                               touches:_currentTouches];
         [touch.target dispatchEvent:touchEvent];
         [touchEvent release];

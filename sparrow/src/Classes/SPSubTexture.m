@@ -22,16 +22,14 @@
     SPRectangle *_frame;
 }
 
-@synthesize baseTexture = _baseTexture;
-@synthesize clipping = _clipping;
 @synthesize frame = _frame;
 
-- (id)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
+- (instancetype)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
 {
     return [self initWithRegion:region frame:nil ofTexture:texture];
 }
 
-- (id)initWithRegion:(SPRectangle *)region frame:(SPRectangle *)frame ofTexture:(SPTexture *)texture
+- (instancetype)initWithRegion:(SPRectangle *)region frame:(SPRectangle *)frame ofTexture:(SPTexture *)texture
 {
     if ((self = [super init]))
     {
@@ -50,7 +48,7 @@
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     return nil;
 }
@@ -93,7 +91,7 @@
     if (_frame)
     {
         if (count != 4)
-            [NSException raise:SP_EXC_INVALID_OPERATION
+            [NSException raise:SPExceptionInvalidOperation
                         format:@"Textures with a frame can only be used on quads"];
         
         float deltaRight  = _frame.width  + _frame.x - self.width;
@@ -170,7 +168,7 @@
     return _baseTexture.scale;
 }
 
-+ (id)textureWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
++ (instancetype)textureWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
 {
     return [[[self alloc] initWithRegion:region ofTexture:texture] autorelease];
 }

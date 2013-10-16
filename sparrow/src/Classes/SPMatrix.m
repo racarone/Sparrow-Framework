@@ -19,8 +19,6 @@
     float _tx, _ty;
 }
 
-@synthesize a=_a, b=_b, c=_c, d=_d, tx=_tx, ty=_ty;
-
 // --- c functions ---
 
 static inline void setValues(SPMatrix *matrix, float a, float b, float c, float d, float tx, float ty)
@@ -35,7 +33,7 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 
 // ---
 
-- (id)initWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
+- (instancetype)initWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
 {
     if ((self = [super init]))
     {
@@ -45,7 +43,7 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithA:1 b:0 c:0 d:1 tx:0 ty:0];
 }
@@ -204,19 +202,19 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
             _a, _b, _c, _d, _tx, _ty];
 }
 
-+ (id)matrixWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
++ (instancetype)matrixWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
 {
     return [[[self allocWithZone:nil] initWithA:a b:b c:c d:d tx:tx ty:ty] autorelease];
 }
 
-+ (id)matrixWithIdentity
++ (instancetype)matrixWithIdentity
 {
     return [[[self allocWithZone:nil] init] autorelease];
 }
 
 #pragma mark NSCopying
 
-- (id)copyWithZone:(NSZone*)zone
+- (instancetype)copyWithZone:(NSZone*)zone
 {
     return [[[self class] allocWithZone:zone] initWithA:_a b:_b c:_c d:_d 
                                                      tx:_tx ty:_ty];

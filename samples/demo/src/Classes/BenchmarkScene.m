@@ -32,7 +32,7 @@
     int _waitFrames;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -50,14 +50,14 @@
         _startButton = [[SPButton alloc] initWithUpState:buttonTexture
                                                     text:@"Start benchmark"];
         [_startButton addEventListener:@selector(onStartButtonPressed:) atObject:self
-                               forType:SP_EVENT_TYPE_TRIGGERED];
+                               forType:SPEventTypeTriggered];
         _startButton.x = 160 - (int)(_startButton.width / 2);
         _startButton.y = 20;
         [self addChild:_startButton];
         
         _started = NO;
         
-        [self addEventListener:@selector(onEnterFrame:) atObject:self forType:SP_EVENT_TYPE_ENTER_FRAME];
+        [self addEventListener:@selector(onEnterFrame:) atObject:self forType:SPEventTypeEnterFrame];
     }
     return self;    
 }
@@ -154,8 +154,8 @@
 
 - (void)dealloc
 {
-    [self removeEventListenersAtObject:self forType:SP_EVENT_TYPE_ENTER_FRAME];
-    [_startButton removeEventListenersAtObject:self forType:SP_EVENT_TYPE_TRIGGERED];
+    [self removeEventListenersAtObject:self forType:SPEventTypeEnterFrame];
+    [_startButton removeEventListenersAtObject:self forType:SPEventTypeTriggered];
 }
 
 @end

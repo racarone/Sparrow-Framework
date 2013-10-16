@@ -25,7 +25,7 @@
     float _offsetY;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -78,13 +78,13 @@
                 button.y += 26;
             
             [button addEventListener:@selector(onButtonTriggered:) atObject:self 
-                             forType:SP_EVENT_TYPE_TRIGGERED];
+                             forType:SPEventTypeTriggered];
             [_mainMenu addChild:button];
             ++count;
         }
         
         [self addEventListener:@selector(onSceneClosing:) atObject:self
-                       forType:EVENT_TYPE_SCENE_CLOSING];
+                       forType:EventTypeSceneClosing];
         
     }
     return self;

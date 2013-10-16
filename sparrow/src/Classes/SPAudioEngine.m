@@ -16,6 +16,14 @@
 #import <OpenAL/alc.h>
 #import <UIKit/UIKit.h>
 
+// --- notifications -------------------------------------------------------------------------------
+
+NSString *const SPNotificationMasterVolumeChanged       = @"masterVolumeChanged";
+NSString *const SPNotificationAudioInteruptionBegan     = @"audioInterruptionBegan";
+NSString *const SPNotificationAudioInteruptionEnded     = @"audioInterruptionEnded";
+
+// --- private interaface --------------------------------------------------------------------------
+
 @interface SPAudioEngine ()
 
 + (BOOL)initAudioSession:(SPAudioSessionCategory)category;
@@ -28,6 +36,8 @@
 
 @end
 
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPAudioEngine
 
 // --- C functions ---
@@ -37,7 +47,7 @@ static void interruptionCallback (void *inUserData, UInt32 interruptionState)
     if (interruptionState == kAudioSessionBeginInterruption)  
         [SPAudioEngine beginInterruption]; 
     else if (interruptionState == kAudioSessionEndInterruption)
-        [SPAudioEngine endInterruption];      
+        [SPAudioEngine endInterruption];
 } 
 
 // --- static members ---
@@ -49,7 +59,7 @@ static BOOL interrupted = NO;
 
 // ---
 
-- (id)init
+- (instancetype)init
 {
     [NSException raise:NSGenericException format:@"Static class - do not initialize!"];        
     return nil;
@@ -151,7 +161,7 @@ static BOOL interrupted = NO;
 
 + (void)beginInterruption
 {
-    [SPAudioEngine postNotification:SP_NOTIFICATION_AUDIO_INTERRUPTION_BEGAN object:nil];
+    [SPAudioEngine postNotification:SPNotificationAudioInteruptionBegan object:nil];
     alcMakeContextCurrent(NULL);
     AudioSessionSetActive(NO);
     interrupted = YES;
@@ -163,7 +173,7 @@ static BOOL interrupted = NO;
     AudioSessionSetActive(YES);
     alcMakeContextCurrent(context);
     alcProcessContext(context);
-    [SPAudioEngine postNotification:SP_NOTIFICATION_AUDIO_INTERRUPTION_ENDED object:nil];
+    [SPAudioEngine postNotification:SPNotificationAudioInteruptionEnded object:nil];
 }
 
 + (void)onAppActivated:(NSNotification *)notification
@@ -180,7 +190,7 @@ static BOOL interrupted = NO;
 {       
     masterVolume = volume;
     alListenerf(AL_GAIN, volume);
-    [SPAudioEngine postNotification:SP_NOTIFICATION_MASTER_VOLUME_CHANGED object:nil];
+    [SPAudioEngine postNotification:SPNotificationMasterVolumeChanged object:nil];
 }
 
 + (void)postNotification:(NSString *)name object:(id)object

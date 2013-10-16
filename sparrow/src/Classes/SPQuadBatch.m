@@ -37,12 +37,7 @@
     uint _indexBufferName;
 }
 
-@synthesize numQuads = _numQuads;
-@synthesize tinted = _tinted;
-@synthesize texture = _texture;
-@synthesize premultipliedAlpha = _premultipliedAlpha;
-
-- (id)initWithCapacity:(int)capacity
+- (instancetype)initWithCapacity:(int)capacity
 {
     if ((self = [super init]))
     {
@@ -58,7 +53,7 @@
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithCapacity:0];
 }
@@ -133,7 +128,7 @@
     glGenBuffers(1, &_indexBufferName);
     
     if (!_vertexBufferName || !_indexBufferName)
-        [NSException raise:SP_EXC_OPERATION_FAILED format:@"could not create vertex buffers"];
+        [NSException raise:SPExceptionOperationFailed format:@"could not create vertex buffers"];
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * numIndices, _indexData, GL_STATIC_DRAW);
@@ -253,9 +248,6 @@
     else if (_texture && texture)
         return _tinted != (tinted || alpha != 1.0f) ||
                _texture.name != texture.name ||
-        // textures must always have the same repeat and smoothing, correct?
-        // _texture.repeat != texture.repeat ||
-        // _texture.smoothing != texture.smoothing ||
                self.blendMode != blendMode;
     else return YES;
 }
@@ -286,7 +278,7 @@
     if (!_numQuads) return;
     if (_syncRequired) [self syncBuffers];
     if (blendMode == SP_BLEND_MODE_AUTO)
-        [NSException raise:SP_EXC_INVALID_OPERATION
+        [NSException raise:SPExceptionInvalidOperation
                     format:@"cannot render object with blend mode AUTO"];
     
     _baseEffect.texture = _texture;
@@ -328,7 +320,7 @@
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
 }
 
-+ (id)quadBatch
++ (instancetype)quadBatch
 {
     return [[[self alloc] init] autorelease];
 }
@@ -418,7 +410,7 @@
     }
     else
     {
-        [NSException raise:SP_EXC_INVALID_OPERATION format:@"Unsupported display object: %@",
+        [NSException raise:SPExceptionInvalidOperation format:@"Unsupported display object: %@",
                                                            [object class]];
     }
     

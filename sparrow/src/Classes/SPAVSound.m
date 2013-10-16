@@ -22,7 +22,7 @@
 
 @synthesize duration = _duration;
 
-- (id)init
+- (instancetype)init
 {
     [self release];
     return nil;
@@ -34,7 +34,7 @@
     [super dealloc];
 }
 
-- (id)initWithContentsOfFile:(NSString *)path duration:(double)duration
+- (instancetype)initWithContentsOfFile:(NSString *)path duration:(double)duration
 {
     if ((self = [super init]))
     {

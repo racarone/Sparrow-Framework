@@ -30,7 +30,7 @@ static char encodingTable[64] = {
 
 @implementation NSInvocation (SPNSExtensions)
 
-+ (NSInvocation*)invocationWithTarget:(id)target selector:(SEL)selector
++ (instancetype)invocationWithTarget:(id)target selector:(SEL)selector
 {
     NSMethodSignature *signature = [target methodSignatureForSelector:selector];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
@@ -45,7 +45,7 @@ static char encodingTable[64] = {
 
 @implementation NSString (SPNSExtensions)
 
-- (NSString *)fullPathExtension
+- (instancetype)fullPathExtension
 {
     NSString *filename = [self lastPathComponent];
     NSRange range = { .location = 1, .length = filename.length - 1 }; // ignore first letter -> '.hidden' files
@@ -53,7 +53,7 @@ static char encodingTable[64] = {
     return dotLocation == NSNotFound ? @"" : [filename substringFromIndex:dotLocation + 1];
 }
 
-- (NSString *)stringByDeletingFullPathExtension
+- (instancetype)stringByDeletingFullPathExtension
 {
     NSString *trimmed = self;
     NSString *base;
@@ -68,13 +68,13 @@ static char encodingTable[64] = {
     return base;
 }
 
-- (NSString *)stringByAppendingSuffixToFilename:(NSString *)suffix
+- (instancetype)stringByAppendingSuffixToFilename:(NSString *)suffix
 {
     return [[self stringByDeletingFullPathExtension] stringByAppendingFormat:@"%@.%@", 
             suffix, [self fullPathExtension]];
 }
 
-- (NSString *)stringByAppendingScaleSuffixToFilename:(float)scale
+- (instancetype)stringByAppendingScaleSuffixToFilename:(float)scale
 {
     NSString *result = self;
     
@@ -138,7 +138,7 @@ static char encodingTable[64] = {
     return [self pathForResource:name];
 }
 
-+ (NSBundle *)appBundle
++ (instancetype)appBundle
 {
     return [NSBundle bundleForClass:[SPDisplayObject class]];
 }
@@ -151,12 +151,12 @@ static char encodingTable[64] = {
 
 #pragma mark Base64
 
-+ (NSData *)dataWithBase64EncodedString:(NSString *)string
++ (instancetype)dataWithBase64EncodedString:(NSString *)string
 {
     return [[[NSData alloc] initWithBase64EncodedString:string] autorelease];
 }
 
-- (id)initWithBase64EncodedString:(NSString *)string
+- (instancetype)initWithBase64EncodedString:(NSString *)string
 {
     NSMutableData *mutableData = nil;
     
@@ -298,7 +298,7 @@ static char encodingTable[64] = {
 
 #pragma mark GZIP
 
-+ (NSData *)dataWithUncompressedContentsOfFile:(NSString *)file
++ (instancetype)dataWithUncompressedContentsOfFile:(NSString *)file
 {
     if ([[file pathExtension] isEqualToString:@"gz"])
         return [[NSData dataWithContentsOfFile:file] gzipInflate];
@@ -306,7 +306,7 @@ static char encodingTable[64] = {
         return [NSData dataWithContentsOfFile:file];
 }
 
-- (NSData *)gzipDeflate
+- (instancetype)gzipDeflate
 {
     if ([self length] == 0) return self;
     
@@ -348,7 +348,7 @@ static char encodingTable[64] = {
     return [NSData dataWithData:compressed];
 }
 
-- (NSData *)gzipInflate
+- (instancetype)gzipInflate
 {
     if ([self length] == 0) return self;
     
@@ -397,7 +397,7 @@ static char encodingTable[64] = {
 
 @interface NSXMLParserHelper : NSObject <NSXMLParserDelegate>
 
-- (id)initWithElementHandler:(SPXMLElementHandler)elementHandler;
+- (instancetype)initWithElementHandler:(SPXMLElementHandler)elementHandler;
 
 @end
 
@@ -406,7 +406,7 @@ static char encodingTable[64] = {
     SPXMLElementHandler _elementHandler;
 }
 
-- (id)initWithElementHandler:(SPXMLElementHandler)elementHandler
+- (instancetype)initWithElementHandler:(SPXMLElementHandler)elementHandler
 {
     if ((self = [super init]))
         _elementHandler = [elementHandler copy];

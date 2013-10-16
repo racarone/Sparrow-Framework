@@ -8,7 +8,7 @@
 
 #import "SPSprite.h"
 
-#define EVENT_TYPE_SCENE_CLOSING @"closing"
+SP_EXTERN NSString *const EventTypeSceneClosing;
 
 // A scene is just a sprite with a back button that dispatches a "closing" event
 // when that button was hit. All scenes inherit from this class.

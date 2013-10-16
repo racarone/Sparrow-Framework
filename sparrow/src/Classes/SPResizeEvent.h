@@ -11,7 +11,7 @@
 
 #import "SPEvent.h"
 
-#define SP_EVENT_TYPE_RESIZE @"resize"
+SP_EXTERN NSString *const SPEventTypeResize;
 
 /** ------------------------------------------------------------------------------------------------
  
@@ -28,11 +28,11 @@
 /// ------------------
 
 /// Initializes a resize event with the given parameters. _Designated Initializer_.
-- (id)initWithType:(NSString *)type width:(float)width height:(float)height 
+- (instancetype)initWithType:(NSString *)type width:(float)width height:(float)height 
      animationTime:(double)time;
 
 /// Initializes a resize event with the given parameters. Animation time will be zero.
-- (id)initWithType:(NSString *)type width:(float)width height:(float)height;
+- (instancetype)initWithType:(NSString *)type width:(float)width height:(float)height;
 
 /// ----------------
 /// @name Properties

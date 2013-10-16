@@ -22,11 +22,7 @@
     NSMutableArray *_invocations;
 }
 
-@synthesize totalTime = _totalTime;
-@synthesize currentTime = _currentTime;
-@synthesize target = _target;
-
-- (id)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block
+- (instancetype)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block
 {
     if ((self = [super init]))
     {
@@ -43,17 +39,17 @@
     return self;
 }
 
-- (id)initWithTarget:(id)target delay:(double)time
+- (instancetype)initWithTarget:(id)target delay:(double)time
 {
     return [self initWithTarget:target delay:time block:NULL];
 }
 
-- (id)initWithDelay:(double)time block:(SPCallbackBlock)block
+- (instancetype)initWithDelay:(double)time block:(SPCallbackBlock)block
 {
     return [self initWithTarget:nil delay:time block:block];
 }
 
-- (id)init
+- (instancetype)init
 {
     return nil;
 }
@@ -98,7 +94,7 @@
         if (_invocations) [_invocations makeObjectsPerformSelector:@selector(invoke)];
         if (_block) _block();
         
-        [self dispatchEventWithType:SP_EVENT_TYPE_REMOVE_FROM_JUGGLER];
+        [self dispatchEventWithType:SPEventTypeRemoveFromJuggler];
     }
 }
 
@@ -107,12 +103,12 @@
     return _currentTime >= _totalTime;
 }
 
-+ (id)invocationWithTarget:(id)target delay:(double)time
++ (instancetype)invocationWithTarget:(id)target delay:(double)time
 {
     return [[[self alloc] initWithTarget:target delay:time] autorelease];
 }
 
-+ (id)invocationWithDelay:(double)time block:(SPCallbackBlock)block
++ (instancetype)invocationWithDelay:(double)time block:(SPCallbackBlock)block
 {
     return [[[self alloc] initWithDelay:time block:block] autorelease];
 }

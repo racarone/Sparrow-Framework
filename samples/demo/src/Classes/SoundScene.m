@@ -17,7 +17,7 @@
     SPButton *_channelButton;
 }
 
-- (id)init
+- (instancetype)init
 {
     if ((self = [super init]))
     {
@@ -34,7 +34,7 @@
         SPSound *sound = [SPSound soundWithContentsOfFile:@"sound0.caf"];
         _soundChannel = [sound createChannel];
         [_soundChannel addEventListener:@selector(onSoundCompleted:) atObject:self
-                                forType:SP_EVENT_TYPE_COMPLETED];
+                                forType:SPEventTypeCompleted];
         
         SPTexture *buttonTexture = [SPTexture textureWithContentsOfFile:@"button_square.png"];
         
@@ -53,7 +53,7 @@
         playButton.y = 105;
         playButton.fontName = FONTNAME;        
         [playButton addEventListener:@selector(onPlayButtonTriggered:) atObject:self
-                             forType:SP_EVENT_TYPE_TRIGGERED];        
+                             forType:SPEventTypeTriggered];        
         [self addChild:playButton];
 
         SPButton *pauseButton = [SPButton buttonWithUpState:buttonTexture text:@"||"];
@@ -61,7 +61,7 @@
         pauseButton.y = playButton.y;
         pauseButton.fontName = FONTNAME;
         [pauseButton addEventListener:@selector(onPauseButtonTriggered:) atObject:self
-                              forType:SP_EVENT_TYPE_TRIGGERED];        
+                              forType:SPEventTypeTriggered];        
         [self addChild:pauseButton];
         
         SPButton *stopButton = [SPButton buttonWithUpState:buttonTexture text:@"[]"];
@@ -69,7 +69,7 @@
         stopButton.y = playButton.y;
         stopButton.fontName = FONTNAME;
         [stopButton addEventListener:@selector(onStopButtonTriggered:) atObject:self
-                             forType:SP_EVENT_TYPE_TRIGGERED];        
+                             forType:SPEventTypeTriggered];        
         [self addChild:stopButton];       
         
         // simple sound button
@@ -87,7 +87,7 @@
         simpleButton.y = 230;
         simpleButton.fontName = FONTNAME;
         [simpleButton addEventListener:@selector(onSimpleButtonTriggered:) atObject:self
-                               forType:SP_EVENT_TYPE_TRIGGERED];  
+                               forType:SPEventTypeTriggered];  
         [self addChild:simpleButton];
         
         // channel sound button
@@ -105,7 +105,7 @@
         _channelButton.y = simpleButton.y;
         _channelButton.fontName = FONTNAME;
         [_channelButton addEventListener:@selector(onChannelButtonTriggered:) atObject:self
-                                forType:SP_EVENT_TYPE_TRIGGERED];  
+                                forType:SPEventTypeTriggered];  
         [self addChild:_channelButton];
         
         // volume buttons
@@ -123,7 +123,7 @@
         volume0Button.y = 355;
         volume0Button.fontName = FONTNAME;
         [volume0Button addEventListener:@selector(onVolume0ButtonTriggered:) atObject:self
-                                forType:SP_EVENT_TYPE_TRIGGERED]; 
+                                forType:SPEventTypeTriggered]; 
         [self addChild:volume0Button];
         
         SPButton *volume50Button = [SPButton buttonWithUpState:buttonTexture text:@"50"];
@@ -131,7 +131,7 @@
         volume50Button.y = volume0Button.y;
         volume50Button.fontName = FONTNAME;
         [volume50Button addEventListener:@selector(onVolume50ButtonTriggered:) atObject:self
-                                forType:SP_EVENT_TYPE_TRIGGERED]; 
+                                forType:SPEventTypeTriggered]; 
         [self addChild:volume50Button];
         
         SPButton *volume100Button = [SPButton buttonWithUpState:buttonTexture text:@"100"];
@@ -139,7 +139,7 @@
         volume100Button.y = volume0Button.y;
         volume100Button.fontName = FONTNAME;
         [volume100Button addEventListener:@selector(onVolume100ButtonTriggered:) atObject:self
-                                forType:SP_EVENT_TYPE_TRIGGERED]; 
+                                forType:SPEventTypeTriggered]; 
         [self addChild:volume100Button];        
         
         

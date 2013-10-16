@@ -22,19 +22,19 @@
 /// ------------------
 
 /// Initializes a point with its x and y components. _Designated Initializer_.
-- (id)initWithX:(float)x y:(float)y;
+- (instancetype)initWithX:(float)x y:(float)y;
 
 /// Initializes a point with the distance and angle in respect to the origin.
-- (id)initWithPolarLength:(float)length angle:(float)angle;
+- (instancetype)initWithPolarLength:(float)length angle:(float)angle;
 
 /// Factory method.
-+ (id)pointWithPolarLength:(float)length angle:(float)angle;
++ (instancetype)pointWithPolarLength:(float)length angle:(float)angle;
 
 /// Factory method.
-+ (id)pointWithX:(float)x y:(float)y;
++ (instancetype)pointWithX:(float)x y:(float)y;
 
 /// Factory method.
-+ (id)point;
++ (instancetype)point;
 
 /// -------------
 /// @name Methods

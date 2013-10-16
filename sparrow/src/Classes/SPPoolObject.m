@@ -76,7 +76,7 @@
     return _retainCount;
 }
 
-- (id)retain
+- (instancetype)retain
 {
     ++_retainCount;
     return self;

@@ -17,6 +17,8 @@
 #import "SPNSExtensions.h"
 #import "SPEventListener.h"
 
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPEventDispatcher
 {
     NSMutableDictionary *_eventListeners;
@@ -135,7 +137,7 @@
 
 @end
 
-// -------------------------------------------------------------------------------------------------
+// --- internal implementation ---------------------------------------------------------------------
 
 @implementation SPEventDispatcher (Internal)
 
