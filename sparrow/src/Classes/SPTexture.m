@@ -158,12 +158,12 @@
             }];
 }
 
-- (instancetype)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
+- (instancetype)initWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture
 {
     return [self initWithRegion:region frame:nil ofTexture:texture];
 }
 
-- (instancetype)initWithRegion:(SPRectangle*)region frame:(SPRectangle *)frame ofTexture:(SPTexture*)texture
+- (instancetype)initWithRegion:(SPRectangle *)region frame:(SPRectangle *)frame ofTexture:(SPTexture *)texture
 {
     [self release]; // class factory - we'll return a subclass!
 
@@ -183,7 +183,7 @@
     return [[[self alloc] initWithContentsOfFile:path] autorelease];
 }
 
-+ (instancetype)textureWithContentsOfFile:(NSString*)path generateMipmaps:(BOOL)mipmaps
++ (instancetype)textureWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
 {
     return [[[self alloc] initWithContentsOfFile:path generateMipmaps:mipmaps] autorelease];
 }

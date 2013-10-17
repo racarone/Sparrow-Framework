@@ -57,7 +57,7 @@
 
 /// Initializes a tween with a target, duration (in seconds) and a transition function. 
 /// _Designated Initializer_.
-- (instancetype)initWithTarget:(id)target time:(double)time transition:(NSString*)transition;
+- (instancetype)initWithTarget:(id)target time:(double)time transition:(NSString *)transition;
 
 /// Initializes a tween with a target, a time (in seconds) and a linear transition 
 /// (`SPTransitionLinear`).
@@ -75,7 +75,7 @@
 
 /// Animates the property of an object to a target value. You can call this method multiple times
 /// on one tween.
-- (void)animateProperty:(NSString*)property targetValue:(float)value;
+- (void)animateProperty:(NSString *)property targetValue:(float)value;
 
 /// Animates the `x` and `y` properties of an object simultaneously.
 - (void)moveToX:(float)x y:(float)y;

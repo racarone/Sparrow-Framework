@@ -16,14 +16,14 @@
 
 // --- event types ---------------------------------------------------------------------------------
 
-NSString *const SPEventTypeAdded                = @"added";
-NSString *const SPEventTypeAddedToStage         = @"addedToStage";
-NSString *const SPEventTypeRemoved              = @"removed";
-NSString *const SPEventTypeRemovedFromStage     = @"removedFromStage";
-NSString *const SPEventTypeRemoveFromJuggler    = @"removeFromJuggler";
-NSString *const SPEventTypeCompleted            = @"completed";
-NSString *const SPEventTypeTriggered            = @"triggered";
-NSString *const SPEventTypeFlatten              = @"flatten";
+NSString *const SPEventTypeAdded                = @"SPEventTypeAdded";
+NSString *const SPEventTypeAddedToStage         = @"SPEventTypeAddedToStage";
+NSString *const SPEventTypeRemoved              = @"SPEventTypeRemoved";
+NSString *const SPEventTypeRemovedFromStage     = @"SPEventTypeRemovedFromStage";
+NSString *const SPEventTypeRemoveFromJuggler    = @"SPEventTypeRemoveFromJuggler";
+NSString *const SPEventTypeCompleted            = @"SPEventTypeCompleted";
+NSString *const SPEventTypeTriggered            = @"SPEventTypeTriggered";
+NSString *const SPEventTypeFlatten              = @"SPEventTypeFlatten";
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ NSString *const SPEventTypeFlatten              = @"flatten";
     BOOL _bubbles;
 }
 
-- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles
+- (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles
 {    
     if ((self = [super init]))
     {        
@@ -47,7 +47,7 @@ NSString *const SPEventTypeFlatten              = @"flatten";
     return self;
 }
 
-- (instancetype)initWithType:(NSString*)type
+- (instancetype)initWithType:(NSString *)type
 {
     return [self initWithType:type bubbles:NO];
 }
@@ -79,12 +79,12 @@ NSString *const SPEventTypeFlatten              = @"flatten";
             NSStringFromClass([self class]), _type, _bubbles ? @"YES" : @"NO"];
 }
 
-+ (instancetype)eventWithType:(NSString*)type bubbles:(BOOL)bubbles
++ (instancetype)eventWithType:(NSString *)type bubbles:(BOOL)bubbles
 {
     return [[[self alloc] initWithType:type bubbles:bubbles] autorelease];
 }
 
-+ (instancetype)eventWithType:(NSString*)type
++ (instancetype)eventWithType:(NSString *)type
 {
     return [[[self alloc] initWithType:type] autorelease];
 }
@@ -106,13 +106,13 @@ NSString *const SPEventTypeFlatten              = @"flatten";
     return _stopsPropagation;
 }
 
-- (void)setTarget:(SPEventDispatcher*)target
+- (void)setTarget:(SPEventDispatcher *)target
 {
     if (_target != target)
         _target = target;
 }
 
-- (void)setCurrentTarget:(SPEventDispatcher*)currentTarget
+- (void)setCurrentTarget:(SPEventDispatcher *)currentTarget
 {
     if (_currentTarget != currentTarget)
         _currentTarget = currentTarget;

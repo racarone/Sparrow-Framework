@@ -28,14 +28,14 @@
 /// ------------------
 
 /// Initializes a touch processor with a certain root object.
-- (instancetype)initWithRoot:(SPDisplayObjectContainer*)root;
+- (instancetype)initWithRoot:(SPDisplayObjectContainer *)root;
 
 /// -------------
 /// @name Methods
 /// -------------
 
 /// @name Processes raw touches and dispatches events on the touched display objects.
-- (void)processTouches:(NSSet*)touches;
+- (void)processTouches:(NSSet *)touches;
 
 /// ----------------
 /// @name Properties

@@ -11,6 +11,6 @@
 
 @interface TouchSheet : SPSprite
 
-- (instancetype)initWithQuad:(SPQuad*)quad; // designated initializer
+- (instancetype)initWithQuad:(SPQuad *)quad; // designated initializer
 
 @end

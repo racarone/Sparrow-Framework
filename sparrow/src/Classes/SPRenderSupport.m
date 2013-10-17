@@ -45,7 +45,7 @@
     {
         _modelviewMatrix = [[SPMatrix alloc] init];
         _alpha = 1.0f;
-        _blendMode = SP_BLEND_MODE_NORMAL;
+        _blendMode = SPBlendModeNormal;
     }
     return self;
 }
@@ -60,7 +60,7 @@
                         alpha:(float)alpha blendMode:(uint)blendMode
 {
     _alpha = alpha * state->_alpha;
-    _blendMode = blendMode == SP_BLEND_MODE_AUTO ? state->_blendMode : blendMode;
+    _blendMode = blendMode == SPBlendModeAuto ? state->_blendMode : blendMode;
 
     [_modelviewMatrix copyFromMatrix:state->_modelviewMatrix];
     [_modelviewMatrix prependMatrix:matrix];

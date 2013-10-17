@@ -35,7 +35,7 @@
         // add background image
         SPImage *background = [SPImage imageWithContentsOfFile:@"background.jpg"];
         background.y = _offsetY > 0.0f ? 0.0 : -44;
-        background.blendMode = SP_BLEND_MODE_NONE;
+        background.blendMode = SPBlendModeNone;
         [self addChild:background];
         
         // this sprite will contain objects that are only visible in the main menu

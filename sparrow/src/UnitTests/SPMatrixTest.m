@@ -27,7 +27,7 @@
     SPMatrix *identMatrix;
 }
 
-- (BOOL)checkMatrixValues:(SPMatrix*)matrix a:(float)a b:(float)b c:(float)c d:(float)d 
+- (BOOL)checkMatrixValues:(SPMatrix *)matrix a:(float)a b:(float)b c:(float)c d:(float)d 
                        tx:(float)tx ty:(float)ty;
 
 @end
@@ -133,7 +133,7 @@
     STAssertTrue(SP_IS_FLOAT_EQUAL(10.0f, ctPoint.y), @"wrong y value: %f", ctPoint.y);    
 }
 
-- (BOOL)checkMatrixValues:(SPMatrix*)matrix a:(float)a b:(float)b c:(float)c d:(float)d 
+- (BOOL)checkMatrixValues:(SPMatrix *)matrix a:(float)a b:(float)b c:(float)c d:(float)d 
                        tx:(float)tx ty:(float)ty
 {
     return SP_IS_FLOAT_EQUAL(a, matrix.a) && SP_IS_FLOAT_EQUAL(b, matrix.b) &&

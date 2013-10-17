@@ -18,9 +18,9 @@
 
 // --- notifications -------------------------------------------------------------------------------
 
-NSString *const SPNotificationMasterVolumeChanged       = @"masterVolumeChanged";
-NSString *const SPNotificationAudioInteruptionBegan     = @"audioInterruptionBegan";
-NSString *const SPNotificationAudioInteruptionEnded     = @"audioInterruptionEnded";
+NSString *const SPNotificationMasterVolumeChanged       = @"SPNotificationMasterVolumeChanged";
+NSString *const SPNotificationAudioInteruptionBegan     = @"SPNotificationAudioInteruptionBegan";
+NSString *const SPNotificationAudioInteruptionEnded     = @"SPNotificationAudioInteruptionEnded";
 
 // --- private interaface --------------------------------------------------------------------------
 

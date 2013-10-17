@@ -12,8 +12,8 @@
 
 @interface SPDisplayObjectContainer (Internal)
 
-- (void)appendDescendantEventListenersOfObject:(SPDisplayObject*)object
-                                 withEventType:(NSString*)type
-                                       toArray:(NSMutableArray*)listeners;
+- (void)appendDescendantEventListenersOfObject:(SPDisplayObject *)object
+                                 withEventType:(NSString *)type
+                                       toArray:(NSMutableArray *)listeners;
 
 @end

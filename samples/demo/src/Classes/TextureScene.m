@@ -43,7 +43,7 @@
         [self addChild:image4];        
         
         SPTextField *atlasText = [SPTextField textFieldWithWidth:128 height:40 
-          text:@"Load textures from an atlas!" fontName:@"Helvetica-Bold" fontSize:14 color:SP_BLACK];
+          text:@"Load textures from an atlas!" fontName:@"Helvetica-Bold" fontSize:14 color:SPColorBlack];
         atlasText.x = 140;
         atlasText.y = 30;
         atlasText.hAlign = SPHAlignRight;

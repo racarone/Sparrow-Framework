@@ -62,14 +62,14 @@
     [super dealloc];
 }
 
-- (NSMethodSignature*)methodSignatureForSelector:(SEL)aSelector
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
     NSMethodSignature *sig = [[self class] instanceMethodSignatureForSelector:aSelector];
     if (!sig) sig = [_target methodSignatureForSelector:aSelector];
     return sig;
 }
 
-- (void)forwardInvocation:(NSInvocation*)anInvocation
+- (void)forwardInvocation:(NSInvocation *)anInvocation
 {
     if ([_target respondsToSelector:[anInvocation selector]])
     {

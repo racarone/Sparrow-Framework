@@ -29,7 +29,7 @@
     NSMutableSet *_currentTouches;
 }
 
-- (instancetype)initWithRoot:(SPDisplayObjectContainer*)root
+- (instancetype)initWithRoot:(SPDisplayObjectContainer *)root
 {
     if ((self = [super init]))
     {
@@ -55,7 +55,7 @@
     [super dealloc];
 }
 
-- (void)processTouches:(NSSet*)touches
+- (void)processTouches:(NSSet *)touches
 {
     NSMutableSet *processedTouches = [[NSMutableSet alloc] init];
     

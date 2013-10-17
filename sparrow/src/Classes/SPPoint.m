@@ -15,8 +15,6 @@
 
 // --- class implementation ------------------------------------------------------------------------
 
-#define SQ(x) ((x)*(x))
-
 @implementation SPPoint
 {
     float _x;
@@ -46,12 +44,12 @@
 
 - (float)length
 {
-    return sqrtf(SQ(_x) + SQ(_y));
+    return sqrtf(SP_SQUARE(_x) + SP_SQUARE(_y));
 }
 
 - (float)lengthSquared 
 {
-    return SQ(_x) + SQ(_y);
+    return SP_SQUARE(_x) + SP_SQUARE(_y);
 }
 
 - (float)angle
@@ -69,12 +67,12 @@
     return [SPPoint pointWithX:-_x y:-_y];
 }
 
-- (SPPoint*)addPoint:(SPPoint*)point
+- (SPPoint *)addPoint:(SPPoint *)point
 {
     return [SPPoint pointWithX:_x+point->_x y:_y+point->_y];
 }
 
-- (SPPoint*)subtractPoint:(SPPoint*)point
+- (SPPoint *)subtractPoint:(SPPoint *)point
 {
     return [SPPoint pointWithX:_x-point->_x y:_y-point->_y];
 }
@@ -128,7 +126,7 @@
     else if (!other) return NO;
     else
     {
-        SPPoint *point = (SPPoint*)other;
+        SPPoint *point = (SPPoint *)other;
         return SP_IS_FLOAT_EQUAL(_x, point->_x) && SP_IS_FLOAT_EQUAL(_y, point->_y);    
     }
 }
@@ -138,9 +136,9 @@
     return [NSString stringWithFormat:@"[SPPoint: x=%f, y=%f]", _x, _y];
 }
 
-+ (float)distanceFromPoint:(SPPoint*)p1 toPoint:(SPPoint*)p2
++ (float)distanceFromPoint:(SPPoint *)p1 toPoint:(SPPoint *)p2
 {
-    return sqrtf(SQ(p2->_x - p1->_x) + SQ(p2->_y - p1->_y));
+    return sqrtf(SP_SQUARE(p2->_x - p1->_x) + SP_SQUARE(p2->_y - p1->_y));
 }
 
 + (SPPoint *)interpolateFromPoint:(SPPoint *)p1 toPoint:(SPPoint *)p2 ratio:(float)ratio
@@ -173,7 +171,7 @@
 
 #pragma mark NSCopying
 
-- (instancetype)copyWithZone:(NSZone*)zone
+- (instancetype)copyWithZone:(NSZone *)zone
 {
     return [[[self class] allocWithZone:zone] initWithX:_x y:_y];
 }

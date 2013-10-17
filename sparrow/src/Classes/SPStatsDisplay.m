@@ -37,7 +37,7 @@
         _framesPerSecond = 0;
         _numDrawCalls = 0;
 
-        self.blendMode = SP_BLEND_MODE_NONE;
+        self.blendMode = SPBlendModeNone;
         
         [self addEventListener:@selector(onAddedToStage:) atObject:self
                        forType:SPEventTypeAddedToStage];
@@ -77,7 +77,7 @@
     if (!_textField)
     {
         _textField = [[SPTextField alloc] initWithWidth:48 height:17 text:@""
-            fontName:SP_BITMAP_FONT_MINI fontSize:SP_NATIVE_FONT_SIZE color:SP_WHITE];
+            fontName:SPBitmapFontMiniName fontSize:SPNativeFontSize color:SPColorWhite];
         _textField.hAlign = SPHAlignLeft;
         _textField.vAlign = SPVAlignTop;
         _textField.x = 2;

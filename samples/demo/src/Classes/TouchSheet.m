@@ -12,7 +12,7 @@
 
 @interface TouchSheet ()
 
-- (void)onTouchEvent:(SPTouchEvent*)event;
+- (void)onTouchEvent:(SPTouchEvent *)event;
 
 @end
 
@@ -23,7 +23,7 @@
     SPQuad *_quad;
 }
 
-- (instancetype)initWithQuad:(SPQuad*)quad
+- (instancetype)initWithQuad:(SPQuad *)quad
 {
     if ((self = [super init]))
     {
@@ -44,7 +44,7 @@
     return [self initWithQuad:quad];
 }
 
-- (void)onTouchEvent:(SPTouchEvent*)event
+- (void)onTouchEvent:(SPTouchEvent *)event
 {
     NSArray *touches = [[event touchesWithTarget:self andPhase:SPTouchPhaseMoved] allObjects];
     

@@ -145,18 +145,18 @@ typedef void (^SPTextureLoadingBlock)(SPTexture *texture, NSError *outError);
 
 /// Initializes a texture with a region (in points) of another texture. The new texture will 
 /// reference the base texture; no data is duplicated.
-- (instancetype)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture;
+- (instancetype)initWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture;
 
 /// Initializes a texture with a region (in points) of another texture, as well as a frame rectangle
 /// that makes up for trimmed parts (see class description). The new texture will reference the base
 /// texture; no data is duplicated.
-- (instancetype)initWithRegion:(SPRectangle*)region frame:(SPRectangle *)frame ofTexture:(SPTexture*)texture;
+- (instancetype)initWithRegion:(SPRectangle *)region frame:(SPRectangle *)frame ofTexture:(SPTexture *)texture;
 
 /// Factory method.
-+ (instancetype)textureWithContentsOfFile:(NSString*)path;
++ (instancetype)textureWithContentsOfFile:(NSString *)path;
 
 /// Factory method.
-+ (instancetype)textureWithContentsOfFile:(NSString*)path generateMipmaps:(BOOL)mipmaps;
++ (instancetype)textureWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps;
 
 /// Factory method.
 + (instancetype)textureWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture;

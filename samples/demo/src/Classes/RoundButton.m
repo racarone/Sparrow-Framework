@@ -11,7 +11,7 @@
 
 @implementation RoundButton
 
-- (SPDisplayObject*)hitTestPoint:(SPPoint*)localPoint
+- (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
 {
     // when the user touches the screen, this method is used to find out if it hit an object.
     // by default, this method uses the bounding box. 

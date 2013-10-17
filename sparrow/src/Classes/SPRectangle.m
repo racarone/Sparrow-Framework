@@ -43,12 +43,12 @@
     return x >= _x && y >= _y && x <= _x + _width && y <= _y + _height;
 }
 
-- (BOOL)containsPoint:(SPPoint*)point
+- (BOOL)containsPoint:(SPPoint *)point
 {
     return [self containsX:point.x y:point.y];
 }
 
-- (BOOL)containsRectangle:(SPRectangle*)rectangle
+- (BOOL)containsRectangle:(SPRectangle *)rectangle
 {
     if (!rectangle) return NO;
     
@@ -61,7 +61,7 @@
            rY >= _y && rY + rHeight <= _y + _height;
 }
 
-- (BOOL)intersectsRectangle:(SPRectangle*)rectangle
+- (BOOL)intersectsRectangle:(SPRectangle *)rectangle
 {
     if (!rectangle) return  NO;
     
@@ -76,7 +76,7 @@
     return !outside;
 }
 
-- (SPRectangle*)intersectionWithRectangle:(SPRectangle*)rectangle
+- (SPRectangle *)intersectionWithRectangle:(SPRectangle *)rectangle
 {
     if (!rectangle) return nil;
     
@@ -91,7 +91,7 @@
         return [SPRectangle rectangleWithX:left y:top width:right-left height:bottom-top];
 }
 
-- (SPRectangle*)uniteWithRectangle:(SPRectangle*)rectangle
+- (SPRectangle *)uniteWithRectangle:(SPRectangle *)rectangle
 {
     if (!rectangle) return [[self copy] autorelease];
     
@@ -155,13 +155,13 @@
     else if (!other) return NO;
     else 
     {
-        SPRectangle *rect = (SPRectangle*)other;
+        SPRectangle *rect = (SPRectangle *)other;
         return SP_IS_FLOAT_EQUAL(_x, rect->_x) && SP_IS_FLOAT_EQUAL(_y, rect->_y) &&
                SP_IS_FLOAT_EQUAL(_width, rect->_width) && SP_IS_FLOAT_EQUAL(_height, rect->_height);    
     }
 }
 
-- (NSString*)description
+- (NSString *)description
 {
     return [NSString stringWithFormat:@"[SPRectangle: x=%f, y=%f, width=%f, height=%f]",
             _x, _y, _width, _height];
@@ -174,7 +174,7 @@
 
 #pragma mark NSCopying
 
-- (instancetype)copyWithZone:(NSZone*)zone
+- (instancetype)copyWithZone:(NSZone *)zone
 {
     return [[[self class] allocWithZone:zone] initWithX:_x y:_y width:_width height:_height];
 }

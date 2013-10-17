@@ -3,11 +3,24 @@
 //  Sparrow
 //
 //  Created by Daniel Sperl on 29.03.13.
+//  Copyright 2011 Gamua. All rights reserved.
 //
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the Simplified BSD License.
 //
 
 #import "SPBlendMode.h"
-#import <GLKit/GLKit.h>
+#import "SPOpenGL.h"
+
+// --- public constants ----------------------------------------------------------------------------
+
+const uint SPBlendModeAuto      = 0xffffffff;
+const uint SPBlendModeNone      = 0x00001010;
+const uint SPBlendModeNormal    = 0x00004515;
+const uint SPBlendModeAdd       = 0x00004611;
+const uint SPBlendModeMultiply  = 0x00008585;
+const uint SPBlendModeScreen    = 0x00004113;
+const uint SPBlendModeErase     = 0x00000505;
 
 // --- C functions ---------------------------------------------------------------------------------
 
@@ -46,14 +59,14 @@ static NSString *getNameOfMode(uint mode)
 {
     switch (mode)
     {
-        case SP_BLEND_MODE_AUTO:     return @"auto";     break;
-        case SP_BLEND_MODE_NONE:     return @"none";     break;
-        case SP_BLEND_MODE_NORMAL:   return @"normal";   break;
-        case SP_BLEND_MODE_ADD:      return @"add";      break;
-        case SP_BLEND_MODE_MULTIPLY: return @"multiply"; break;
-        case SP_BLEND_MODE_SCREEN:   return @"screen";   break;
-        case SP_BLEND_MODE_ERASE:    return @"erase";    break;
-        default:                     return nil;         break;
+        case SPBlendModeAuto:       return @"auto";     break;
+        case SPBlendModeNone:       return @"none";     break;
+        case SPBlendModeNormal:     return @"normal";   break;
+        case SPBlendModeAdd:        return @"add";      break;
+        case SPBlendModeMultiply:   return @"multiply"; break;
+        case SPBlendModeScreen:     return @"screen";   break;
+        case SPBlendModeErase:      return @"erase";    break;
+        default:                    return nil;         break;
     }
 }
 
@@ -102,10 +115,14 @@ static NSString *getNameOfMode(uint mode)
 + (void)applyBlendFactorsForBlendMode:(uint)blendMode premultipliedAlpha:(BOOL)pma
 {
     uint srcFactor, dstFactor;
+
+    if (blendMode == SPBlendModeNone)
+        return glDisable(GL_BLEND);
     
     [self decodeBlendMode:blendMode premultipliedAlpha:pma intoSourceFactor:&srcFactor
                destFactor:&dstFactor];
-    
+
+    glEnable(GL_BLEND);
     glBlendFunc(srcFactor, dstFactor);
 }
 

@@ -36,7 +36,7 @@
     _completedCount = 0;
 }
 
-- (void)onMovieCompleted:(SPEvent*)event
+- (void)onMovieCompleted:(SPEvent *)event
 {
     _completedCount++;
 }

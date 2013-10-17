@@ -23,7 +23,7 @@
 
 @interface SPTextureAtlas()
 
-- (void)parseAtlasXml:(NSString*)path;
+- (void)parseAtlasXml:(NSString *)path;
 
 @end
 

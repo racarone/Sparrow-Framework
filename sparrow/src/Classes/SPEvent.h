@@ -49,16 +49,16 @@ SP_EXTERN NSString *const SPEventTypeFlatten;
 /// ------------------
 
 /// Initializes an event object that can be passed to listeners. _Designated Initializer_.
-- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles;
+- (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles;
 
 /// Initializes a non-bubbling event.
-- (instancetype)initWithType:(NSString*)type;
+- (instancetype)initWithType:(NSString *)type;
 
 /// Factory method.
-+ (instancetype)eventWithType:(NSString*)type bubbles:(BOOL)bubbles;
++ (instancetype)eventWithType:(NSString *)type bubbles:(BOOL)bubbles;
 
 /// Factory method.
-+ (instancetype)eventWithType:(NSString*)type;
++ (instancetype)eventWithType:(NSString *)type;
 
 /// -------------
 /// @name Methods

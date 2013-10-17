@@ -11,14 +11,14 @@
 
 #import "SPEnterFrameEvent.h"
 
-NSString *const SPEventTypeEnterFrame = @"enterFrame";
+NSString *const SPEventTypeEnterFrame = @"SPEventTypeEnterFrame";
 
 @implementation SPEnterFrameEvent
 {
     double _passedTime;
 }
 
-- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles passedTime:(double)seconds 
+- (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles passedTime:(double)seconds 
 {
     if ((self = [super initWithType:type bubbles:bubbles]))
     {
@@ -27,17 +27,17 @@ NSString *const SPEventTypeEnterFrame = @"enterFrame";
     return self;    
 }
 
-- (instancetype)initWithType:(NSString*)type passedTime:(double)seconds
+- (instancetype)initWithType:(NSString *)type passedTime:(double)seconds
 {
     return [self initWithType:type bubbles:NO passedTime:seconds];
 }
 
-- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles
+- (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles
 {
     return [self initWithType:type bubbles:bubbles passedTime:0.0f];
 }
 
-+ (instancetype)eventWithType:(NSString*)type passedTime:(double)seconds
++ (instancetype)eventWithType:(NSString *)type passedTime:(double)seconds
 {
     return [[[self alloc] initWithType:type passedTime:seconds] autorelease];
 }

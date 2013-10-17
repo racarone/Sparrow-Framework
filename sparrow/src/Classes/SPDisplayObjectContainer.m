@@ -158,7 +158,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
     else [NSException raise:SPExceptionIndexOutOfBounds format:@"Invalid child index"];        
 }
 
-- (void)swapChild:(SPDisplayObject*)child1 withChild:(SPDisplayObject*)child2
+- (void)swapChild:(SPDisplayObject *)child1 withChild:(SPDisplayObject *)child2
 {
     int index1 = [self childIndex:child1];
     int index2 = [self childIndex:child2];
@@ -193,7 +193,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
     return (int)[_children count];
 }
 
-- (SPRectangle*)boundsInSpace:(SPDisplayObject*)targetSpace
+- (SPRectangle *)boundsInSpace:(SPDisplayObject *)targetSpace
 {    
     int numChildren = (int)[_children count];
 
@@ -223,7 +223,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
     }
 }
 
-- (SPDisplayObject*)hitTestPoint:(SPPoint*)localPoint
+- (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
 {
     if (!self.visible || !self.touchable)
         return nil;
@@ -294,8 +294,8 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
 
 @implementation SPDisplayObjectContainer (Internal)
 
-- (void)appendDescendantEventListenersOfObject:(SPDisplayObject*)object withEventType:(NSString*)type
-                                       toArray:(NSMutableArray*)listeners
+- (void)appendDescendantEventListenersOfObject:(SPDisplayObject *)object withEventType:(NSString *)type
+                                       toArray:(NSMutableArray *)listeners
 {
     getDescendantEventListeners(object, type, listeners);
 }

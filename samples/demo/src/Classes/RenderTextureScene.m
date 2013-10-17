@@ -41,7 +41,7 @@
     _brush = [[SPImage alloc] initWithContentsOfFile:@"brush.png"];
     _brush.pivotX = (int)(_brush.width / 2);
     _brush.pivotY = (int)(_brush.height / 2);
-    _brush.blendMode = SP_BLEND_MODE_NORMAL;
+    _brush.blendMode = SPBlendModeNormal;
     
     // the render texture is a dyanmic texture. We will draw the egg on that texture on
     // every touch event.
@@ -73,14 +73,14 @@
 
 - (void)onButtonTriggered:(SPEvent *)event
 {
-    if (_brush.blendMode == SP_BLEND_MODE_NORMAL)
+    if (_brush.blendMode == SPBlendModeNormal)
     {
-        _brush.blendMode = SP_BLEND_MODE_ERASE;
+        _brush.blendMode = SPBlendModeErase;
         _button.text = @"Mode: Erase";
     }
     else
     {
-        _brush.blendMode = SP_BLEND_MODE_NORMAL;
+        _brush.blendMode = SPBlendModeNormal;
         _button.text = @"Mode: Draw";
     }
 }

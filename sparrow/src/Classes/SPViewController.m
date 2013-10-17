@@ -284,7 +284,7 @@
     [self processTouchEvent:event];
 }
 
-- (void)processTouchEvent:(UIEvent*)event
+- (void)processTouchEvent:(UIEvent *)event
 {
     if (!self.paused && _lastTouchTimestamp != event.timestamp)
     {
