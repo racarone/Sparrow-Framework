@@ -39,12 +39,20 @@
 
 /// Initializes a delayed invocation using both a target and a block. The instance will act as a
 /// proxy object, forwarding method calls to the target after a certain time has passed; the block
-/// will be invoked at the same time. _Designated Initializer_.
+/// will be invoked asynchronously at the same time with the specified dispatch queue. _Designated Initializer_.
+- (instancetype)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block queue:(dispatch_queue_t)queue;
+
+/// Initializes a delayed invocation using both a target and a block. The instance will act as a
+/// proxy object, forwarding method calls to the target after a certain time has passed; the block
+/// will be invoked at the same time.
 - (instancetype)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block;
 
 /// Initializes a delayed invocation by acting as a proxy object forwarding method calls to the
 /// target after a certain time has passed.
 - (instancetype)initWithTarget:(id)target delay:(double)time;
+
+/// Initializes the delayed invocation of a block and asynchronous queue.
+- (instancetype)initWithDelay:(double)time block:(SPCallbackBlock)block queue:(dispatch_queue_t)queue;
 
 /// Initializes the delayed invocation of a block.
 - (instancetype)initWithDelay:(double)time block:(SPCallbackBlock)block;
@@ -54,6 +62,9 @@
 
 /// Factory method.
 + (instancetype)invocationWithDelay:(double)time block:(SPCallbackBlock)block;
+
+/// Factory method.
++ (instancetype)invocationWithDelay:(double)time block:(SPCallbackBlock)block queue:(dispatch_queue_t)queue;
 
 /// ----------------
 /// @name Properties
