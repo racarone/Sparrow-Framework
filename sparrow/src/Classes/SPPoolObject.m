@@ -76,19 +76,11 @@ SP_INLINE OSQueueHead* getQueueWithClass(Class class)
 #define QUEUE_OFFSET sizeof(Class)
 
 #if SP_POOL_OBJECT_IS_ATOMIC
-<<<<<<< HEAD
-#define DEQUEUE(pool)       OSAtomicDequeue(pool, QUEUE_OFFSET)
-#define ENQUEUE(pool, obj)  OSAtomicEnqueue(pool, obj, QUEUE_OFFSET)
-#else
-#define DEQUEUE(pool)       dequeue(pool)
-#define ENQUEUE(pool, obj)  enqueue(pool, obj)
-=======
     #define DEQUEUE(pool)       OSAtomicDequeue(pool, QUEUE_OFFSET)
     #define ENQUEUE(pool, obj)  OSAtomicEnqueue(pool, obj, QUEUE_OFFSET)
 #else
     #define DEQUEUE(pool)       dequeue(pool)
     #define ENQUEUE(pool, obj)  enqueue(pool, obj)
->>>>>>> cc7fac5b3c0b4c8a63c32b40c4a745edf35c5760
 #endif
 
 void enqueue(OSQueueHead *list, void *new)
