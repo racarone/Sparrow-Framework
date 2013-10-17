@@ -24,6 +24,8 @@
 #import "SPNSExtensions.h"
 #import "SPQuadBatch.h"
 
+NSString *const SPBitmapFontMiniName = @"mini";
+
 #define CHAR_SPACE           32
 #define CHAR_TAB              9
 #define CHAR_NEWLINE         10
@@ -82,7 +84,7 @@ SP_IMPLEMENT_MEMORY_POOL();
         }
         
         _name = @"unknown";
-        _lineHeight = _size = _baseline = SP_DEFAULT_FONT_SIZE;
+        _lineHeight = _size = _baseline = SPDefaultFontSize;
         _chars = [[NSMutableDictionary alloc] init];
         _fontTexture = texture ? [texture retain] : [self textureReferencedByXmlData:data];
         _helperImage = [[SPImage alloc] initWithTexture:_fontTexture];

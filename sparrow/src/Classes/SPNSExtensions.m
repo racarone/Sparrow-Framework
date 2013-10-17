@@ -420,10 +420,10 @@ static char encodingTable[64] = {
     [super dealloc];
 }
 
-- (void)parser:(NSXMLParser*)parser didStartElement:(NSString*)elementName
-                                       namespaceURI:(NSString*)namespaceURI
-                                      qualifiedName:(NSString*)qName
-                                         attributes:(NSDictionary*)attributeDict
+- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName
+                                       namespaceURI:(NSString *)namespaceURI
+                                      qualifiedName:(NSString *)qName
+                                         attributes:(NSDictionary *)attributeDict
 {
     _elementHandler(elementName, attributeDict);
 }

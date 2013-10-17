@@ -83,7 +83,7 @@ typedef void (^SPEventBlock)(id event);
 - (void)removeEventListenerForType:(NSString *)eventType block:(SPEventBlock)block;
 
 /// Dispatches an event to all objects that have registered for events of the same type.
-- (void)dispatchEvent:(SPEvent*)event;
+- (void)dispatchEvent:(SPEvent *)event;
 
 /// Creates a new (non-bubbling) event object and dispatches it.
 - (void)dispatchEventWithType:(NSString *)type;

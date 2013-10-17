@@ -14,6 +14,6 @@
 
 @interface SPDisplayObject (Internal)
 
-- (void)setParent:(SPDisplayObjectContainer*)parent;
+- (void)setParent:(SPDisplayObjectContainer *)parent;
 
 @end

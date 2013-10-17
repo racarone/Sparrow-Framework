@@ -18,7 +18,7 @@
 @class SPSprite;
 @class SPQuadBatch;
 
-#define SP_BITMAP_FONT_MINI @"mini"
+SP_EXTERN NSString *const SPBitmapFontMiniName;
 
 /** ------------------------------------------------------------------------------------------------
 

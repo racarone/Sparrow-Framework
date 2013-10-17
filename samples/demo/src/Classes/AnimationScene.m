@@ -115,7 +115,7 @@
     _transitionLabel.text = transition;
     _transitionLabel.alpha = 1.0f;
     SPTween *hideTween = [SPTween tweenWithTarget:_transitionLabel time:2.0f
-                                       transition:SP_TRANSITION_EASE_IN];
+                                       transition:SPTransitionEaseIn];
     [hideTween animateProperty:@"alpha" targetValue:0.0f];
     [Sparrow.juggler addObject:hideTween];
 }

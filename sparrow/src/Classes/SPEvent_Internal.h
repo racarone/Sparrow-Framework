@@ -16,8 +16,8 @@
 
 - (BOOL)stopsImmediatePropagation;
 - (BOOL)stopsPropagation;
-- (void)setTarget:(SPEventDispatcher*)target;
-- (void)setCurrentTarget:(SPEventDispatcher*)currentTarget;
+- (void)setTarget:(SPEventDispatcher *)target;
+- (void)setCurrentTarget:(SPEventDispatcher *)currentTarget;
 
 @end
 

@@ -25,7 +25,7 @@
 
 @synthesize texture = _texture;
 
-- (instancetype)initWithTexture:(SPTexture*)texture
+- (instancetype)initWithTexture:(SPTexture *)texture
 {
     if (!texture) [NSException raise:SPExceptionInvalidOperation format:@"texture cannot be nil!"];
     
@@ -34,7 +34,7 @@
     float height = frame ? frame.height : texture.height;
     BOOL pma = texture.premultipliedAlpha;
     
-    if ((self = [super initWithWidth:width height:height color:SP_WHITE premultipliedAlpha:pma]))
+    if ((self = [super initWithWidth:width height:height color:SPColorWhite premultipliedAlpha:pma]))
     {
         _vertexData.vertices[1].texCoords.x = 1.0f;
         _vertexData.vertices[2].texCoords.y = 1.0f;
@@ -53,7 +53,7 @@
     return [self initWithTexture:[SPTexture textureWithContentsOfFile:path generateMipmaps:mipmaps]];
 }
 
-- (instancetype)initWithContentsOfFile:(NSString*)path
+- (instancetype)initWithContentsOfFile:(NSString *)path
 {
     return [self initWithContentsOfFile:path generateMipmaps:NO];
 }
@@ -70,7 +70,7 @@
     [super dealloc];
 }
 
-- (void)setTexCoords:(SPPoint*)coords ofVertex:(int)vertexID
+- (void)setTexCoords:(SPPoint *)coords ofVertex:(int)vertexID
 {
     [_vertexData setTexCoords:coords atIndex:vertexID];
     [self vertexDataDidChange];
@@ -82,7 +82,7 @@
     [self vertexDataDidChange];
 }
 
-- (SPPoint*)texCoordsOfVertex:(int)vertexID
+- (SPPoint *)texCoordsOfVertex:(int)vertexID
 {
     return [_vertexData texCoordsAtIndex:vertexID];
 }
@@ -133,12 +133,12 @@
     }
 }
 
-+ (instancetype)imageWithTexture:(SPTexture*)texture
++ (instancetype)imageWithTexture:(SPTexture *)texture
 {
     return [[[self alloc] initWithTexture:texture] autorelease];
 }
 
-+ (instancetype)imageWithContentsOfFile:(NSString*)path
++ (instancetype)imageWithContentsOfFile:(NSString *)path
 {
     return [[[self alloc] initWithContentsOfFile:path] autorelease];
 }

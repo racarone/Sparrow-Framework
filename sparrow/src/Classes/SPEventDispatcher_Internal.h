@@ -14,7 +14,7 @@
 
 @interface SPEventDispatcher (Internal)
 
-- (void)addEventListener:(SPEventListener*)listener forType:(NSString*)eventType;
-- (void)removeEventListenersForType:(NSString*)eventType withTarget:(id)object andSelector:(SEL)selector orBlock:(SPEventBlock)block;
+- (void)addEventListener:(SPEventListener *)listener forType:(NSString *)eventType;
+- (void)removeEventListenersForType:(NSString *)eventType withTarget:(id)object andSelector:(SEL)selector orBlock:(SPEventBlock)block;
 
 @end

@@ -96,7 +96,7 @@
 - (void)removeAllChildren;
 
 /// Swaps the indexes of two children.
-- (void)swapChild:(SPDisplayObject*)child1 withChild:(SPDisplayObject*)child2;
+- (void)swapChild:(SPDisplayObject *)child1 withChild:(SPDisplayObject *)child2;
 
 /// Swaps the indexes of two children.
 - (void)swapChildAtIndex:(int)index1 withChildAtIndex:(int)index2;

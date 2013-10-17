@@ -18,8 +18,6 @@
 #import "SPStage_Internal.h"
 #import "SPTouchEvent.h"
 
-float square(float value) { return value * value; }
-
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPDisplayObject
@@ -65,7 +63,7 @@ float square(float value) { return value * value; }
         _touchable = YES;
         _transformationMatrix = [[SPMatrix alloc] init];
         _orientationChanged = NO;
-        _blendMode = SP_BLEND_MODE_AUTO;
+        _blendMode = SPBlendModeAuto;
     }
     return self;
 }
@@ -77,7 +75,7 @@ float square(float value) { return value * value; }
     [super dealloc];
 }
 
-- (void)render:(SPRenderSupport*)support
+- (void)render:(SPRenderSupport *)support
 {
     // override in subclass
 }
@@ -176,7 +174,7 @@ float square(float value) { return value * value; }
     return selfMatrix;
 }
 
-- (SPRectangle*)boundsInSpace:(SPDisplayObject*)targetSpace
+- (SPRectangle *)boundsInSpace:(SPDisplayObject *)targetSpace
 {
     [NSException raise:SPExceptionAbstractMethod 
                 format:@"Method 'boundsInSpace:' needs to be implemented in subclasses"];
@@ -213,13 +211,13 @@ float square(float value) { return value * value; }
 
 #pragma mark - Events
 
-- (void)dispatchEvent:(SPEvent*)event
+- (void)dispatchEvent:(SPEvent *)event
 {
     // on one given moment, there is only one set of touches -- thus, 
     // we process only one touch event with a certain timestamp
     if ([event isKindOfClass:[SPTouchEvent class]])
     {
-        SPTouchEvent *touchEvent = (SPTouchEvent*)event;
+        SPTouchEvent *touchEvent = (SPTouchEvent *)event;
         if (touchEvent.timestamp == _lastTouchTimestamp) return;        
         else _lastTouchTimestamp = touchEvent.timestamp;
     }
@@ -256,7 +254,7 @@ float square(float value) { return value * value; }
     [[[Sparrow currentController] stage] removeEnterFrameListener:self];
 }
 
-- (void)addEventListener:(id)listener forType:(NSString*)eventType
+- (void)addEventListener:(id)listener forType:(NSString *)eventType
 {
     if ([eventType isEqualToString:SPEventTypeEnterFrame] && ![self hasEventListenerForType:SPEventTypeEnterFrame])
     {
@@ -268,7 +266,7 @@ float square(float value) { return value * value; }
     [super addEventListener:listener forType:eventType];
 }
 
-- (void)removeEventListenersForType:(NSString*)eventType withTarget:(id)object andSelector:(SEL)selector orBlock:(SPEventBlock)block
+- (void)removeEventListenersForType:(NSString *)eventType withTarget:(id)object andSelector:(SEL)selector orBlock:(SPEventBlock)block
 {
     [super removeEventListenersForType:eventType withTarget:object andSelector:selector orBlock:block];
 
@@ -418,14 +416,14 @@ float square(float value) { return value * value; }
     return nil;
 }
 
-- (SPStage*)stage
+- (SPStage *)stage
 {
     SPDisplayObject *base = self.base;
-    if ([base isKindOfClass:[SPStage class]]) return (SPStage*) base;
+    if ([base isKindOfClass:[SPStage class]]) return (SPStage *) base;
     else return nil;
 }
 
-- (SPMatrix*)transformationMatrix
+- (SPMatrix *)transformationMatrix
 {
     if (_orientationChanged)
     {
@@ -488,7 +486,7 @@ float square(float value) { return value * value; }
     _x = matrix.tx;
     _y = matrix.ty;
     
-    _scaleX = sqrtf(square(matrix.a) + square(matrix.b));
+    _scaleX = sqrtf(SP_SQUARE(matrix.a) + SP_SQUARE(matrix.b));
     _skewY  = acosf(matrix.a / _scaleX);
     
     if (!SP_IS_FLOAT_EQUAL(matrix.b, _scaleX * sinf(_skewY)))
@@ -497,7 +495,7 @@ float square(float value) { return value * value; }
         _skewY = acosf(matrix.a / _scaleX);
     }
     
-    _scaleY = sqrtf(square(matrix.c) + square(matrix.d));
+    _scaleY = sqrtf(SP_SQUARE(matrix.c) + SP_SQUARE(matrix.d));
     _skewX  = acosf(matrix.d / _scaleY);
     
     if (!SP_IS_FLOAT_EQUAL(matrix.c, -_scaleY * sinf(_skewX)))

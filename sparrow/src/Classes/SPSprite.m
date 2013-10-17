@@ -64,7 +64,7 @@
         for (SPQuadBatch *quadBatch in _flattenedContents)
         {
             uint blendMode = quadBatch.blendMode;
-            if (blendMode == SP_BLEND_MODE_AUTO) blendMode = supportBlendMode;
+            if (blendMode == SPBlendModeAuto) blendMode = supportBlendMode;
             
             [quadBatch renderWithMvpMatrix:mvpMatrix alpha:alpha blendMode:blendMode];
         }

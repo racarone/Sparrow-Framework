@@ -37,7 +37,7 @@
     SPEventDispatcher *_broadcastTarget;
 }
 
-- (void)addQuadToSprite:(SPSprite*)sprite;
+- (void)addQuadToSprite:(SPSprite *)sprite;
 
 @end
 
@@ -263,7 +263,7 @@
     STAssertThrows([sprite addChild:sprite], @"container allowed adding self as child");
 }
 
-- (void)addQuadToSprite:(SPSprite*)sprite
+- (void)addQuadToSprite:(SPSprite *)sprite
 {
     SPQuad *quad = [[SPQuad alloc] initWithWidth:100 height:100];
     quad.alpha = 0.2f;
@@ -316,10 +316,10 @@
     [quad removeEventListenersAtObject:self forType:SPEventTypeRemovedFromStage];
 }
 
-- (void)onAdded:(SPEvent*)event { _added++; }
-- (void)onRemoved:(SPEvent*)event { _removed++; }
-- (void)onAddedToStage:(SPEvent*)event { _addedToStage++; }
-- (void)onRemovedFromStage:(SPEvent*)event { _removedFromStage++; }
+- (void)onAdded:(SPEvent *)event { _added++; }
+- (void)onRemoved:(SPEvent *)event { _removed++; }
+- (void)onAddedToStage:(SPEvent *)event { _addedToStage++; }
+- (void)onRemovedFromStage:(SPEvent *)event { _removedFromStage++; }
 
 - (void)testRemovedFromStage
 {

@@ -277,7 +277,7 @@
 {
     if (!_numQuads) return;
     if (_syncRequired) [self syncBuffers];
-    if (blendMode == SP_BLEND_MODE_AUTO)
+    if (blendMode == SPBlendModeAuto)
         [NSException raise:SPExceptionInvalidOperation
                     format:@"cannot render object with blend mode AUTO"];
     
@@ -337,7 +337,7 @@
     if (!quadBatches) quadBatches = [NSMutableArray array];
     
     [self compileObject:object intoArray:quadBatches atPosition:-1
-             withMatrix:[SPMatrix matrixWithIdentity] alpha:1.0f blendMode:SP_BLEND_MODE_AUTO];
+             withMatrix:[SPMatrix matrixWithIdentity] alpha:1.0f blendMode:SPBlendModeAuto];
 
     return quadBatches;
 }
@@ -373,7 +373,7 @@
             if ([child hasVisibleArea])
             {
                 uint childBlendMode = child.blendMode;
-                if (childBlendMode == SP_BLEND_MODE_AUTO) childBlendMode = blendMode;
+                if (childBlendMode == SPBlendModeAuto) childBlendMode = blendMode;
                 
                 [childMatrix copyFromMatrix:transformationMatrix];
                 [childMatrix prependMatrix:child.transformationMatrix];

@@ -37,22 +37,22 @@ typedef void (^SPCallbackBlock)();
 #define SP_FLOAT_EPSILON            0.0001f
 #define SP_MAX_DISPLAY_TREE_DEPTH   32
 
-#define SP_WHITE     0xffffff
-#define SP_SILVER    0xc0c0c0
-#define SP_GRAY      0x808080
-#define SP_BLACK     0x000000
-#define SP_RED       0xff0000
-#define SP_MAROON    0x800000
-#define SP_YELLOW    0xffff00
-#define SP_OLIVE     0x808000
-#define SP_LIME      0x00ff00
-#define SP_GREEN     0x008000
-#define SP_AQUA      0x00ffff
-#define SP_TEAL      0x008080
-#define SP_BLUE      0x0000ff
-#define SP_NAVY      0x000080
-#define SP_FUCHSIA   0xff00ff
-#define SP_PURPLE    0x800080
+SP_EXTERN const uint SPColorWhite;
+SP_EXTERN const uint SPColorSilver;
+SP_EXTERN const uint SPColorGray;
+SP_EXTERN const uint SPColorBlack;
+SP_EXTERN const uint SPColorRed;
+SP_EXTERN const uint SPColorMaroon;
+SP_EXTERN const uint SPColorYellow;
+SP_EXTERN const uint SPColorOlive;
+SP_EXTERN const uint SPColorLime;
+SP_EXTERN const uint SPColorGreen;
+SP_EXTERN const uint SPColorAqua;
+SP_EXTERN const uint SPColorTeal;
+SP_EXTERN const uint SPColorBlue;
+SP_EXTERN const uint SPColorNavy;
+SP_EXTERN const uint SPColorFuchsia;
+SP_EXTERN const uint SPColorPurple;
 
 enum {SPNotFound = -1};
 
@@ -156,6 +156,37 @@ SP_EXTERN NSString *const SPExceptionOperationFailed;
 // deprecated
 
 #define SP_NOT_FOUND                                SPNotFound
+
+#define SP_BLEND_MODE_AUTO                          SPBlendModeAuto
+#define SP_BLEND_MODE_NONE                          SPBlendModeNone
+#define SP_BLEND_MODE_NORMAL                        SPBlendModeNormal
+#define SP_BLEND_MODE_ADD                           SPBlendModeAdd
+#define SP_BLEND_MODE_MULTIPLY                      SPBlendModeMultiply
+#define SP_BLEND_MODE_SCREEN                        SPBlendModeScreen
+#define SP_BLEND_MODE_ERASE                         SPBlendModeErase
+
+#define SP_BITMAP_FONT_MINI                         SPBitmapFontMiniName
+#define SP_DEFAULT_FONT_NAME                        SPDefaultFontName
+#define SP_DEFAULT_FONT_SIZE                        SPDefaultFontSize
+#define SP_DEFAULT_FONT_COLOR                       SPDefaultFontColor
+#define SP_NATIVE_FONT_SIZE                         SPNativeFontSize
+
+#define SP_WHITE                                    SPColorWhite
+#define SP_SILVER                                   SPColorSilver
+#define SP_GRAY                                     SPColorGray
+#define SP_BLACK                                    SPColorBlack
+#define SP_RED                                      SPColorRed
+#define SP_MAROON                                   SPColorMaroon
+#define SP_YELLOW                                   SPColorYellow
+#define SP_OLIVE                                    SPColorOlive
+#define SP_LIME                                     SPColorLime
+#define SP_GREEN                                    SPColorGreen
+#define SP_AQUA                                     SPColorAqua
+#define SP_TEAL                                     SPColorTeal
+#define SP_BLUE                                     SPColorBlue
+#define SP_NAVY                                     SPColorNavy
+#define SP_FUCHSIA                                  SPColorFuchsia
+#define SP_PURPLE                                   SPColorPurple
 
 #define SP_EVENT_TYPE_ADDED                         SPEventTypeAdded
 #define SP_EVENT_TYPE_ADDED_TO_STAGE                SPEventTypeAddedToStage

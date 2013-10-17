@@ -13,7 +13,7 @@
 @interface SPStage (Internal)
 
 - (void)advanceTime:(double)passedTime;
-- (void)addEnterFrameListener:(SPDisplayObject*)listener;
-- (void)removeEnterFrameListener:(SPDisplayObject*)listener;
+- (void)addEnterFrameListener:(SPDisplayObject *)listener;
+- (void)removeEnterFrameListener:(SPDisplayObject *)listener;
 
 @end

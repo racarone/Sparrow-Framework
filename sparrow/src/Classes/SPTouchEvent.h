@@ -34,7 +34,7 @@ SP_EXTERN NSString *const SPEventTypeTouch;
 	[self addEventListener:@selector(onTouch:) atObject:self forType:SPEventTypeTouch];
 	
 	// the corresponding listener:
-	- (void)onTouch:(SPTouchEvent*)event
+	- (void)onTouch:(SPTouchEvent *)event
 	{
  	    // query all touches that are currently moving on top of 'self'
 	    NSArray *touches = [[event touchesWithTarget:self andPhase:SPTouchPhaseMoved] allObjects];
@@ -63,23 +63,23 @@ SP_EXTERN NSString *const SPEventTypeTouch;
 /// ------------------
 
 /// Creates a touch event with a set of touches. _Designated Initializer_.
-- (instancetype)initWithType:(NSString*)type bubbles:(BOOL)bubbles touches:(NSSet*)touches;
+- (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles touches:(NSSet *)touches;
 
 /// Creates a touch event with a set of touches.
-- (instancetype)initWithType:(NSString*)type touches:(NSSet*)touches;
+- (instancetype)initWithType:(NSString *)type touches:(NSSet *)touches;
 
 /// Factory method.
-+ (instancetype)eventWithType:(NSString*)type touches:(NSSet*)touches;
++ (instancetype)eventWithType:(NSString *)type touches:(NSSet *)touches;
 
 /// -------------
 /// @name Methods
 /// -------------
 
 /// Gets a set of SPTouch objects that originated over a certain target.
-- (NSSet*)touchesWithTarget:(SPDisplayObject*)target;
+- (NSSet *)touchesWithTarget:(SPDisplayObject *)target;
 
 /// Gets a set of SPTouch objects that originated over a certain target and are in a certain phase.
-- (NSSet*)touchesWithTarget:(SPDisplayObject*)target andPhase:(SPTouchPhase)phase;
+- (NSSet *)touchesWithTarget:(SPDisplayObject *)target andPhase:(SPTouchPhase)phase;
 
 /// ----------------
 /// @name Properties

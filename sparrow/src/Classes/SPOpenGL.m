@@ -352,7 +352,7 @@ void sglGetIntegerv(GLenum pname, GLint* params)
             return;
 
         case GL_SCISSOR_BOX:
-            __sglGetIntv(pname, 4, (GLint*)currentState->scissor, params);
+            __sglGetIntv(pname, 4, (GLint *)currentState->scissor, params);
             return;
 
         case GL_TEXTURE_BINDING_2D:
@@ -364,7 +364,7 @@ void sglGetIntegerv(GLenum pname, GLint* params)
             return;
 
         case GL_VIEWPORT:
-            __sglGetIntv(pname, 4, (GLint*)currentState->viewport, params);
+            __sglGetIntv(pname, 4, (GLint *)currentState->viewport, params);
             return;
     }
 

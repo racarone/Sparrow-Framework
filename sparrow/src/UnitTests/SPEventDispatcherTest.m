@@ -140,27 +140,27 @@
     STAssertEquals(1, testCounter, @"event block was called, but shouldn't have been");
 }
 
-- (void)onEvent:(SPEvent*)event
+- (void)onEvent:(SPEvent *)event
 {
     _testCounter++;
 }
 
-- (void)onEvent2:(SPEvent*)event
+- (void)onEvent2:(SPEvent *)event
 {
     _testCounter *= 2;
 }
 
-- (void)onEvent3:(SPEvent*)event
+- (void)onEvent3:(SPEvent *)event
 {
     _testCounter += 3;
 }
 
-- (void)stopEvent:(SPEvent*)event
+- (void)stopEvent:(SPEvent *)event
 {
     [event stopPropagation];
 }
 
-- (void)stopEventImmediately:(SPEvent*)event
+- (void)stopEventImmediately:(SPEvent *)event
 {
     [event stopImmediatePropagation];
 }

@@ -37,19 +37,19 @@
     [listener release];
 }
 
-- (void)addEventListener:(SEL)selector atObject:(id)object forType:(NSString*)eventType
+- (void)addEventListener:(SEL)selector atObject:(id)object forType:(NSString *)eventType
 {
     SPEventListener *listener = [[SPEventListener alloc] initWithTarget:object selector:selector];
     [self addEventListener:listener forType:eventType];
     [listener release];
 }
 
-- (void)removeEventListener:(SEL)selector atObject:(id)object forType:(NSString*)eventType
+- (void)removeEventListener:(SEL)selector atObject:(id)object forType:(NSString *)eventType
 {
     [self removeEventListenersForType:eventType withTarget:object andSelector:selector orBlock:nil];
 }
 
-- (void)removeEventListenersAtObject:(id)object forType:(NSString*)eventType
+- (void)removeEventListenersAtObject:(id)object forType:(NSString *)eventType
 {
     [self removeEventListenersForType:eventType withTarget:object andSelector:nil orBlock:nil];
 }
@@ -59,7 +59,7 @@
     [self removeEventListenersForType:eventType withTarget:nil andSelector:nil orBlock:block];
 }
 
-- (BOOL)hasEventListenerForType:(NSString*)eventType
+- (BOOL)hasEventListenerForType:(NSString *)eventType
 {
     return _eventListeners[eventType] != nil;
 }
@@ -84,7 +84,7 @@
     }
 }
 
-- (void)dispatchEvent:(SPEvent*)event
+- (void)dispatchEvent:(SPEvent *)event
 {
     NSMutableArray *listeners = _eventListeners[event.type];   
     if (!event.bubbles && !listeners) return; // no need to do anything.
@@ -123,7 +123,7 @@
         [self isKindOfClass:[SPDisplayObject class]])
     {
         event.currentTarget = nil; // this is how we can find out later if the event was redispatched
-        SPDisplayObject *target = (SPDisplayObject*)self;
+        SPDisplayObject *target = (SPDisplayObject *)self;
         [target.parent dispatchEvent:event];
     }
     

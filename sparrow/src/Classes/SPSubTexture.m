@@ -24,7 +24,7 @@
 
 @synthesize frame = _frame;
 
-- (instancetype)initWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
+- (instancetype)initWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture
 {
     return [self initWithRegion:region frame:nil ofTexture:texture];
 }
@@ -168,7 +168,7 @@
     return _baseTexture.scale;
 }
 
-+ (instancetype)textureWithRegion:(SPRectangle*)region ofTexture:(SPTexture*)texture
++ (instancetype)textureWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture
 {
     return [[[self alloc] initWithRegion:region ofTexture:texture] autorelease];
 }

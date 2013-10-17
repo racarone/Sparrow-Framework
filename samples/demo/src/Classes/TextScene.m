@@ -83,9 +83,9 @@
     // That's it! If you use this font now, the textField will be rendered with the bitmap font.
     SPTextField *bmpFontTF = [SPTextField textFieldWithWidth:300 height:150 
         text:@"It is very easy to use Bitmap fonts, as well!"];
-    bmpFontTF.fontSize = SP_NATIVE_FONT_SIZE; // use the native bitmap font size, no scaling
+    bmpFontTF.fontSize = SPNativeFontSize; // use the native bitmap font size, no scaling
     bmpFontTF.fontName = bmpFontName;
-    bmpFontTF.color = SP_WHITE; // use white if you want to use the texture as it is
+    bmpFontTF.color = SPColorWhite; // use white if you want to use the texture as it is
     bmpFontTF.hAlign = SPHAlignCenter;
     bmpFontTF.vAlign = SPVAlignCenter;
     bmpFontTF.kerning = YES;

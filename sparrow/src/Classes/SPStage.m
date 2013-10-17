@@ -48,7 +48,7 @@
     return [self initWithWidth:screenSize.width height:screenSize.height];
 }
 
-- (SPDisplayObject*)hitTestPoint:(SPPoint*)localPoint
+- (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
 {
     if (!self.visible || !self.touchable)
         return nil;
@@ -126,19 +126,19 @@
     [enterFrameEvent release];
 }
 
-- (void)addEnterFrameListener:(SPDisplayObject*)listener
+- (void)addEnterFrameListener:(SPDisplayObject *)listener
 {
     [_enterFrameListeners addObject:listener];
 }
 
-- (void)removeEnterFrameListener:(SPDisplayObject*)listener
+- (void)removeEnterFrameListener:(SPDisplayObject *)listener
 {
     NSUInteger index = [_enterFrameListeners indexOfObject:listener];
     if (index != NSNotFound) [_enterFrameListeners removeObjectAtIndex:index];
 }
 
-- (void)appendDescendantEventListenersOfObject:(SPDisplayObject*)object withEventType:(NSString*)type
-                                       toArray:(NSMutableArray*)listeners
+- (void)appendDescendantEventListenersOfObject:(SPDisplayObject *)object withEventType:(NSString *)type
+                                       toArray:(NSMutableArray *)listeners
 {
     if (object == self && [type isEqualToString:SPEventTypeEnterFrame])
         [listeners addObjectsFromArray:_enterFrameListeners];

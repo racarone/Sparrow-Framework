@@ -39,7 +39,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     SPCallbackBlock _onComplete;
 }
 
-- (instancetype)initWithTarget:(id)target time:(double)time transition:(NSString*)transition
+- (instancetype)initWithTarget:(id)target time:(double)time transition:(NSString *)transition
 {
     if ((self = [super init]))
     {
@@ -79,7 +79,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     [super dealloc];
 }
 
-- (void)animateProperty:(NSString*)property targetValue:(float)value
+- (void)animateProperty:(NSString *)property targetValue:(float)value
 {    
     if (!_target) return; // tweening nil just does nothing.
     
@@ -162,7 +162,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
         [self advanceTime:carryOverTime];
 }
 
-- (NSString*)transition
+- (NSString *)transition
 {
     NSString *selectorName = NSStringFromSelector(_transition);
     return [selectorName substringToIndex:selectorName.length - [TRANS_SUFFIX length]];
@@ -179,7 +179,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     _delay = delay;
 }
 
-+ (instancetype)tweenWithTarget:(id)target time:(double)time transition:(NSString*)transition
++ (instancetype)tweenWithTarget:(id)target time:(double)time transition:(NSString *)transition
 {
     return [[[self alloc] initWithTarget:target time:time transition:transition] autorelease];
 }
