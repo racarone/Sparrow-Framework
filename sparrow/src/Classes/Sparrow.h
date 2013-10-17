@@ -18,6 +18,10 @@
 #define SPARROW_VERSION @"2.0.1"
 
 #import "SPNSExtensions.h"
+#import "SPBlurFilter.h"
+#import "SPColorMatrixFilter.h"
+#import "SPDisplacementMapFilter.h"
+#import "SPPerlinNoise.h"
 #import "SPEventDispatcher.h"
 #import "SPDisplayObject.h"
 #import "SPDisplayObjectContainer.h"

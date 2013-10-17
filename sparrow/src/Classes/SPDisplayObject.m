@@ -36,7 +36,8 @@
     BOOL _visible;
     BOOL _touchable;
     BOOL _orientationChanged;
-    
+
+    SPFragmentFilter* _filter;
     SPDisplayObjectContainer *__weak _parent;
     SPMatrix *_transformationMatrix;
     double _lastTouchTimestamp;
@@ -70,6 +71,7 @@
 
 - (void)dealloc
 {
+    [_filter release];
     [_name release];
     [_transformationMatrix release];
     [super dealloc];

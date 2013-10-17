@@ -73,10 +73,21 @@
 /// Changes to the sprite's children will immediately become visible again.
 - (void)unflatten;
 
+/// Returns the bounds of the container's clipRect in the given coordinate space, or
+/// null if the sprite doens't have a clipRect.
+- (SPRectangle *)clipRectInSpace:(SPDisplayObject *)targetSpace;
+
 /// ----------------
 /// @name Properties
 /// ----------------
 
+/// The object's clipping rectangle in its local coordinate system.
+/// Only pixels within that rectangle will be drawn.
+/// @note clip rects are axis aligned with the screen, so they
+/// will not be rotated or skewed if the sprite is.
+@property (nonatomic, copy) SPRectangle* clipRect;
+
+/// Returns YES if this sprite has been flattened.
 @property (nonatomic, readonly) BOOL isFlattened;
 
 @end

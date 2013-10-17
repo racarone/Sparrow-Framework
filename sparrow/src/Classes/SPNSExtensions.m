@@ -13,6 +13,7 @@
 #import "SPMacros.h"
 #import "SPNSExtensions.h"
 #import "SPDisplayObject.h"
+#import "SPPerlinNoise.h"
 
 
 // --- structs and enums ---------------------------------------------------------------------------
@@ -444,6 +445,56 @@ static char encodingTable[64] = {
         [blockDelegate release];
         return success;
     }
+}
+
+@end
+
+#pragma mark - UIImage
+
+@implementation UIImage (SPNSExtensions)
+
++ (CGContextRef)contextSetup:(CGSize)size
+{
+	UIGraphicsBeginImageContext(size);
+	CGContextRef context = UIGraphicsGetCurrentContext();
+	UIGraphicsPushContext(context);
+    return context;
+}
+
++ (UIImage *)finishImageContext
+{
+    UIGraphicsPopContext();
+	UIImage *outputImage = UIGraphicsGetImageFromCurrentImageContext();
+    [outputImage retain];
+	UIGraphicsEndImageContext();
+    return [outputImage autorelease];
+}
+
++ (UIImage *)noiseWithPerlinGenerator:(SPPerlinNoise *)generator size:(CGSize)size
+                           firstColor:(UIColor *)color1 secondColor:(UIColor *)color2
+{
+    CGContextRef ctx = [self contextSetup:size];
+
+    const CGFloat *components1 = CGColorGetComponents([color1 CGColor]);
+    const CGFloat *components2 = CGColorGetComponents([color2 CGColor]);
+
+    typedef float (*PerlinNoiseIMP)(id,SEL,float,float);
+    PerlinNoiseIMP perlinNoiceFunc = (PerlinNoiseIMP)[generator methodForSelector:@selector(perlinNoiseAtX:atY:)];
+
+    CGContextSetRGBFillColor(ctx, components1[0], components1[1], components1[2], 1.0f);
+    CGContextFillRect(ctx, CGRectMake(0.0, 0.0, size.width, size.height));
+    for (CGFloat x = 0.0; x<size.width; x+=1.0)
+    {
+        for (CGFloat y=0.0; y< size.height; y+=1.0)
+        {
+            CGContextSetRGBFillColor(ctx, components2[0], components2[1], components2[2],
+                                     1.0f * ABS(perlinNoiceFunc(generator, @selector(perlinNoiseAtX:atY:), x, y)));
+
+            CGContextFillRect(ctx, CGRectMake(x, y, 1.0, 1.0));
+        }
+    }
+
+    return [self finishImageContext];
 }
 
 @end

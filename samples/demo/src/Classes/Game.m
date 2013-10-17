@@ -17,6 +17,8 @@
 #import "MovieScene.h"
 #import "SoundScene.h"
 #import "RenderTextureScene.h"
+#import "MaskScene.h"
+#import "FilterScene.h"
 
 @implementation Game
 {
@@ -56,7 +58,9 @@
                                     @"Custom hit-test", [CustomHitTestScene class],
                                     @"Movie Clip", [MovieScene class],
                                     @"Sound", [SoundScene class],
+                                    @"Clipping", [MaskScene class],
                                     @"RenderTexture", [RenderTextureScene class],
+                                    @"Filters", [FilterScene class],
                                     @"Benchmark", [BenchmarkScene class]];
         
         SPTexture *buttonTexture = [SPTexture textureWithContentsOfFile:@"button_big.png"];
