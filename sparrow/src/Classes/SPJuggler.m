@@ -27,6 +27,7 @@
     {        
         _objects = [[NSMutableOrderedSet alloc] init];
         _elapsedTime = 0.0;
+        _speed = 1.0;
     }
     return self;
 }
