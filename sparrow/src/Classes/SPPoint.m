@@ -176,8 +176,4 @@
     return [[[self class] allocWithZone:zone] initWithX:_x y:_y];
 }
 
-#pragma mark SPPoolObject
-
-SP_IMPLEMENT_MEMORY_POOL();
-
 @end

@@ -220,8 +220,4 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
                                                      tx:_tx ty:_ty];
 }
 
-#pragma mark SPPoolObject
-
-SP_IMPLEMENT_MEMORY_POOL();
-
 @end

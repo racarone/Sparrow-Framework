@@ -54,8 +54,6 @@ NSString *const SPBitmapFontMiniName = @"mini";
     return self;
 }
 
-SP_IMPLEMENT_MEMORY_POOL();
-
 @end
 
 // --- class implementation ------------------------------------------------------------------------
