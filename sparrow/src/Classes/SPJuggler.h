@@ -80,11 +80,18 @@
 /// Delays the execution of a block by a certain time in seconds.
 - (id)delayInvocationByTime:(double)time block:(SPCallbackBlock)block;
 
+/// Delays the execution of an asynchronous block by a certain time in seconds.
+- (id)delayInvocationByTime:(double)time block:(SPCallbackBlock)block queue:(dispatch_queue_t)queue;
+
 /// ----------------
 /// @name Properties
 /// ----------------
 
 /// The total life time of the juggler.
 @property (nonatomic, readonly) double elapsedTime;
+
+/// The speed factor adjusts how fast a juggler's animatables run.
+/// For example, a speed factor of 2.0 means the juggler runs twice as fast.
+@property (nonatomic, assign) double speed;
 
 @end
