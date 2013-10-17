@@ -28,6 +28,9 @@
 /// Factory method.
 + (instancetype)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height;
 
+/// Factory method.
++ (instancetype)rectangle;
+
 /// -------------
 /// @name Methods
 /// -------------

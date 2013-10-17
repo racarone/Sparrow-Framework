@@ -17,6 +17,7 @@
 #import "MovieScene.h"
 #import "SoundScene.h"
 #import "RenderTextureScene.h"
+#import "MaskScene.h"
 
 @implementation Game
 {
@@ -56,6 +57,7 @@
                                     @"Custom hit-test", [CustomHitTestScene class],
                                     @"Movie Clip", [MovieScene class],
                                     @"Sound", [SoundScene class],
+                                    @"Clipping", [MaskScene class],
                                     @"RenderTexture", [RenderTextureScene class],
                                     @"Benchmark", [BenchmarkScene class]];
         

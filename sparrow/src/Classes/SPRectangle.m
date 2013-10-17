@@ -172,6 +172,11 @@
     return [[[self allocWithZone:nil] initWithX:x y:y width:width height:height] autorelease];
 }
 
++ (instancetype)rectangle
+{
+    return [[[self allocWithZone:nil] init] autorelease];
+}
+
 #pragma mark NSCopying
 
 - (instancetype)copyWithZone:(NSZone *)zone

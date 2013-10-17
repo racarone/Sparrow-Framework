@@ -10,12 +10,12 @@
 //
 
 #import <Foundation/Foundation.h>
-
 #import "SPMatrix.h"
 
-@class SPTexture;
 @class SPDisplayObject;
 @class SPQuad;
+@class SPRectangle;
+@class SPTexture;
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -78,6 +78,25 @@
 
 /// Restores the previous render state.
 - (void)popState;
+
+/// --------------
+/// @name Clipping
+/// --------------
+
+/// The clipping rectangle can be used to limit rendering in the current render target to
+/// a certain area. This method expects the rectangle in stage coordinates. Internally,
+/// it uses the 'glScissor' command of OpenGL, which works with pixel coordinates.
+/// Any pushed rectangle is intersected with the previous rectangle; the method returns
+/// that intersection.
+- (SPRectangle *)pushClipRect:(SPRectangle *)clipRect;
+
+/// Restores the clipping rectangle that was last pushed to the stack.
+- (void)popClipRect;
+
+/// Updates the scissor rectangle using the current clipping rectangle. This
+/// method is called automatically when either the projection matrix
+/// or the clipping rectangle changes.
+- (void)applyClipRect;
 
 /// ----------------
 /// @name Properties
