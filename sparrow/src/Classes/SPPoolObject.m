@@ -73,11 +73,38 @@ SP_INLINE OSQueueHead* getQueueWithClass(Class class)
 
 // --- queue ---------------------------------------------------------------------------------------
 
-#define QUEUE_OFFSET        sizeof(Class)
-#define DEQUEUE(pool)       OSAtomicDequeue(pool, QUEUE_OFFSET)
-#define ENQUEUE(pool, obj)  OSAtomicEnqueue(pool, obj, QUEUE_OFFSET)
+#define QUEUE_OFFSET sizeof(Class)
+
+#if SP_POOL_OBJECT_IS_ATOMIC
+    #define DEQUEUE(pool)       OSAtomicDequeue(pool, QUEUE_OFFSET)
+    #define ENQUEUE(pool, obj)  OSAtomicEnqueue(pool, obj, QUEUE_OFFSET)
+#else
+    #define DEQUEUE(pool)       dequeue(pool)
+    #define ENQUEUE(pool, obj)  enqueue(pool, obj)
+#endif
+
+void enqueue(OSQueueHead *list, void *new)
+{
+    *((void **)((char *)new + QUEUE_OFFSET)) = list->opaque1;
+    list->opaque1 = new;
+}
+
+void* dequeue(OSQueueHead *list)
+{
+    void *head;
+
+    head = list->opaque1;
+    if (head != NULL) {
+        void **next = (void **)((char *)head + QUEUE_OFFSET);
+        list->opaque1 = *next;
+    }
+
+    return head;
+}
 
 // --- class implementation ------------------------------------------------------------------------
+
+#define RETAIN_COUNT _refOrLink.ref
 
 #if SP_POOL_OBJECT_IS_ATOMIC
     #define INCREMENT_32(var)    OSAtomicIncrement32Barrier(&var)
@@ -88,8 +115,6 @@ SP_INLINE OSQueueHead* getQueueWithClass(Class class)
     #define DECREMENT_32(var)    (-- var)
     #define MEMORY_BARRIER()
 #endif
-
-#define RETAIN_COUNT _refOrLink.ref
 
 @implementation SPPoolObject
 {

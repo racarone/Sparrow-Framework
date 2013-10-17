@@ -181,6 +181,13 @@
     [_projectionMatrix setA:2.0f/(right-left) b:0.0f c:0.0f d:2.0f/(top-bottom)
                          tx:-(right+left) / (right-left)
                          ty:-(top+bottom) / (top-bottom)];
+    [self applyClipRect];
+}
+
+- (void)setProjectionMatrix:(SPMatrix *)projectionMatrix
+{
+    [_projectionMatrix copyFromMatrix:projectionMatrix];
+    [self applyClipRect];
 }
 
 #pragma mark - state stack
@@ -214,14 +221,30 @@
     return _stateStackTop->_alpha;
 }
 
+- (void)setAlpha:(float)alpha
+{
+    _stateStackTop->_alpha = SP_CLAMP(alpha, 0.0f, 1.0f);
+}
+
 - (uint)blendMode
 {
     return _stateStackTop->_blendMode;
 }
 
+- (void)setBlendMode:(uint)blendMode
+{
+    if (blendMode != SPBlendModeAuto)
+        _stateStackTop->_blendMode = blendMode;
+}
+
 - (SPMatrix *)modelviewMatrix
 {
     return _stateStackTop->_modelviewMatrix;
+}
+
+- (void)setModelviewMatrix:(SPMatrix *)modelviewMatrix
+{
+    [_stateStackTop->_modelviewMatrix copyFromMatrix:modelviewMatrix];
 }
 
 - (SPMatrix *)mvpMatrix
@@ -240,7 +263,7 @@
 
 - (SPRectangle *)pushClipRect:(SPRectangle *)clipRect
 {
-    if (_clipRectStack.count < _clipRectStackSize+1)
+    if ([_clipRectStack count] < _clipRectStackSize + 1)
         [_clipRectStack addObject:[SPRectangle rectangle]];
 
     SPRectangle* rectangle = _clipRectStack[_clipRectStackSize];
@@ -248,7 +271,7 @@
 
     // intersect with the last pushed clip rect
     if (_clipRectStackSize > 0)
-        rectangle = [rectangle intersectionWithRectangle:_clipRectStack[_clipRectStackSize-1]];
+        rectangle = [rectangle intersectionWithRectangle:_clipRectStack[_clipRectStackSize - 1]];
 
     ++ _clipRectStackSize;
     [self applyClipRect];
@@ -272,15 +295,13 @@
 
     if (_clipRectStackSize > 0)
     {
-        SPRectangle *rect = _clipRectStack[_clipRectStackSize-1];
-        SPRectangle *clip = [[rect copy] autorelease];
+        SPRectangle *rect = _clipRectStack[_clipRectStackSize - 1];
+        SPRectangle *clip = [SPRectangle rectangle];
 
         struct { int x, y, w, h; } viewport;
-        glGetIntegerv(GL_VIEWPORT, (int*)&viewport);
+        glGetIntegerv(GL_VIEWPORT, (int *)&viewport);
 
-        float sign;
-        if (_projectionMatrix.ty < 0) sign =  1.0f;
-        else                          sign = -1.0f;
+        float sign = copysignf(1.0f, _projectionMatrix.d);
 
         // convert to pixel coordinates (matrix transformation ends up in range [-1, 1])
         SPPoint *topLeft = [_projectionMatrix transformPointWithX:rect.x y:rect.y];

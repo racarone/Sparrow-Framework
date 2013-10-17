@@ -15,6 +15,7 @@
 #import "SPMacros.h"
 #import "SPEvent_Internal.h"
 #import "SPRenderSupport.h"
+#import "SPFragmentFilter.h"
 
 // --- C functions ---------------------------------------------------------------------------------
 
@@ -30,6 +31,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
     if ([object isKindOfClass:[SPDisplayObjectContainer class]])
         for (SPDisplayObject *child in (SPDisplayObjectContainer *)object)
             getDescendantEventListeners(child, eventType, listeners);
+
 }
 
 // --- class implementation ------------------------------------------------------------------------
@@ -271,8 +273,10 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
             [support pushStateWithMatrix:child.transformationMatrix
                                    alpha:child.alpha
                                blendMode:child.blendMode];
-            
-            [child render:support];
+
+            SPFragmentFilter* filter = child.filter;
+            if (filter) [filter renderObject:child withSupport:support];
+            else        [child render:support];
             
             [support popState];
         }

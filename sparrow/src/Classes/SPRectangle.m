@@ -102,6 +102,15 @@
     return [SPRectangle rectangleWithX:left y:top width:right-left height:bottom-top];
 }
 
+- (void)inflateWithXBy:(float)dx yBy:(float)dy
+{
+    _x -= dx;
+    _width += 2 * dx;
+
+    _y -= dy;
+    _height += 2 * dy;
+}
+
 - (void)setX:(float)x y:(float)y width:(float)width height:(float)height
 {
     _x = x;

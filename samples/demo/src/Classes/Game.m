@@ -18,6 +18,7 @@
 #import "SoundScene.h"
 #import "RenderTextureScene.h"
 #import "MaskScene.h"
+#import "FilterScene.h"
 
 @implementation Game
 {
@@ -59,6 +60,7 @@
                                     @"Sound", [SoundScene class],
                                     @"Clipping", [MaskScene class],
                                     @"RenderTexture", [RenderTextureScene class],
+                                    @"Filters", [FilterScene class],
                                     @"Benchmark", [BenchmarkScene class]];
         
         SPTexture *buttonTexture = [SPTexture textureWithContentsOfFile:@"button_big.png"];

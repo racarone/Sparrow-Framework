@@ -24,6 +24,7 @@
 		25C23B0011EC7FE200A25DF7 /* atlas.png in Resources */ = {isa = PBXBuildFile; fileRef = 25C23AFE11EC7FE200A25DF7 /* atlas.png */; };
 		25C23B0111EC7FE200A25DF7 /* atlas.xml in Resources */ = {isa = PBXBuildFile; fileRef = 25C23AFF11EC7FE200A25DF7 /* atlas.xml */; };
 		87CD74D41810549C00447480 /* MaskScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 87CD74D31810549C00447480 /* MaskScene.m */; };
+		87CD74EF1810672C00447480 /* FilterScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 87CD74EE1810672C00447480 /* FilterScene.m */; };
 		DE0240901381B87E008A91B9 /* logo_rect.pvr in Resources */ = {isa = PBXBuildFile; fileRef = DE02408F1381B87E008A91B9 /* logo_rect.pvr */; };
 		DE0240921381B891008A91B9 /* logo_rect@2x.pvr in Resources */ = {isa = PBXBuildFile; fileRef = DE0240911381B891008A91B9 /* logo_rect@2x.pvr */; };
 		DE0240941381B89B008A91B9 /* logo_rect.pvr.gz in Resources */ = {isa = PBXBuildFile; fileRef = DE0240931381B89B008A91B9 /* logo_rect.pvr.gz */; };
@@ -133,6 +134,8 @@
 		32CA4F630368D1EE00C91783 /* Demo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Demo_Prefix.pch; sourceTree = "<group>"; };
 		87CD74D21810549C00447480 /* MaskScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskScene.h; sourceTree = "<group>"; };
 		87CD74D31810549C00447480 /* MaskScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaskScene.m; sourceTree = "<group>"; };
+		87CD74ED1810672C00447480 /* FilterScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterScene.h; sourceTree = "<group>"; };
+		87CD74EE1810672C00447480 /* FilterScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterScene.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Demo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Demo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		DE02408F1381B87E008A91B9 /* logo_rect.pvr */ = {isa = PBXFileReference; lastKnownFileType = file; path = logo_rect.pvr; sourceTree = "<group>"; };
 		DE0240911381B891008A91B9 /* logo_rect@2x.pvr */ = {isa = PBXFileReference; lastKnownFileType = file; path = "logo_rect@2x.pvr"; sourceTree = "<group>"; };
@@ -380,6 +383,8 @@
 				DE0F755810641630004F2821 /* BenchmarkScene.m */,
 				DE396AE6104055A100C27DDF /* CustomHitTestScene.h */,
 				DE396AE7104055A100C27DDF /* CustomHitTestScene.m */,
+				87CD74ED1810672C00447480 /* FilterScene.h */,
+				87CD74EE1810672C00447480 /* FilterScene.m */,
 				87CD74D21810549C00447480 /* MaskScene.h */,
 				87CD74D31810549C00447480 /* MaskScene.m */,
 				DE061A28119D799900DFF25D /* MovieScene.h */,
@@ -583,6 +588,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87CD74EF1810672C00447480 /* FilterScene.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* DemoAppDelegate.m in Sources */,
 				DEFE4CF0101B684B00E22471 /* Game.m in Sources */,

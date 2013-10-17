@@ -15,8 +15,9 @@
 #import "SPMatrix.h"
 
 @class SPDisplayObjectContainer;
-@class SPStage;
+@class SPFragmentFilter;
 @class SPRenderSupport;
+@class SPStage;
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -149,6 +150,9 @@
 
 /// Indicates if this object (and its children) will receive touch events.
 @property (nonatomic, assign) BOOL touchable;
+
+/// The filter that is attached to the display object.
+@property (nonatomic, strong) SPFragmentFilter* filter;
 
 /// The bounds of the object relative to the local coordinates of the parent.
 @property (weak, nonatomic, readonly) SPRectangle *bounds;

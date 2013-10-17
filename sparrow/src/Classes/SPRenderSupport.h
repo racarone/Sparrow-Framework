@@ -67,6 +67,9 @@
 - (void)setupOrthographicProjectionWithLeft:(float)left right:(float)right
                                         top:(float)top bottom:(float)bottom;
 
+/// Activates the current blend mode on the active rendering state.
+- (void)applyBlendModeForPremultipliedAlpha:(BOOL)pma;
+
 /// -------------------------
 /// @name State Manipulation
 /// -------------------------
@@ -108,17 +111,17 @@
 
 /// Returns the current modelview matrix.
 /// CAUTION: Use with care! Returns not a copy, but the internally used instance.
-@property (nonatomic, readonly) SPMatrix *modelviewMatrix;
+@property (nonatomic, copy) SPMatrix *modelviewMatrix;
 
 /// Returns the current projection matrix.
 /// CAUTION: Use with care! Each call returns the same instance.
-@property (nonatomic, readonly) SPMatrix *projectionMatrix;
+@property (nonatomic, copy) SPMatrix *projectionMatrix;
 
 /// Returns the current (accumulated) alpha value.
-@property (nonatomic, readonly) float alpha;
+@property (nonatomic, assign) float alpha;
 
 /// Returns the current blend mode.
-@property (nonatomic, readonly) uint blendMode;
+@property (nonatomic, assign) uint blendMode;
 
 /// Indicates the number of OpenGL ES draw calls since the last call to `nextFrame`.
 @property (nonatomic, readonly) int numDrawCalls;
