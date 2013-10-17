@@ -115,6 +115,16 @@
     return _height / _scale;
 }
 
+- (float)nativeWidth
+{
+    return _width;
+}
+
+- (float)nativeHeight
+{
+    return _height;
+}
+
 - (void)setRepeat:(BOOL)value
 {
     _repeat = value;

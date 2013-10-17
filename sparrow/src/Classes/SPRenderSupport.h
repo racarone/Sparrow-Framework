@@ -10,12 +10,12 @@
 //
 
 #import <Foundation/Foundation.h>
-
 #import "SPMatrix.h"
 
-@class SPTexture;
 @class SPDisplayObject;
 @class SPQuad;
+@class SPRectangle;
+@class SPTexture;
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -67,6 +67,9 @@
 - (void)setupOrthographicProjectionWithLeft:(float)left right:(float)right
                                         top:(float)top bottom:(float)bottom;
 
+/// Activates the current blend mode on the active rendering state.
+- (void)applyBlendModeForPremultipliedAlpha:(BOOL)pma;
+
 /// -------------------------
 /// @name State Manipulation
 /// -------------------------
@@ -79,6 +82,25 @@
 /// Restores the previous render state.
 - (void)popState;
 
+/// --------------
+/// @name Clipping
+/// --------------
+
+/// The clipping rectangle can be used to limit rendering in the current render target to
+/// a certain area. This method expects the rectangle in stage coordinates. Internally,
+/// it uses the 'glScissor' command of OpenGL, which works with pixel coordinates.
+/// Any pushed rectangle is intersected with the previous rectangle; the method returns
+/// that intersection.
+- (SPRectangle *)pushClipRect:(SPRectangle *)clipRect;
+
+/// Restores the clipping rectangle that was last pushed to the stack.
+- (void)popClipRect;
+
+/// Updates the scissor rectangle using the current clipping rectangle. This
+/// method is called automatically when either the projection matrix
+/// or the clipping rectangle changes.
+- (void)applyClipRect;
+
 /// ----------------
 /// @name Properties
 /// ----------------
@@ -89,17 +111,17 @@
 
 /// Returns the current modelview matrix.
 /// CAUTION: Use with care! Returns not a copy, but the internally used instance.
-@property (nonatomic, readonly) SPMatrix *modelviewMatrix;
+@property (nonatomic, copy) SPMatrix *modelviewMatrix;
 
 /// Returns the current projection matrix.
 /// CAUTION: Use with care! Each call returns the same instance.
-@property (nonatomic, readonly) SPMatrix *projectionMatrix;
+@property (nonatomic, copy) SPMatrix *projectionMatrix;
 
 /// Returns the current (accumulated) alpha value.
-@property (nonatomic, readonly) float alpha;
+@property (nonatomic, assign) float alpha;
 
 /// Returns the current blend mode.
-@property (nonatomic, readonly) uint blendMode;
+@property (nonatomic, assign) uint blendMode;
 
 /// Indicates the number of OpenGL ES draw calls since the last call to `nextFrame`.
 @property (nonatomic, readonly) int numDrawCalls;
