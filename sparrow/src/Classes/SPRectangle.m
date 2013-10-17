@@ -179,8 +179,4 @@
     return [[[self class] allocWithZone:zone] initWithX:_x y:_y width:_width height:_height];
 }
 
-#pragma mark SPPoolObject
-
-SP_IMPLEMENT_MEMORY_POOL();
-
 @end
