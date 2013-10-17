@@ -123,6 +123,23 @@
     }
 }
 
+- (void)adjustTexCoords:(float *)texCoords numTexCoords:(int)count startIndex:(int)startIndex stride:(int)stride
+{
+    float clipX = _rootClipping.x;
+    float clipY = _rootClipping.y;
+    float clipWidth = _rootClipping.width;
+    float clipHeight = _rootClipping.height;
+
+    int index = startIndex;
+    for (int i=0; i<count; ++i)
+    {
+        texCoords[index] = clipX + texCoords[index] * clipWidth;
+        index += 1;
+        texCoords[index] = clipY + texCoords[index] * clipHeight;
+        index += 1 + stride;
+    }
+}
+
 - (float)width
 {
     return _baseTexture.width * _clipping.width;
@@ -131,6 +148,16 @@
 - (float)height
 {
     return _baseTexture.height * _clipping.height;
+}
+
+- (float)nativeWidth
+{
+    return _baseTexture.nativeWidth * _clipping.width;
+}
+
+- (float)nativeHeight
+{
+    return _baseTexture.nativeHeight * _clipping.height;
 }
 
 - (uint)name

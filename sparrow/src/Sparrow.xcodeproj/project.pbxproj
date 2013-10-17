@@ -10,6 +10,16 @@
 		87C7DCC2180480A7005E8CFB /* SPOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 87C7DCC0180480A7005E8CFB /* SPOpenGL.h */; };
 		87C7DCC3180480A7005E8CFB /* SPOpenGL.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C7DCC1180480A7005E8CFB /* SPOpenGL.m */; };
 		87C7DCF118061354005E8CFB /* SPMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C7DCF018061354005E8CFB /* SPMacros.m */; };
+		87CD74E0181060AF00447480 /* SPBlurFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 87CD74D7181060AF00447480 /* SPBlurFilter.h */; };
+		87CD74E1181060AF00447480 /* SPBlurFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 87CD74D8181060AF00447480 /* SPBlurFilter.m */; };
+		87CD74E2181060AF00447480 /* SPColorMatrixFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 87CD74D9181060AF00447480 /* SPColorMatrixFilter.h */; };
+		87CD74E3181060AF00447480 /* SPColorMatrixFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 87CD74DA181060AF00447480 /* SPColorMatrixFilter.m */; };
+		87CD74E4181060AF00447480 /* SPDisplacementMapFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 87CD74DB181060AF00447480 /* SPDisplacementMapFilter.h */; };
+		87CD74E5181060AF00447480 /* SPDisplacementMapFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 87CD74DC181060AF00447480 /* SPDisplacementMapFilter.m */; };
+		87CD74E6181060AF00447480 /* SPFragmentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 87CD74DD181060AF00447480 /* SPFragmentFilter.h */; };
+		87CD74E7181060AF00447480 /* SPFragmentFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 87CD74DE181060AF00447480 /* SPFragmentFilter.m */; };
+		87CD74EB1810656C00447480 /* SPPerlinNoise.h in Headers */ = {isa = PBXBuildFile; fileRef = 87CD74E91810656C00447480 /* SPPerlinNoise.h */; };
+		87CD74EC1810656C00447480 /* SPPerlinNoise.m in Sources */ = {isa = PBXBuildFile; fileRef = 87CD74EA1810656C00447480 /* SPPerlinNoise.m */; };
 		DE019C391026360B00ECB0AC /* SPTween.m in Sources */ = {isa = PBXBuildFile; fileRef = DE7044760FB62080007F5ECC /* SPTween.m */; };
 		DE019C3A1026361200ECB0AC /* SPDelayedInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFB1B94100926260022C117 /* SPDelayedInvocation.m */; };
 		DE019C3B1026363D00ECB0AC /* SPNSExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = DE68EA160FBB5660004DBC95 /* SPNSExtensions.m */; };
@@ -189,6 +199,16 @@
 		87C7DCC0180480A7005E8CFB /* SPOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPOpenGL.h; sourceTree = "<group>"; };
 		87C7DCC1180480A7005E8CFB /* SPOpenGL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPOpenGL.m; sourceTree = "<group>"; };
 		87C7DCF018061354005E8CFB /* SPMacros.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPMacros.m; sourceTree = "<group>"; };
+		87CD74D7181060AF00447480 /* SPBlurFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPBlurFilter.h; sourceTree = "<group>"; };
+		87CD74D8181060AF00447480 /* SPBlurFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPBlurFilter.m; sourceTree = "<group>"; };
+		87CD74D9181060AF00447480 /* SPColorMatrixFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPColorMatrixFilter.h; sourceTree = "<group>"; };
+		87CD74DA181060AF00447480 /* SPColorMatrixFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPColorMatrixFilter.m; sourceTree = "<group>"; };
+		87CD74DB181060AF00447480 /* SPDisplacementMapFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPDisplacementMapFilter.h; sourceTree = "<group>"; };
+		87CD74DC181060AF00447480 /* SPDisplacementMapFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPDisplacementMapFilter.m; sourceTree = "<group>"; };
+		87CD74DD181060AF00447480 /* SPFragmentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPFragmentFilter.h; sourceTree = "<group>"; };
+		87CD74DE181060AF00447480 /* SPFragmentFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPFragmentFilter.m; sourceTree = "<group>"; };
+		87CD74E91810656C00447480 /* SPPerlinNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPPerlinNoise.h; sourceTree = "<group>"; };
+		87CD74EA1810656C00447480 /* SPPerlinNoise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPPerlinNoise.m; sourceTree = "<group>"; };
 		DE0456E413882A27005FFBCE /* SPButtonTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPButtonTest.m; sourceTree = "<group>"; };
 		DE05748611E915A900F3A8A4 /* SPNSExtensionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPNSExtensionsTest.m; sourceTree = "<group>"; };
 		DE08535C0FEC21F500DAF53C /* SPImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPImage.h; sourceTree = "<group>"; };
@@ -386,6 +406,7 @@
 				DEE63A4A11AED36700D60321 /* Audio */,
 				DEDCD3B00FADF1720022011C /* Display */,
 				DEDCD3C60FADF1870022011C /* Events */,
+				87CD74D6181060A000447480 /* Filters */,
 				DE82240916EF462700A172EE /* Rendering */,
 				DEDCD3CE0FADF2100022011C /* System */,
 				DEE09D771083647D00ECC896 /* Text */,
@@ -444,6 +465,21 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		87CD74D6181060A000447480 /* Filters */ = {
+			isa = PBXGroup;
+			children = (
+				87CD74D7181060AF00447480 /* SPBlurFilter.h */,
+				87CD74D8181060AF00447480 /* SPBlurFilter.m */,
+				87CD74D9181060AF00447480 /* SPColorMatrixFilter.h */,
+				87CD74DA181060AF00447480 /* SPColorMatrixFilter.m */,
+				87CD74DB181060AF00447480 /* SPDisplacementMapFilter.h */,
+				87CD74DC181060AF00447480 /* SPDisplacementMapFilter.m */,
+				87CD74DD181060AF00447480 /* SPFragmentFilter.h */,
+				87CD74DE181060AF00447480 /* SPFragmentFilter.m */,
+			);
+			name = Filters;
+			sourceTree = "<group>";
+		};
 		DE469D310F93870A00F56E91 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -453,6 +489,8 @@
 				DE469D260F9386FD00F56E91 /* SPMatrix.m */,
 				DE68EA150FBB5660004DBC95 /* SPNSExtensions.h */,
 				DE68EA160FBB5660004DBC95 /* SPNSExtensions.m */,
+				87CD74E91810656C00447480 /* SPPerlinNoise.h */,
+				87CD74EA1810656C00447480 /* SPPerlinNoise.m */,
 				DE469D270F9386FD00F56E91 /* SPPoint.h */,
 				DE469D280F9386FD00F56E91 /* SPPoint.m */,
 				DED9B51B10629D9F00989853 /* SPPoolObject.h */,
@@ -747,6 +785,7 @@
 				DE611388134F8F8300AB742E /* SPImage.h in Headers */,
 				DE611389134F8F8300AB742E /* SPButton.h in Headers */,
 				DE61138A134F8F8300AB742E /* SPMovieClip.h in Headers */,
+				87CD74E0181060AF00447480 /* SPBlurFilter.h in Headers */,
 				DE61138C134F8FA600AB742E /* SPTexture.h in Headers */,
 				DE61138D134F8FA600AB742E /* SPGLTexture.h in Headers */,
 				DE61138E134F8FA600AB742E /* SPSubTexture.h in Headers */,
@@ -755,6 +794,7 @@
 				DE611392134F8FBD00AB742E /* SPJuggler.h in Headers */,
 				DE611393134F8FBD00AB742E /* SPTransitions.h in Headers */,
 				DE611394134F8FBD00AB742E /* SPTween.h in Headers */,
+				87CD74E6181060AF00447480 /* SPFragmentFilter.h in Headers */,
 				DE611395134F8FBD00AB742E /* SPDelayedInvocation.h in Headers */,
 				DE611396134F8FBD00AB742E /* SPMacros.h in Headers */,
 				DE611397134F8FBD00AB742E /* SPMatrix.h in Headers */,
@@ -762,6 +802,8 @@
 				DE611399134F8FBD00AB742E /* SPRectangle.h in Headers */,
 				DE61139A134F8FBD00AB742E /* SPNSExtensions.h in Headers */,
 				DE61139B134F8FBD00AB742E /* SPPoolObject.h in Headers */,
+				87CD74E2181060AF00447480 /* SPColorMatrixFilter.h in Headers */,
+				87CD74E4181060AF00447480 /* SPDisplacementMapFilter.h in Headers */,
 				DE61139C134F8FD400AB742E /* Sparrow.h in Headers */,
 				DEC734811386BC1400234D95 /* SPTextureAtlas.h in Headers */,
 				DE8E6A8216B430C4007EE8BA /* SPViewController.h in Headers */,
@@ -775,6 +817,7 @@
 				DE97B93016F1EA5E00DC1077 /* SPProgram.h in Headers */,
 				DE0BA5D81703513D00637533 /* SPStatsDisplay.h in Headers */,
 				DE574D5F1705B83D008B03D7 /* SPBlendMode.h in Headers */,
+				87CD74EB1810656C00447480 /* SPPerlinNoise.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -923,6 +966,7 @@
 				DEFE4BDC101B31DF00E22471 /* SPImage.m in Sources */,
 				DEFE4BDD101B31DF00E22471 /* SPTextField.m in Sources */,
 				DEFE4BDE101B31DF00E22471 /* SPTexture.m in Sources */,
+				87CD74E5181060AF00447480 /* SPDisplacementMapFilter.m in Sources */,
 				DEFE4BDF101B31DF00E22471 /* SPGLTexture.m in Sources */,
 				DEFE4BE0101B31DF00E22471 /* SPSubTexture.m in Sources */,
 				DEFE4BE1101B31DF00E22471 /* SPButton.m in Sources */,
@@ -945,20 +989,24 @@
 				DEE63A5411AED38100D60321 /* SPSound.m in Sources */,
 				DEE63A5611AED38100D60321 /* SPSoundChannel.m in Sources */,
 				DEF1730F11B0645A00A11DD7 /* SPALSound.m in Sources */,
+				87CD74E1181060AF00447480 /* SPBlurFilter.m in Sources */,
 				DEF1731311B0648B00A11DD7 /* SPALSoundChannel.m in Sources */,
 				DEF1735D11B075B000A11DD7 /* SPAVSound.m in Sources */,
 				DEF1736111B075BC00A11DD7 /* SPAVSoundChannel.m in Sources */,
+				87CD74EC1810656C00447480 /* SPPerlinNoise.m in Sources */,
 				DEE94E8311B43DE60000FE20 /* SPMovieClip.m in Sources */,
 				DE13D18C12AADBF6000C77E6 /* SPRenderTexture.m in Sources */,
 				DE33072612D2EBCD009CC5E7 /* SPUtils.m in Sources */,
 				DE8E6A8316B430C4007EE8BA /* SPViewController.m in Sources */,
 				DE85778F16B58E4B00725EC0 /* SparrowClass.m in Sources */,
 				87C7DCF118061354005E8CFB /* SPMacros.m in Sources */,
+				87CD74E3181060AF00447480 /* SPColorMatrixFilter.m in Sources */,
 				DEAAF3D816BC0D21004EB9D5 /* SPResizeEvent.m in Sources */,
 				DEAAF3DC16BC0E46004EB9D5 /* SPOverlayView.m in Sources */,
 				DE19443316D27E9E00E5CCD9 /* SPVertexData.m in Sources */,
 				DED29C0816DFB48E000C2BD7 /* SPEventListener.m in Sources */,
 				87C7DCC3180480A7005E8CFB /* SPOpenGL.m in Sources */,
+				87CD74E7181060AF00447480 /* SPFragmentFilter.m in Sources */,
 				DEC87D0816E0CDD80050EA95 /* SPQuadBatch.m in Sources */,
 				DE82240D16EF468E00A172EE /* SPBaseEffect.m in Sources */,
 				DE97B93116F1EA5E00DC1077 /* SPProgram.m in Sources */,

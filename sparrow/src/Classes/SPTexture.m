@@ -208,6 +208,11 @@
     // override in subclasses
 }
 
+- (void)adjustTexCoords:(float *)texCoords numTexCoords:(int)count startIndex:(int)index stride:(int)stride
+{
+    // override in subclasses
+}
+
 - (float)width
 {
     [NSException raise:SPExceptionAbstractMethod format:@"Override 'width' in subclasses."];
@@ -217,6 +222,18 @@
 - (float)height
 {
     [NSException raise:SPExceptionAbstractMethod format:@"Override 'height' in subclasses."];
+    return 0;
+}
+
+- (float)nativeWidth
+{
+    [NSException raise:SPExceptionAbstractMethod format:@"Override 'nativeWidth' in subclasses."];
+    return 0;
+}
+
+- (float)nativeHeight
+{
+    [NSException raise:SPExceptionAbstractMethod format:@"Override 'nativeHeight' in subclasses."];
     return 0;
 }
 
