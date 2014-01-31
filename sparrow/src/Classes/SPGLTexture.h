@@ -16,7 +16,7 @@
 @class SPRectangle;
 @class SPPVRData;
 
-typedef enum
+typedef NS_ENUM(uint, SPTextureFormat)
 {
     SPTextureFormatRGBA,
     SPTextureFormatAlpha,
@@ -30,7 +30,7 @@ typedef enum
     SPTextureFormat4444,
     SPTextureFormatAI88,
     SPTextureFormatI8
-} SPTextureFormat;
+};
 
 typedef struct
 {
