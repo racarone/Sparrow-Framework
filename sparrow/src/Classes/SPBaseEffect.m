@@ -17,7 +17,7 @@
 #import <Sparrow/SPProgram.h>
 #import <Sparrow/SPTexture.h>
 
-NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
+static NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
 {
     if (hasTexture)
     {
@@ -30,6 +30,18 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
         else            return @"SPQuad#00";
     }
 }
+
+// --- private interface ---------------------------------------------------------------------------
+
+@interface SPBaseEffect ()
+
+- (NSString *)vertexShaderForTexture:(SPTexture *)texture useTinting:(BOOL)useTinting;
+- (NSString *)fragmentShaderForTexture:(SPTexture *)texture useTinting:(BOOL)useTinting;
+
+@end
+
+
+// --- class implementation ------------------------------------------------------------------------
 
 @implementation SPBaseEffect
 {
@@ -51,6 +63,8 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
 @synthesize attribColor = _aColor;
 @synthesize attribTexCoords = _aTexCoords;
 
+#pragma mark Initialization
+
 - (instancetype)init
 {
     if ((self = [super init]))
@@ -70,6 +84,8 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
     [_program release];
     [super dealloc];
 }
+
+#pragma mark Methods
 
 - (void)prepareToDraw
 {
@@ -113,6 +129,40 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
         glBindTexture(GL_TEXTURE_2D, _texture.name);
     }
 }
+
+#pragma mark Properties
+
+- (void)setMvpMatrix:(SPMatrix *)value
+{
+    [_mvpMatrix copyFromMatrix:value];
+}
+
+- (void)setAlpha:(float)value
+{
+    if ((value >= 1.0f && _alpha < 1.0f) || (value < 1.0f && _alpha >= 1.0f))
+        SP_RELEASE_AND_NIL(_program);
+
+    _alpha = value;
+}
+
+- (void)setUseTinting:(BOOL)value
+{
+    if (value != _useTinting)
+    {
+        _useTinting = value;
+        SP_RELEASE_AND_NIL(_program);
+    }
+}
+
+- (void)setTexture:(SPTexture *)value
+{
+    if ((_texture && !value) || (!_texture && value))
+        SP_RELEASE_AND_NIL(_program);
+
+    SP_RELEASE_AND_RETAIN(_texture, value);
+}
+
+#pragma mark Private
 
 - (NSString *)vertexShaderForTexture:(SPTexture *)texture useTinting:(BOOL)useTinting
 {
@@ -177,36 +227,6 @@ NSString *getProgramName(BOOL hasTexture, BOOL useTinting)
     [source appendString:@"}"];
     
     return source;
-}
-
-- (void)setMvpMatrix:(SPMatrix *)value
-{
-    [_mvpMatrix copyFromMatrix:value];
-}
-
-- (void)setAlpha:(float)value
-{
-    if ((value >= 1.0f && _alpha < 1.0f) || (value < 1.0f && _alpha >= 1.0f))
-        SP_RELEASE_AND_NIL(_program);
-    
-    _alpha = value;
-}
-
-- (void)setUseTinting:(BOOL)value
-{
-    if (value != _useTinting)
-    {
-        _useTinting = value;
-        SP_RELEASE_AND_NIL(_program);
-    }
-}
-
-- (void)setTexture:(SPTexture *)value
-{
-    if ((_texture && !value) || (!_texture && value))
-        SP_RELEASE_AND_NIL(_program);
-
-    SP_RELEASE_AND_RETAIN(_texture, value);
 }
 
 @end

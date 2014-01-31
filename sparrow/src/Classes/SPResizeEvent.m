@@ -20,6 +20,8 @@ NSString *const SPEventTypeResize = @"SPEventTypeResize";
     double _animationTime;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithType:(NSString *)type width:(float)width height:(float)height 
      animationTime:(double)time
 {
@@ -41,6 +43,8 @@ NSString *const SPEventTypeResize = @"SPEventTypeResize";
 {
     return [self initWithType:type width:320 height:480 animationTime:0.5];
 }
+
+#pragma mark Properties
 
 - (BOOL)isPortrait
 {

@@ -37,9 +37,9 @@
 
 @interface SPSound : NSObject 
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a sound 
 - (instancetype)initWithContentsOfFile:(NSString *)path;

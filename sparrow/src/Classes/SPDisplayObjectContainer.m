@@ -43,6 +43,8 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
     NSMutableArray *_children;
 }
 
+#pragma mark Initialization
+
 - (instancetype)init
 {    
   #if DEBUG
@@ -68,6 +70,8 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
     [_children release];
     [super dealloc];
 }
+
+#pragma mark Methods
 
 - (void)addChild:(SPDisplayObject *)child
 {
@@ -197,74 +201,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
     return (int)[_children count];
 }
 
-- (SPRectangle *)boundsInSpace:(SPDisplayObject *)targetSpace
-{    
-    int numChildren = (int)[_children count];
-
-    if (numChildren == 0)
-    {
-        SPMatrix *transformationMatrix = [self transformationMatrixToSpace:targetSpace];
-        SPPoint *transformedPoint = [transformationMatrix transformPointWithX:self.x y:self.y];
-        return [SPRectangle rectangleWithX:transformedPoint.x y:transformedPoint.y 
-                                     width:0.0f height:0.0f];
-    }
-    else if (numChildren == 1)
-    {
-        return [_children[0] boundsInSpace:targetSpace];
-    }
-    else
-    {
-        float minX = FLT_MAX, maxX = -FLT_MAX, minY = FLT_MAX, maxY = -FLT_MAX;    
-        for (SPDisplayObject *child in _children)
-        {
-            SPRectangle *childBounds = [child boundsInSpace:targetSpace];        
-            minX = MIN(minX, childBounds.x);
-            maxX = MAX(maxX, childBounds.x + childBounds.width);
-            minY = MIN(minY, childBounds.y);
-            maxY = MAX(maxY, childBounds.y + childBounds.height);        
-        }    
-        return [SPRectangle rectangleWithX:minX y:minY width:maxX-minX height:maxY-minY];
-    }
-}
-
-- (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
-{
-    if (!self.visible || !self.touchable)
-        return nil;
-    
-    for (int i=(int)[_children count]-1; i>=0; --i) // front to back!
-    {
-        SPDisplayObject *child = _children[i];
-        SPMatrix *transformationMatrix = [self transformationMatrixToSpace:child];
-        SPPoint  *transformedPoint = [transformationMatrix transformPoint:localPoint];
-        SPDisplayObject *target = [child hitTestPoint:transformedPoint];
-        if (target) return target;
-    }
-    
-    return nil;
-}
-
-- (void)broadcastEvent:(SPEvent *)event
-{
-    if (event.bubbles) 
-        [NSException raise:SPExceptionInvalidOperation 
-                    format:@"Broadcast of bubbling events is prohibited"];
-    
-    // the event listeners might modify the display tree, which could make the loop crash. 
-    // thus, we collect them in a list and iterate over that list instead.
-    NSMutableArray *listeners = [[NSMutableArray alloc] init];
-    [self appendDescendantEventListenersOfObject:self withEventType:event.type toArray:listeners];
-    [event setTarget:self];
-    [listeners makeObjectsPerformSelector:@selector(dispatchEvent:) withObject:event];
-    [listeners release];
-}
-
-- (void)broadcastEventWithType:(NSString *)type
-{
-    SPEvent *event = [[SPEvent alloc] initWithType:type bubbles:NO];
-    [self broadcastEvent:event];
-    [event release];
-}
+#pragma mark SPDisplayObject
 
 - (void)render:(SPRenderSupport *)support
 {
@@ -278,10 +215,79 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
 
             if (child.filter) [child.filter renderObject:child support:support];
             else              [child render:support];
-            
+
             [support popState];
         }
     }
+}
+
+- (SPRectangle *)boundsInSpace:(SPDisplayObject *)targetSpace
+{
+    int numChildren = (int)[_children count];
+
+    if (numChildren == 0)
+    {
+        SPMatrix *transformationMatrix = [self transformationMatrixToSpace:targetSpace];
+        SPPoint *transformedPoint = [transformationMatrix transformPointWithX:self.x y:self.y];
+        return [SPRectangle rectangleWithX:transformedPoint.x y:transformedPoint.y
+                                     width:0.0f height:0.0f];
+    }
+    else if (numChildren == 1)
+    {
+        return [_children[0] boundsInSpace:targetSpace];
+    }
+    else
+    {
+        float minX = FLT_MAX, maxX = -FLT_MAX, minY = FLT_MAX, maxY = -FLT_MAX;
+        for (SPDisplayObject *child in _children)
+        {
+            SPRectangle *childBounds = [child boundsInSpace:targetSpace];
+            minX = MIN(minX, childBounds.x);
+            maxX = MAX(maxX, childBounds.x + childBounds.width);
+            minY = MIN(minY, childBounds.y);
+            maxY = MAX(maxY, childBounds.y + childBounds.height);
+        }
+        return [SPRectangle rectangleWithX:minX y:minY width:maxX-minX height:maxY-minY];
+    }
+}
+
+- (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
+{
+    if (!self.visible || !self.touchable)
+        return nil;
+
+    for (int i=(int)[_children count]-1; i>=0; --i) // front to back!
+    {
+        SPDisplayObject *child = _children[i];
+        SPMatrix *transformationMatrix = [self transformationMatrixToSpace:child];
+        SPPoint  *transformedPoint = [transformationMatrix transformPoint:localPoint];
+        SPDisplayObject *target = [child hitTestPoint:transformedPoint];
+        if (target) return target;
+    }
+
+    return nil;
+}
+
+- (void)broadcastEvent:(SPEvent *)event
+{
+    if (event.bubbles)
+        [NSException raise:SPExceptionInvalidOperation
+                    format:@"Broadcast of bubbling events is prohibited"];
+
+    // the event listeners might modify the display tree, which could make the loop crash.
+    // thus, we collect them in a list and iterate over that list instead.
+    NSMutableArray *listeners = [[NSMutableArray alloc] init];
+    [self appendDescendantEventListenersOfObject:self withEventType:event.type toArray:listeners];
+    [event setTarget:self];
+    [listeners makeObjectsPerformSelector:@selector(dispatchEvent:) withObject:event];
+    [listeners release];
+}
+
+- (void)broadcastEventWithType:(NSString *)type
+{
+    SPEvent *event = [[SPEvent alloc] initWithType:type bubbles:NO];
+    [self broadcastEvent:event];
+    [event release];
 }
 
 #pragma mark NSFastEnumeration

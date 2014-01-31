@@ -22,6 +22,8 @@
     SEL _selector;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithTarget:(id)target selector:(SEL)selector block:(SPEventBlock)block
 {
     if ((self = [super init]))
@@ -44,16 +46,18 @@
             }];
 }
 
+- (instancetype)initWithBlock:(SPEventBlock)block
+{
+    return [self initWithTarget:nil selector:nil block:block];
+}
+
 - (void)dealloc
 {
     [_block release];
     [super dealloc];
 }
 
-- (instancetype)initWithBlock:(SPEventBlock)block
-{
-    return [self initWithTarget:nil selector:nil block:block];
-}
+#pragma mark Methods
 
 - (void)invokeWithEvent:(SPEvent *)event
 {

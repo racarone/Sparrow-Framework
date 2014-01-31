@@ -27,7 +27,7 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
     matrix->_ty = ty;    
 }
 
-// ---
+#pragma mark Initialization
 
 - (instancetype)initWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
 {
@@ -44,40 +44,34 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
     return [self initWithA:1 b:0 c:0 d:1 tx:0 ty:0];
 }
 
++ (instancetype)matrixWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
+{
+    return [[[self allocWithZone:nil] initWithA:a b:b c:c d:d tx:tx ty:ty] autorelease];
+}
+
++ (instancetype)matrixWithIdentity
+{
+    return [[[self allocWithZone:nil] init] autorelease];
+}
+
+#pragma mark Methods
+
 - (void)setA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
 {
     _a = a; _b = b; _c = c; _d = d;
     _tx = tx; _ty = ty;
 }
 
-- (float)determinant
+- (BOOL)isEquivalent:(SPMatrix *)matrix
 {
-    return _a * _d - _c * _b;
-}
-
-- (float)rotation
-{
-    return atan2f(_b, _a);
-}
-
-- (float)scaleX
-{
-    return _a / cosf(self.skewY);
-}
-
-- (float)scaleY
-{
-    return _d / cosf(self.skewX);
-}
-
-- (float)skewX
-{
-    return atanf(-_c / _d);
-}
-
-- (float)skewY
-{
-    return atanf( _b / _a);
+    if (matrix == self) return YES;
+    else if (!matrix) return NO;
+    else
+    {
+        return SP_IS_FLOAT_EQUAL(_a, matrix->_a) && SP_IS_FLOAT_EQUAL(_b, matrix->_b) &&
+               SP_IS_FLOAT_EQUAL(_c, matrix->_c) && SP_IS_FLOAT_EQUAL(_d, matrix->_d) &&
+               SP_IS_FLOAT_EQUAL(_tx, matrix->_tx) && SP_IS_FLOAT_EQUAL(_ty, matrix->_ty);
+    }
 }
 
 - (void)appendMatrix:(SPMatrix *)lhs
@@ -160,18 +154,6 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
     setValues(self, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
 }
 
-- (SPPoint *)transformPoint:(SPPoint *)point
-{
-    return [SPPoint pointWithX:_a*point.x + _c*point.y + _tx
-                             y:_b*point.x + _d*point.y + _ty];
-}
-
-- (SPPoint *)transformPointWithX:(float)x y:(float)y
-{
-    return [SPPoint pointWithX:_a*x + _c*y + _tx
-                             y:_b*x + _d*y + _ty];
-}
-
 - (void)invert
 {
     float det = self.determinant;
@@ -204,33 +186,24 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
                           _tx, _ty, 1.0f);
 }
 
-- (BOOL)isEquivalent:(SPMatrix *)other
+- (SPPoint *)transformPoint:(SPPoint *)point
 {
-    if (other == self) return YES;
-    else if (!other) return NO;
-    else 
-    {    
-        SPMatrix *matrix = (SPMatrix *)other;
-        return SP_IS_FLOAT_EQUAL(_a, matrix->_a) && SP_IS_FLOAT_EQUAL(_b, matrix->_b) &&
-               SP_IS_FLOAT_EQUAL(_c, matrix->_c) && SP_IS_FLOAT_EQUAL(_d, matrix->_d) &&
-               SP_IS_FLOAT_EQUAL(_tx, matrix->_tx) && SP_IS_FLOAT_EQUAL(_ty, matrix->_ty);
-    }
+    return [SPPoint pointWithX:_a*point.x + _c*point.y + _tx
+                             y:_b*point.x + _d*point.y + _ty];
 }
+
+- (SPPoint *)transformPointWithX:(float)x y:(float)y
+{
+    return [SPPoint pointWithX:_a*x + _c*y + _tx
+                             y:_b*x + _d*y + _ty];
+}
+
+#pragma mark NSObject
 
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"[SPMatrix: a=%f, b=%f, c=%f, d=%f, tx=%f, ty=%f]", 
             _a, _b, _c, _d, _tx, _ty];
-}
-
-+ (instancetype)matrixWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
-{
-    return [[[self allocWithZone:nil] initWithA:a b:b c:c d:d tx:tx ty:ty] autorelease];
-}
-
-+ (instancetype)matrixWithIdentity
-{
-    return [[[self allocWithZone:nil] init] autorelease];
 }
 
 #pragma mark NSCopying
@@ -239,6 +212,38 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 {
     return [[[self class] allocWithZone:zone] initWithA:_a b:_b c:_c d:_d 
                                                      tx:_tx ty:_ty];
+}
+
+#pragma mark Properties
+
+- (float)determinant
+{
+    return _a * _d - _c * _b;
+}
+
+- (float)rotation
+{
+    return atan2f(_b, _a);
+}
+
+- (float)scaleX
+{
+    return _a / cosf(self.skewY);
+}
+
+- (float)scaleY
+{
+    return _d / cosf(self.skewX);
+}
+
+- (float)skewX
+{
+    return atanf(-_c / _d);
+}
+
+- (float)skewY
+{
+    return atanf( _b / _a);
 }
 
 @end

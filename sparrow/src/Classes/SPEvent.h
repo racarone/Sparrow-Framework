@@ -44,9 +44,9 @@ SP_EXTERN NSString *const SPEventTypeFlatten;
 
 @interface SPEvent : NSObject
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes an event object that can be passed to listeners. _Designated Initializer_.
 - (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles;

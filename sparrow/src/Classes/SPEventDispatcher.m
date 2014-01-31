@@ -24,11 +24,15 @@
     NSMutableDictionary *_eventListeners;
 }
 
+#pragma mark Initialization
+
 - (void)dealloc
 {
     [_eventListeners release];
     [super dealloc];
 }
+
+#pragma mark Methods
 
 - (void)addEventListenerForType:(NSString *)eventType block:(SPEventBlock)block
 {
@@ -57,31 +61,6 @@
 - (void)removeEventListenerForType:(NSString *)eventType block:(SPEventBlock)block;
 {
     [self removeEventListenersForType:eventType withTarget:nil andSelector:nil orBlock:block];
-}
-
-- (BOOL)hasEventListenerForType:(NSString *)eventType
-{
-    return _eventListeners[eventType] != nil;
-}
-
-- (void)dispatchEventWithType:(NSString *)type
-{
-    if ([self hasEventListenerForType:type])
-    {
-        SPEvent* event = [[SPEvent alloc] initWithType:type bubbles:NO];
-        [self dispatchEvent:event];
-        [event release];
-    }
-}
-
-- (void)dispatchEventWithType:(NSString *)type bubbles:(BOOL)bubbles
-{
-    if (bubbles || [self hasEventListenerForType:type])
-    {
-        SPEvent* event = [[SPEvent alloc] initWithType:type bubbles:bubbles];
-        [self dispatchEvent:event];
-        [event release];
-    }
 }
 
 - (void)dispatchEvent:(SPEvent *)event
@@ -133,6 +112,31 @@
     // in calling methods (like "dispatchEventsOnChildren"). Those methods might be called very
     // often, so we save some time by avoiding that.
     [self autorelease];
+}
+
+- (void)dispatchEventWithType:(NSString *)type
+{
+    if ([self hasEventListenerForType:type])
+    {
+        SPEvent* event = [[SPEvent alloc] initWithType:type bubbles:NO];
+        [self dispatchEvent:event];
+        [event release];
+    }
+}
+
+- (void)dispatchEventWithType:(NSString *)type bubbles:(BOOL)bubbles
+{
+    if (bubbles || [self hasEventListenerForType:type])
+    {
+        SPEvent* event = [[SPEvent alloc] initWithType:type bubbles:bubbles];
+        [self dispatchEvent:event];
+        [event release];
+    }
+}
+
+- (BOOL)hasEventListenerForType:(NSString *)eventType
+{
+    return _eventListeners[eventType] != nil;
 }
 
 @end

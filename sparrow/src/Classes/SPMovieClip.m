@@ -13,6 +13,16 @@
 #import <Sparrow/SPMovieClip.h>
 #import <Sparrow/SPSoundChannel.h>
 
+// --- private interface ---------------------------------------------------------------------------
+
+@interface SPMovieClip ()
+
+- (void)updateCurrentFrame;
+- (void)playCurrentSound;
+
+@end
+
+
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPMovieClip
@@ -28,6 +38,8 @@
     BOOL _playing;
     int _currentFrame;
 }
+
+#pragma mark Initialization
 
 - (instancetype)initWithFrame:(SPTexture *)texture fps:(float)fps
 {
@@ -73,6 +85,18 @@
     [_durations release];
     [super dealloc];
 }
+
++ (instancetype)movieWithFrame:(SPTexture *)texture fps:(float)fps
+{
+    return [[[self alloc] initWithFrame:texture fps:fps] autorelease];
+}
+
++ (instancetype)movieWithFrames:(NSArray *)textures fps:(float)fps
+{
+    return [[[self alloc] initWithFrames:textures fps:fps] autorelease];
+}
+
+#pragma mark Frame Manipulation Methods
 
 - (void)addFrameWithTexture:(SPTexture *)texture
 {
@@ -150,26 +174,7 @@
     return [_durations[frameID] doubleValue];
 }
 
-- (void)setFps:(float)fps
-{
-    float newFrameDuration = (fps == 0.0f ? INT_MAX : 1.0 / fps);
-	float acceleration = newFrameDuration / _defaultFrameDuration;
-    _currentTime *= acceleration;
-    _defaultFrameDuration = newFrameDuration;
-    
-	for (int i=0; i<self.numFrames; ++i)
-		[self setDuration:[self durationAtIndex:i] * acceleration atIndex:i];
-}
-
-- (float)fps
-{
-	return (float)(1.0 / _defaultFrameDuration);
-}
-
-- (int)numFrames
-{        
-    return (int)_textures.count;
-}
+#pragma mark Playback Methods
 
 - (void)play
 {
@@ -185,52 +190,6 @@
 {
     _playing = NO;
     self.currentFrame = 0;
-}
-
-- (void)updateCurrentFrame
-{
-    self.texture = _textures[_currentFrame];
-}
-
-- (void)playCurrentSound
-{
-    id sound = _sounds[_currentFrame];
-    if ([NSNull class] != [sound class])                    
-        [sound play];
-}
-
-- (void)setCurrentFrame:(int)frameID
-{
-    _currentFrame = frameID;
-    _currentTime = 0.0;
-    
-    for (int i=0; i<frameID; ++i)
-        _currentTime += [_durations[i] doubleValue];
-    
-    [self updateCurrentFrame];
-}
-
-- (BOOL)isPlaying
-{
-    if (_playing)
-        return _loop || _currentTime < _totalTime;
-    else
-        return NO;
-}
-
-- (BOOL)isComplete
-{
-    return !_loop && _currentTime >= _totalTime;
-}
-
-+ (instancetype)movieWithFrame:(SPTexture *)texture fps:(float)fps
-{
-    return [[[self alloc] initWithFrame:texture fps:fps] autorelease];
-}
-
-+ (instancetype)movieWithFrames:(NSArray *)textures fps:(float)fps
-{
-    return [[[self alloc] initWithFrames:textures fps:fps] autorelease];
 }
 
 #pragma mark SPAnimatable
@@ -269,6 +228,67 @@
         [self dispatchEventWithType:SPEventTypeCompleted];
     
     [self advanceTime:carryOverTime];
+}
+
+#pragma mark Private
+
+- (void)updateCurrentFrame
+{
+    self.texture = _textures[_currentFrame];
+}
+
+- (void)playCurrentSound
+{
+    id sound = _sounds[_currentFrame];
+    if ([NSNull class] != [sound class])
+        [sound play];
+}
+
+#pragma mark Properties
+
+- (int)numFrames
+{
+    return (int)_textures.count;
+}
+
+- (float)fps
+{
+	return (float)(1.0 / _defaultFrameDuration);
+}
+
+- (void)setFps:(float)fps
+{
+    float newFrameDuration = (fps == 0.0f ? INT_MAX : 1.0 / fps);
+	float acceleration = newFrameDuration / _defaultFrameDuration;
+    _currentTime *= acceleration;
+    _defaultFrameDuration = newFrameDuration;
+
+	for (int i=0; i<self.numFrames; ++i)
+		[self setDuration:[self durationAtIndex:i] * acceleration atIndex:i];
+}
+
+- (BOOL)isPlaying
+{
+    if (_playing)
+        return _loop || _currentTime < _totalTime;
+    else
+        return NO;
+}
+
+- (BOOL)isComplete
+{
+    return !_loop && _currentTime >= _totalTime;
+}
+
+- (void)setCurrentFrame:(int)frameID
+{
+    _currentFrame = frameID;
+    _currentTime = 0.0;
+
+    for (int i=0; i<frameID; ++i)
+        _currentTime += [_durations[i] doubleValue];
+
+    [self updateCurrentFrame];
 }
 
 @end

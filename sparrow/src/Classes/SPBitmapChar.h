@@ -24,9 +24,9 @@
 
 @interface SPBitmapChar : NSObject
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a char with a texture and its properties.
 - (instancetype)initWithID:(int)charID texture:(SPTexture *)texture

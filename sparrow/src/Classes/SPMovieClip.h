@@ -36,9 +36,9 @@
  
 @interface SPMovieClip : SPImage <SPAnimatable>
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a movie with the first frame and the default number of frames per second. _Designated initializer_.
 - (instancetype)initWithFrame:(SPTexture *)texture fps:(float)fps;

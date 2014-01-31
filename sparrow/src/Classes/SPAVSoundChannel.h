@@ -26,9 +26,9 @@
 
 @interface SPAVSoundChannel : SPSoundChannel <AVAudioPlayerDelegate> 
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a sound channel from an SPAVSound object.
 - (instancetype)initWithSound:(SPAVSound *)sound;

@@ -29,6 +29,8 @@
 
 #define MIN_TEXTURE_SIZE 64
 
+// --- private interface ---------------------------------------------------------------------------
+
 @interface SPFragmentFilter ()
 
 @property (nonatomic, assign) float marginX;
@@ -63,6 +65,8 @@
     uint _vertexBufferName;
     uint _indexBufferName;
 }
+
+#pragma mark Initialization
 
 - (instancetype)initWithNumPasses:(int)numPasses resolution:(float)resolution
 {
@@ -123,6 +127,8 @@
 
     [super dealloc];
 }
+
+#pragma mark Methods
 
 - (void)cache
 {
@@ -200,7 +206,7 @@
     @"} \n";
 }
 
-#pragma mark Internal
+#pragma mark Private
 
 - (void)calcBoundsWithObject:(SPDisplayObject *)object
                        stage:(SPStage *)stage

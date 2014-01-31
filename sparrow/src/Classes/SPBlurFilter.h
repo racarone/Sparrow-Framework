@@ -30,9 +30,9 @@
 
 @interface SPBlurFilter : SPFragmentFilter
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a blur filter with the specified blur and a resolution. _Designated Initializer_.
 - (instancetype)initWithBlur:(float)blur resolution:(float)resolution;

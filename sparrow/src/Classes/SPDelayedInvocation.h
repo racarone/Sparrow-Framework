@@ -33,9 +33,9 @@
 
 @interface SPDelayedInvocation : SPEventDispatcher <SPAnimatable>
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a delayed invocation using both a target and a block. The instance will act as a
 /// proxy object, forwarding method calls to the target after a certain time has passed; the block

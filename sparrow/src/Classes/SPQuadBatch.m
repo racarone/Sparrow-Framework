@@ -21,6 +21,20 @@
 #import <Sparrow/SPTexture.h>
 #import <Sparrow/SPVertexData.h>
 
+// --- private interface ---------------------------------------------------------------------------
+
+@interface SPQuadBatch ()
+
+- (void)expand;
+- (void)createBuffers;
+- (void)syncBuffers;
+
+@property (nonatomic, assign) int capacity;
+
+@end
+
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPQuadBatch
 {
     int _numQuads;
@@ -36,6 +50,8 @@
     ushort *_indexData;
     uint _indexBufferName;
 }
+
+#pragma mark Initialization
 
 - (instancetype)initWithCapacity:(int)capacity
 {
@@ -71,84 +87,18 @@
     [super dealloc];
 }
 
++ (instancetype)quadBatch
+{
+    return [[[self alloc] init] autorelease];
+}
+
+#pragma mark Methods
+
 - (void)reset
 {
     _numQuads = 0;
     _syncRequired = YES;
     SP_RELEASE_AND_NIL(_texture);
-}
-
-- (void)expand
-{
-    int oldCapacity = self.capacity;
-    self.capacity = oldCapacity < 8 ? 16 : oldCapacity * 2;
-}
-
-- (int)capacity
-{
-    return _vertexData.numVertices / 4;
-}
-
-- (void)setCapacity:(int)newCapacity
-{
-    NSAssert(newCapacity > 0, @"capacity must not be zero");
-    
-    int oldCapacity = self.capacity;
-    int numVertices = newCapacity * 4;
-    int numIndices  = newCapacity * 6;
-    
-    _vertexData.numVertices = numVertices;
-    
-    if (!_indexData) _indexData = malloc(sizeof(ushort) * numIndices);
-    else             _indexData = realloc(_indexData, sizeof(ushort) * numIndices);
-    
-    for (int i=oldCapacity; i<newCapacity; ++i)
-    {
-        _indexData[i*6  ] = i*4;
-        _indexData[i*6+1] = i*4 + 1;
-        _indexData[i*6+2] = i*4 + 2;
-        _indexData[i*6+3] = i*4 + 1;
-        _indexData[i*6+4] = i*4 + 3;
-        _indexData[i*6+5] = i*4 + 2;
-    }
-    
-    [self createBuffers];
-}
-
-- (void)createBuffers
-{
-    int numVertices = _vertexData.numVertices;
-    int numIndices = numVertices / 4 * 6;
-    
-    if (_vertexBufferName) glDeleteBuffers(1, &_vertexBufferName);
-    if (_indexBufferName)  glDeleteBuffers(1, &_indexBufferName);
-    if (numVertices == 0)  return;
-    
-    glGenBuffers(1, &_vertexBufferName);
-    glGenBuffers(1, &_indexBufferName);
-    
-    if (!_vertexBufferName || !_indexBufferName)
-        [NSException raise:SPExceptionOperationFailed format:@"could not create vertex buffers"];
-    
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * numIndices, _indexData, GL_STATIC_DRAW);
-    
-    _syncRequired = YES;
-}
-
-- (void)syncBuffers
-{
-    if (!_vertexBufferName)
-        [self createBuffers];
-    
-    // don't use 'glBufferSubData'! It's much slower than uploading
-    // everything via 'glBufferData', at least on the iPad 1.
-    
-    glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(SPVertex) * _vertexData.numVertices,
-                 _vertexData.vertices, GL_STATIC_DRAW);
-    
-    _syncRequired = NO;
 }
 
 - (void)addQuad:(SPQuad *)quad
@@ -320,12 +270,7 @@
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
 }
 
-+ (instancetype)quadBatch
-{
-    return [[[self alloc] init] autorelease];
-}
-
-#pragma mark - compilation (for flattened sprites)
+#pragma mark Compilation Methods
 
 + (NSMutableArray *)compileObject:(SPDisplayObject *)object
 {
@@ -422,6 +367,81 @@
     }
     
     return quadBatchID;
+}
+
+#pragma mark Private
+
+- (void)expand
+{
+    int oldCapacity = self.capacity;
+    self.capacity = oldCapacity < 8 ? 16 : oldCapacity * 2;
+}
+
+- (void)createBuffers
+{
+    int numVertices = _vertexData.numVertices;
+    int numIndices = numVertices / 4 * 6;
+
+    if (_vertexBufferName) glDeleteBuffers(1, &_vertexBufferName);
+    if (_indexBufferName)  glDeleteBuffers(1, &_indexBufferName);
+    if (numVertices == 0)  return;
+
+    glGenBuffers(1, &_vertexBufferName);
+    glGenBuffers(1, &_indexBufferName);
+
+    if (!_vertexBufferName || !_indexBufferName)
+        [NSException raise:SPExceptionOperationFailed format:@"could not create vertex buffers"];
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * numIndices, _indexData, GL_STATIC_DRAW);
+
+    _syncRequired = YES;
+}
+
+- (void)syncBuffers
+{
+    if (!_vertexBufferName)
+        [self createBuffers];
+
+    // don't use 'glBufferSubData'! It's much slower than uploading
+    // everything via 'glBufferData', at least on the iPad 1.
+
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SPVertex) * _vertexData.numVertices,
+                 _vertexData.vertices, GL_STATIC_DRAW);
+
+    _syncRequired = NO;
+}
+
+- (int)capacity
+{
+    return _vertexData.numVertices / 4;
+}
+
+- (void)setCapacity:(int)newCapacity
+{
+    NSAssert(newCapacity > 0, @"capacity must not be zero");
+
+    int oldCapacity = self.capacity;
+    int numVertices = newCapacity * 4;
+    int numIndices  = newCapacity * 6;
+
+    _vertexData.numVertices = numVertices;
+
+    if (!_indexData) _indexData = malloc(sizeof(ushort) * numIndices);
+    else             _indexData = realloc(_indexData, sizeof(ushort) * numIndices);
+
+    for (int i=oldCapacity; i<newCapacity; ++i)
+    {
+        _indexData[i*6  ] = i*4;
+        _indexData[i*6+1] = i*4 + 1;
+        _indexData[i*6+2] = i*4 + 2;
+        _indexData[i*6+3] = i*4 + 1;
+        _indexData[i*6+4] = i*4 + 3;
+        _indexData[i*6+5] = i*4 + 2;
+    }
+
+    [self createBuffers];
 }
 
 @end

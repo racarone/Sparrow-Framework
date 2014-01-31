@@ -66,9 +66,9 @@ SP_EXTERN SPVertexColor SPVertexColorMakeWithColorAndAlpha(uint rgb, float alpha
 
 @interface SPVertexData : NSObject <NSCopying>
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a VertexData instance with a certain size. _Designated Initializer_.
 - (instancetype)initWithSize:(int)numVertices premultipliedAlpha:(BOOL)pma;

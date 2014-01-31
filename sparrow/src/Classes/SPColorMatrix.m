@@ -51,7 +51,7 @@ static void concatMatrix(SPColorMatrix *self, Matrix4x5 mtx)
     memmove(self->_m, temp, sizeof(Matrix4x5));
 }
 
-// ---
+#pragma mark Initialization
 
 - (instancetype)initWithValues:(const float[20])values
 {
@@ -66,6 +66,18 @@ static void concatMatrix(SPColorMatrix *self, Matrix4x5 mtx)
 {
     return [self initWithValues:Matrix4x5Identity];
 }
+
++ (instancetype)colorMatrixWithValues:(const float [20])values
+{
+    return [[[[self class] allocWithZone:nil] initWithValues:values] autorelease];
+}
+
++ (instancetype)colorMatrixWithIdentity
+{
+    return [[[[self class] allocWithZone:nil] init] autorelease];
+}
+
+#pragma mark Methods
 
 - (void)invert
 {
@@ -177,6 +189,15 @@ static void concatMatrix(SPColorMatrix *self, Matrix4x5 mtx)
     concatMatrix(self, colorMatrix->_m);
 }
 
+#pragma mark NSCopying
+
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    return [[[self class] allocWithZone:zone] initWithValues:_m];
+}
+
+#pragma mark Properties
+
 - (float *)values
 {
     return _m;
@@ -185,23 +206,6 @@ static void concatMatrix(SPColorMatrix *self, Matrix4x5 mtx)
 - (int)numValues
 {
     return 20;
-}
-
-+ (instancetype)colorMatrixWithValues:(const float [20])values
-{
-    return [[[[self class] allocWithZone:nil] initWithValues:values] autorelease];
-}
-
-+ (instancetype)colorMatrixWithIdentity
-{
-    return [[[[self class] allocWithZone:nil] init] autorelease];
-}
-
-#pragma mark NSCopying
-
-- (instancetype)copyWithZone:(NSZone *)zone
-{
-    return [[[self class] allocWithZone:zone] initWithValues:_m];
 }
 
 @end

@@ -13,6 +13,8 @@
 
 @implementation SPSoundChannel
 
+#pragma mark Initialization
+
 - (instancetype)init
 {
     if ([self isMemberOfClass:[SPSoundChannel class]]) 
@@ -24,6 +26,8 @@
     
     return [super init];
 }
+
+#pragma mark Methods
 
 - (void)play
 {
@@ -39,6 +43,8 @@
 {
     [NSException raise:SPExceptionAbstractMethod format:@"Override 'stop' in subclasses."];
 }
+
+#pragma mark Properties
 
 - (BOOL)isPlaying
 {

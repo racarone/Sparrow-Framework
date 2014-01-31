@@ -35,12 +35,12 @@ NSString *const SPBitmapFontMiniName = @"mini";
 
 @interface SPCharLocation : SPPoolObject
 
+- (instancetype)initWithChar:(SPBitmapChar *)bitmapChar;
+
 @property (nonatomic, assign) SPBitmapChar* bitmapChar;
 @property (nonatomic) float scale;
 @property (nonatomic) float x;
 @property (nonatomic) float y;
-
-- (instancetype)initWithChar:(SPBitmapChar *)bitmapChar;
 
 @end
 
@@ -56,6 +56,21 @@ NSString *const SPBitmapFontMiniName = @"mini";
 
 @end
 
+
+// --- private interface ---------------------------------------------------------------------------
+
+@interface SPBitmapFont ()
+
+- (SPTexture *)textureReferencedByXmlData:(NSData *)data;
+- (SPTexture *)textureReferencedByXmlData:(NSData *)data inFolder:(NSString *)folder;
+- (BOOL)parseFontData:(NSData *)data;
+- (NSMutableArray *)arrangeCharsInAreaWithWidth:(float)width height:(float)height
+                                           text:(NSString *)text fontSize:(float)size
+                                         hAlign:(SPHAlign)hAlign vAlign:(SPVAlign)vAlign
+                                      autoScale:(BOOL)autoScale kerning:(BOOL)kerning;
+@end
+
+
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPBitmapFont
@@ -68,6 +83,8 @@ NSString *const SPBitmapFontMiniName = @"mini";
     float _baseline;
     SPImage *_helperImage;
 }
+
+#pragma mark Initialization
 
 - (instancetype)initWithContentsOfData:(NSData *)data texture:(SPTexture *)texture
 {
@@ -136,6 +153,75 @@ NSString *const SPBitmapFontMiniName = @"mini";
     [_helperImage release];
     [super dealloc];
 }
+
+#pragma mark Methods
+
+- (SPBitmapChar *)charByID:(int)charID
+{
+    return (SPBitmapChar *)_chars[@(charID)];
+}
+
+- (SPSprite *)createSpriteWithWidth:(float)width height:(float)height
+                               text:(NSString *)text fontSize:(float)size color:(uint)color
+                             hAlign:(SPHAlign)hAlign vAlign:(SPVAlign)vAlign
+                          autoScale:(BOOL)autoScale kerning:(BOOL)kerning
+{
+    NSMutableArray *charLocations = [self arrangeCharsInAreaWithWidth:width height:height
+                                                                 text:text fontSize:size hAlign:hAlign vAlign:vAlign autoScale:autoScale kerning:kerning];
+
+    SPSprite *sprite = [SPSprite sprite];
+
+    for (SPCharLocation *charLocation in charLocations)
+    {
+        SPImage *charImage = [charLocation.bitmapChar createImage];
+        charImage.x = charLocation.x;
+        charImage.y = charLocation.y;
+        charImage.scaleX = charImage.scaleY = charLocation.scale;
+        charImage.color = color;
+        [sprite addChild:charImage];
+    }
+
+    return sprite;
+}
+
+- (void)fillQuadBatch:(SPQuadBatch *)quadBatch withWidth:(float)width height:(float)height
+                 text:(NSString *)text fontSize:(float)size color:(uint)color
+               hAlign:(SPHAlign)hAlign vAlign:(SPVAlign)vAlign
+            autoScale:(BOOL)autoScale kerning:(BOOL)kerning
+{
+    NSMutableArray *charLocations = [self arrangeCharsInAreaWithWidth:width height:height
+                                                                 text:text fontSize:size hAlign:hAlign vAlign:vAlign autoScale:autoScale kerning:kerning];
+
+    _helperImage.color = color;
+
+    if (charLocations.count > 8192)
+        [NSException raise:SPExceptionInvalidOperation
+                    format:@"Bitmap font text is limited to 8192 characters"];
+
+    for (SPCharLocation *charLocation in charLocations)
+    {
+        _helperImage.texture = charLocation.bitmapChar.texture;
+        _helperImage.x = charLocation.x;
+        _helperImage.y = charLocation.y;
+        _helperImage.scaleX = _helperImage.scaleY = charLocation.scale;
+        [_helperImage readjustSize];
+        [quadBatch addQuad:_helperImage];
+    }
+}
+
+#pragma mark Properties
+
+- (SPTextureSmoothing)smoothing
+{
+    return _fontTexture.smoothing;
+}
+
+- (void)setSmoothing:(SPTextureSmoothing)smoothing
+{
+    _fontTexture.smoothing = smoothing;
+}
+
+#pragma mark Private
 
 - (SPTexture *)textureReferencedByXmlData:(NSData *)data
 {
@@ -238,59 +324,6 @@ NSString *const SPBitmapFontMiniName = @"mini";
                      parser.parserError.localizedDescription];
     
     return success;
-}
-
-- (SPBitmapChar *)charByID:(int)charID
-{
-    return (SPBitmapChar *)_chars[@(charID)];
-}
-
-- (SPSprite *)createSpriteWithWidth:(float)width height:(float)height
-                               text:(NSString *)text fontSize:(float)size color:(uint)color
-                             hAlign:(SPHAlign)hAlign vAlign:(SPVAlign)vAlign
-                          autoScale:(BOOL)autoScale kerning:(BOOL)kerning
-{
-    NSMutableArray *charLocations = [self arrangeCharsInAreaWithWidth:width height:height
-        text:text fontSize:size hAlign:hAlign vAlign:vAlign autoScale:autoScale kerning:kerning];
-    
-    SPSprite *sprite = [SPSprite sprite];
-    
-    for (SPCharLocation *charLocation in charLocations)
-    {
-        SPImage *charImage = [charLocation.bitmapChar createImage];
-        charImage.x = charLocation.x;
-        charImage.y = charLocation.y;
-        charImage.scaleX = charImage.scaleY = charLocation.scale;
-        charImage.color = color;
-        [sprite addChild:charImage];
-    }
-    
-    return sprite;
-}
-
-- (void)fillQuadBatch:(SPQuadBatch *)quadBatch withWidth:(float)width height:(float)height
-                 text:(NSString *)text fontSize:(float)size color:(uint)color
-               hAlign:(SPHAlign)hAlign vAlign:(SPVAlign)vAlign
-               autoScale:(BOOL)autoScale kerning:(BOOL)kerning
-{
-    NSMutableArray *charLocations = [self arrangeCharsInAreaWithWidth:width height:height
-        text:text fontSize:size hAlign:hAlign vAlign:vAlign autoScale:autoScale kerning:kerning];
-    
-    _helperImage.color = color;
-    
-    if (charLocations.count > 8192)
-        [NSException raise:SPExceptionInvalidOperation
-                    format:@"Bitmap font text is limited to 8192 characters"];
-    
-    for (SPCharLocation *charLocation in charLocations)
-    {
-        _helperImage.texture = charLocation.bitmapChar.texture;
-        _helperImage.x = charLocation.x;
-        _helperImage.y = charLocation.y;
-        _helperImage.scaleX = _helperImage.scaleY = charLocation.scale;
-        [_helperImage readjustSize];
-        [quadBatch addQuad:_helperImage];
-    }
 }
 
 - (NSMutableArray *)arrangeCharsInAreaWithWidth:(float)width height:(float)height
@@ -446,17 +479,7 @@ NSString *const SPBitmapFontMiniName = @"mini";
     return finalLocations;
 }
 
-- (SPTextureSmoothing)smoothing
-{
-    return _fontTexture.smoothing;
-}
-
-- (void)setSmoothing:(SPTextureSmoothing)smoothing
-{
-    _fontTexture.smoothing = smoothing;
-}
-
-#pragma mark - Mini Font
+#pragma mark Mini Font
 
 NSString *MiniFontXmlDataBase64 =
    @"H4sIAAAAAAAAA7Wc3XIbKRCF7/MUKt2nPM0/VXau8wZ7rbXlWLW2lFp5f7JPvxpxxgHBiEGhb1yyYn0+6Qb60DC+fz7s37"

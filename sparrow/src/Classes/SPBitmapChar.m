@@ -24,6 +24,8 @@
     NSMutableDictionary *_kernings;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithID:(int)charID texture:(SPTexture *)texture
          xOffset:(float)xOffset yOffset:(float)yOffset xAdvance:(float)xAdvance;
 {
@@ -46,6 +48,7 @@
 
 - (instancetype)init
 {
+    [self release];
     return nil;
 }
 
@@ -55,6 +58,8 @@
     [_kernings release];
     [super dealloc];
 }
+
+#pragma mark Methods
 
 - (void)addKerning:(float)amount toChar:(int)charID
 {
@@ -74,6 +79,8 @@
 {
     return [SPImage imageWithTexture:_texture];
 }
+
+#pragma mark Properties
 
 - (float)width
 {

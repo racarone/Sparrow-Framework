@@ -31,6 +31,8 @@
 @synthesize width = _width;
 @synthesize height = _height;
 
+#pragma mark Initialization
+
 - (instancetype)initWithWidth:(float)width height:(float)height
 {    
     if ((self = [super init]))
@@ -48,6 +50,16 @@
     return [self initWithWidth:screenSize.width height:screenSize.height];
 }
 
+#pragma mark SPDisplayObject
+
+- (void)render:(SPRenderSupport *)support
+{
+    [SPRenderSupport clearWithColor:_color alpha:1.0f];
+    [support setupOrthographicProjectionWithLeft:0 right:_width top:0 bottom:_height];
+
+    [super render:support];
+}
+
 - (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
 {
     if (!self.visible || !self.touchable)
@@ -60,13 +72,18 @@
     return target;
 }
 
-- (void)render:(SPRenderSupport *)support
+#pragma mark SPDisplayObjectContainer (Internal)
+
+- (void)appendDescendantEventListenersOfObject:(SPDisplayObject *)object withEventType:(NSString *)type
+                                       toArray:(NSMutableArray *)listeners
 {
-    [SPRenderSupport clearWithColor:_color alpha:1.0f];
-    [support setupOrthographicProjectionWithLeft:0 right:_width top:0 bottom:_height];
-    
-    [super render:support];
+    if (object == self && [type isEqualToString:SPEventTypeEnterFrame])
+        [listeners addObjectsFromArray:_enterFrameListeners];
+    else
+        [super appendDescendantEventListenersOfObject:object withEventType:type toArray:listeners];
 }
+
+#pragma mark Properties
 
 - (void)setX:(float)value
 {
@@ -135,15 +152,6 @@
 {
     NSUInteger index = [_enterFrameListeners indexOfObject:listener];
     if (index != NSNotFound) [_enterFrameListeners removeObjectAtIndex:index];
-}
-
-- (void)appendDescendantEventListenersOfObject:(SPDisplayObject *)object withEventType:(NSString *)type
-                                       toArray:(NSMutableArray *)listeners
-{
-    if (object == self && [type isEqualToString:SPEventTypeEnterFrame])
-        [listeners addObjectsFromArray:_enterFrameListeners];
-    else
-        [super appendDescendantEventListenersOfObject:object withEventType:type toArray:listeners];
 }
 
 @end

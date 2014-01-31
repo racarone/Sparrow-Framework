@@ -23,6 +23,8 @@
     NSMutableSet *_playingChannels;
 }
 
+#pragma mark Initialization
+
 - (instancetype)init
 {
     if ([self isMemberOfClass:[SPSound class]])
@@ -162,6 +164,13 @@
     [super dealloc];
 }
 
++ (instancetype)soundWithContentsOfFile:(NSString *)path
+{
+    return [[[SPSound alloc] initWithContentsOfFile:path] autorelease];
+}
+
+#pragma mark Methods
+
 - (void)play
 {
     SPSoundChannel *channel = [self createChannel];
@@ -173,6 +182,14 @@
     [_playingChannels addObject:channel];
 }
 
+- (SPSoundChannel *)createChannel
+{
+    [NSException raise:SPExceptionAbstractMethod format:@"Override 'createChannel' in subclasses."];
+    return nil;
+}
+
+#pragma mark Events
+
 - (void)onSoundCompleted:(SPEvent *)event
 {
     SPSoundChannel *channel = (SPSoundChannel *)event.target;
@@ -180,22 +197,12 @@
     [_playingChannels removeObject:channel];
 }
 
-- (SPSoundChannel *)createChannel
-{
-    [NSException raise:SPExceptionAbstractMethod format:@"Override 'createChannel' in subclasses."];
-    return nil;
-}
+#pragma mark Properties
 
 - (double)duration
 {
     [NSException raise:SPExceptionAbstractMethod format:@"Override 'duration' in subclasses."];
     return 0.0;
 }
-
-+ (instancetype)soundWithContentsOfFile:(NSString *)path
-{
-    return [[[SPSound alloc] initWithContentsOfFile:path] autorelease];
-}
-
 
 @end

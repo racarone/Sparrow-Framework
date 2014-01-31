@@ -68,7 +68,9 @@
     NSMutableDictionary *_textureInfos;
 }
 
-@synthesize texture=_atlasTexture;
+@synthesize texture = _atlasTexture;
+
+#pragma mark Initialization
 
 - (instancetype)initWithContentsOfFile:(NSString *)path texture:(SPTexture *)texture
 {
@@ -103,63 +105,12 @@
     [super dealloc];
 }
 
-- (void)parseAtlasXml:(NSString *)relativePath
++ (instancetype)atlasWithContentsOfFile:(NSString *)path
 {
-    if (!relativePath) return;
-
-    NSString *path = [SPUtils absolutePathToFile:relativePath];
-    if (!path) [NSException raise:SPExceptionFileNotFound format:@"file not found: %@", relativePath];
-    
-    NSData *xmlData = [[NSData alloc] initWithContentsOfFile:path];
-    NSXMLParser *parser = [[NSXMLParser alloc] initWithData:xmlData];
-    [xmlData release];
-    
-    BOOL success = [parser parseElementsWithBlock:^(NSString *elementName, NSDictionary *attributes)
-    {
-        if ([elementName isEqualToString:@"SubTexture"])
-        {
-            float scale = _atlasTexture.scale;
-            
-            NSString *name = attributes[@"name"];
-            float x = [attributes[@"x"] floatValue] / scale;
-            float y = [attributes[@"y"] floatValue] / scale;
-            float width = [attributes[@"width"] floatValue] / scale;
-            float height = [attributes[@"height"] floatValue] / scale;
-            float frameX = [attributes[@"frameX"] floatValue] / scale;
-            float frameY = [attributes[@"frameY"] floatValue] / scale;
-            float frameWidth = [attributes[@"frameWidth"] floatValue] / scale;
-            float frameHeight = [attributes[@"frameHeight"] floatValue] / scale;
-            BOOL  rotated = [attributes[@"rotated"] boolValue];
-
-            SPRectangle *region = [SPRectangle rectangleWithX:x y:y width:width height:height];
-            SPRectangle *frame = nil;
-
-            if (frameWidth && frameHeight)
-                frame = [SPRectangle rectangleWithX:frameX y:frameY width:frameWidth height:frameHeight];
-            
-            [self addRegion:region withName:name frame:frame rotated:rotated];
-        }
-        else if ([elementName isEqualToString:@"TextureAtlas"] && !_atlasTexture)
-        {
-            // load atlas texture
-            NSString *filename = [attributes valueForKey:@"imagePath"];
-            NSString *textureFolder = [path stringByDeletingLastPathComponent];
-            NSString *texturePath = [textureFolder stringByAppendingPathComponent:filename];
-            _atlasTexture = [[SPTexture alloc] initWithContentsOfFile:texturePath];
-        }
-    }];
-
-    [parser release];
-    
-    if (!success)
-        [NSException raise:SPExceptionFileInvalid format:@"could not parse texture atlas %@. Error: %@",
-                           path, parser.parserError.localizedDescription];
+    return [[[self alloc] initWithContentsOfFile:path] autorelease];
 }
 
-- (int)numTextures
-{
-    return (int)[_textureInfos count];
-}
+#pragma mark Methods
 
 - (SPTexture *)textureByName:(NSString *)name
 {
@@ -188,11 +139,6 @@
     return info.frame;
 }
 
-- (NSArray *)textures
-{
-    return [self texturesStartingWith:nil];
-}
-
 - (NSArray *)texturesStartingWith:(NSString *)prefix
 {
     NSArray *names = [self namesStartingWith:prefix];
@@ -202,11 +148,6 @@
         [textures addObject:[self textureByName:textureName]];
     
     return textures;
-}
-
-- (NSArray *)names
-{
-    return [self namesStartingWith:nil];
 }
 
 - (NSArray *)namesStartingWith:(NSString *)prefix
@@ -249,9 +190,76 @@
     [_textureInfos removeObjectForKey:name];
 }
 
-+ (instancetype)atlasWithContentsOfFile:(NSString *)path
+#pragma mark Properties
+
+- (int)numTextures
 {
-    return [[[self alloc] initWithContentsOfFile:path] autorelease];
+    return (int)[_textureInfos count];
+}
+
+- (NSArray *)names
+{
+    return [self namesStartingWith:nil];
+}
+
+- (NSArray *)textures
+{
+    return [self texturesStartingWith:nil];
+}
+
+#pragma mark Private
+
+- (void)parseAtlasXml:(NSString *)relativePath
+{
+    if (!relativePath) return;
+
+    NSString *path = [SPUtils absolutePathToFile:relativePath];
+    if (!path) [NSException raise:SPExceptionFileNotFound format:@"file not found: %@", relativePath];
+
+    NSData *xmlData = [[NSData alloc] initWithContentsOfFile:path];
+    NSXMLParser *parser = [[NSXMLParser alloc] initWithData:xmlData];
+    [xmlData release];
+
+    BOOL success = [parser parseElementsWithBlock:^(NSString *elementName, NSDictionary *attributes)
+                    {
+                        if ([elementName isEqualToString:@"SubTexture"])
+                        {
+                            float scale = _atlasTexture.scale;
+
+                            NSString *name = attributes[@"name"];
+                            float x = [attributes[@"x"] floatValue] / scale;
+                            float y = [attributes[@"y"] floatValue] / scale;
+                            float width = [attributes[@"width"] floatValue] / scale;
+                            float height = [attributes[@"height"] floatValue] / scale;
+                            float frameX = [attributes[@"frameX"] floatValue] / scale;
+                            float frameY = [attributes[@"frameY"] floatValue] / scale;
+                            float frameWidth = [attributes[@"frameWidth"] floatValue] / scale;
+                            float frameHeight = [attributes[@"frameHeight"] floatValue] / scale;
+                            BOOL  rotated = [attributes[@"rotated"] boolValue];
+
+                            SPRectangle *region = [SPRectangle rectangleWithX:x y:y width:width height:height];
+                            SPRectangle *frame = nil;
+
+                            if (frameWidth && frameHeight)
+                                frame = [SPRectangle rectangleWithX:frameX y:frameY width:frameWidth height:frameHeight];
+
+                            [self addRegion:region withName:name frame:frame rotated:rotated];
+                        }
+                        else if ([elementName isEqualToString:@"TextureAtlas"] && !_atlasTexture)
+                        {
+                            // load atlas texture
+                            NSString *filename = [attributes valueForKey:@"imagePath"];
+                            NSString *textureFolder = [path stringByDeletingLastPathComponent];
+                            NSString *texturePath = [textureFolder stringByAppendingPathComponent:filename];
+                            _atlasTexture = [[SPTexture alloc] initWithContentsOfFile:texturePath];
+                        }
+                    }];
+    
+    [parser release];
+    
+    if (!success)
+        [NSException raise:SPExceptionFileInvalid format:@"could not parse texture atlas %@. Error: %@",
+         path, parser.parserError.localizedDescription];
 }
 
 @end

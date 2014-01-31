@@ -13,6 +13,20 @@
 #import <Sparrow/SPOpenGL.h>
 #import <Sparrow/SPProgram.h>
 
+// --- private interface ---------------------------------------------------------------------------
+
+@interface SPProgram ()
+
+- (void)compile;
+- (uint)compileShader:(NSString *)source type:(GLenum)type;
+- (void)updateUniforms;
+- (void)updateAttributes;
+
+@end
+
+
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPProgram
 {
     uint _name;
@@ -21,6 +35,8 @@
     NSMutableDictionary *_uniforms;
     NSMutableDictionary *_attributes;
 }
+
+#pragma mark Initialization
 
 - (instancetype)initWithVertexShader:(NSString *)vertexShader fragmentShader:(NSString *)fragmentShader
 {
@@ -39,6 +55,7 @@
 
 - (instancetype)init
 {
+    [self release];
     return nil;
 }
 
@@ -52,6 +69,29 @@
     [_attributes release];
     [super dealloc];
 }
+
+#pragma mark Methods
+
+- (int)uniformByName:(NSString *)name
+{
+    return [_uniforms[name] intValue];
+}
+
+- (int)attributeByName:(NSString *)name
+{
+    return [_attributes[name] intValue];
+}
+
+#pragma mark NSObject
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:
+            @"[Program %d\n## VERTEX SHADER: ##\n%@\n## FRAGMENT SHADER: ##\n%@]",
+            _name, _vertexShader, _fragmentShader];
+}
+
+#pragma mark Private
 
 - (void)compile
 {
@@ -171,23 +211,6 @@
         _attributes[name] = @(glGetAttribLocation(_name, rawName));
         [name release];
     }
-}
-
-- (int)uniformByName:(NSString *)name
-{
-    return [_uniforms[name] intValue];
-}
-
-- (int)attributeByName:(NSString *)name
-{
-    return [_attributes[name] intValue];
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:
-            @"[Program %d\n## VERTEX SHADER: ##\n%@\n## FRAGMENT SHADER: ##\n%@]",
-            _name, _vertexShader, _fragmentShader];
 }
 
 @end

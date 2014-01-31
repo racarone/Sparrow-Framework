@@ -57,9 +57,9 @@
 
 @interface SPTextureAtlas : NSObject
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a texture atlas from an XML file and a custom texture. _Designated Initializer_.
 - (instancetype)initWithContentsOfFile:(NSString *)path texture:(SPTexture *)texture;

@@ -37,6 +37,8 @@ NSString *const SPEventTypeFlatten              = @"SPEventTypeFlatten";
     BOOL _bubbles;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles
 {    
     if ((self = [super init]))
@@ -63,22 +65,6 @@ NSString *const SPEventTypeFlatten              = @"SPEventTypeFlatten";
     [super dealloc];
 }
 
-- (void)stopImmediatePropagation
-{
-    _stopsImmediatePropagation = YES;
-}
-
-- (void)stopPropagation
-{
-    _stopsPropagation = YES;
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"[%@: type=\"%@\", bubbles=%@]",
-            NSStringFromClass([self class]), _type, _bubbles ? @"YES" : @"NO"];
-}
-
 + (instancetype)eventWithType:(NSString *)type bubbles:(BOOL)bubbles
 {
     return [[[self alloc] initWithType:type bubbles:bubbles] autorelease];
@@ -89,6 +75,25 @@ NSString *const SPEventTypeFlatten              = @"SPEventTypeFlatten";
     return [[[self alloc] initWithType:type] autorelease];
 }
 
+#pragma mark Methods
+
+- (void)stopImmediatePropagation
+{
+    _stopsImmediatePropagation = YES;
+}
+
+- (void)stopPropagation
+{
+    _stopsPropagation = YES;
+}
+
+#pragma mark NSObject
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"[%@: type=\"%@\", bubbles=%@]",
+            NSStringFromClass([self class]), _type, _bubbles ? @"YES" : @"NO"];
+}
 
 @end
 

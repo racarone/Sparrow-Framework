@@ -31,13 +31,7 @@ static NSMutableDictionary *framebufferCache = nil;
     SPTexture *_renderTarget;
 }
 
-+ (void)initialize
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        framebufferCache = [[NSMutableDictionary alloc] init];
-    });
-}
+#pragma mark Initialization
 
 - (instancetype)initWithSharegroup:(id)sharegroup
 {
@@ -60,6 +54,14 @@ static NSMutableDictionary *framebufferCache = nil;
     [_renderTarget release];
 
     [super dealloc];
+}
+
++ (void)initialize
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        framebufferCache = [[NSMutableDictionary alloc] init];
+    });
 }
 
 #pragma mark Methods

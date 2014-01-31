@@ -22,9 +22,9 @@
     float _y;
 }
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a point with its x and y components. _Designated Initializer_.
 - (instancetype)initWithX:(float)x y:(float)y;

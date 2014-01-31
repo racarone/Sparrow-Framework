@@ -48,6 +48,8 @@
     SPFragmentFilter *_filter;
 }
 
+#pragma mark Initialization
+
 - (instancetype)init
 {    
     #ifdef DEBUG    
@@ -82,6 +84,8 @@
     [super dealloc];
 }
 
+#pragma mark Methods
+
 - (void)render:(SPRenderSupport *)support
 {
     // override in subclass
@@ -104,18 +108,22 @@
 
     switch (hAlign)
     {
-        case SPHAlignLeft:      _pivotX = bounds.x;                      break;
-        case SPHAlignCenter:    _pivotX = bounds.x + bounds.width / 2.0; break;
-        case SPHAlignRight:     _pivotX = bounds.x + bounds.width;       break;
-        default:                [NSException raise:SPExceptionInvalidOperation format:@"invalid horizontal alignment"];
+        case SPHAlignLeft:   _pivotX = bounds.x;                      break;
+        case SPHAlignCenter: _pivotX = bounds.x + bounds.width / 2.0; break;
+        case SPHAlignRight:  _pivotX = bounds.x + bounds.width;       break;
+        default:
+            [NSException raise:SPExceptionInvalidOperation
+                        format:@"Invalid horizontal alignment"];
     }
 
     switch (vAlign)
     {
-        case SPVAlignTop:       _pivotY = bounds.y;                       break;
-        case SPVAlignCenter:    _pivotY = bounds.y + bounds.height / 2.0; break;
-        case SPVAlignBottom:    _pivotY = bounds.y + bounds.height;       break;
-        default:                [NSException raise:SPExceptionInvalidOperation format:@"invalid vertical alignment"];
+        case SPVAlignTop:    _pivotY = bounds.y;                       break;
+        case SPVAlignCenter: _pivotY = bounds.y + bounds.height / 2.0; break;
+        case SPVAlignBottom: _pivotY = bounds.y + bounds.height;       break;
+        default:
+            [NSException raise:SPExceptionInvalidOperation
+                        format:@"Invalid vertical alignment"];
     }
 }
 
@@ -215,11 +223,6 @@
     return nil;
 }
 
-- (SPRectangle *)bounds
-{
-    return [self boundsInSpace:_parent];
-}
-
 - (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
 {
     // invisible or untouchable objects cause the test to fail
@@ -243,7 +246,21 @@
     return [matrix transformPoint:globalPoint];
 }
 
-#pragma mark - Events
+- (void)broadcastEvent:(SPEvent *)event
+{
+    if (event.bubbles)
+        [NSException raise:SPExceptionInvalidOperation
+                    format:@"Broadcast of bubbling events is prohibited"];
+
+    [self dispatchEvent:event];
+}
+
+- (void)broadcastEventWithType:(NSString *)type
+{
+    [self dispatchEventWithType:type];
+}
+
+#pragma mark SPEventDispatcher
 
 - (void)dispatchEvent:(SPEvent *)event
 {
@@ -259,34 +276,8 @@
     [super dispatchEvent:event];
 }
 
-- (void)broadcastEvent:(SPEvent *)event
-{
-    if (event.bubbles)
-        [NSException raise:SPExceptionInvalidOperation
-                    format:@"Broadcast of bubbling events is prohibited"];
-
-    [self dispatchEvent:event];
-}
-
-- (void)broadcastEventWithType:(NSString *)type
-{
-    [self dispatchEventWithType:type];
-}
-
-// SPEnterFrame event optimization
-
 // To avoid looping through the complete display tree each frame to find out who's listening to
 // SPEventTypeEnterFrame events, we manage a list of them manually in the SPStage class.
-
-- (void)addEnterFrameListenerToStage
-{
-    [[[Sparrow currentController] stage] addEnterFrameListener:self];
-}
-
-- (void)removeEnterFrameListenerFromStage
-{
-    [[[Sparrow currentController] stage] removeEnterFrameListener:self];
-}
 
 - (void)addEventListener:(id)listener forType:(NSString *)eventType
 {
@@ -312,34 +303,17 @@
     }
 }
 
-#pragma mark - Properties
-
-- (float)width
+- (void)addEnterFrameListenerToStage
 {
-    return [self boundsInSpace:_parent].width; 
+    [Sparrow.currentController.stage addEnterFrameListener:self];
 }
 
-- (void)setWidth:(float)value
+- (void)removeEnterFrameListenerFromStage
 {
-    // this method calls 'self.scaleX' instead of changing _scaleX directly.
-    // that way, subclasses reacting on size changes need to override only the scaleX method.
-    
-    self.scaleX = 1.0f;
-    float actualWidth = self.width;
-    if (actualWidth != 0.0f) self.scaleX = value / actualWidth;
+    [Sparrow.currentController.stage removeEnterFrameListener:self];
 }
 
-- (float)height
-{
-    return [self boundsInSpace:_parent].height;
-}
-
-- (void)setHeight:(float)value
-{
-    self.scaleY = 1.0f;
-    float actualHeight = self.height;
-    if (actualHeight != 0.0f) self.scaleY = value / actualHeight;
-}
+#pragma mark Properties
 
 - (void)setX:(float)value
 {
@@ -413,6 +387,33 @@
     }
 }
 
+- (float)width
+{
+    return [self boundsInSpace:_parent].width;
+}
+
+- (void)setWidth:(float)value
+{
+    // this method calls 'self.scaleX' instead of changing _scaleX directly.
+    // that way, subclasses reacting on size changes need to override only the scaleX method.
+
+    self.scaleX = 1.0f;
+    float actualWidth = self.width;
+    if (actualWidth != 0.0f) self.scaleX = value / actualWidth;
+}
+
+- (float)height
+{
+    return [self boundsInSpace:_parent].height;
+}
+
+- (void)setHeight:(float)value
+{
+    self.scaleY = 1.0f;
+    float actualHeight = self.height;
+    if (actualHeight != 0.0f) self.scaleY = value / actualHeight;
+}
+
 - (void)setRotation:(float)value
 {
     // move to equivalent value in range [0 deg, 360 deg] without a loop
@@ -431,11 +432,9 @@
     _alpha = SP_CLAMP(value, 0.0f, 1.0f);
 }
 
-- (SPDisplayObject *)base
+- (SPRectangle *)bounds
 {
-    SPDisplayObject *currentObject = self;
-    while (currentObject->_parent) currentObject = currentObject->_parent;
-    return currentObject;
+    return [self boundsInSpace:_parent];
 }
 
 - (SPDisplayObject *)root
@@ -448,6 +447,13 @@
         else currentObject = currentObject->_parent;
     }
     return nil;
+}
+
+- (SPDisplayObject *)base
+{
+    SPDisplayObject *currentObject = self;
+    while (currentObject->_parent) currentObject = currentObject->_parent;
+    return currentObject;
 }
 
 - (SPStage *)stage

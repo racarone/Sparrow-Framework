@@ -17,7 +17,17 @@
 #import <Sparrow/SPOpenGL.h>
 #import <Sparrow/SPProgram.h>
 
+// --- private interface ---------------------------------------------------------------------------
+
 static NSString *const SPColorMatrixProgram = @"SPColorMatrixProgram";
+
+@interface SPColorMatrixFilter ()
+
+- (NSString *)fragmentShader;
+- (void)updateShaderMatrix;
+
+@end
+
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -32,6 +42,8 @@ static NSString *const SPColorMatrixProgram = @"SPColorMatrixProgram";
     int _uColorMatrix;
     int _uColorOffset;
 }
+
+#pragma mark Initialization
 
 - (instancetype)initWithMatrix:(SPColorMatrix *)colorMatrix
 {
@@ -52,6 +64,18 @@ static NSString *const SPColorMatrixProgram = @"SPColorMatrixProgram";
     [_shaderProgram release];
     [super dealloc];
 }
+
++ (instancetype)colorMatrixFilter
+{
+    return [[[self alloc] init] autorelease];
+}
+
++ (instancetype)colorMatrixFilterWithMatrix:(SPColorMatrix *)colorMatrix
+{
+    return [[[self alloc] initWithMatrix:colorMatrix] autorelease];
+}
+
+#pragma mark Methods
 
 - (void)invert
 {
@@ -101,6 +125,8 @@ static NSString *const SPColorMatrixProgram = @"SPColorMatrixProgram";
     _colorMatrixDirty = YES;
 }
 
+#pragma mark SPFragmentFilter (Subclasses)
+
 - (void)createPrograms
 {
     if (!_shaderProgram)
@@ -137,6 +163,8 @@ static NSString *const SPColorMatrixProgram = @"SPColorMatrixProgram";
     glUniformMatrix4fv(_uColorMatrix, 1, false, _shaderMatrix.m);
     glUniform4fv(_uColorOffset, 1, _shaderOffset.v);
 }
+
+#pragma mark Private
 
 - (NSString *)fragmentShader
 {
@@ -184,16 +212,6 @@ static NSString *const SPColorMatrixProgram = @"SPColorMatrixProgram";
     };
 
     _colorMatrixDirty = NO;
-}
-
-+ (instancetype)colorMatrixFilter
-{
-    return [[[self alloc] init] autorelease];
-}
-
-+ (instancetype)colorMatrixFilterWithMatrix:(SPColorMatrix *)colorMatrix
-{
-    return [[[self alloc] initWithMatrix:colorMatrix] autorelease];
 }
 
 @end

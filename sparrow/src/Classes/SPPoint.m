@@ -16,7 +16,8 @@
 
 @implementation SPPoint
 
-// designated initializer
+#pragma mark Initialization
+
 - (instancetype)initWithX:(float)x y:(float)y
 {
     if ((self = [super init]))
@@ -37,30 +38,22 @@
     return [self initWithX:0.0f y:0.0f];
 }
 
-- (float)length
++ (instancetype)pointWithPolarLength:(float)length angle:(float)angle
 {
-    return sqrtf(SP_SQUARE(_x) + SP_SQUARE(_y));
+    return [[[self allocWithZone:nil] initWithPolarLength:length angle:angle] autorelease];
 }
 
-- (float)lengthSquared 
++ (instancetype)pointWithX:(float)x y:(float)y
 {
-    return SP_SQUARE(_x) + SP_SQUARE(_y);
+    return [[[self allocWithZone:nil] initWithX:x y:y] autorelease];
 }
 
-- (float)angle
++ (instancetype)point
 {
-    return atan2f(_y, _x);
+    return [[[self allocWithZone:nil] init] autorelease];
 }
 
-- (BOOL)isOrigin
-{
-    return _x == 0.0f && _y == 0.0f;
-}
-
-- (SPPoint *)invert
-{
-    return [SPPoint pointWithX:-_x y:-_y];
-}
+#pragma mark Methods
 
 - (SPPoint *)addPoint:(SPPoint *)point
 {
@@ -93,9 +86,25 @@
     return [SPPoint pointWithX:_x * inverseLength y:_y * inverseLength];
 }
 
+- (SPPoint *)invert
+{
+    return [SPPoint pointWithX:-_x y:-_y];
+}
+
 - (float)dot:(SPPoint *)other
 {
     return _x * other->_x + _y * other->_y;
+}
+
+- (BOOL)isEquivalent:(SPPoint *)point
+{
+    if (point == self) return YES;
+    else if (!point) return NO;
+    else
+    {
+        return SP_IS_FLOAT_EQUAL(_x, point->_x) &&
+               SP_IS_FLOAT_EQUAL(_y, point->_y);
+    }
 }
 
 - (void)copyFromPoint:(SPPoint *)point
@@ -113,22 +122,6 @@
 - (GLKVector2)convertToGLKVector
 {
     return GLKVector2Make(_x, _y);
-}
-
-- (BOOL)isEquivalent:(SPPoint *)other
-{
-    if (other == self) return YES;
-    else if (!other) return NO;
-    else
-    {
-        SPPoint *point = (SPPoint *)other;
-        return SP_IS_FLOAT_EQUAL(_x, point->_x) && SP_IS_FLOAT_EQUAL(_y, point->_y);    
-    }
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"[SPPoint: x=%f, y=%f]", _x, _y];
 }
 
 + (float)distanceFromPoint:(SPPoint *)p1 toPoint:(SPPoint *)p2
@@ -149,19 +142,11 @@
     return cos >= 1.0f ? 0.0f : acosf(cos);
 }
 
-+ (instancetype)pointWithPolarLength:(float)length angle:(float)angle
-{
-    return [[[self allocWithZone:nil] initWithPolarLength:length angle:angle] autorelease];
-}
+#pragma mark NSObject
 
-+ (instancetype)pointWithX:(float)x y:(float)y
+- (NSString *)description
 {
-    return [[[self allocWithZone:nil] initWithX:x y:y] autorelease];
-}
-
-+ (instancetype)point
-{
-    return [[[self allocWithZone:nil] init] autorelease];
+    return [NSString stringWithFormat:@"[SPPoint: x=%f, y=%f]", _x, _y];
 }
 
 #pragma mark NSCopying
@@ -169,6 +154,28 @@
 - (instancetype)copyWithZone:(NSZone *)zone
 {
     return [[[self class] allocWithZone:zone] initWithX:_x y:_y];
+}
+
+#pragma mark Properties
+
+- (float)length
+{
+    return sqrtf(SP_SQUARE(_x) + SP_SQUARE(_y));
+}
+
+- (float)lengthSquared
+{
+    return SP_SQUARE(_x) + SP_SQUARE(_y);
+}
+
+- (float)angle
+{
+    return atan2f(_y, _x);
+}
+
+- (BOOL)isOrigin
+{
+    return _x == 0.0f && _y == 0.0f;
 }
 
 @end

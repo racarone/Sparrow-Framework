@@ -54,6 +54,8 @@ enum PVRPixelType
     NSData *_data;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithData:(NSData *)data
 {
     return [self initWithData:data compressed:NO];
@@ -97,16 +99,18 @@ enum PVRPixelType
     return self;
 }
 
-- (void *)imageData
-{
-    PVRTextureHeader *header = (PVRTextureHeader *)[_data bytes];
-    return (unsigned char *)header + header->headerSize;
-}
-
 - (void)dealloc
 {
     [_data release];
     [super dealloc];
+}
+
+#pragma mark Properties
+
+- (void *)imageData
+{
+    PVRTextureHeader *header = (PVRTextureHeader *)[_data bytes];
+    return (unsigned char *)header + header->headerSize;
 }
 
 @end

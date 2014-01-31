@@ -48,9 +48,9 @@ SP_EXTERN NSString *const SPBitmapFontMiniName;
 
 @interface SPBitmapFont : NSObject
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a bitmap font by parsing the XML data and using the specified texture.
 /// _Designated Initializer_.

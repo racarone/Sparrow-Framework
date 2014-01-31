@@ -36,6 +36,8 @@
 @synthesize scale = _scale;
 @synthesize smoothing = _smoothing;
 
+#pragma mark Initialization
+
 - (instancetype)initWithName:(uint)name format:(SPTextureFormat)format
                        width:(float)width height:(float)height containsMipmaps:(BOOL)mipmaps
                        scale:(float)scale premultipliedAlpha:(BOOL)pma;
@@ -205,6 +207,8 @@
 
     [super dealloc];
 }
+
+#pragma mark SPTexture
 
 - (float)width
 {

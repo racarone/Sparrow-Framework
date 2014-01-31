@@ -76,8 +76,11 @@ static NSString *getNameOfMode(uint mode)
 
 - (instancetype)init
 {
+    [NSException raise:NSGenericException format:@"Static class - do not initialize!"];
     return nil;
 }
+
+#pragma mark Class
 
 // OpenGL blend factors are either 0, 1, or something between 0x0300 and 0x0308.
 // We can use this to encode 4 blend factors in a single unsigned integer.

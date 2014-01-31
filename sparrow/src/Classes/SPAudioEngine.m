@@ -31,10 +31,11 @@ NSString *const SPNotificationAudioInteruptionEnded     = @"SPNotificationAudioI
 
 + (void)beginInterruption;
 + (void)endInterruption;
-
++ (void)onAppActivated:(NSNotification *)notification;
 + (void)postNotification:(NSString *)name object:(id)object;
 
 @end
+
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -57,13 +58,73 @@ static ALCcontext *context = NULL;
 static float masterVolume = 1.0f;
 static BOOL interrupted = NO;
 
-// ---
+#pragma mark Initialization
 
 - (instancetype)init
 {
     [NSException raise:NSGenericException format:@"Static class - do not initialize!"];        
     return nil;
 }
+
++ (BOOL)initAudioSession:(SPAudioSessionCategory)category
+{
+    static BOOL sessionInitialized = NO;
+    OSStatus result;
+
+    if (!sessionInitialized)
+    {
+        result = AudioSessionInitialize(NULL, NULL, interruptionCallback, NULL);
+        if (result != kAudioSessionNoError)
+        {
+            NSLog(@"Could not initialize audio session: %x", (unsigned int)result);
+            return NO;
+        }
+        sessionInitialized = YES;
+    }
+
+    UInt32 sessionCategory = category;
+    AudioSessionSetProperty(kAudioSessionProperty_AudioCategory,
+                            sizeof(sessionCategory), &sessionCategory);
+
+    result = AudioSessionSetActive(YES);
+    if (result != kAudioSessionNoError)
+    {
+        NSLog(@"Could not activate audio session: %x", (unsigned int)result);
+        return NO;
+    }
+
+    return YES;
+}
+
++ (BOOL)initOpenAL
+{
+    alGetError(); // reset any errors
+
+    device = alcOpenDevice(NULL);
+    if (!device)
+    {
+        NSLog(@"Could not open default OpenAL device");
+        return NO;
+    }
+
+    context = alcCreateContext(device, 0);
+    if (!context)
+    {
+        NSLog(@"Could not create OpenAL context for default device");
+        return NO;
+    }
+
+    BOOL success = alcMakeContextCurrent(context);
+    if (!success)
+    {
+        NSLog(@"Could not set current OpenAL context");
+        return NO;
+    }
+
+    return YES;
+}
+
+#pragma mark Methods
 
 + (void)start:(SPAudioSessionCategory)category
 {
@@ -101,63 +162,19 @@ static BOOL interrupted = NO;
     interrupted = NO;
 }
 
-+ (BOOL)initAudioSession:(SPAudioSessionCategory)category
++ (float)masterVolume
 {
-    static BOOL sessionInitialized = NO;
-    OSStatus result;
-    
-    if (!sessionInitialized)
-    {
-        result = AudioSessionInitialize(NULL, NULL, interruptionCallback, NULL);
-        if (result != kAudioSessionNoError)        
-        {        
-            NSLog(@"Could not initialize audio session: %x", (unsigned int)result);
-            return NO;
-        }        
-        sessionInitialized = YES;
-    }
-    
-    UInt32 sessionCategory = category;
-    AudioSessionSetProperty(kAudioSessionProperty_AudioCategory,                             
-                            sizeof(sessionCategory), &sessionCategory);
-    
-    result = AudioSessionSetActive(YES);
-    if (result != kAudioSessionNoError)
-    {
-        NSLog(@"Could not activate audio session: %x", (unsigned int)result);
-        return NO;
-    }
-    
-    return YES;
+    return masterVolume;
 }
 
-+ (BOOL)initOpenAL
-{
-    alGetError(); // reset any errors
-    
-    device = alcOpenDevice(NULL);
-    if (!device)
-    {
-        NSLog(@"Could not open default OpenAL device");
-        return NO;
-    }
-    
-    context = alcCreateContext(device, 0);
-    if (!context)
-    {
-        NSLog(@"Could not create OpenAL context for default device");
-        return NO;
-    }
-    
-    BOOL success = alcMakeContextCurrent(context);
-    if (!success)
-    {
-        NSLog(@"Could not set current OpenAL context");
-        return NO;
-    }
-    
-    return YES;
++ (void)setMasterVolume:(float)volume
+{       
+    masterVolume = volume;
+    alListenerf(AL_GAIN, volume);
+    [SPAudioEngine postNotification:SPNotificationMasterVolumeChanged object:nil];
 }
+
+#pragma mark Notifications
 
 + (void)beginInterruption
 {
@@ -181,22 +198,10 @@ static BOOL interrupted = NO;
     if (interrupted) [self endInterruption];
 }
 
-+ (float)masterVolume
-{
-    return masterVolume;
-}
-
-+ (void)setMasterVolume:(float)volume
-{       
-    masterVolume = volume;
-    alListenerf(AL_GAIN, volume);
-    [SPAudioEngine postNotification:SPNotificationMasterVolumeChanged object:nil];
-}
-
 + (void)postNotification:(NSString *)name object:(id)object
 {
     [[NSNotificationCenter defaultCenter] postNotification:
-     [NSNotification notificationWithName:name object:object]]; 
+     [NSNotification notificationWithName:name object:object]];
 }
 
 @end

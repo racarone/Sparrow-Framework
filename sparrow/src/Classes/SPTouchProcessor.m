@@ -20,14 +20,27 @@
 
 #import <UIKit/UIKit.h>
 
+// --- private interface ---------------------------------------------------------------------------
+
 #define MULTITAP_TIME 0.25f
 #define MULTITAP_DIST 25
+
+@interface SPTouchProcessor ()
+
+- (void)cancelCurrentTouches:(NSNotification *)notification;
+
+@end
+
+
+// --- class implementation ------------------------------------------------------------------------
 
 @implementation SPTouchProcessor
 {
     SPDisplayObjectContainer *__weak _root;
     NSMutableSet *_currentTouches;
 }
+
+#pragma mark Initialization
 
 - (instancetype)initWithRoot:(SPDisplayObjectContainer *)root
 {
@@ -54,6 +67,8 @@
     [_currentTouches release];
     [super dealloc];
 }
+
+#pragma mark Methods
 
 - (void)processTouches:(NSSet *)touches
 {
@@ -114,6 +129,8 @@
     SP_RELEASE_AND_RETAIN(_currentTouches, processedTouches);
     [processedTouches release];
 }
+
+#pragma mark Private
 
 - (void)cancelCurrentTouches:(NSNotification *)notification
 {

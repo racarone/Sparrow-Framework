@@ -22,9 +22,9 @@
 
 @interface SPTweenedProperty : NSObject
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a tween property on a certain target. The start value will be zero.
 - (instancetype)initWithTarget:(id)target name:(NSString *)name endValue:(float)endValue;

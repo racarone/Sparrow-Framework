@@ -18,7 +18,18 @@
 #import <Sparrow/SPProgram.h>
 #import <Sparrow/SPTexture.h>
 
+// --- private interface ---------------------------------------------------------------------------
+
 static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilterProgram";
+
+@interface SPDisplacementMapFilter ()
+
+- (NSString *)fragmentShader;
+- (NSString *)vertexShader;
+- (void)updateParametersWithWidth:(int)width height:(int)height;
+
+@end
+
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -45,6 +56,8 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
     int _uTexture;
     int _uMapTexture;
 }
+
+#pragma mark Initialization
 
 - (instancetype)initWithMapTexture:(SPTexture *)mapTexture
 {
@@ -79,13 +92,12 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
     [super dealloc];
 }
 
-- (void)setMapPoint:(SPPoint *)mapPoint
++ (instancetype)displacementMapFilterWithMapTexture:(SPTexture *)texture
 {
-    if (mapPoint) [_mapPoint copyFromPoint:mapPoint];
-    else          [_mapPoint setX:0 y:0];
+    return [[[self alloc] initWithMapTexture:texture] autorelease];
 }
 
-#pragma mark Subclasses
+#pragma mark SPFragmentFilter (Subclasses)
 
 - (void)createPrograms
 {
@@ -153,6 +165,14 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+#pragma mark Properties
+
+- (void)setMapPoint:(SPPoint *)mapPoint
+{
+    if (mapPoint) [_mapPoint copyFromPoint:mapPoint];
+    else          [_mapPoint setX:0 y:0];
 }
 
 #pragma mark Private
@@ -246,11 +266,6 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
     
     glBindBuffer(GL_ARRAY_BUFFER, _mapTexCoordBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*8, _mapTexCoords, GL_STATIC_DRAW);
-}
-
-+ (instancetype)displacementMapFilterWithMapTexture:(SPTexture *)texture
-{
-    return [[[self alloc] initWithMapTexture:texture] autorelease];
 }
 
 @end

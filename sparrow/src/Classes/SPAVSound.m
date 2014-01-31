@@ -21,6 +21,8 @@
 
 @synthesize duration = _duration;
 
+#pragma mark Initialization
+
 - (instancetype)init
 {
     [self release];
@@ -44,10 +46,7 @@
     return self;
 }
 
-- (SPSoundChannel *)createChannel
-{
-    return [[[SPAVSoundChannel alloc] initWithSound:self] autorelease];
-}
+#pragma mark Methods
 
 - (AVAudioPlayer *)createPlayer
 {
@@ -55,6 +54,13 @@
     AVAudioPlayer *player = [[[AVAudioPlayer alloc] initWithData:_soundData error:&error] autorelease];
     if (error) NSLog(@"Could not create AVAudioPlayer: %@", [error description]);    
     return player;	
+}
+
+#pragma mark SPSound
+
+- (SPSoundChannel *)createChannel
+{
+    return [[[SPAVSoundChannel alloc] initWithSound:self] autorelease];
 }
 
 @end

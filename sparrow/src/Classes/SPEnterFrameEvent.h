@@ -27,9 +27,9 @@ SP_EXTERN NSString *const SPEventTypeEnterFrame;
 
 @interface SPEnterFrameEvent : SPEvent
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes an enter frame event with the passed time. _Designated Initializer_.
 - (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles passedTime:(double)seconds;

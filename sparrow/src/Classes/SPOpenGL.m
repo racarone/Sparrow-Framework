@@ -23,7 +23,10 @@ const GLchar* sglGetErrorString(GLenum error)
 	return "";
 }
 
-// --- state cache ---------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------
+#  pragma mark - OpenGL State Cache
+// -------------------------------------------------------------------------------------------------
 
 #if SP_ENABLE_GL_STATE_CACHE
 
@@ -78,7 +81,10 @@ typedef struct
     GLint   blendDst;
 } SGLState;
 
-// internal functions
+
+// -------------------------------------------------------------------------------------------------
+#  pragma mark Internal
+// -------------------------------------------------------------------------------------------------
 
 SP_INLINE SGLState* __sglGetState(void)
 {
@@ -138,7 +144,10 @@ SP_INLINE void __sglGetIntv(GLenum pname, GLint count, GLint statev[], GLint* ou
     memcpy(outParams, statev, sizeof(GLint)*count);
 }
 
-// public functions
+
+// -------------------------------------------------------------------------------------------------
+#  pragma mark Public
+// -------------------------------------------------------------------------------------------------
 
 void sglActiveTexture(GLenum texture)
 {

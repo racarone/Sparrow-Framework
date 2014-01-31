@@ -27,6 +27,8 @@
 
 @implementation SPTexture
 
+#pragma mark Initialization
+
 - (instancetype)init
 {    
     if ([self isMemberOfClass:[SPTexture class]]) 
@@ -209,6 +211,8 @@
     return [[[self alloc] init] autorelease];
 }
 
+#pragma mark Methods
+
 - (void)adjustVertexData:(SPVertexData *)vertexData atIndex:(int)index numVertices:(int)count
 {
     // override in subclasses
@@ -223,6 +227,104 @@
 {
     // override in subclasses
 }
+
+#pragma mark Asynchronous Texture Loading
+
++ (void)loadFromFile:(NSString *)path onComplete:(SPTextureLoadingBlock)callback
+{
+    [self loadFromFile:path generateMipmaps:NO onComplete:callback];
+}
+
++ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
+          onComplete:(SPTextureLoadingBlock)callback
+{
+    NSString *fullPath = [SPUtils absolutePathToFile:path];
+
+    if (!fullPath)
+        [NSException raise:SPExceptionFileNotFound format:@"File '%@' not found", path];
+
+    [Sparrow.currentController executeInResourceQueue:^
+     {
+         NSError *error = nil;
+         SPTexture *texture = nil;
+
+         @try
+         {
+             texture = [[SPTexture alloc] initWithContentsOfFile:fullPath generateMipmaps:mipmaps];
+         }
+         @catch (NSException *exception)
+         {
+             error = [NSError errorWithDomain:exception.name code:0 userInfo:exception.userInfo];
+         }
+
+         dispatch_async(dispatch_get_main_queue(), ^
+                        {
+                            callback(texture, error);
+                            [texture release];
+                        });
+     }];
+}
+
++ (void)loadFromURL:(NSURL *)url onComplete:(SPTextureLoadingBlock)callback
+{
+    [self loadFromURL:url generateMipmaps:NO onComplete:callback];
+}
+
++ (void)loadFromURL:(NSURL *)url generateMipmaps:(BOOL)mipmaps
+         onComplete:(SPTextureLoadingBlock)callback
+{
+    float scale = [[url path] contentScaleFactor];
+    [self loadFromURL:url generateMipmaps:mipmaps scale:scale onComplete:callback];
+}
+
++ (void)loadFromURL:(NSURL *)url generateMipmaps:(BOOL)mipmaps scale:(float)scale
+         onComplete:(SPTextureLoadingBlock)callback
+{
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    SPURLConnection *connection = [[SPURLConnection alloc] initWithRequest:request];
+
+    [connection startWithBlock:^(NSData *body, NSInteger httpStatus, NSError *error)
+     {
+         [Sparrow.currentController executeInResourceQueue:^
+          {
+              NSError *error = nil;
+              SPTexture *texture = nil;
+
+              @try
+              {
+                  UIImage *image = [UIImage imageWithData:body scale:scale];
+                  texture = [[SPTexture alloc] initWithContentsOfImage:image generateMipmaps:mipmaps];
+              }
+              @catch (NSException *exception)
+              {
+                  error = [NSError errorWithDomain:exception.name code:0 userInfo:exception.userInfo];
+              }
+
+              dispatch_async(dispatch_get_main_queue(), ^
+                             {
+                                 callback(texture, error);
+                                 [connection release];
+                                 [texture release];
+                             });
+          }];
+     }];
+}
+
++ (void)loadFromSuffixedURL:(NSURL *)url onComplete:(SPTextureLoadingBlock)callback
+{
+    [self loadFromSuffixedURL:url generateMipmaps:NO onComplete:callback];
+}
+
++ (void)loadFromSuffixedURL:(NSURL *)url generateMipmaps:(BOOL)mipmaps
+                 onComplete:(SPTextureLoadingBlock)callback
+{
+    float scale = Sparrow.contentScaleFactor;
+    NSString *suffixedString = [[url absoluteString] stringByAppendingScaleSuffixToFilename:scale];
+    NSURL *suffixedURL = [NSURL URLWithString:suffixedString];
+    [self loadFromURL:suffixedURL generateMipmaps:mipmaps scale:scale onComplete:callback];
+}
+
+#pragma mark Properties
 
 - (float)width
 {
@@ -296,6 +398,8 @@
     return nil;
 }
 
+#pragma mark Private
+
 + (BOOL)isPVRFile:(NSString *)path
 {
     path = [path lowercaseString];
@@ -305,102 +409,6 @@
 + (BOOL)isCompressedFile:(NSString *)path
 {
     return [[path lowercaseString] hasSuffix:@".gz"];
-}
-
-#pragma mark - Asynchronous Texture Loading
-
-+ (void)loadFromFile:(NSString *)path onComplete:(SPTextureLoadingBlock)callback
-{
-    [self loadFromFile:path generateMipmaps:NO onComplete:callback];
-}
-
-+ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
-          onComplete:(SPTextureLoadingBlock)callback
-{
-    NSString *fullPath = [SPUtils absolutePathToFile:path];
-    
-    if (!fullPath)
-        [NSException raise:SPExceptionFileNotFound format:@"File '%@' not found", path];
-    
-    [Sparrow.currentController executeInResourceQueue:^
-    {
-        NSError *error = nil;
-        SPTexture *texture = nil;
-        
-        @try
-        {
-            texture = [[SPTexture alloc] initWithContentsOfFile:fullPath generateMipmaps:mipmaps];
-        }
-        @catch (NSException *exception)
-        {
-            error = [NSError errorWithDomain:exception.name code:0 userInfo:exception.userInfo];
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^
-        {
-            callback(texture, error);
-            [texture release];
-        });
-    }];
-}
-
-+ (void)loadFromURL:(NSURL *)url onComplete:(SPTextureLoadingBlock)callback
-{
-    [self loadFromURL:url generateMipmaps:NO onComplete:callback];
-}
-
-+ (void)loadFromURL:(NSURL *)url generateMipmaps:(BOOL)mipmaps
-         onComplete:(SPTextureLoadingBlock)callback
-{
-    float scale = [[url path] contentScaleFactor];
-    [self loadFromURL:url generateMipmaps:mipmaps scale:scale onComplete:callback];
-}
-
-+ (void)loadFromURL:(NSURL *)url generateMipmaps:(BOOL)mipmaps scale:(float)scale
-         onComplete:(SPTextureLoadingBlock)callback
-{
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    SPURLConnection *connection = [[SPURLConnection alloc] initWithRequest:request];
-    
-    [connection startWithBlock:^(NSData *body, NSInteger httpStatus, NSError *error)
-    {
-        [Sparrow.currentController executeInResourceQueue:^
-        {
-            NSError *error = nil;
-            SPTexture *texture = nil;
-            
-            @try
-            {
-                UIImage *image = [UIImage imageWithData:body scale:scale];
-                texture = [[SPTexture alloc] initWithContentsOfImage:image generateMipmaps:mipmaps];
-            }
-            @catch (NSException *exception)
-            {
-                error = [NSError errorWithDomain:exception.name code:0 userInfo:exception.userInfo];
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), ^
-            {
-                callback(texture, error);
-                [connection release];
-                [texture release];
-            });
-        }];
-    }];
-}
-
-+ (void)loadFromSuffixedURL:(NSURL *)url onComplete:(SPTextureLoadingBlock)callback
-{
-    [self loadFromSuffixedURL:url generateMipmaps:NO onComplete:callback];
-}
-
-+ (void)loadFromSuffixedURL:(NSURL *)url generateMipmaps:(BOOL)mipmaps
-                 onComplete:(SPTextureLoadingBlock)callback
-{
-    float scale = Sparrow.contentScaleFactor;
-    NSString *suffixedString = [[url absoluteString] stringByAppendingScaleSuffixToFilename:scale];
-    NSURL *suffixedURL = [NSURL URLWithString:suffixedString];
-    [self loadFromURL:suffixedURL generateMipmaps:mipmaps scale:scale onComplete:callback];
 }
 
 @end

@@ -52,9 +52,9 @@ typedef NS_ENUM(uint, SPFragmentFilterMode)
 
 @interface SPFragmentFilter : NSObject
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a fragment filter with the specified number of passes and resolution.
 /// This initializer must only be called by the initializer of a subclass.
@@ -142,11 +142,11 @@ typedef NS_ENUM(uint, SPFragmentFilterMode)
 /// @name Properties
 /// ----------------
 
-/// The x-margin will extend the size of the filter SPTexture along the x-axis.
+/// The x-margin will extend the size of the filter texture along the x-axis.
 /// Useful when the filter will "grow" the rendered object.
 @property (nonatomic, assign) float marginX;
 
-/// The y-margin will extend the size of the filter SPTexture along the y-axis.
+/// The y-margin will extend the size of the filter texture along the y-axis.
 /// Useful when the filter will "grow" the rendered object.
 @property (nonatomic, assign) float marginY;
 

@@ -23,9 +23,9 @@
 
 @interface SPProgram : NSObject
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a GLSL program by compiling vertex and fragment shaders from source. In debug
 /// mode, compilation erros are logged into the console. _Designated Initializer_.

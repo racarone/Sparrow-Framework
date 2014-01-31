@@ -72,9 +72,9 @@ SP_EXTERN const float       SPNativeFontSize;
 
 @interface SPTextField : SPDisplayObjectContainer
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initialize a text field with all important font properties. _Designated Initializer_.
 - (instancetype)initWithWidth:(float)width height:(float)height text:(NSString *)text fontName:(NSString *)name

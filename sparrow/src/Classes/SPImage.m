@@ -26,6 +26,8 @@
 
 @synthesize texture = _texture;
 
+#pragma mark Initialization
+
 - (instancetype)initWithTexture:(SPTexture *)texture
 {
     if (!texture) [NSException raise:SPExceptionInvalidOperation format:@"texture cannot be nil!"];
@@ -71,6 +73,18 @@
     [super dealloc];
 }
 
++ (instancetype)imageWithTexture:(SPTexture *)texture
+{
+    return [[[self alloc] initWithTexture:texture] autorelease];
+}
+
++ (instancetype)imageWithContentsOfFile:(NSString *)path
+{
+    return [[[self alloc] initWithContentsOfFile:path] autorelease];
+}
+
+#pragma mark Methods
+
 - (void)setTexCoords:(SPPoint *)coords ofVertex:(int)vertexID
 {
     [_vertexData setTexCoords:coords atIndex:vertexID];
@@ -102,6 +116,8 @@
     [self vertexDataDidChange];
 }
 
+#pragma mark SPQuad
+
 - (void)vertexDataDidChange
 {
     _vertexDataCacheInvalid = YES;
@@ -132,16 +148,6 @@
         [_vertexDataCache setPremultipliedAlpha:_texture.premultipliedAlpha updateVertices:NO];
         [self vertexDataDidChange];
     }
-}
-
-+ (instancetype)imageWithTexture:(SPTexture *)texture
-{
-    return [[[self alloc] initWithTexture:texture] autorelease];
-}
-
-+ (instancetype)imageWithContentsOfFile:(NSString *)path
-{
-    return [[[self alloc] initWithContentsOfFile:path] autorelease];
 }
 
 @end

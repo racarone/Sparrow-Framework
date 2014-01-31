@@ -25,9 +25,9 @@
 
 @interface SPSubTexture : SPTexture
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a subtexture with a region (in points) of another texture, using a frame rectangle
 /// to place the texture within an image. If `rotated` is `YES`, the subtexture will show the base

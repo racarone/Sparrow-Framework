@@ -19,6 +19,8 @@
 #import <Sparrow/SPSprite.h>
 #import <Sparrow/SPStage.h>
 
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPSprite
 {
     NSMutableArray *_flattenedContents;
@@ -26,11 +28,20 @@
     SPRectangle *_clipRect;
 }
 
+#pragma mark Initialization
+
 - (void)dealloc
 {
     [_flattenedContents release];
     [super dealloc];
 }
+
++ (instancetype)sprite
+{
+    return [[[self alloc] init] autorelease];
+}
+
+#pragma mark Methods
 
 - (void)flatten
 {
@@ -89,24 +100,7 @@
     return [SPRectangle rectangleWithX:minX y:minY width:maxX-minX height:maxY-minY];
 }
 
-- (SPRectangle *)boundsInSpace:(SPDisplayObject *)targetSpace
-{
-    SPRectangle *bounds = [super boundsInSpace:targetSpace];
-
-    // if we have a scissor rect, intersect it with our bounds
-    if (_clipRect)
-        bounds = [bounds intersectionWithRectangle:[self clipRectInSpace:targetSpace]];
-
-    return bounds;
-}
-
-- (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
-{
-    if (_clipRect && ![_clipRect containsPoint:localPoint])
-        return nil;
-    else
-        return [super hitTestPoint:localPoint];
-}
+#pragma mark SPDisplayObject
 
 - (void)render:(SPRenderSupport *)support
 {
@@ -150,9 +144,23 @@
         [support popClipRect];
 }
 
-+ (instancetype)sprite
+- (SPRectangle *)boundsInSpace:(SPDisplayObject *)targetSpace
 {
-    return [[[self alloc] init] autorelease];
+    SPRectangle *bounds = [super boundsInSpace:targetSpace];
+
+    // if we have a scissor rect, intersect it with our bounds
+    if (_clipRect)
+        bounds = [bounds intersectionWithRectangle:[self clipRectInSpace:targetSpace]];
+
+    return bounds;
+}
+
+- (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
+{
+    if (_clipRect && ![_clipRect containsPoint:localPoint])
+        return nil;
+    else
+        return [super hitTestPoint:localPoint];
 }
 
 @end

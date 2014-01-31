@@ -46,9 +46,9 @@
 
 @interface SPJuggler : NSObject <SPAnimatable>
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Factory method.
 + (instancetype)juggler;

@@ -56,9 +56,9 @@ SP_EXTERN NSString *const SPEventTypeTouch;
  
 @interface SPTouchEvent : SPEvent
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Creates a touch event with a set of touches. _Designated Initializer_.
 - (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles touches:(NSSet *)touches;

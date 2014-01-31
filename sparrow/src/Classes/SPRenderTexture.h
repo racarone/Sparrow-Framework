@@ -45,9 +45,9 @@ typedef void (^SPDrawingBlock)();
 
 @interface SPRenderTexture : SPSubTexture
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a transparent render texture with the scale factor of the stage.
 - (instancetype)initWithWidth:(float)width height:(float)height;

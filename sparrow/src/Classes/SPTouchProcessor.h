@@ -23,9 +23,9 @@
 
 @interface SPTouchProcessor : NSObject 
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a touch processor with a certain root object.
 - (instancetype)initWithRoot:(SPDisplayObjectContainer *)root;

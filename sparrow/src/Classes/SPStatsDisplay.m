@@ -26,6 +26,8 @@
     int _frameCount;
 }
 
+#pragma mark Initialization
+
 - (instancetype)init
 {
     if ((self = [super init]))
@@ -52,6 +54,8 @@
     [_textField release];
     [super dealloc];
 }
+
+#pragma mark Events
 
 - (void)onAddedToStage:(SPEvent *)event
 {

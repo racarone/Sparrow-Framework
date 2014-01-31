@@ -25,6 +25,8 @@
     SPRenderSupport *_renderSupport;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithWidth:(float)width height:(float)height fillColor:(uint)argb scale:(float)scale
 {
     int legalWidth  = [SPUtils nextPowerOfTwo:width  * scale];
@@ -74,48 +76,17 @@
     [super dealloc];
 }
 
-- (void)renderToFramebuffer:(SPDrawingBlock)block
++ (instancetype)textureWithWidth:(float)width height:(float)height
 {
-    if (!block) return;
-    
-    // the block may call a draw-method again, so we're making sure that the frame buffer switching
-    // happens only in the outermost block.
-
-    SPTexture *previousTarget = (SPTexture *)-1;
-    
-    if (!_framebufferIsActive)
-    {
-        _framebufferIsActive = YES;
-        
-        // remember standard frame buffer
-        previousTarget = [_renderSupport.renderTarget retain];
-
-        SPGLTexture *rootTexture = self.root;
-        float width  = rootTexture.width;
-        float height = rootTexture.height;
-        
-        // switch to the texture's framebuffer for rendering
-        _renderSupport.renderTarget = rootTexture;
-        
-        // prepare clipping and OpenGL matrices
-        [_renderSupport pushClipRect:[SPRectangle rectangleWithX:0 y:0 width:width height:height]];
-        [_renderSupport setupOrthographicProjectionWithLeft:0 right:width top:height bottom:0];
-    }
-    
-    block();
-    
-    if (previousTarget != (SPTexture *)-1)
-    {
-        _framebufferIsActive = NO;
-        
-        [_renderSupport finishQuadBatch];
-        [_renderSupport nextFrame];
-        
-        // return to standard frame buffer
-        _renderSupport.renderTarget = previousTarget;
-        [previousTarget release];
-    }
+    return [[[self alloc] initWithWidth:width height:height] autorelease];
 }
+
++ (instancetype)textureWithWidth:(float)width height:(float)height fillColor:(uint)argb
+{
+    return [[[self alloc] initWithWidth:width height:height fillColor:argb] autorelease];
+}
+
+#pragma mark Methods
 
 - (void)drawObject:(SPDisplayObject *)object
 {
@@ -144,14 +115,49 @@
      }];
 }
 
-+ (instancetype)textureWithWidth:(float)width height:(float)height
-{
-    return [[[self alloc] initWithWidth:width height:height] autorelease];
-}
+#pragma mark Private
 
-+ (instancetype)textureWithWidth:(float)width height:(float)height fillColor:(uint)argb
+- (void)renderToFramebuffer:(SPDrawingBlock)block
 {
-    return [[[self alloc] initWithWidth:width height:height fillColor:argb] autorelease];
+    if (!block) return;
+
+    // the block may call a draw-method again, so we're making sure that the frame buffer switching
+    // happens only in the outermost block.
+
+    SPTexture *previousTarget = (SPTexture *)-1;
+
+    if (!_framebufferIsActive)
+    {
+        _framebufferIsActive = YES;
+
+        // remember standard frame buffer
+        previousTarget = [_renderSupport.renderTarget retain];
+
+        SPGLTexture *rootTexture = self.root;
+        float width  = rootTexture.width;
+        float height = rootTexture.height;
+
+        // switch to the texture's framebuffer for rendering
+        _renderSupport.renderTarget = rootTexture;
+
+        // prepare clipping and OpenGL matrices
+        [_renderSupport pushClipRect:[SPRectangle rectangleWithX:0 y:0 width:width height:height]];
+        [_renderSupport setupOrthographicProjectionWithLeft:0 right:width top:height bottom:0];
+    }
+
+    block();
+
+    if (previousTarget != (SPTexture *)-1)
+    {
+        _framebufferIsActive = NO;
+
+        [_renderSupport finishQuadBatch];
+        [_renderSupport nextFrame];
+
+        // return to standard frame buffer
+        _renderSupport.renderTarget = previousTarget;
+        [previousTarget release];
+    }
 }
 
 @end

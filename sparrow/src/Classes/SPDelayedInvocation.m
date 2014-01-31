@@ -21,6 +21,8 @@
     NSMutableArray *_invocations;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block
 {
     if ((self = [super init]))
@@ -61,6 +63,18 @@
     [super dealloc];
 }
 
++ (instancetype)invocationWithTarget:(id)target delay:(double)time
+{
+    return [[[self alloc] initWithTarget:target delay:time] autorelease];
+}
+
++ (instancetype)invocationWithDelay:(double)time block:(SPCallbackBlock)block
+{
+    return [[[self alloc] initWithDelay:time block:block] autorelease];
+}
+
+#pragma mark NSObject
+
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
     NSMethodSignature *sig = [[self class] instanceMethodSignatureForSelector:aSelector];
@@ -78,10 +92,14 @@
     }
 }
 
+#pragma mark SPAnimatable
+
 - (void)advanceTime:(double)seconds
 {
     self.currentTime = _currentTime + seconds;
 }
+
+#pragma mark Properties
 
 - (void)setCurrentTime:(double)currentTime
 {
@@ -100,16 +118,6 @@
 - (BOOL)isComplete
 {
     return _currentTime >= _totalTime;
-}
-
-+ (instancetype)invocationWithTarget:(id)target delay:(double)time
-{
-    return [[[self alloc] initWithTarget:target delay:time] autorelease];
-}
-
-+ (instancetype)invocationWithDelay:(double)time block:(SPCallbackBlock)block
-{
-    return [[[self alloc] initWithDelay:time block:block] autorelease];
 }
 
 @end

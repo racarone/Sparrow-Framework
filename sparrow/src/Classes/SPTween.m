@@ -39,6 +39,8 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     SPCallbackBlock _onComplete;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithTarget:(id)target time:(double)time transition:(NSString *)transition
 {
     if ((self = [super init]))
@@ -79,6 +81,18 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     [super dealloc];
 }
 
++ (instancetype)tweenWithTarget:(id)target time:(double)time transition:(NSString *)transition
+{
+    return [[[self alloc] initWithTarget:target time:time transition:transition] autorelease];
+}
+
++ (instancetype)tweenWithTarget:(id)target time:(double)time
+{
+    return [[[self alloc] initWithTarget:target time:time] autorelease];
+}
+
+#pragma mark Methods
+
 - (void)animateProperty:(NSString *)property targetValue:(float)value
 {    
     if (!_target) return; // tweening nil just does nothing.
@@ -101,10 +115,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     [self animateProperty:@"scaleY" targetValue:scale];
 }
 
-- (void)fadeTo:(float)alpha
-{
-    [self animateProperty:@"alpha" targetValue:alpha];
-}
+#pragma mark SPAnimatable
 
 - (void)advanceTime:(double)time
 {
@@ -112,10 +123,10 @@ typedef float (*FnPtrTransition) (id, SEL, float);
         return; // nothing to do
     else if ((_repeatCount == 0 || _repeatCount > 1) && _currentTime == _totalTime)
         _currentTime = 0.0;
-    
+
     double previousTime = _currentTime;
     double restTime = _totalTime - _currentTime;
-    double carryOverTime = time > restTime ? time - restTime : 0.0;    
+    double carryOverTime = time > restTime ? time - restTime : 0.0;
     _currentTime = MIN(_totalTime, _currentTime + time);
     BOOL isStarting = _currentCycle < 0 && previousTime <= 0 && _currentTime > 0;
 
@@ -126,22 +137,22 @@ typedef float (*FnPtrTransition) (id, SEL, float);
         _currentCycle++;
         if (_onStart) _onStart();
     }
-    
+
     float ratio = _currentTime / _totalTime;
     BOOL reversed = _reverse && (_currentCycle % 2 == 1);
     FnPtrTransition transFunc = (FnPtrTransition) _transitionFunc;
     Class transClass = [SPTransitions class];
-    
+
     for (SPTweenedProperty *prop in _properties)
     {
         if (isStarting) prop.startValue = prop.currentValue;
         float transitionValue = reversed ? transFunc(transClass, _transition, 1.0 - ratio) :
-                                           transFunc(transClass, _transition, ratio);
+        transFunc(transClass, _transition, ratio);
         prop.currentValue = prop.startValue + prop.delta * transitionValue;
     }
-    
+
     if (_onUpdate) _onUpdate();
-    
+
     if (previousTime < _totalTime && _currentTime >= _totalTime)
     {
         if (_repeatCount == 0 || _repeatCount > 1)
@@ -157,9 +168,16 @@ typedef float (*FnPtrTransition) (id, SEL, float);
             if (_onComplete) _onComplete();
         }
     }
-    
+
     if (carryOverTime)
         [self advanceTime:carryOverTime];
+}
+
+#pragma mark Properties
+
+- (void)fadeTo:(float)alpha
+{
+    [self animateProperty:@"alpha" targetValue:alpha];
 }
 
 - (NSString *)transition
@@ -177,16 +195,6 @@ typedef float (*FnPtrTransition) (id, SEL, float);
 {
     _currentTime = _currentTime + _delay - delay;
     _delay = delay;
-}
-
-+ (instancetype)tweenWithTarget:(id)target time:(double)time transition:(NSString *)transition
-{
-    return [[[self alloc] initWithTarget:target time:time transition:transition] autorelease];
-}
-
-+ (instancetype)tweenWithTarget:(id)target time:(double)time
-{
-    return [[[self alloc] initWithTarget:target time:time] autorelease];
 }
 
 @end

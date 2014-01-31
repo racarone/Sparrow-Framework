@@ -49,9 +49,9 @@
 
 @interface SPTween : SPEventDispatcher <SPAnimatable>
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a tween with a target, duration (in seconds) and a transition function. 
 /// _Designated Initializer_.
@@ -99,6 +99,9 @@
 
 /// The time that has passed since the tween was started (in seconds).
 @property (nonatomic, readonly) double currentTime;
+
+/// Indicates if the total time has passed and the tweened properties have finished.
+@property (nonatomic, readonly) BOOL isComplete;
 
 /// The delay before the tween is started.
 @property (nonatomic, assign) double delay;

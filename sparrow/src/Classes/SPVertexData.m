@@ -72,6 +72,8 @@ BOOL isOpaqueWhite(SPVertexColor color)
     BOOL _premultipliedAlpha;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithSize:(int)numVertices premultipliedAlpha:(BOOL)pma
 {
     if ((self = [super init]))
@@ -98,6 +100,8 @@ BOOL isOpaqueWhite(SPVertexColor color)
     free(_vertices);
     [super dealloc];
 }
+
+#pragma mark Methods
 
 - (void)copyToVertexData:(SPVertexData *)target
 {
@@ -308,35 +312,6 @@ BOOL isOpaqueWhite(SPVertexColor color)
     }
 }
 
-- (void)setNumVertices:(int)value
-{
-    if (value != _numVertices)
-    {
-        if (value)
-        {
-            if (_vertices)
-                _vertices = realloc(_vertices, sizeof(SPVertex) * value);
-            else
-                _vertices = malloc(sizeof(SPVertex) * value);
-            
-            if (value > _numVertices)
-            {
-                memset(&_vertices[_numVertices], 0, sizeof(SPVertex) * (value - _numVertices));
-                
-                for (int i=_numVertices; i<value; ++i)
-                    _vertices[i].color = SPVertexColorMakeWithColorAndAlpha(0, 1.0f);
-            }
-        }
-        else
-        {
-            free(_vertices);
-            _vertices = NULL;
-        }
-        
-        _numVertices = value;
-    }
-}
-
 - (SPRectangle *)bounds
 {
     return [self boundsAfterTransformation:nil atIndex:0 numVertices:_numVertices];
@@ -386,6 +361,52 @@ BOOL isOpaqueWhite(SPVertexColor color)
     return [SPRectangle rectangleWithX:minX y:minY width:maxX-minX height:maxY-minY];
 }
 
+#pragma mark NSCopying
+
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    SPVertexData *copy = [[[self class] allocWithZone:zone] initWithSize:_numVertices
+                                                      premultipliedAlpha:_premultipliedAlpha];
+    memcpy(copy->_vertices, _vertices, sizeof(SPVertex) *_numVertices);
+    return copy;
+}
+
+#pragma mark Properties
+
+- (SPVertex *)vertices
+{
+    return _vertices;
+}
+
+- (void)setNumVertices:(int)value
+{
+    if (value != _numVertices)
+    {
+        if (value)
+        {
+            if (_vertices)
+                _vertices = realloc(_vertices, sizeof(SPVertex) * value);
+            else
+                _vertices = malloc(sizeof(SPVertex) * value);
+
+            if (value > _numVertices)
+            {
+                memset(&_vertices[_numVertices], 0, sizeof(SPVertex) * (value - _numVertices));
+
+                for (int i=_numVertices; i<value; ++i)
+                    _vertices[i].color = SPVertexColorMakeWithColorAndAlpha(0, 1.0f);
+            }
+        }
+        else
+        {
+            free(_vertices);
+            _vertices = NULL;
+        }
+
+        _numVertices = value;
+    }
+}
+
 - (void)setPremultipliedAlpha:(BOOL)value
 {
     [self setPremultipliedAlpha:value updateVertices:YES];
@@ -394,7 +415,7 @@ BOOL isOpaqueWhite(SPVertexColor color)
 - (void)setPremultipliedAlpha:(BOOL)value updateVertices:(BOOL)update
 {
     if (value == _premultipliedAlpha) return;
-    
+
     if (update)
     {
         if (value)
@@ -408,31 +429,16 @@ BOOL isOpaqueWhite(SPVertexColor color)
                 _vertices[i].color = unmultiplyAlpha(_vertices[i].color);
         }
     }
-    
-    _premultipliedAlpha = value;
-}
 
-- (SPVertex *)vertices
-{
-    return _vertices;
+    _premultipliedAlpha = value;
 }
 
 - (BOOL)tinted
 {
     for (int i=0; i<_numVertices; ++i)
         if (!isOpaqueWhite(_vertices[i].color)) return YES;
-    
+
     return NO;
-}
-
-#pragma mark NSCopying
-
-- (instancetype)copyWithZone:(NSZone *)zone
-{
-    SPVertexData *copy = [[[self class] allocWithZone:zone] initWithSize:_numVertices
-                                                      premultipliedAlpha:_premultipliedAlpha];
-    memcpy(copy->_vertices, _vertices, sizeof(SPVertex) *_numVertices);
-    return copy;
 }
 
 @end

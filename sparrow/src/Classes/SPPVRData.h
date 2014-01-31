@@ -12,9 +12,9 @@
 /// A class that can be used to parse PVR texture data.
 @interface SPPVRData : NSObject
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes the object with uncompressed PVR data.
 - (instancetype)initWithData:(NSData *)data;

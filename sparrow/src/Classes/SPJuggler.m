@@ -21,6 +21,8 @@
     float _speed;
 }
 
+#pragma mark Initialization
+
 - (instancetype)init
 {    
     if ((self = [super init]))
@@ -38,26 +40,12 @@
     [super dealloc];
 }
 
-- (void)advanceTime:(double)seconds
++ (instancetype)juggler
 {
-    if (seconds < 0.0)
-        [NSException raise:SPExceptionInvalidOperation format:@"time must be positive"];
-    
-    seconds *= _speed;
-    
-    if (seconds > 0.0)
-    {
-        _elapsedTime += seconds;
-        
-        // we need work with a copy, since user-code could modify the collection while enumerating
-        NSArray* objectsCopy = [[_objects array] copy];
-        
-        for (id<SPAnimatable> object in objectsCopy)
-            [object advanceTime:seconds];
-        
-        [objectsCopy release];
-    }
+    return [[[SPJuggler alloc] init] autorelease];
 }
+
+#pragma mark Methods
 
 - (void)addObject:(id<SPAnimatable>)object
 {
@@ -134,17 +122,37 @@
     return delayedInv;
 }
 
+#pragma mark SPAnimatable
+
+- (void)advanceTime:(double)seconds
+{
+    if (seconds < 0.0)
+        [NSException raise:SPExceptionInvalidOperation format:@"time must be positive"];
+
+    seconds *= _speed;
+
+    if (seconds > 0.0)
+    {
+        _elapsedTime += seconds;
+
+        // we need work with a copy, since user-code could modify the collection while enumerating
+        NSArray* objectsCopy = [[_objects array] copy];
+
+        for (id<SPAnimatable> object in objectsCopy)
+            [object advanceTime:seconds];
+
+        [objectsCopy release];
+    }
+}
+
+#pragma mark Properties
+
 - (void)setSpeed:(float)speed
 {
     if (speed < 0.0)
         [NSException raise:SPExceptionInvalidOperation format:@"speed must be positive"];
     else
         _speed = speed;
-}
-
-+ (instancetype)juggler
-{
-    return [[[SPJuggler alloc] init] autorelease];
 }
 
 @end

@@ -21,6 +21,8 @@
     float _volume;
 }
 
+#pragma mark Initialization
+
 - (instancetype)init
 {
     [self release];
@@ -54,6 +56,8 @@
     [_player release];
     [super dealloc];
 }
+
+#pragma mark SPSoundChannel
 
 - (void)play
 {
@@ -115,15 +119,10 @@
     return _player.duration;
 }
 
-- (void)onMasterVolumeChanged:(NSNotification *)notification
-{    
-    self.volume = _volume;    
-}
-
 #pragma mark AVAudioPlayerDelegate
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
-{    
+{
     [self dispatchEventWithType:SPEventTypeCompleted];
 }
 
@@ -140,6 +139,13 @@
 - (void)audioPlayerEndInterruption:(AVAudioPlayer *)player
 {
     [player play];
+}
+
+#pragma mark Notifications
+
+- (void)onMasterVolumeChanged:(NSNotification *)notification
+{
+    self.volume = _volume;
 }
 
 @end

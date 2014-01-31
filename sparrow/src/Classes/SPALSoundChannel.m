@@ -26,6 +26,7 @@
 
 @end
 
+
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPALSoundChannel
@@ -42,6 +43,8 @@
 
 @synthesize volume = _volume;
 @synthesize loop = _loop;
+
+#pragma mark Initialization
 
 - (instancetype)init
 {
@@ -89,6 +92,8 @@
     [_sound release];
     [super dealloc];
 }
+
+#pragma mark SPSoundChannel
 
 - (void)play
 {
@@ -154,8 +159,8 @@
     if (value != _loop)
     {
         _loop = value;
-        alSourcei(_sourceID, AL_LOOPING, _loop);        
-    }    
+        alSourcei(_sourceID, AL_LOOPING, _loop);
+    }
 }
 
 - (void)setVolume:(float)value
@@ -163,7 +168,7 @@
     if (value != _volume)
     {
         _volume = value;
-        alSourcef(_sourceID, AL_GAIN, _volume);        
+        alSourcef(_sourceID, AL_GAIN, _volume);
     }
 }
 
@@ -172,24 +177,26 @@
     return [_sound duration];
 }
 
+#pragma mark Events
+
 - (void)scheduleSoundCompletedEvent
 {
     if (_startMoment != 0.0)
-    {    
-        double remainingTime = _sound.duration - (CACurrentMediaTime() - _startMoment);        
+    {
+        double remainingTime = _sound.duration - (CACurrentMediaTime() - _startMoment);
         [self revokeSoundCompletedEvent];
         if (remainingTime >= 0.0)
-        {        
+        {
             [self performSelector:@selector(dispatchCompletedEvent) withObject:nil
-                       afterDelay:remainingTime];   
+                       afterDelay:remainingTime];
         }
     }
 }
 
 - (void)revokeSoundCompletedEvent
 {
-    [NSObject cancelPreviousPerformRequestsWithTarget:self 
-        selector:@selector(dispatchCompletedEvent) object:nil];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self
+                                             selector:@selector(dispatchCompletedEvent) object:nil];
 }
 
 - (void)dispatchCompletedEvent
@@ -198,8 +205,10 @@
         [self dispatchEventWithType:SPEventTypeCompleted];
 }
 
+#pragma mark Notifications
+
 - (void)onInterruptionBegan:(NSNotification *)notification
-{        
+{
     if (self.isPlaying)
     {
         [self revokeSoundCompletedEvent];

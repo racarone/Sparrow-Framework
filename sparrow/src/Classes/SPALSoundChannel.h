@@ -25,9 +25,9 @@
 
 @interface SPALSoundChannel : SPSoundChannel
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a sound channel from an SPALSound object.
 - (instancetype)initWithSound:(SPALSound *)sound;

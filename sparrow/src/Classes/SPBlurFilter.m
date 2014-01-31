@@ -17,21 +17,24 @@
 #import <Sparrow/SPProgram.h>
 #import <Sparrow/SPTexture.h>
 
-// --- blur program --------------------------------------------------------------------------------
+#pragma mark - SPBlurProgram
 
 @interface SPBlurProgram : SPProgram
 
-@property (nonatomic, readonly) BOOL tinted;
+- (instancetype)initWithTintedFragmentShader:(BOOL)isTinted;
 
+@property (nonatomic, readonly) BOOL tinted;
 @property (nonatomic, readonly) int aPosition;
 @property (nonatomic, readonly) int aTexCoords;
-
 @property (nonatomic, readonly) int uOffsets;
 @property (nonatomic, readonly) int uWeights;
 @property (nonatomic, readonly) int uColor;
 @property (nonatomic, readonly) int uMvpMatrix;
 
 @end
+
+
+// --- blur implementation -------------------------------------------------------------------------
 
 @implementation SPBlurProgram
 {
@@ -44,18 +47,14 @@
     int _uMvpMatrix;
 }
 
-+ (NSString *)programNameForTinting:(BOOL)tinting
-{
-    if (tinting) return @"SPBlurFilter#01";
-    else         return @"SPBlurFilter#00";
-}
+#pragma mark Initialization
 
-- (instancetype)initWithTintedFragmenShader:(BOOL)tintedFragmenShader
+- (instancetype)initWithTintedFragmentShader:(BOOL)isTinted
 {
     if ((self = [super initWithVertexShader:[self vertexShader]
-                             fragmentShader:[self fragmentShader:tintedFragmenShader]]))
+                             fragmentShader:[self fragmentShader:isTinted]]))
     {
-        _tinted = tintedFragmenShader;
+        _tinted = isTinted;
         _aPosition = [self attributeByName:@"aPosition"];
         _aTexCoords = [self attributeByName:@"aTexCoords"];
         _uOffsets = [self uniformByName:@"uOffsets"];
@@ -65,6 +64,8 @@
     }
     return self;
 }
+
+#pragma mark Methods
 
 - (NSString *)vertexShader
 {
@@ -161,7 +162,26 @@
     return fragSource;
 }
 
+#pragma mark Class
+
++ (NSString *)programNameForTinting:(BOOL)tinting
+{
+    if (tinting) return @"SPBlurFilter#01";
+    else         return @"SPBlurFilter#00";
+}
+
 @end
+
+
+#pragma mark - SPBlurFilter
+
+@interface SPBlurFilter ()
+
+- (void)updateParamatersWithPass:(int)pass texWidth:(int)texWidth texHeight:(int)texHeight;
+- (void)updateMarginsAndPasses;
+
+@end
+
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -174,6 +194,8 @@
     SPBlurProgram *_program;
     SPBlurProgram *_tintedProgram;
 }
+
+#pragma mark Initialization
 
 - (instancetype)init
 {
@@ -205,6 +227,23 @@
     [super dealloc];
 }
 
++ (instancetype)blurFilter
+{
+    return [[[self alloc] init] autorelease];
+}
+
++ (instancetype)blurFilterWithBlur:(float)blur
+{
+    return [[[self alloc] initWithBlur:blur] autorelease];
+}
+
++ (instancetype)blurFilterWithBlur:(float)blur resolution:(float)resolution
+{
+    return [[[self alloc] initWithBlur:blur resolution:resolution] autorelease];
+}
+
+#pragma mark Methods
+
 - (void)setUniformColor:(BOOL)enable
 {
     [self setUniformColor:enable color:SPColorBlack];
@@ -224,17 +263,7 @@
     _enableColorUniform = enable;
 }
 
-- (void)setBlurX:(float)blurX
-{
-    _blurX = blurX;
-    [self updateMarginsAndPasses];
-}
-
-- (void)setBlurY:(float)blurY
-{
-    _blurY = blurY;
-    [self updateMarginsAndPasses];
-}
+#pragma mark SPFragmentFilter (Subclasses)
 
 - (void)createPrograms
 {
@@ -245,7 +274,7 @@
 
         if (!_program)
         {
-            _program = [[SPBlurProgram alloc] initWithTintedFragmenShader:NO];
+            _program = [[SPBlurProgram alloc] initWithTintedFragmentShader:NO];
             [[Sparrow currentController] registerProgram:_program name:programName];
         }
     }
@@ -257,7 +286,7 @@
 
         if (!_tintedProgram)
         {
-            _tintedProgram = [[SPBlurProgram alloc] initWithTintedFragmenShader:YES];
+            _tintedProgram = [[SPBlurProgram alloc] initWithTintedFragmentShader:YES];
             [[Sparrow currentController] registerProgram:_tintedProgram name:programName];
         }
     }
@@ -284,6 +313,8 @@
     if (isColorPass)
         glUniform4fv(program.uColor, 1, _color);
 }
+
+#pragma mark Private
 
 - (void)updateParamatersWithPass:(int)pass texWidth:(int)texWidth texHeight:(int)texHeight
 {
@@ -365,20 +396,21 @@
     self.marginY = 4.0f + ceilf(_blurY);
 }
 
-+ (instancetype)blurFilter
+#pragma mark Properties
+
+- (void)setBlurX:(float)blurX
 {
-    return [[[self alloc] init] autorelease];
+    _blurX = blurX;
+    [self updateMarginsAndPasses];
 }
 
-+ (instancetype)blurFilterWithBlur:(float)blur
+- (void)setBlurY:(float)blurY
 {
-    return [[[self alloc] initWithBlur:blur] autorelease];
+    _blurY = blurY;
+    [self updateMarginsAndPasses];
 }
 
-+ (instancetype)blurFilterWithBlur:(float)blur resolution:(float)resolution
-{
-    return [[[self alloc] initWithBlur:blur resolution:resolution] autorelease];
-}
+#pragma mark Drop Shadow
 
 + (instancetype)dropShadow
 {
@@ -419,6 +451,8 @@
     [dropShadow setUniformColor:YES color:color alpha:alpha];
     return dropShadow;
 }
+
+#pragma mark Glow
 
 + (instancetype)glow
 {

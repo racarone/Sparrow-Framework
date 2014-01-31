@@ -28,6 +28,8 @@
     id _nativeTouch;
 }
 
+#pragma mark Initialization
+
 - (instancetype)init
 {
     return [super init];
@@ -38,6 +40,8 @@
     [_target release];
     [super dealloc];
 }
+
+#pragma mark Methods
 
 - (SPPoint *)locationInSpace:(SPDisplayObject *)space
 {
@@ -57,6 +61,13 @@
     SPPoint *curLoc = [transformationMatrix transformPointWithX:_globalX y:_globalY];
     SPPoint *preLoc = [transformationMatrix transformPointWithX:_previousGlobalX y:_previousGlobalY];
     return [curLoc subtractPoint:preLoc];
+}
+
+#pragma mark NSObject
+
+- (NSUInteger)hash
+{
+    return [_nativeTouch hash];
 }
 
 - (NSString *)description
@@ -127,4 +138,3 @@
 }
 
 @end
-

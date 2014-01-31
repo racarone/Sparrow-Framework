@@ -21,6 +21,8 @@
 
 // --- private interface ---------------------------------------------------------------------------
 
+#define MAX_DRAG_DIST 40
+
 @interface SPButton()
 
 - (void)resetContents;
@@ -47,7 +49,7 @@
     BOOL _isDown;
 }
 
-#define MAX_DRAG_DIST 40
+#pragma mark Initialization
 
 - (instancetype)initWithUpState:(SPTexture *)upState downState:(SPTexture *)downState
 {
@@ -104,11 +106,28 @@
     [super dealloc];
 }
 
++ (instancetype)buttonWithUpState:(SPTexture *)upState downState:(SPTexture *)downState
+{
+    return [[[self alloc] initWithUpState:upState downState:downState] autorelease];
+}
+
++ (instancetype)buttonWithUpState:(SPTexture *)upState text:(NSString *)text
+{
+    return [[[self alloc] initWithUpState:upState text:text] autorelease];
+}
+
++ (instancetype)buttonWithUpState:(SPTexture *)upState
+{
+    return [[[self alloc] initWithUpState:upState] autorelease];
+}
+
+#pragma mark Events
+
 - (void)onTouch:(SPTouchEvent *)touchEvent
-{    
-    if (!_enabled) return;    
+{
+    if (!_enabled) return;
     SPTouch *touch = [[touchEvent touchesWithTarget:self] anyObject];
-    
+
     if (touch.phase == SPTouchPhaseBegan && !_isDown)
     {
         _background.texture = _downState;
@@ -127,31 +146,52 @@
             touch.globalY > buttonRect.y + buttonRect.height + MAX_DRAG_DIST)
         {
             [self resetContents];
-        }            
+        }
     }
     else if (touch.phase == SPTouchPhaseEnded && _isDown)
     {
         [self resetContents];
         [self dispatchEventWithType:SPEventTypeTriggered bubbles:YES];
-    }    
+    }
     else if (touch.phase == SPTouchPhaseCancelled && _isDown)
     {
         [self resetContents];
     }
 }
 
-- (void)resetContents
+#pragma mark SPDisplayObject
+
+- (void)setWidth:(float)width
 {
-    _isDown = NO;
-    _background.texture = _upState;
-    _contents.x = _contents.y = 0;        
-    _contents.scaleX = _contents.scaleY = 1.0f;
+    // a button behaves just like a textfield: when changing width & height,
+    // the textfield is not stretched, but will have more room for its chars.
+
+    _background.width = width;
+    [self createTextField];
 }
+
+- (float)width
+{
+    return _background.width;
+}
+
+- (void)setHeight:(float)height
+{
+    _background.height = height;
+    [self createTextField];
+}
+
+- (float)height
+{
+    return _background.height;
+}
+
+#pragma mark Properties
 
 - (void)setEnabled:(BOOL)value
 {
     _enabled = value;
-    if (_enabled) 
+    if (_enabled)
     {
         _contents.alpha = 1.0f;
     }
@@ -159,41 +199,7 @@
     {
         _contents.alpha = _alphaWhenDisabled;
         [self resetContents];
-    }    
-}
-
-- (void)setUpState:(SPTexture *)upState
-{
-    if (upState != _upState)
-    {
-        SP_RELEASE_AND_RETAIN(_upState, upState);
-        if (!_isDown) _background.texture = upState;
     }
-}
-
-- (void)setDownState:(SPTexture *)downState
-{
-    if (downState != _downState)
-    {
-        SP_RELEASE_AND_RETAIN(_downState, downState);
-        if (_isDown) _background.texture = downState;
-    }
-}
-
-- (void)createTextField
-{
-    if (!_textField)
-    {
-        _textField = [[SPTextField alloc] init];
-        _textField.vAlign = SPVAlignCenter;
-        _textField.hAlign = SPHAlignCenter;
-        _textField.touchable = NO;
-    }
-
-    _textField.width  = _textBounds.width;
-    _textField.height = _textBounds.height;
-    _textField.x = _textBounds.x;
-    _textField.y = _textBounds.y;
 }
 
 - (NSString *)text
@@ -217,27 +223,6 @@
     _textField.text = value;
 }
 
-- (void)setTextBounds:(SPRectangle *)value
-{
-    float scaleX = _background.scaleX;
-    float scaleY = _background.scaleY;
-
-    [_textBounds release];
-    _textBounds = [[SPRectangle alloc] initWithX:value.x/scaleX y:value.y/scaleY 
-                                           width:value.width/scaleX height:value.height/scaleY];
-    
-    [self createTextField];
-}
-
-- (SPRectangle *)textBounds
-{
-    float scaleX = _background.scaleX;
-    float scaleY = _background.scaleY;
-    
-    return [SPRectangle rectangleWithX:_textBounds.x*scaleX y:_textBounds.y*scaleY 
-                                 width:_textBounds.width*scaleX height:_textBounds.height*scaleY];
-}
-
 - (NSString *)fontName
 {
     if (_textField) return _textField.fontName;
@@ -259,7 +244,7 @@
 - (void)setFontSize:(float)value
 {
     [self createTextField];
-    _textField.fontSize = value;    
+    _textField.fontSize = value;
 }
 
 - (uint)fontColor
@@ -274,44 +259,69 @@
     _textField.color = value;
 }
 
-- (void)setWidth:(float)width
+- (void)setUpState:(SPTexture *)upState
 {
-    // a button behaves just like a textfield: when changing width & height,
-    // the textfield is not stretched, but will have more room for its chars.
+    if (upState != _upState)
+    {
+        SP_RELEASE_AND_RETAIN(_upState, upState);
+        if (!_isDown) _background.texture = upState;
+    }
+}
+
+- (void)setDownState:(SPTexture *)downState
+{
+    if (downState != _downState)
+    {
+        SP_RELEASE_AND_RETAIN(_downState, downState);
+        if (_isDown) _background.texture = downState;
+    }
+}
+
+- (void)setTextBounds:(SPRectangle *)value
+{
+    float scaleX = _background.scaleX;
+    float scaleY = _background.scaleY;
+
+    [_textBounds release];
+    _textBounds = [[SPRectangle alloc] initWithX:value.x/scaleX y:value.y/scaleY 
+                                           width:value.width/scaleX height:value.height/scaleY];
     
-    _background.width = width;
     [self createTextField];
 }
 
-- (float)width
+- (SPRectangle *)textBounds
 {
-    return _background.width;
+    float scaleX = _background.scaleX;
+    float scaleY = _background.scaleY;
+    
+    return [SPRectangle rectangleWithX:_textBounds.x*scaleX y:_textBounds.y*scaleY 
+                                 width:_textBounds.width*scaleX height:_textBounds.height*scaleY];
 }
 
-- (void)setHeight:(float)height
+#pragma mark Private
+
+- (void)resetContents
 {
-    _background.height = height;    
-    [self createTextField];
+    _isDown = NO;
+    _background.texture = _upState;
+    _contents.x = _contents.y = 0;
+    _contents.scaleX = _contents.scaleY = 1.0f;
 }
 
-- (float)height
+- (void)createTextField
 {
-    return _background.height;
-}
- 
-+ (instancetype)buttonWithUpState:(SPTexture *)upState downState:(SPTexture *)downState
-{
-    return [[[self alloc] initWithUpState:upState downState:downState] autorelease];
-}
+    if (!_textField)
+    {
+        _textField = [[SPTextField alloc] init];
+        _textField.vAlign = SPVAlignCenter;
+        _textField.hAlign = SPHAlignCenter;
+        _textField.touchable = NO;
+    }
 
-+ (instancetype)buttonWithUpState:(SPTexture *)upState text:(NSString *)text
-{
-    return [[[self alloc] initWithUpState:upState text:text] autorelease];
-}
-
-+ (instancetype)buttonWithUpState:(SPTexture *)upState
-{
-    return [[[self alloc] initWithUpState:upState] autorelease];
+    _textField.width  = _textBounds.width;
+    _textField.height = _textBounds.height;
+    _textField.x = _textBounds.x;
+    _textField.y = _textBounds.y;
 }
 
 @end

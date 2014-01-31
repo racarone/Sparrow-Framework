@@ -28,6 +28,8 @@
 
 @synthesize frame = _frame;
 
+#pragma mark Initialization
+
 - (instancetype)initWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture
 {
     return [self initWithRegion:region frame:nil ofTexture:texture];
@@ -80,6 +82,13 @@
     [_frame release];
     [super dealloc];
 }
+
++ (instancetype)textureWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture
+{
+    return [[[self alloc] initWithRegion:region ofTexture:texture] autorelease];
+}
+
+#pragma mark SPTexture
 
 - (void)adjustVertexData:(SPVertexData *)vertexData atIndex:(int)index numVertices:(int)count
 {
@@ -147,17 +156,6 @@
     }
 }
 
-- (SPRectangle *)clipping
-{
-    SPPoint *topLeft     = [_transformationMatrix transformPointWithX:0.0f y:0.0f];
-    SPPoint *bottomRight = [_transformationMatrix transformPointWithX:1.0f y:1.0f];
-    SPRectangle *clipping = [SPRectangle rectangleWithX:topLeft.x y:topLeft.y
-                                                  width:bottomRight.x - topLeft.x
-                                                 height:bottomRight.y - topLeft.y];
-    [clipping normalize];
-    return clipping;
-}
-
 - (float)width
 {
     return _width;
@@ -218,9 +216,17 @@
     return _parent.scale;
 }
 
-+ (instancetype)textureWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture
+#pragma mark Properties
+
+- (SPRectangle *)clipping
 {
-    return [[[self alloc] initWithRegion:region ofTexture:texture] autorelease];
+    SPPoint *topLeft     = [_transformationMatrix transformPointWithX:0.0f y:0.0f];
+    SPPoint *bottomRight = [_transformationMatrix transformPointWithX:1.0f y:1.0f];
+    SPRectangle *clipping = [SPRectangle rectangleWithX:topLeft.x y:topLeft.y
+                                                  width:bottomRight.x - topLeft.x
+                                                 height:bottomRight.y - topLeft.y];
+    [clipping normalize];
+    return clipping;
 }
 
 @end

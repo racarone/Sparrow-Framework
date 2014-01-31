@@ -18,7 +18,7 @@
 @class SPGLTexture;
 @class SPVertexData;
 
-typedef NS_ENUM(NSInteger, SPTextureSmoothing)
+typedef NS_ENUM(uint, SPTextureSmoothing)
 {
     SPTextureSmoothingNone,
     SPTextureSmoothingBilinear,
@@ -97,9 +97,9 @@ typedef void (^SPTextureLoadingBlock)(SPTexture *texture, NSError *outError);
 
 @interface SPTexture : NSObject
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes an empty texture with a certain size (in points).
 - (instancetype)initWithWidth:(float)width height:(float)height;

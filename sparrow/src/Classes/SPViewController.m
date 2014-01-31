@@ -30,9 +30,14 @@
 
 @interface SPViewController()
 
+- (void)purgePools;
+- (void)createRoot;
+- (void)readjustStageSize;
+
 @property (nonatomic, readonly) GLKView *glkView;
 
 @end
+
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -58,6 +63,8 @@
     BOOL _supportHighResolutions;
     BOOL _doubleOnPad;
 }
+
+#pragma mark Initializers
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -127,19 +134,7 @@
     [self glkView].context = _context.nativeContext;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [self purgePools];
-    [_support purgeBuffers];
-    [super didReceiveMemoryWarning];
-}
-
-- (void)purgePools
-{
-    [SPPoint purgePool];
-    [SPRectangle purgePool];
-    [SPMatrix purgePool];
-}
+#pragma mark Methods
 
 - (void)startWithRoot:(Class)rootClass
 {
@@ -166,51 +161,24 @@
     _contentScaleFactor = (_doubleOnPad && isPad) ? _viewScaleFactor * 2.0f : _viewScaleFactor;
 }
 
-- (void)createRoot
-{
-    if (!_root)
-    {
-        _root = [[_rootClass alloc] init];
-        
-        if ([_root isKindOfClass:[SPStage class]])
-            [NSException raise:SPExceptionInvalidOperation
-                        format:@"Root extends 'SPStage' but is expected to extend 'SPSprite' "
-                               @"instead (different to Sparrow 1.x)"];
-        else
-        {
-            [_stage addChild:_root atIndex:0];
+#pragma mark Program Management
 
-            if (_onRootCreated)
-            {
-                _onRootCreated(_root);
-                SP_RELEASE_AND_NIL(_onRootCreated);
-            }
-        }
-    }
+- (void)registerProgram:(SPProgram *)program name:(NSString *)name
+{
+    _programs[name] = program;
 }
 
-- (void)readjustStageSize
+- (void)unregisterProgram:(NSString *)name
 {
-    CGSize viewSize = self.view.bounds.size;
-    _stage.width  = viewSize.width  * _viewScaleFactor / _contentScaleFactor;
-    _stage.height = viewSize.height * _viewScaleFactor / _contentScaleFactor;
+    [_programs removeObjectForKey:name];
 }
 
-- (BOOL)showStats
+- (SPProgram *)programByName:(NSString *)name
 {
-    return _statsDisplay.visible;
+    return _programs[name];
 }
 
-- (void)setShowStats:(BOOL)showStats
-{
-    if (showStats && !_statsDisplay)
-    {
-        _statsDisplay = [[SPStatsDisplay alloc] init];
-        [_stage addChild:_statsDisplay];
-    }
-    
-    _statsDisplay.visible = showStats;
-}
+#pragma mark Other Methods
 
 - (void)executeInResourceQueue:(dispatch_block_t)block
 {
@@ -226,7 +194,7 @@
     });
 }
 
-#pragma mark - GLKViewDelegate
+#pragma mark GLKViewDelegate Protocol
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
@@ -273,17 +241,16 @@
     }
 }
 
-#pragma mark - Touch Processing
+#pragma mark UIViewController
 
-- (void)setMultitouchEnabled:(BOOL)multitouchEnabled
+- (void)didReceiveMemoryWarning
 {
-    self.view.multipleTouchEnabled = multitouchEnabled;
+    [self purgePools];
+    [_support purgeBuffers];
+    [super didReceiveMemoryWarning];
 }
 
-- (BOOL)multitouchEnabled
-{
-    return self.view.multipleTouchEnabled;
-}
+#pragma mark Touch Processing
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
@@ -340,7 +307,7 @@
     }
 }
 
-#pragma mark - Auto Rotation
+#pragma mark Auto Rotation
 
 // The following methods implement what I would expect to be the default behaviour of iOS:
 // The orientations that you activated in the application plist file are automatically rotated to.
@@ -401,24 +368,17 @@
     }
 }
 
-#pragma mark - Program registration
+#pragma mark Properties
 
-- (void)registerProgram:(SPProgram *)program name:(NSString *)name
+- (void)setMultitouchEnabled:(BOOL)multitouchEnabled
 {
-    _programs[name] = program;
+    self.view.multipleTouchEnabled = multitouchEnabled;
 }
 
-- (void)unregisterProgram:(NSString *)name
+- (BOOL)multitouchEnabled
 {
-    [_programs removeObjectForKey:name];
+    return self.view.multipleTouchEnabled;
 }
-
-- (SPProgram *)programByName:(NSString *)name
-{
-    return _programs[name];
-}
-
-#pragma mark - Properties
 
 - (NSInteger)drawableWidth
 {
@@ -428,6 +388,61 @@
 - (NSInteger)drawableHeight
 {
     return self.glkView.drawableHeight;
+}
+
+- (BOOL)showStats
+{
+    return _statsDisplay.visible;
+}
+
+- (void)setShowStats:(BOOL)showStats
+{
+    if (showStats && !_statsDisplay)
+    {
+        _statsDisplay = [[SPStatsDisplay alloc] init];
+        [_stage addChild:_statsDisplay];
+    }
+
+    _statsDisplay.visible = showStats;
+}
+
+#pragma mark Private
+
+- (void)purgePools
+{
+    [SPPoint purgePool];
+    [SPRectangle purgePool];
+    [SPMatrix purgePool];
+}
+
+- (void)createRoot
+{
+    if (!_root)
+    {
+        _root = [[_rootClass alloc] init];
+
+        if ([_root isKindOfClass:[SPStage class]])
+            [NSException raise:SPExceptionInvalidOperation
+                        format:@"Root extends 'SPStage' but is expected to extend 'SPSprite' "
+             @"instead (different to Sparrow 1.x)"];
+        else
+        {
+            [_stage addChild:_root atIndex:0];
+
+            if (_onRootCreated)
+            {
+                _onRootCreated(_root);
+                SP_RELEASE_AND_NIL(_onRootCreated);
+            }
+        }
+    }
+}
+
+- (void)readjustStageSize
+{
+    CGSize viewSize = self.view.bounds.size;
+    _stage.width  = viewSize.width  * _viewScaleFactor / _contentScaleFactor;
+    _stage.height = viewSize.height * _viewScaleFactor / _contentScaleFactor;
 }
 
 - (GLKView *)glkView

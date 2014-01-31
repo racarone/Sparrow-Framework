@@ -24,6 +24,8 @@
 
 @synthesize duration = _duration;
 
+#pragma mark Initialization
+
 - (instancetype)init
 {
     [self release];
@@ -68,13 +70,15 @@
     return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     alDeleteBuffers(1, &_bufferID);
     _bufferID = 0;
 
     [super dealloc];
 }
+
+#pragma mark SPSound
 
 - (SPSoundChannel *)createChannel
 {

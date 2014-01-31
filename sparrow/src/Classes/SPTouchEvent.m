@@ -22,6 +22,8 @@ NSString *const SPEventTypeTouch = @"SPEventTypeTouch";
     NSSet *_touches;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles touches:(NSSet *)touches
 {   
     if ((self = [super initWithType:type bubbles:bubbles]))
@@ -47,15 +49,12 @@ NSString *const SPEventTypeTouch = @"SPEventTypeTouch";
     [super dealloc];
 }
 
-- (SPEvent *)clone
++ (instancetype)eventWithType:(NSString *)type touches:(NSSet *)touches
 {
-    return [SPTouchEvent eventWithType:self.type touches:self.touches];
+    return [[[self alloc] initWithType:type touches:touches] autorelease];
 }
 
-- (double)timestamp
-{
-    return [[_touches anyObject] timestamp];    
-}
+#pragma mark Methods
 
 - (NSSet *)touchesWithTarget:(SPDisplayObject *)target
 {
@@ -88,9 +87,18 @@ NSString *const SPEventTypeTouch = @"SPEventTypeTouch";
     return touchesFound;    
 }
 
-+ (instancetype)eventWithType:(NSString *)type touches:(NSSet *)touches
+#pragma mark Private
+
+- (SPEvent *)clone
 {
-    return [[[self alloc] initWithType:type touches:touches] autorelease];
+    return [SPTouchEvent eventWithType:self.type touches:self.touches];
+}
+
+#pragma mark Properties
+
+- (double)timestamp
+{
+    return [[_touches anyObject] timestamp];
 }
 
 @end

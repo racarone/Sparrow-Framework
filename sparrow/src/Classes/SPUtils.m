@@ -17,7 +17,13 @@
 
 @implementation SPUtils
 
-#pragma mark - Math Utils
+- (instancetype)init
+{
+    [NSException raise:NSGenericException format:@"Static class - do not initialize!"];
+    return nil;
+}
+
+#pragma mark Math Utils
 
 + (int)nextPowerOfTwo:(int)number
 {    
@@ -41,7 +47,7 @@
     return (float) arc4random() / UINT_MAX;
 }
 
-#pragma mark - File Utils
+#pragma mark File Utils
 
 + (BOOL)fileExistsAtPath:(NSString *)path
 {

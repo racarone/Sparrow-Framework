@@ -15,6 +15,8 @@
 
 @implementation SPRectangle
 
+#pragma mark Initialization
+
 - (instancetype)initWithX:(float)x y:(float)y width:(float)width height:(float)height
 {
     if ((self = [super init]))
@@ -32,6 +34,18 @@
 {
     return [self initWithX:0.0f y:0.0f width:0.0f height:0.0f];
 }
+
++ (instancetype)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height
+{
+    return [[[self allocWithZone:nil] initWithX:x y:y width:width height:height] autorelease];
+}
+
++ (instancetype)rectangle
+{
+    return [[[self alloc] init] autorelease];
+}
+
+#pragma mark Methods
 
 - (BOOL)containsX:(float)x y:(float)y
 {
@@ -127,6 +141,18 @@
     _height = rectangle->_height;
 }
 
+- (BOOL)isEquivalent:(SPRectangle *)other
+{
+    if (other == self) return YES;
+    else if (!other) return NO;
+    else 
+    {
+        SPRectangle *rect = (SPRectangle *)other;
+        return SP_IS_FLOAT_EQUAL(_x, rect->_x) && SP_IS_FLOAT_EQUAL(_y, rect->_y) &&
+               SP_IS_FLOAT_EQUAL(_width, rect->_width) && SP_IS_FLOAT_EQUAL(_height, rect->_height);    
+    }
+}
+
 - (void)normalize
 {
     if (_width < 0.0f)
@@ -141,6 +167,23 @@
         _y -= _height;
     }
 }
+
+#pragma mark NSObject
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"[SPRectangle: x=%f, y=%f, width=%f, height=%f]",
+            _x, _y, _width, _height];
+}
+
+#pragma mark NSCopying
+
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    return [[[self class] allocWithZone:zone] initWithX:_x y:_y width:_width height:_height];
+}
+
+#pragma mark Properties
 
 - (float)top { return _y; }
 - (void)setTop:(float)value { _y = value; }
@@ -166,41 +209,6 @@
 - (BOOL)isEmpty
 {
     return _width == 0 || _height == 0;
-}
-
-- (BOOL)isEquivalent:(SPRectangle *)other
-{
-    if (other == self) return YES;
-    else if (!other) return NO;
-    else 
-    {
-        SPRectangle *rect = (SPRectangle *)other;
-        return SP_IS_FLOAT_EQUAL(_x, rect->_x) && SP_IS_FLOAT_EQUAL(_y, rect->_y) &&
-               SP_IS_FLOAT_EQUAL(_width, rect->_width) && SP_IS_FLOAT_EQUAL(_height, rect->_height);    
-    }
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"[SPRectangle: x=%f, y=%f, width=%f, height=%f]",
-            _x, _y, _width, _height];
-}
-
-+ (instancetype)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height
-{
-    return [[[self allocWithZone:nil] initWithX:x y:y width:width height:height] autorelease];
-}
-
-+ (instancetype)rectangle
-{
-    return [[[self alloc] init] autorelease];
-}
-
-#pragma mark NSCopying
-
-- (instancetype)copyWithZone:(NSZone *)zone
-{
-    return [[[self class] allocWithZone:zone] initWithX:_x y:_y width:_width height:_height];
 }
 
 @end

@@ -24,9 +24,9 @@ SP_EXTERN NSString *const SPEventTypeResize;
 
 @interface SPResizeEvent : SPEvent
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a resize event with the given parameters. _Designated Initializer_.
 - (instancetype)initWithType:(NSString *)type width:(float)width height:(float)height 

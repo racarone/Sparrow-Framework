@@ -56,9 +56,9 @@ typedef struct
 
 @interface SPGLTexture : SPTexture
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a texture with the given properties. Width and height are expected pixel dimensions.
 /// _Designated Initializer_.

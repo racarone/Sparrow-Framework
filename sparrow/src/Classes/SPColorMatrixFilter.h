@@ -36,9 +36,9 @@
 
 @interface SPColorMatrixFilter : SPFragmentFilter
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initialize a color matrix filter with a color matrix.  _Designated initializer_.
 - (instancetype)initWithMatrix:(SPColorMatrix *)colorMatrix;

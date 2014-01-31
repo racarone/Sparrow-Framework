@@ -37,9 +37,9 @@ typedef NS_ENUM(uint, SPColorChannel)
 
 @interface SPDisplacementMapFilter : SPFragmentFilter
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Intializes the displacement map filter with the specified map texture.
 - (instancetype)initWithMapTexture:(SPTexture *)mapTexture;

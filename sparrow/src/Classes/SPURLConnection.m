@@ -20,6 +20,8 @@
     SPURLConnectionCompleteBlock _onComplete;
 }
 
+#pragma mark Initialization
+
 - (instancetype)initWithRequest:(NSURLRequest *)request
 {
     if ((self = [super init]))
@@ -43,6 +45,8 @@
     [super dealloc];
 }
 
+#pragma mark Methods
+
 - (void)startWithBlock:(SPURLConnectionCompleteBlock)completeBlock
 {
     if (_onComplete)
@@ -59,7 +63,7 @@
     SP_RELEASE_AND_NIL(_onComplete);
 }
 
-#pragma mark NSURLConnection Delegate Methods
+#pragma mark NSURLConnection Delegate
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {

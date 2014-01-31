@@ -24,9 +24,12 @@
 #import <Sparrow/SPTexture.h>
 #import <Sparrow/SPVertexData.h>
 
-// --- helper class --------------------------------------------------------------------------------
+#pragma mark - SPRenderState
 
 @interface SPRenderState : NSObject
+@end
+
+@implementation SPRenderState
 {
   @package
     SPMatrix *_modelviewMatrix;
@@ -34,14 +37,7 @@
     uint _blendMode;
 }
 
-+ (instancetype)renderState;
-
-- (void)setupDerivedFromState:(SPRenderState *)state withModelviewMatrix:(SPMatrix *)matrix
-                        alpha:(float)alpha blendMode:(uint)blendMode;
-
-@end
-
-@implementation SPRenderState
+#pragma mark Initialization
 
 - (instancetype)init
 {
@@ -60,6 +56,13 @@
     [super dealloc];
 }
 
++ (instancetype)renderState
+{
+    return [[[self alloc] init] autorelease];
+}
+
+#pragma mark Methods
+
 - (void)setupDerivedFromState:(SPRenderState *)state withModelviewMatrix:(SPMatrix *)matrix
                         alpha:(float)alpha blendMode:(uint)blendMode
 {
@@ -70,14 +73,10 @@
     [_modelviewMatrix prependMatrix:matrix];
 }
 
-+ (instancetype)renderState
-{
-    return [[[self alloc] init] autorelease];
-}
-
 @end
 
-// --- class implementation ------------------------------------------------------------------------
+
+#pragma mark - SPRenderSupport
 
 @implementation SPRenderSupport
 {
@@ -98,6 +97,8 @@
     NSMutableArray *_clipRectStack;
     int _clipRectStackSize;
 }
+
+#pragma mark Initialization
 
 - (instancetype)init
 {
@@ -134,15 +135,7 @@
     [super dealloc];
 }
 
-- (void)nextFrame
-{
-    _clipRectStackSize = 0;
-    _stateStackIndex = 0;
-    _quadBatchIndex = 0;
-    _numDrawCalls = 0;
-    _quadBatchTop = _quadBatches[0];
-    _stateStackTop = _stateStack[0];
-}
+#pragma mark Methods
 
 - (void)purgeBuffers
 {
@@ -201,91 +194,17 @@
     [self applyClipRect];
 }
 
-#pragma mark - state stack
+#pragma mark Rendering
 
-- (void)pushStateWithMatrix:(SPMatrix *)matrix alpha:(float)alpha blendMode:(uint)blendMode
+- (void)nextFrame
 {
-    SPRenderState *previousState = _stateStackTop;
-
-    if (_stateStackSize == _stateStackIndex + 1)
-    {
-        [_stateStack addObject:[SPRenderState renderState]];
-        ++_stateStackSize;
-    }
-
-    _stateStackTop = _stateStack[++_stateStackIndex];
-
-    [_stateStackTop setupDerivedFromState:previousState withModelviewMatrix:matrix
-                                    alpha:alpha blendMode:blendMode];
+    _clipRectStackSize = 0;
+    _stateStackIndex = 0;
+    _quadBatchIndex = 0;
+    _numDrawCalls = 0;
+    _quadBatchTop = _quadBatches[0];
+    _stateStackTop = _stateStack[0];
 }
-
-- (void)popState
-{
-    if (_stateStackIndex == 0)
-        [NSException raise:SPExceptionInvalidOperation format:@"The state stack must not be empty"];
-
-    _stateStackTop = _stateStack[--_stateStackIndex];
-}
-
-- (void)applyBlendModeForPremultipliedAlpha:(BOOL)pma
-{
-    [SPBlendMode applyBlendFactorsForBlendMode:_stateStackTop->_blendMode premultipliedAlpha:pma];
-}
-
-- (void)setProjectionMatrix:(SPMatrix *)projectionMatrix
-{
-    [_projectionMatrix copyFromMatrix:projectionMatrix];
-    [self applyClipRect];
-}
-
-- (SPMatrix *)mvpMatrix
-{
-    [_mvpMatrix copyFromMatrix:_stateStackTop->_modelviewMatrix];
-    [_mvpMatrix appendMatrix:_projectionMatrix];
-    return _mvpMatrix;
-}
-
-- (SPMatrix *)modelviewMatrix
-{
-    return _stateStackTop->_modelviewMatrix;
-}
-
-- (float)alpha
-{
-    return _stateStackTop->_alpha;
-}
-
-- (void)setAlpha:(float)alpha
-{
-    _stateStackTop->_alpha = alpha;
-}
-
-- (uint)blendMode
-{
-    return _stateStackTop->_blendMode;
-}
-
-- (void)setBlendMode:(uint)blendMode
-{
-    if (blendMode != SPBlendModeAuto)
-        _stateStackTop->_blendMode = blendMode;
-}
-
-#pragma mark - render targets
-
-- (SPTexture *)renderTarget
-{
-    return Sparrow.context.renderTarget;
-}
-
-- (void)setRenderTarget:(SPTexture *)renderTarget
-{
-    [self applyClipRect];
-
-    Sparrow.context.renderTarget = renderTarget;
-}
-
-#pragma mark - rendering
 
 - (void)batchQuad:(SPQuad *)quad
 {
@@ -321,7 +240,38 @@
     }
 }
 
-#pragma mark - clipping stack
+#pragma mark State Manipulation
+
+- (void)pushStateWithMatrix:(SPMatrix *)matrix alpha:(float)alpha blendMode:(uint)blendMode
+{
+    SPRenderState *previousState = _stateStackTop;
+
+    if (_stateStackSize == _stateStackIndex + 1)
+    {
+        [_stateStack addObject:[SPRenderState renderState]];
+        ++_stateStackSize;
+    }
+
+    _stateStackTop = _stateStack[++_stateStackIndex];
+
+    [_stateStackTop setupDerivedFromState:previousState withModelviewMatrix:matrix
+                                    alpha:alpha blendMode:blendMode];
+}
+
+- (void)popState
+{
+    if (_stateStackIndex == 0)
+        [NSException raise:SPExceptionInvalidOperation format:@"The state stack must not be empty"];
+
+    _stateStackTop = _stateStack[--_stateStackIndex];
+}
+
+- (void)applyBlendModeForPremultipliedAlpha:(BOOL)pma
+{
+    [SPBlendMode applyBlendFactorsForBlendMode:_stateStackTop->_blendMode premultipliedAlpha:pma];
+}
+
+#pragma mark Clipping
 
 - (SPRectangle *)pushClipRect:(SPRectangle *)clipRect
 {
@@ -403,6 +353,59 @@
     {
         context.scissorBox = nil;
     }
+}
+
+#pragma mark Properties
+
+- (void)setProjectionMatrix:(SPMatrix *)projectionMatrix
+{
+    [_projectionMatrix copyFromMatrix:projectionMatrix];
+    [self applyClipRect];
+}
+
+- (SPMatrix *)mvpMatrix
+{
+    [_mvpMatrix copyFromMatrix:_stateStackTop->_modelviewMatrix];
+    [_mvpMatrix appendMatrix:_projectionMatrix];
+    return _mvpMatrix;
+}
+
+- (SPMatrix *)modelviewMatrix
+{
+    return _stateStackTop->_modelviewMatrix;
+}
+
+- (float)alpha
+{
+    return _stateStackTop->_alpha;
+}
+
+- (void)setAlpha:(float)alpha
+{
+    _stateStackTop->_alpha = alpha;
+}
+
+- (uint)blendMode
+{
+    return _stateStackTop->_blendMode;
+}
+
+- (void)setBlendMode:(uint)blendMode
+{
+    if (blendMode != SPBlendModeAuto)
+        _stateStackTop->_blendMode = blendMode;
+}
+
+- (SPTexture *)renderTarget
+{
+    return Sparrow.context.renderTarget;
+}
+
+- (void)setRenderTarget:(SPTexture *)renderTarget
+{
+    [self applyClipRect];
+
+    Sparrow.context.renderTarget = renderTarget;
 }
 
 @end

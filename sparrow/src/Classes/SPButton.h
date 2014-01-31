@@ -33,9 +33,9 @@
 
 @interface SPButton : SPDisplayObjectContainer
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a button with textures for up- and down-state. _Designated Initializer_.
 - (instancetype)initWithUpState:(SPTexture *)upState downState:(SPTexture *)downState;

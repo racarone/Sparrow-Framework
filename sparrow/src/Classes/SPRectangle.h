@@ -26,9 +26,9 @@
     float _height;
 }
 
-/// ------------------
-/// @name Initializers
-/// ------------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a rectangle with the specified components. _Designated Initializer_.
 - (instancetype)initWithX:(float)x y:(float)y width:(float)width height:(float)height;
