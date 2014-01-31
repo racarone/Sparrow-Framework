@@ -78,7 +78,7 @@ static NSMutableDictionary *framebufferCache = nil;
 
 + (BOOL)setCurrentContext:(SPContext *)context
 {
-    if ([EAGLContext setCurrentContext:context->_nativeContext])
+    if (context && [EAGLContext setCurrentContext:context->_nativeContext])
     {
         currentThreadDictionary[currentContextKey] = context;
         return YES;
@@ -90,7 +90,7 @@ static NSMutableDictionary *framebufferCache = nil;
 + (SPContext *)currentContext
 {
     SPContext *current = currentThreadDictionary[currentContextKey];
-    if (current->_nativeContext != [EAGLContext currentContext])
+    if (!current || current->_nativeContext != [EAGLContext currentContext])
         return nil;
 
     return current;
