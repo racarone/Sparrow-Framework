@@ -10,7 +10,7 @@
 //
 
 #import <Sparrow/SparrowClass.h>
-#import <Sparrow/SPContext.h>
+#import <Sparrow/SPContext_Internal.h>
 #import <Sparrow/SPMacros.h>
 #import <Sparrow/SPOpenGL.h>
 #import <Sparrow/SPRectangle.h>
@@ -65,32 +65,6 @@ static NSMutableDictionary *framebufferCache = nil;
 }
 
 #pragma mark Methods
-
-- (uint)createFramebufferForTexture:(SPTexture *)texture
-{
-    uint framebuffer = -1;
-
-    // create framebuffer
-    glGenFramebuffers(1, &framebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    // attach renderbuffer
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.name, 0);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        NSLog(@"failed to create frame buffer for render texture");
-
-    return framebuffer;
-}
-
-- (void)destroyFramebufferForTexture:(SPTexture *)texture
-{
-    uint framebuffer = [framebufferCache[@(texture.name)] unsignedIntValue];
-    if (framebuffer)
-    {
-        glDeleteFramebuffers(1, &framebuffer);
-        [framebufferCache removeObjectForKey:@(texture.name)];
-    }
-}
 
 - (void)renderToBackBuffer
 {
@@ -204,6 +178,38 @@ static NSMutableDictionary *framebufferCache = nil;
     }
 
     SP_RELEASE_AND_RETAIN(_renderTarget, renderTarget);
+}
+
+@end
+
+// -------------------------------------------------------------------------------------------------
+
+@implementation SPContext (Internal)
+
+- (uint)createFramebufferForTexture:(SPTexture *)texture
+{
+    uint framebuffer = -1;
+
+    // create framebuffer
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    // attach renderbuffer
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.name, 0);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        NSLog(@"failed to create frame buffer for render texture");
+
+    return framebuffer;
+}
+
+- (void)destroyFramebufferForTexture:(SPTexture *)texture
+{
+    uint framebuffer = [framebufferCache[@(texture.name)] unsignedIntValue];
+    if (framebuffer)
+    {
+        glDeleteFramebuffers(1, &framebuffer);
+        [framebufferCache removeObjectForKey:@(texture.name)];
+    }
 }
 
 @end
