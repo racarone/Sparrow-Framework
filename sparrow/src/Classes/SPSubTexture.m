@@ -17,6 +17,18 @@
 #import <Sparrow/SPSubTexture.h>
 #import <Sparrow/SPVertexData.h>
 
+// --- c functions ---
+
+static GLKVector2 transformVector2WithMatrix3(const GLKMatrix3 *glkMatrix, const GLKVector2 vector)
+{
+    return (GLKVector2) {
+        glkMatrix->m00*vector.x + glkMatrix->m10*vector.y + glkMatrix->m20,
+        glkMatrix->m11*vector.y + glkMatrix->m01*vector.x + glkMatrix->m21
+    };
+}
+
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPSubTexture
 {
     SPTexture *_parent;
@@ -63,8 +75,9 @@
 
         [_transformationMatrix scaleXBy:region.width  / texture.width
                                     yBy:region.height / texture.height];
-        [_transformationMatrix translateXBy:region.x / texture.width
-                                        yBy:region.y / texture.height];
+
+        [_transformationMatrix translateXBy:region.x  / texture.width
+                                        yBy:region.y  / texture.height];
     }
     return self;
 }
@@ -80,6 +93,7 @@
     [_parent release];
     [_transformationMatrix release];
     [_frame release];
+    
     [super dealloc];
 }
 
@@ -112,13 +126,14 @@
     }
     while ([texture isKindOfClass:[SPSubTexture class]]);
 
+    const GLKMatrix3 glkMatrix = matrix.convertToGLKMatrix3;
+    const size_t step = sizeof(GLKVector2) + stride;
+
     for (int i=0; i<count; ++i)
     {
-        float *dataf = (float *)data;
-        SPPoint *texCoords = [matrix transformPointWithX:dataf[0] y:dataf[1]];
-        dataf[0] = texCoords.x;
-        dataf[1] = texCoords.y;
-        data += sizeof(GLKVector2) + stride;
+        GLKVector2 *currentCoord = (GLKVector2 *)data;
+        *currentCoord = transformVector2WithMatrix3(&glkMatrix, *currentCoord);
+        data += step;
     }
 
     [matrix release];
@@ -132,27 +147,31 @@
             [NSException raise:SPExceptionInvalidOperation
                         format:@"Textures with a frame can only be used on quads"];
 
-        float deltaRight  = _frame.width  + _frame.x - _width;
-        float deltaBottom = _frame.height + _frame.y - _height;
+        const float deltaRight  = _frame.width  + _frame.x - _width;
+        const float deltaBottom = _frame.height + _frame.y - _height;
 
-        float *dataf;
-        size_t step = sizeof(GLKVector2) + stride;
+        const size_t step = sizeof(GLKVector2) + stride;
+        GLKVector2 *pos = NULL;
 
-        dataf = (float *)data;
-        dataf[0] -= _frame.x;
-        dataf[1] -= _frame.y;
+        // top left
+        pos = (GLKVector2 *)data;
+        pos->x -= _frame.x;
+        pos->y -= _frame.y;
 
-        dataf = (float *)(data + step);
-        dataf[0] -= deltaRight;
-        dataf[1] -= _frame.y;
+        // top right
+        pos = (GLKVector2 *)(data + step);
+        pos->x -= deltaRight;
+        pos->y -= _frame.y;
 
-        dataf = (float *)(data + 2*step);
-        dataf[0] -= _frame.x;
-        dataf[1] -= deltaBottom;
+        // bottom left
+        pos = (GLKVector2 *)(data + 2*step);
+        pos->x -= _frame.x;
+        pos->y -= deltaBottom;
 
-        dataf = (float *)(data + 3*step);
-        dataf[0] -= deltaRight;
-        dataf[1] -= deltaBottom;
+        // bottom right
+        pos = (GLKVector2 *)(data + 3*step);
+        pos->x -= deltaRight;
+        pos->y -= deltaBottom;
     }
 }
 
@@ -220,8 +239,8 @@
 
 - (SPRectangle *)clipping
 {
-    SPPoint *topLeft     = [_transformationMatrix transformPointWithX:0.0f y:0.0f];
-    SPPoint *bottomRight = [_transformationMatrix transformPointWithX:1.0f y:1.0f];
+    SPPoint *topLeft      = [_transformationMatrix transformPointWithX:0.0f y:0.0f];
+    SPPoint *bottomRight  = [_transformationMatrix transformPointWithX:1.0f y:1.0f];
     SPRectangle *clipping = [SPRectangle rectangleWithX:topLeft.x y:topLeft.y
                                                   width:bottomRight.x - topLeft.x
                                                  height:bottomRight.y - topLeft.y];
