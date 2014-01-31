@@ -9,9 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 #import <GLKit/GLKMath.h>
+#import <Sparrow/SPMacros.h>
 
 @class SPMatrix;
 @class SPPoint;
