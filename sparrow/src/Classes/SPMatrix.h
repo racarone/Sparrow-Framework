@@ -35,9 +35,9 @@
     float _tx, _ty;
 }
 
-/// -----------------
-/// @name Intializers
-/// -----------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a matrix with the specified components. _Designated Initializer_.
 - (instancetype)initWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;

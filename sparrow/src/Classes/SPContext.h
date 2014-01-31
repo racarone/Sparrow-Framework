@@ -24,9 +24,9 @@
 
 @interface SPContext : NSObject
 
-/// -----------------
-/// @name Intializers
-/// -----------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes and returns a rendering context with the specified sharegroup.
 - (instancetype)initWithSharegroup:(id)sharegroup;

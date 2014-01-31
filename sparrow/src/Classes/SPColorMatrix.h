@@ -20,9 +20,9 @@
     float _m[20];
 }
 
-/// -----------------
-/// @name Intializers
-/// -----------------
+/// --------------------
+/// @name Initialization
+/// --------------------
 
 /// Initializes a color matrix with an array of 20 floats. _Designated Initializer_.
 - (instancetype)initWithValues:(const float[20])values;
