@@ -200,6 +200,17 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 
 #pragma mark NSObject
 
+- (BOOL)isEqual:(id)object
+{
+    if (object == self)
+        return YES;
+
+    if ([object isKindOfClass:[SPMatrix class]])
+        return [self isEquivalent:object];
+
+    return NO;
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"[SPMatrix: a=%f, b=%f, c=%f, d=%f, tx=%f, ty=%f]", 

@@ -144,6 +144,25 @@
 
 #pragma mark NSObject
 
+- (BOOL)isEqual:(id)object
+{
+    if (object == self)
+        return YES;
+
+    if ([object hash] != [self hash])
+        return NO;
+
+    if ([object isKindOfClass:[SPPoint class]])
+        return [self isEquivalent:object];
+
+    return NO;
+}
+
+- (NSUInteger)hash
+{
+    return (SPHashInt(_x) ^ (SPHashInt(_y) << 1));
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"[SPPoint: x=%f, y=%f]", _x, _y];

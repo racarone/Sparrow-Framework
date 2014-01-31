@@ -64,7 +64,7 @@
     BOOL _doubleOnPad;
 }
 
-#pragma mark Initializers
+#pragma mark Initialization
 
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

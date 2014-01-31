@@ -170,6 +170,25 @@
 
 #pragma mark NSObject
 
+- (BOOL)isEqual:(id)object
+{
+    if (object == self)
+        return YES;
+
+    if ([object hash] != [self hash])
+        return NO;
+
+    if ([object isKindOfClass:[SPRectangle class]])
+        return [self isEquivalent:object];
+
+    return NO;
+}
+
+- (NSUInteger)hash
+{
+    return ((SPHashInt(_x) ^ (SPHashInt(_y) << 1)) ^ SPHashInt(_width)) + SPHashInt(_height);
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"[SPRectangle: x=%f, y=%f, width=%f, height=%f]",
