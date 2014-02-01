@@ -34,6 +34,8 @@
 @synthesize repeat = _repeat;
 @synthesize premultipliedAlpha = _premultipliedAlpha;
 @synthesize scale = _scale;
+@synthesize format = _format;
+@synthesize mipmaps = _mipmaps;
 @synthesize smoothing = _smoothing;
 
 #pragma mark Initialization

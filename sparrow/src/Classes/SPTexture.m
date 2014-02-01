@@ -23,11 +23,147 @@
 #import <Sparrow/SPUtils.h>
 #import <Sparrow/SPVertexData.h>
 
-// --- class implementation ------------------------------------------------------------------------
+#pragma mark - SPTextureCache
+
+@interface SPTextureCache : NSObject <NSCacheDelegate>
+{
+    NSCache *_cache;
+    dispatch_queue_t _queue;
+}
+
+- (SPTexture *)textureForKey:(NSString *)key;
+- (void)setTexture:(SPTexture *)obj forKey:(NSString *)key;
+- (void)reset;
+
+@property (nonatomic, copy) SPTextureCacheEvictionBlock delegateBlock;
+
+@end
+
+@implementation SPTextureCache
+
+#pragma mark Initialization
+
+- (instancetype)init
+{
+    if ((self = [super init]))
+    {
+        _cache = [[NSCache alloc] init];
+        _cache.name = @"Sparrow-TextureCache";
+        _queue = dispatch_queue_create("Sparrow-TexureCacheQueue", DISPATCH_QUEUE_CONCURRENT);
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    dispatch_release(_queue);
+
+    [_cache release];
+    [_delegateBlock release];
+    [super dealloc];
+}
+
+#pragma mark Methods
+
+- (SPTexture *)textureForKey:(NSString *)key
+{
+    __block SPTexture *texture;
+    dispatch_sync(_queue, ^{
+        texture = [[_cache objectForKey: key] retain];
+    });
+
+    return [texture autorelease];
+}
+
+- (void)setTexture:(SPTexture *)texture forKey:(NSString *)key
+{
+    int cost = [self calculateCostForTexture:texture];
+    dispatch_barrier_async(_queue, ^{
+        [_cache setObject:texture forKey:key cost:cost];
+    });
+}
+
+- (void)reset
+{
+    NSCache *copy = [[[NSCache alloc] init] autorelease];
+    copy.name = _cache.name;
+    copy.delegate = self;
+
+    SP_RELEASE_AND_RETAIN(_cache, copy);
+}
+
+#pragma mark NSCacheDelegate
+
+- (void)cache:(NSCache *)cache willEvictObject:(SPTexture *)texture
+{
+    if (_delegateBlock) _delegateBlock(texture);
+}
+
+#pragma mark Private
+
+- (int)calculateCostForTexture:(SPTexture *)texture
+{
+    float cost = texture.nativeWidth * texture.nativeHeight;
+    switch (texture.format)
+    {
+        default:
+        case SPTextureFormatRGBA:
+            cost *= 4.0;
+
+        case SPTextureFormat888:
+            cost *= 3.0;
+
+        case SPTextureFormat565:
+        case SPTextureFormat5551:
+        case SPTextureFormat4444:
+        case SPTextureFormatAI88:
+            cost *= 2.0;
+
+        case SPTextureFormatAlpha:
+        case SPTextureFormatI8:
+            cost *= 1.0;
+
+        case SPTextureFormatPvrtcRGBA4:
+        case SPTextureFormatPvrtcRGB4:
+            cost *= 0.5;
+
+        case SPTextureFormatPvrtcRGBA2:
+        case SPTextureFormatPvrtcRGB2:
+            cost *= 0.25;
+    }
+
+    if (texture.mipmaps)
+        cost *= 1.33;
+
+    return (int)cost;
+}
+
+@end
+
+
+#pragma mark - SPTexture
+
+static SPTextureCache *textureCache = nil;
+
+@interface SPTexture ()
+
++ (BOOL)isPVRFile:(NSString *)path;
++ (BOOL)isCompressedFile:(NSString *)path;
+
+@end
 
 @implementation SPTexture
 
 #pragma mark Initialization
+
++ (void)initialize
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^
+     {
+         textureCache = [[SPTextureCache alloc] init];
+     });
+}
 
 - (instancetype)init
 {    
@@ -46,11 +182,25 @@
 
 - (instancetype)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
 {
+    return [self initWithContentsOfFile:path generateMipmaps:NO useCache:YES];
+}
+
+- (instancetype)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps useCache:(BOOL)useCache
+{
+    if (useCache)
+    {
+        SPTexture *cachedTexture = [textureCache textureForKey:path];
+        if (cachedTexture)
+        {
+            [self release]; // return the cached texture
+            return [cachedTexture retain];
+        }
+    }
+
     NSString *fullPath = [SPUtils absolutePathToFile:path];
-    
     if (!fullPath)
         [NSException raise:SPExceptionFileNotFound format:@"File '%@' not found", path];
-    
+
     if ([SPTexture isPVRFile:fullPath])
     {
         BOOL isCompressed = [SPTexture isCompressedFile:fullPath];
@@ -64,8 +214,6 @@
 
         [rawData release];
         [pvrData release];
-
-        return self;
     }
     else
     {
@@ -80,9 +228,12 @@
         [image2 release];
         [image1 release];
         [data release];
-        
-        return self;
     }
+
+    if (useCache)
+        [textureCache setTexture:self forKey:path];
+
+    return self;
 }
 
 - (instancetype)initWithWidth:(float)width height:(float)height
@@ -196,6 +347,11 @@
     return [[[self alloc] initWithContentsOfFile:path generateMipmaps:mipmaps] autorelease];
 }
 
++ (instancetype)textureWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps useCache:(BOOL)useCache
+{
+    return [[[self alloc] initWithContentsOfFile:path generateMipmaps:mipmaps useCache:useCache] autorelease];
+}
+
 + (instancetype)textureWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture
 {
     return [[[self alloc] initWithRegion:region ofTexture:texture] autorelease];
@@ -228,6 +384,18 @@
     // override in subclasses
 }
 
+#pragma mark Texture Cache
+
++ (void)setCacheEvictionHandler:(SPTextureCacheEvictionBlock)handler
+{
+    textureCache.delegateBlock = handler;
+}
+
++ (void)purgeCache
+{
+    [textureCache reset];
+}
+
 #pragma mark Asynchronous Texture Loading
 
 + (void)loadFromFile:(NSString *)path onComplete:(SPTextureLoadingBlock)callback
@@ -235,7 +403,12 @@
     [self loadFromFile:path generateMipmaps:NO onComplete:callback];
 }
 
-+ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
++ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps onComplete:(SPTextureLoadingBlock)callback
+{
+    [self loadFromFile:path generateMipmaps:mipmaps useCache:YES onComplete:callback];
+}
+
++ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps useCache:(BOOL)useCache
           onComplete:(SPTextureLoadingBlock)callback
 {
     NSString *fullPath = [SPUtils absolutePathToFile:path];
@@ -250,7 +423,7 @@
 
          @try
          {
-             texture = [[SPTexture alloc] initWithContentsOfFile:fullPath generateMipmaps:mipmaps];
+             texture = [[SPTexture alloc] initWithContentsOfFile:fullPath generateMipmaps:mipmaps useCache:useCache];
          }
          @catch (NSException *exception)
          {
@@ -258,10 +431,10 @@
          }
 
          dispatch_async(dispatch_get_main_queue(), ^
-                        {
-                            callback(texture, error);
-                            [texture release];
-                        });
+    	  {
+              callback(texture, error);
+              [texture release];
+          });
      }];
 }
 
@@ -301,11 +474,11 @@
               }
 
               dispatch_async(dispatch_get_main_queue(), ^
-                             {
-                                 callback(texture, error);
-                                 [connection release];
-                                 [texture release];
-                             });
+    		   {
+                   callback(texture, error);
+                   [connection release];
+                   [texture release];
+               });
           }];
      }];
 }
@@ -361,9 +534,34 @@
     return 0;    
 }
 
+- (BOOL)premultipliedAlpha
+{
+    return NO;
+}
+
+- (float)scale
+{
+    return 1.0f;
+}
+
+- (SPTextureFormat)format
+{
+    return SPTextureFormatRGBA;
+}
+
+- (BOOL)mipmaps
+{
+    return NO;
+}
+
+- (SPRectangle *)frame
+{
+    return nil;
+}
+
 - (void)setRepeat:(BOOL)value
 {
-    [NSException raise:SPExceptionAbstractMethod format:@"Override 'setRepeat:' in subclasses."];    
+    [NSException raise:SPExceptionAbstractMethod format:@"Override 'setRepeat:' in subclasses."];
 }
 
 - (BOOL)repeat
@@ -381,21 +579,6 @@
 - (void)setSmoothing:(SPTextureSmoothing)filter
 {
     [NSException raise:SPExceptionAbstractMethod format:@"Override 'setSmoothing' in subclasses."];
-}
-
-- (BOOL)premultipliedAlpha
-{
-    return NO;
-}
-
-- (float)scale
-{
-    return 1.0f;
-}
-
-- (SPRectangle *)frame
-{
-    return nil;
 }
 
 #pragma mark Private

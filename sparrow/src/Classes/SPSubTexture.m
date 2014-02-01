@@ -195,14 +195,34 @@ static GLKVector2 transformVector2WithMatrix3(const GLKMatrix3 *glkMatrix, const
     return _height * self.scale;
 }
 
+- (SPGLTexture *)root
+{
+    return _parent.root;
+}
+
 - (uint)name
 {
     return _parent.name;
 }
 
-- (SPGLTexture *)root
+- (BOOL)premultipliedAlpha
 {
-    return _parent.root;
+    return _parent.premultipliedAlpha;
+}
+
+- (SPTextureFormat)format
+{
+    return _parent.format;
+}
+
+- (BOOL)mipmaps
+{
+    return _parent.mipmaps;
+}
+
+- (float)scale
+{
+    return _parent.scale;
 }
 
 - (void)setRepeat:(BOOL)value
@@ -216,23 +236,13 @@ static GLKVector2 transformVector2WithMatrix3(const GLKMatrix3 *glkMatrix, const
 }
 
 - (SPTextureSmoothing)smoothing
-{    
+{
     return _parent.smoothing;
 }
 
 - (void)setSmoothing:(SPTextureSmoothing)value
 {
     _parent.smoothing = value;
-}
-
-- (BOOL)premultipliedAlpha
-{
-    return _parent.premultipliedAlpha;
-}
-
-- (float)scale
-{
-    return _parent.scale;
 }
 
 #pragma mark Properties

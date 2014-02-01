@@ -22,6 +22,7 @@
 #import <Sparrow/SPResizeEvent.h>
 #import <Sparrow/SPStage_Internal.h>
 #import <Sparrow/SPStatsDisplay.h>
+#import <Sparrow/SPTexture.h>
 #import <Sparrow/SPTouchProcessor.h>
 #import <Sparrow/SPTouch_Internal.h>
 #import <Sparrow/SPViewController.h>
@@ -91,6 +92,7 @@
 
 - (void)dealloc
 {
+    [SPTexture purgeCache];
     [self purgePools];
     [SPContext setCurrentContext:nil];
     [Sparrow setCurrentController:nil];

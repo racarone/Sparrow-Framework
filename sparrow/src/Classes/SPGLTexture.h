@@ -16,22 +16,6 @@
 @class SPRectangle;
 @class SPPVRData;
 
-typedef NS_ENUM(uint, SPTextureFormat)
-{
-    SPTextureFormatRGBA,
-    SPTextureFormatAlpha,
-    SPTextureFormatPvrtcRGB2,
-    SPTextureFormatPvrtcRGBA2,
-    SPTextureFormatPvrtcRGB4,
-    SPTextureFormatPvrtcRGBA4,
-    SPTextureFormat565,
-    SPTextureFormat888,
-    SPTextureFormat5551,
-    SPTextureFormat4444,
-    SPTextureFormatAI88,
-    SPTextureFormatI8
-};
-
 typedef struct
 {
     SPTextureFormat format;
