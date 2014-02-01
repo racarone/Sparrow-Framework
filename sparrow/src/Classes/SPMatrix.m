@@ -31,11 +31,12 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 
 - (instancetype)initWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
 {
-    if ((self = [super init]))
+    if (self)
     {
         _a = a; _b = b; _c = c; _d = d;
         _tx = tx; _ty = ty;
     }
+
     return self;
 }
 
@@ -162,7 +163,7 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 
 - (void)copyFromMatrix:(SPMatrix *)matrix
 {
-    setValues(self, matrix->_a, matrix->_b, matrix->_c, matrix->_d, matrix->_tx, matrix->_ty);
+    memcpy(&_a, &matrix->_a, sizeof(float) * 6);
 }
 
 - (GLKMatrix4)convertToGLKMatrix4

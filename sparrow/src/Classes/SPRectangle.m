@@ -19,14 +19,13 @@
 
 - (instancetype)initWithX:(float)x y:(float)y width:(float)width height:(float)height
 {
-    if ((self = [super init]))
+    if (self)
     {
         _x = x;
         _y = y;
         _width = width;
         _height = height;
     }
-     
     return self;
 }
 

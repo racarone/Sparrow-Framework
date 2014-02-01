@@ -20,7 +20,7 @@
 
 - (instancetype)initWithX:(float)x y:(float)y
 {
-    if ((self = [super init]))
+    if (self)
     {
         _x = x;
         _y = y;        
