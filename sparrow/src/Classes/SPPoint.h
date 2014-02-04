@@ -67,7 +67,7 @@
 - (float)dot:(SPPoint *)other;
 
 /// Compares two points.
-- (BOOL)isEquivalent:(SPPoint *)other;
+- (BOOL)isEqualToPoint:(SPPoint *)other;
 
 /// Copies the values from another point into the current point.
 - (void)copyFromPoint:(SPPoint *)point;

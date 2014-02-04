@@ -63,7 +63,7 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
     _tx = tx; _ty = ty;
 }
 
-- (BOOL)isEquivalent:(SPMatrix *)matrix
+- (BOOL)isEqualToMatrix:(SPMatrix *)matrix
 {
     if (matrix == self) return YES;
     else if (!matrix) return NO;
@@ -203,13 +203,14 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 
 - (BOOL)isEqual:(id)object
 {
-    if (object == self)
+    if (!object)
+        return NO;
+    else if (object == self)
         return YES;
-
-    if ([object isKindOfClass:[SPMatrix class]])
-        return [self isEquivalent:object];
-
-    return NO;
+    else if (![object isKindOfClass:[SPMatrix class]])
+        return NO;
+    else
+        return [self isEqualToMatrix:object];
 }
 
 - (NSString *)description

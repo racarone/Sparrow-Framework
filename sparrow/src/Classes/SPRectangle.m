@@ -140,15 +140,15 @@
     _height = rectangle->_height;
 }
 
-- (BOOL)isEquivalent:(SPRectangle *)other
+- (BOOL)isEqualToRectangle:(SPRectangle *)other
 {
     if (other == self) return YES;
     else if (!other) return NO;
-    else 
+    else
     {
         SPRectangle *rect = (SPRectangle *)other;
         return SP_IS_FLOAT_EQUAL(_x, rect->_x) && SP_IS_FLOAT_EQUAL(_y, rect->_y) &&
-               SP_IS_FLOAT_EQUAL(_width, rect->_width) && SP_IS_FLOAT_EQUAL(_height, rect->_height);    
+               SP_IS_FLOAT_EQUAL(_width, rect->_width) && SP_IS_FLOAT_EQUAL(_height, rect->_height);
     }
 }
 
@@ -171,16 +171,14 @@
 
 - (BOOL)isEqual:(id)object
 {
-    if (object == self)
-        return YES;
-
-    if ([object hash] != [self hash])
+    if (!object)
         return NO;
-
-    if ([object isKindOfClass:[SPRectangle class]])
-        return [self isEquivalent:object];
-
-    return NO;
+    else if (object == self)
+        return YES;
+    else if (![object isKindOfClass:[SPRectangle class]])
+        return NO;
+    else
+        return [self isEqualToRectangle:object];
 }
 
 - (NSUInteger)hash

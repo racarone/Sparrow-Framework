@@ -96,7 +96,7 @@
     return _x * other->_x + _y * other->_y;
 }
 
-- (BOOL)isEquivalent:(SPPoint *)point
+- (BOOL)isEqualToPoint:(SPPoint *)point
 {
     if (point == self) return YES;
     else if (!point) return NO;
@@ -146,16 +146,14 @@
 
 - (BOOL)isEqual:(id)object
 {
-    if (object == self)
-        return YES;
-
-    if ([object hash] != [self hash])
+    if (!object)
         return NO;
-
-    if ([object isKindOfClass:[SPPoint class]])
-        return [self isEquivalent:object];
-
-    return NO;
+    else if (object == self)
+        return YES;
+    else if (![object isKindOfClass:[SPPoint class]])
+        return NO;
+    else
+        return [self isEqualToPoint:object];
 }
 
 - (NSUInteger)hash

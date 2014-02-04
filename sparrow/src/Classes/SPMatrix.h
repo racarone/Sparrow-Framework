@@ -59,7 +59,7 @@
 - (void)setA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty;
 
 /// Compares two matrices.
-- (BOOL)isEquivalent:(SPMatrix *)other;
+- (BOOL)isEqualToMatrix:(SPMatrix *)other;
 
 /// Appends the matrix by multiplying another matrix by the current matrix.
 - (void)appendMatrix:(SPMatrix *)lhs;

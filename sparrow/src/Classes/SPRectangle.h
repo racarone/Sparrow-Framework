@@ -77,7 +77,7 @@
 - (void)copyFromRectangle:(SPRectangle *)rectangle;
 
 /// Compares two rectangles.
-- (BOOL)isEquivalent:(SPRectangle *)other;
+- (BOOL)isEqualToRectangle:(SPRectangle *)other;
 
 /// If the rectangle contains negative values for width or height, all coordinates
 /// are adjusted so that the rectangle describes the same region with positive values.
