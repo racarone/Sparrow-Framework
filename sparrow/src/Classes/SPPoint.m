@@ -158,7 +158,8 @@
 
 - (NSUInteger)hash
 {
-    return (SPHashInt(_x) ^ (SPHashInt(_y) << 1));
+    return SPHashInt(SPFloatToIntBits(_x)) ^
+           SPShiftAnRotateInt(SPHashInt(SPFloatToIntBits(_y)), CHAR_BIT);
 }
 
 - (NSString *)description

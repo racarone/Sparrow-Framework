@@ -19,7 +19,6 @@ typedef void (^SPCallbackBlock)();
 // defines
 
 #define SP_DEPRECATED               __attribute__((deprecated))
-
 #define SP_INLINE                   static __inline__
 
 #ifdef __cplusplus
@@ -74,7 +73,7 @@ typedef NS_ENUM(uint, SPVAlign)
 
 // functions
 
-SP_INLINE uint SPHashInt(uint a)
+SP_INLINE int SPHashInt(int a)
 {
     a = (a+0x7ed55d16) + (a<<12);
     a = (a^0xc761c23c) ^ (a>>19);
@@ -83,6 +82,17 @@ SP_INLINE uint SPHashInt(uint a)
     a = (a+0xfd7046c5) + (a<<3);
     a = (a^0xb55a4f09) ^ (a>>16);
     return a;
+}
+
+SP_INLINE int SPFloatToIntBits(float v)
+{
+    union { float f; int i; } converter = { .f = v };
+    return converter.i;
+}
+
+SP_INLINE int SPShiftAnRotateInt(int val, int bit)
+{
+    return (val << 1) | (val >> ((sizeof(int) * bit) - 1));
 }
 
 // exceptions

@@ -183,7 +183,10 @@
 
 - (NSUInteger)hash
 {
-    return ((SPHashInt(_x) ^ (SPHashInt(_y) << 1)) ^ SPHashInt(_width)) + SPHashInt(_height);
+    return SPHashInt(SPFloatToIntBits(_x)) ^
+           SPShiftAnRotateInt(SPHashInt(SPFloatToIntBits(_y)), CHAR_BIT) ^
+           SPShiftAnRotateInt(SPHashInt(SPFloatToIntBits(_width)), CHAR_BIT) ^
+           SPShiftAnRotateInt(SPHashInt(SPFloatToIntBits(_height)), CHAR_BIT);
 }
 
 - (NSString *)description
