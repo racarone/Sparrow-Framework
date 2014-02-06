@@ -172,7 +172,6 @@
 
 @end
 
-
 #pragma mark - SPBlurFilter
 
 @interface SPBlurFilter ()
@@ -181,7 +180,6 @@
 - (void)updateMarginsAndPasses;
 
 @end
-
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -314,6 +312,20 @@
         glUniform4fv(program.uColor, 1, _color);
 }
 
+#pragma mark Properties
+
+- (void)setBlurX:(float)blurX
+{
+    _blurX = blurX;
+    [self updateMarginsAndPasses];
+}
+
+- (void)setBlurY:(float)blurY
+{
+    _blurY = blurY;
+    [self updateMarginsAndPasses];
+}
+
 #pragma mark Private
 
 - (void)updateParamatersWithPass:(int)pass texWidth:(int)texWidth texHeight:(int)texHeight
@@ -394,20 +406,6 @@
     self.numPasses = ceilf(_blurX) + ceilf(_blurY);
     self.marginX = 4.0f + ceilf(_blurX);
     self.marginY = 4.0f + ceilf(_blurY);
-}
-
-#pragma mark Properties
-
-- (void)setBlurX:(float)blurX
-{
-    _blurX = blurX;
-    [self updateMarginsAndPasses];
-}
-
-- (void)setBlurY:(float)blurY
-{
-    _blurY = blurY;
-    [self updateMarginsAndPasses];
 }
 
 #pragma mark Drop Shadow

@@ -13,6 +13,8 @@
 #import <Sparrow/SPMatrix.h>
 #import <Sparrow/SPPoint.h>
 
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPMatrix
 
 // --- c functions ---
