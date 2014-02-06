@@ -66,7 +66,7 @@
     _fileImage.visible = NO;
     _logText.text = @"Loading texture ...";
     
-    [SPTexture loadFromFile:@"async_local.png" generateMipmaps:NO useCache:NO
+    [SPTexture loadFromFile:@"async_local.png" generateMipmaps:NO
                  onComplete:^(SPTexture *texture, NSError *outError)
     {
         if (outError)

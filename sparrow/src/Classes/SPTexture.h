@@ -43,7 +43,6 @@ typedef NS_ENUM(uint, SPTextureSmoothing)
 
 typedef void (^SPTextureDrawingBlock)(CGContextRef context);
 typedef void (^SPTextureLoadingBlock)(SPTexture *texture, NSError *outError);
-typedef void (^SPTextureCacheEvictionBlock)(SPTexture *texture);
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -129,30 +128,24 @@ typedef void (^SPTextureCacheEvictionBlock)(SPTexture *texture);
 /// Initializes a texture with a certain size (in points), as well as a block containing Core
 /// Graphics commands. The texture will have the current scale factor of the stage.
 - (instancetype)initWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
-               draw:(SPTextureDrawingBlock)drawingBlock;
+                         draw:(SPTextureDrawingBlock)drawingBlock;
 
 /// Initializes a texture with a certain size (in points), as well as a block containing Core
 /// Graphics commands.
 - (instancetype)initWithWidth:(float)width height:(float)height generateMipmaps:(BOOL)mipmaps
-              scale:(float)scale draw:(SPTextureDrawingBlock)drawingBlock;
+                        scale:(float)scale draw:(SPTextureDrawingBlock)drawingBlock;
 
 /// Initializes a texture with the contents of a file (supported formats: png, jpg, pvr);
 /// no mip maps will be created. Sparrow will automatically pick the optimal file for the current
 /// system, using standard iOS naming conventions ("@2x", "~ipad" etc). If the file name ends with
-/// ".gz", the file will be uncompressed automatically. The texture will be cached.
+/// ".gz", the file will be uncompressed automatically.
 - (instancetype)initWithContentsOfFile:(NSString *)path;
 
 /// Initializes a texture with the contents of a file (supported formats: png, jpg, pvr). Sparrow
 /// will automatically pick the optimal file for the current system, using standard iOS naming
 /// conventions ("@2x", "~ipad" etc). If the file name ends with ".gz", the file will be
-/// uncompressed automatically. The texture will be cached.
+/// uncompressed automatically.
 - (instancetype)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps;
-
-/// Initializes a texture with the contents of a file (supported formats: png, jpg, pvr). Sparrow
-/// will automatically pick the optimal file for the current system, using standard iOS naming
-/// conventions ("@2x", "~ipad" etc). If the file name ends with ".gz", the file will be
-/// uncompressed automatically. Texture can optionally be cached for later use.
-- (instancetype)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps useCache:(BOOL)useCache;
 
 /// Initializes a texture with the contents of a UIImage; no mip maps will be created. The texture
 /// will have the same scale factor as the image.
@@ -162,7 +155,7 @@ typedef void (^SPTextureCacheEvictionBlock)(SPTexture *texture);
 /// factor as the image.
 - (instancetype)initWithContentsOfImage:(UIImage *)image generateMipmaps:(BOOL)mipmaps;
 
-/// Initializes a texture with a region (in points) of another texture. The new texture will 
+/// Initializes a texture with a region (in points) of another texture. The new texture will
 /// reference the base texture; no data is duplicated.
 - (instancetype)initWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture;
 
@@ -176,9 +169,6 @@ typedef void (^SPTextureCacheEvictionBlock)(SPTexture *texture);
 
 /// Factory method.
 + (instancetype)textureWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps;
-
-/// Factory method.
-+ (instancetype)textureWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps useCache:(BOOL)useCache;
 
 /// Factory method.
 + (instancetype)textureWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture;
@@ -221,30 +211,30 @@ typedef void (^SPTextureCacheEvictionBlock)(SPTexture *texture);
 /// @name Texture Caching
 /// ---------------------
 
-/// A block used to be notified when a texture is about to evicted from the cache.
-+ (void)setCacheEvictionHandler:(SPTextureCacheEvictionBlock)handler;
+/// Returns YES if texture caching is enabled.
++ (BOOL)cachingEnabled;
+
+/// Enables or disables texture caching.
++ (void)setCachingEnabled:(BOOL)cachingEnabled;
 
 /// This will reset the cache and force removal of all cached textures. In most cases you should
 /// never have to call this manually.
 + (void)purgeCache;
 
+/// A block used to be notified when a texture is about to evicted from the cache.
++ (void)setCacheEvictionHandler:(void(^)(SPTexture *texture))handler;
+
 /// -------------------------------------
 /// @name Loading Textures asynchronously
 /// -------------------------------------
 
-/// Loads a texture asynchronously from a local file, caches the texture and executes a callback
-/// block when it's finished. No mip maps will be created; premultiplied alpha state is guessed
-/// by file type.
+/// Loads a texture asynchronously from a local file and executes a callback block when it's
+/// finished. No mip maps will be created; premultiplied alpha state is guessed by file type.
 + (void)loadFromFile:(NSString *)path onComplete:(SPTextureLoadingBlock)callback;
-
-/// Loads a texture asynchronously from a local file, caches the texture and executes a callback
-/// block when it's finished.
-+ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
-          onComplete:(SPTextureLoadingBlock)callback;
 
 /// Loads a texture asynchronously from a local file and executes a callback block when it's
 /// finished.
-+ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps useCache:(BOOL)useCache
++ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
           onComplete:(SPTextureLoadingBlock)callback;
 
 /// Loads a texture asynchronously from an URL and executes a callback block when it's finished.

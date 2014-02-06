@@ -26,20 +26,20 @@
 #pragma mark - SPTextureCache
 
 @interface SPTextureCache : NSObject <NSCacheDelegate>
-{
-    NSCache *_cache;
-    dispatch_queue_t _queue;
-}
 
 - (SPTexture *)textureForKey:(NSString *)key;
 - (void)setTexture:(SPTexture *)obj forKey:(NSString *)key;
 - (void)reset;
 
-@property (nonatomic, copy) SPTextureCacheEvictionBlock delegateBlock;
+@property (nonatomic, copy) void(^delegateBlock)(SPTexture *texture);
 
 @end
 
 @implementation SPTextureCache
+{
+    NSCache *_cache;
+    dispatch_queue_t _queue;
+}
 
 #pragma mark Initialization
 
@@ -144,13 +144,7 @@
 #pragma mark - SPTexture
 
 static SPTextureCache *textureCache = nil;
-
-@interface SPTexture ()
-
-+ (BOOL)isPVRFile:(NSString *)path;
-+ (BOOL)isCompressedFile:(NSString *)path;
-
-@end
+static BOOL cachingEnabled = YES;
 
 @implementation SPTexture
 
@@ -182,12 +176,7 @@ static SPTextureCache *textureCache = nil;
 
 - (instancetype)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps
 {
-    return [self initWithContentsOfFile:path generateMipmaps:NO useCache:YES];
-}
-
-- (instancetype)initWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps useCache:(BOOL)useCache
-{
-    if (useCache)
+    if (cachingEnabled)
     {
         SPTexture *cachedTexture = [textureCache textureForKey:path];
         if (cachedTexture)
@@ -230,7 +219,7 @@ static SPTextureCache *textureCache = nil;
         [data release];
     }
 
-    if (useCache)
+    if (cachingEnabled)
         [textureCache setTexture:self forKey:path];
 
     return self;
@@ -347,11 +336,6 @@ static SPTextureCache *textureCache = nil;
     return [[[self alloc] initWithContentsOfFile:path generateMipmaps:mipmaps] autorelease];
 }
 
-+ (instancetype)textureWithContentsOfFile:(NSString *)path generateMipmaps:(BOOL)mipmaps useCache:(BOOL)useCache
-{
-    return [[[self alloc] initWithContentsOfFile:path generateMipmaps:mipmaps useCache:useCache] autorelease];
-}
-
 + (instancetype)textureWithRegion:(SPRectangle *)region ofTexture:(SPTexture *)texture
 {
     return [[[self alloc] initWithRegion:region ofTexture:texture] autorelease];
@@ -386,14 +370,28 @@ static SPTextureCache *textureCache = nil;
 
 #pragma mark Texture Cache
 
-+ (void)setCacheEvictionHandler:(SPTextureCacheEvictionBlock)handler
++ (BOOL)cachingEnabled
 {
-    textureCache.delegateBlock = handler;
+    return cachingEnabled;
+}
+
++ (void)setCachingEnabled:(BOOL)newCachingEnabled
+{
+    if (newCachingEnabled != cachingEnabled)
+    {
+        cachingEnabled = newCachingEnabled;
+        if (!cachingEnabled) [textureCache reset];
+    }
 }
 
 + (void)purgeCache
 {
     [textureCache reset];
+}
+
++ (void)setCacheEvictionHandler:(void(^)(SPTexture *texture))handler
+{
+    textureCache.delegateBlock = handler;
 }
 
 #pragma mark Asynchronous Texture Loading
@@ -404,12 +402,6 @@ static SPTextureCache *textureCache = nil;
 }
 
 + (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps onComplete:(SPTextureLoadingBlock)callback
-{
-    [self loadFromFile:path generateMipmaps:mipmaps useCache:YES onComplete:callback];
-}
-
-+ (void)loadFromFile:(NSString *)path generateMipmaps:(BOOL)mipmaps useCache:(BOOL)useCache
-          onComplete:(SPTextureLoadingBlock)callback
 {
     NSString *fullPath = [SPUtils absolutePathToFile:path];
 
@@ -423,7 +415,7 @@ static SPTextureCache *textureCache = nil;
 
          @try
          {
-             texture = [[SPTexture alloc] initWithContentsOfFile:fullPath generateMipmaps:mipmaps useCache:useCache];
+             texture = [[SPTexture alloc] initWithContentsOfFile:fullPath generateMipmaps:mipmaps];
          }
          @catch (NSException *exception)
          {
@@ -465,8 +457,13 @@ static SPTextureCache *textureCache = nil;
 
               @try
               {
-                  UIImage *image = [UIImage imageWithData:body scale:scale];
-                  texture = [[SPTexture alloc] initWithContentsOfImage:image generateMipmaps:mipmaps];
+                  if (cachingEnabled) texture = [textureCache textureForKey:[url absoluteString]];
+                  if (!texture)
+                  {
+                      UIImage *image = [UIImage imageWithData:body scale:scale];
+                      texture = [[SPTexture alloc] initWithContentsOfImage:image generateMipmaps:mipmaps];
+                      if (cachingEnabled) [textureCache setTexture:texture forKey:[url absoluteString]];
+                  }
               }
               @catch (NSException *exception)
               {
