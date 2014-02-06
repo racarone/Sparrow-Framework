@@ -159,9 +159,9 @@ typedef void (^SPRootCreatedBlock)(id root);
 @property (nonatomic, copy) SPRootCreatedBlock onRootCreated;
 
 /// The width, in pixels, of the underlying framebuffer object.
-@property (nonatomic, readonly) NSInteger drawableWidth;
+@property (nonatomic, readonly) int drawableWidth;
 
 /// The height, in pixels, of the underlying framebuffer object.
-@property (nonatomic, readonly) NSInteger drawableHeight;
+@property (nonatomic, readonly) int drawableHeight;
 
 @end

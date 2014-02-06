@@ -107,7 +107,7 @@ static GLKVector2 transformVector2WithMatrix3(const GLKMatrix3 *glkMatrix, const
 - (void)adjustVertexData:(SPVertexData *)vertexData atIndex:(int)index numVertices:(int)count
 {
     SPVertex *vertices = vertexData.vertices;
-    size_t stride = sizeof(SPVertex) - sizeof(GLKVector2);
+    int stride = sizeof(SPVertex) - sizeof(GLKVector2);
 
     [self adjustPositions:&vertices[index].position  numVertices:count stride:stride];
     [self adjustTexCoords:&vertices[index].texCoords numVertices:count stride:stride];

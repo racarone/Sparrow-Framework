@@ -382,14 +382,14 @@
     return self.view.multipleTouchEnabled;
 }
 
-- (NSInteger)drawableWidth
+- (int)drawableWidth
 {
-    return self.glkView.drawableWidth;
+    return (int)self.glkView.drawableWidth;
 }
 
-- (NSInteger)drawableHeight
+- (int)drawableHeight
 {
-    return self.glkView.drawableHeight;
+    return (int)self.glkView.drawableHeight;
 }
 
 - (BOOL)showStats
