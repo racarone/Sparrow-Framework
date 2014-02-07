@@ -69,7 +69,6 @@
 		DE14414012421F4C00FFA95A /* SPJugglerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DE1F9446104704440084D470 /* SPJugglerTest.m */; };
 		DE14414112421F4D00FFA95A /* SPTweenTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DE75E8660FBDC57E00C64495 /* SPTweenTest.m */; };
 		DE14414212421F4E00FFA95A /* SPStageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DED67F330FA3514C0050E779 /* SPStageTest.m */; };
-		DE18FE4511B083B200D01F04 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE18FE4411B083B200D01F04 /* AVFoundation.framework */; };
 		DE19443216D27E9E00E5CCD9 /* SPVertexData.h in Headers */ = {isa = PBXBuildFile; fileRef = DE19443016D27E9E00E5CCD9 /* SPVertexData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE19443316D27E9E00E5CCD9 /* SPVertexData.m in Sources */ = {isa = PBXBuildFile; fileRef = DE19443116D27E9E00E5CCD9 /* SPVertexData.m */; };
 		DE20D9CC10713B0C006658C9 /* SPRenderSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = DE20D9CA10713B0C006658C9 /* SPRenderSupport.m */; };
@@ -88,7 +87,6 @@
 		DE57B32B14E90647002BD1A8 /* image_only_hd@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DE57B32A14E90647002BD1A8 /* image_only_hd@2x.png */; };
 		DE57B33214E916E7002BD1A8 /* image_idiom@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = DE57B33014E916E7002BD1A8 /* image_idiom@2x~iphone.png */; };
 		DE57B33314E916E7002BD1A8 /* image_idiom~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = DE57B33114E916E7002BD1A8 /* image_idiom~iphone.png */; };
-		DE5A7ED613805C2B00C6CBBC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DE5A7ED513805C2B00C6CBBC /* libz.dylib */; };
 		DE611371134F8F6C00AB742E /* SPAVSound.h in Headers */ = {isa = PBXBuildFile; fileRef = DEF1735A11B075B000A11DD7 /* SPAVSound.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE611372134F8F6C00AB742E /* SPAVSoundChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = DEF1735E11B075BC00A11DD7 /* SPAVSoundChannel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE611373134F8F6C00AB742E /* SPALSound.h in Headers */ = {isa = PBXBuildFile; fileRef = DEF1730C11B0645A00A11DD7 /* SPALSound.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -133,7 +131,6 @@
 		DE82240D16EF468E00A172EE /* SPBaseEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = DE82240B16EF468E00A172EE /* SPBaseEffect.m */; };
 		DE85778E16B58E4B00725EC0 /* SparrowClass.h in Headers */ = {isa = PBXBuildFile; fileRef = DE85778C16B58E4B00725EC0 /* SparrowClass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE85778F16B58E4B00725EC0 /* SparrowClass.m in Sources */ = {isa = PBXBuildFile; fileRef = DE85778D16B58E4B00725EC0 /* SparrowClass.m */; };
-		DE8E6A7E16B4303E007EE8BA /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE8E6A7D16B4303E007EE8BA /* GLKit.framework */; };
 		DE8E6A8216B430C4007EE8BA /* SPViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8E6A8016B430C4007EE8BA /* SPViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE8E6A8316B430C4007EE8BA /* SPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DE8E6A8116B430C4007EE8BA /* SPViewController.m */; };
 		DE94B949189B8AEA004F3862 /* SPTextureTest.m in Sources */ = {isa = PBXBuildFile; fileRef = DE94B948189B8AEA004F3862 /* SPTextureTest.m */; };
@@ -154,13 +151,6 @@
 		DEC87D0816E0CDD80050EA95 /* SPQuadBatch.m in Sources */ = {isa = PBXBuildFile; fileRef = DEC87D0616E0CDD80050EA95 /* SPQuadBatch.m */; };
 		DED29C0716DFB48E000C2BD7 /* SPEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = DED29C0516DFB48E000C2BD7 /* SPEventListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DED29C0816DFB48E000C2BD7 /* SPEventListener.m in Sources */ = {isa = PBXBuildFile; fileRef = DED29C0616DFB48E000C2BD7 /* SPEventListener.m */; };
-		DED8B48711B0827E00A1766C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
-		DED8B48811B0827E00A1766C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE9CF1EB0FED3128008A32FF /* CoreGraphics.framework */; };
-		DED8B48911B0827E00A1766C /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD15070DC6FC5B0079059D /* QuartzCore.framework */; };
-		DED8B48A11B0827E00A1766C /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD14FF0DC6FC520079059D /* OpenGLES.framework */; };
-		DED8B48B11B0827E00A1766C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		DED8B48C11B0827E00A1766C /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEE63A7111AED4FA00D60321 /* OpenAL.framework */; };
-		DED8B48D11B0827E00A1766C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEE63A8511AED51400D60321 /* AudioToolbox.framework */; };
 		DED9B51E10629D9F00989853 /* SPPoolObject.m in Sources */ = {isa = PBXBuildFile; fileRef = DED9B51C10629D9F00989853 /* SPPoolObject.m */; };
 		DEE09D7B108364A900ECC896 /* SPBitmapFont.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE09D79108364A900ECC896 /* SPBitmapFont.m */; };
 		DEE09D7F108369AE00ECC896 /* SPBitmapChar.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE09D7D108369AE00ECC896 /* SPBitmapChar.m */; };
@@ -428,16 +418,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DE5A7ED613805C2B00C6CBBC /* libz.dylib in Frameworks */,
-				DE8E6A7E16B4303E007EE8BA /* GLKit.framework in Frameworks */,
-				DED8B48711B0827E00A1766C /* Foundation.framework in Frameworks */,
-				DED8B48811B0827E00A1766C /* CoreGraphics.framework in Frameworks */,
-				DED8B48911B0827E00A1766C /* QuartzCore.framework in Frameworks */,
-				DED8B48A11B0827E00A1766C /* OpenGLES.framework in Frameworks */,
-				DED8B48B11B0827E00A1766C /* UIKit.framework in Frameworks */,
-				DED8B48C11B0827E00A1766C /* OpenAL.framework in Frameworks */,
-				DED8B48D11B0827E00A1766C /* AudioToolbox.framework in Frameworks */,
-				DE18FE4511B083B200D01F04 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1167,10 +1147,6 @@
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(PROJECT_NAME)Headers";
@@ -1201,10 +1177,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(PROJECT_NAME)Headers";
 				SDKROOT = iphoneos;
