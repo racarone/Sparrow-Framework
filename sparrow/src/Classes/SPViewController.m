@@ -94,12 +94,11 @@
 {
     [SPTexture purgeCache];
     [self purgePools];
+
     [SPContext setCurrentContext:nil];
     [Sparrow setCurrentController:nil];
 
-    if (_resourceQueue)
-        dispatch_release(_resourceQueue);
-    
+    [(id)_resourceQueue release];
     [_context release];
     [_resourceContext release];
     [_stage release];

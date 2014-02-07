@@ -56,10 +56,10 @@
 
 - (void)dealloc
 {
-    dispatch_release(_queue);
-
+    [(id)_queue release];
     [_cache release];
     [_delegateBlock release];
+
     [super dealloc];
 }
 
@@ -69,7 +69,7 @@
 {
     __block SPTexture *texture;
     dispatch_sync(_queue, ^{
-        texture = [[_cache objectForKey: key] retain];
+        texture = [[_cache objectForKey:key] retain];
     });
 
     return [texture autorelease];
@@ -453,21 +453,20 @@ static BOOL cachingEnabled = YES;
          [Sparrow.currentController executeInResourceQueue:^
           {
               NSError *error = nil;
-              SPTexture *texture = nil;
+              SPTexture *texture = cachingEnabled ? [[textureCache textureForKey:[url absoluteString]] retain] : nil;
 
-              @try
+              if (!texture)
               {
-                  if (cachingEnabled) texture = [textureCache textureForKey:[url absoluteString]];
-                  if (!texture)
+                  @try
                   {
                       UIImage *image = [UIImage imageWithData:body scale:scale];
                       texture = [[SPTexture alloc] initWithContentsOfImage:image generateMipmaps:mipmaps];
                       if (cachingEnabled) [textureCache setTexture:texture forKey:[url absoluteString]];
                   }
-              }
-              @catch (NSException *exception)
-              {
-                  error = [NSError errorWithDomain:exception.name code:0 userInfo:exception.userInfo];
+                  @catch (NSException *exception)
+                  {
+                      error = [NSError errorWithDomain:exception.name code:0 userInfo:exception.userInfo];
+                  }
               }
 
               dispatch_async(dispatch_get_main_queue(), ^
