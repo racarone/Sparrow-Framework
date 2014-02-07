@@ -53,9 +53,9 @@ SP_EXTERN const uint SPColorNavy;
 SP_EXTERN const uint SPColorFuchsia;
 SP_EXTERN const uint SPColorPurple;
 
-enum {SPNotFound = -1};
+enum { SPNotFound = -1 };
 
-// horizontal Alignment
+// horizontal alignment
 typedef NS_ENUM(uint, SPHAlign)
 {
     SPHAlignLeft,
@@ -63,7 +63,7 @@ typedef NS_ENUM(uint, SPHAlign)
     SPHAlignRight
 };
 
-// vertical Alignment
+// vertical alignment
 typedef NS_ENUM(uint, SPVAlign)
 {
     SPVAlignTop,
@@ -73,26 +73,26 @@ typedef NS_ENUM(uint, SPVAlign)
 
 // functions
 
-SP_INLINE int SPHashInt(int a)
+SP_INLINE uint SPHashInt(uint value)
 {
-    a = (a+0x7ed55d16) + (a<<12);
-    a = (a^0xc761c23c) ^ (a>>19);
-    a = (a+0x165667b1) + (a<<5);
-    a = (a+0xd3a2646c) ^ (a<<9);
-    a = (a+0xfd7046c5) + (a<<3);
-    a = (a^0xb55a4f09) ^ (a>>16);
-    return a;
+    value = (value+0x7ed55d16) + (value<<12);
+    value = (value^0xc761c23c) ^ (value>>19);
+    value = (value+0x165667b1) + (value<<5);
+    value = (value+0xd3a2646c) ^ (value<<9);
+    value = (value+0xfd7046c5) + (value<<3);
+    value = (value^0xb55a4f09) ^ (value>>16);
+    return value;
 }
 
-SP_INLINE int SPFloatToIntBits(float v)
+SP_INLINE uint SPHashFloat(float value)
 {
-    union { float f; int i; } converter = { .f = v };
-    return converter.i;
+    union { float f; int i; } converter = { .f = value };
+    return converter.i & 0xffffff00; // mask for epsilon
 }
 
-SP_INLINE int SPShiftAnRotateInt(int val, int bit)
+SP_INLINE uint SPShiftAndRotate(uint value, int shift)
 {
-    return (val << 1) | (val >> ((sizeof(int) * bit) - 1));
+    return (value << 1) | (value >> ((sizeof(uint) * CHAR_BIT) - shift));
 }
 
 // exceptions

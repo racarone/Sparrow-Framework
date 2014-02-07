@@ -36,7 +36,7 @@
 
 + (instancetype)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height
 {
-    return [[[self allocWithZone:nil] initWithX:x y:y width:width height:height] autorelease];
+    return [[[self alloc] initWithX:x y:y width:width height:height] autorelease];
 }
 
 + (instancetype)rectangle
@@ -183,10 +183,10 @@
 
 - (NSUInteger)hash
 {
-    return SPHashInt(SPFloatToIntBits(_x)) ^
-           SPShiftAnRotateInt(SPHashInt(SPFloatToIntBits(_y)), CHAR_BIT) ^
-           SPShiftAnRotateInt(SPHashInt(SPFloatToIntBits(_width)), CHAR_BIT) ^
-           SPShiftAnRotateInt(SPHashInt(SPFloatToIntBits(_height)), CHAR_BIT);
+    return SPHashFloat(_x) ^
+           SPShiftAndRotate(SPHashFloat(_y),      1) ^
+           SPShiftAndRotate(SPHashFloat(_width),  1) ^
+           SPShiftAndRotate(SPHashFloat(_height), 1);
 }
 
 - (NSString *)description
@@ -197,9 +197,14 @@
 
 #pragma mark NSCopying
 
+- (instancetype)copy
+{
+    return [[[self class] alloc] initWithX:_x y:_y width:_width height:_height];
+}
+
 - (instancetype)copyWithZone:(NSZone *)zone
 {
-    return [[[self class] allocWithZone:zone] initWithX:_x y:_y width:_width height:_height];
+    return [self copy];
 }
 
 #pragma mark Properties

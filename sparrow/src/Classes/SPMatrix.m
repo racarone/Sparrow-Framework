@@ -49,12 +49,12 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 
 + (instancetype)matrixWithA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
 {
-    return [[[self allocWithZone:nil] initWithA:a b:b c:c d:d tx:tx ty:ty] autorelease];
+    return [[[self alloc] initWithA:a b:b c:c d:d tx:tx ty:ty] autorelease];
 }
 
 + (instancetype)matrixWithIdentity
 {
-    return [[[self allocWithZone:nil] init] autorelease];
+    return [[[self alloc] init] autorelease];
 }
 
 #pragma mark Methods
@@ -223,10 +223,14 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 
 #pragma mark NSCopying
 
+- (instancetype)copy
+{
+    return [[[self class] alloc] initWithA:_a b:_b c:_c d:_d tx:_tx ty:_ty];
+}
+
 - (instancetype)copyWithZone:(NSZone *)zone
 {
-    return [[[self class] allocWithZone:zone] initWithA:_a b:_b c:_c d:_d 
-                                                     tx:_tx ty:_ty];
+    return [self copy];
 }
 
 #pragma mark Properties
@@ -258,7 +262,7 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 
 - (float)skewY
 {
-    return atanf( _b / _a);
+    return atanf(_b / _a);
 }
 
 @end

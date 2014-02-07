@@ -40,17 +40,17 @@
 
 + (instancetype)pointWithPolarLength:(float)length angle:(float)angle
 {
-    return [[[self allocWithZone:nil] initWithPolarLength:length angle:angle] autorelease];
+    return [[[self alloc] initWithPolarLength:length angle:angle] autorelease];
 }
 
 + (instancetype)pointWithX:(float)x y:(float)y
 {
-    return [[[self allocWithZone:nil] initWithX:x y:y] autorelease];
+    return [[[self alloc] initWithX:x y:y] autorelease];
 }
 
 + (instancetype)point
 {
-    return [[[self allocWithZone:nil] init] autorelease];
+    return [[[self alloc] init] autorelease];
 }
 
 #pragma mark Methods
@@ -158,8 +158,7 @@
 
 - (NSUInteger)hash
 {
-    return SPHashInt(SPFloatToIntBits(_x)) ^
-           SPShiftAnRotateInt(SPHashInt(SPFloatToIntBits(_y)), CHAR_BIT);
+    return SPHashFloat(_x) ^ SPShiftAndRotate(SPHashFloat(_y), 1);
 }
 
 - (NSString *)description
@@ -169,9 +168,14 @@
 
 #pragma mark NSCopying
 
+- (instancetype)copy
+{
+    return [[[self class] alloc] initWithX:_x y:_y];
+}
+
 - (instancetype)copyWithZone:(NSZone *)zone
 {
-    return [[[self class] allocWithZone:zone] initWithX:_x y:_y];
+    return [self copy];
 }
 
 #pragma mark Properties

@@ -68,7 +68,7 @@ SP_INLINE OSQueueHead *getPoolWith(PoolCache *cache, Class class)
 {
     unsigned key = hashPtr(class);
     Pair *pair = getPairWith(cache, key);
-    assert(pair->key == class);
+    //assert(pair->key == class);
     return &pair->value;
 }
 
@@ -99,7 +99,7 @@ typedef volatile int32_t RCint;
     initPoolWith(poolCache(), self);
 }
 
-+ (id)allocWithZone:(NSZone *)zone
++ (instancetype)alloc
 {
     OSQueueHead *poolQueue = getPoolWith(poolCache(), self);
     SPPoolObject *object = DEQUEUE(poolQueue);
@@ -119,6 +119,11 @@ typedef volatile int32_t RCint;
     }
 
     return object;
+}
+
++ (instancetype)allocWithZone:(NSZone *)zone
+{
+    return [self alloc];
 }
 
 - (NSUInteger)retainCount
