@@ -20,7 +20,13 @@ typedef NS_ENUM(uint, SPDisplayLinkMode)
 
 typedef void (^SPDisplayLinkBlock)(double frameTime);
 
-/** Class representing a timer bound to the display vsync depending on it's mode. **/
+/** ------------------------------------------------------------------------------------------------
+
+ Class representing a timer bound to the display vsync or an NSTimer object depending on it's mode.
+
+ _You don't have to use this class directly in most cases._
+
+------------------------------------------------------------------------------------------------- */
 
 @interface SPDisplayLink : NSObject
 

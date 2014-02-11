@@ -11,6 +11,7 @@
 
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
+#import <Sparrow/SPView.h>
 
 @class SPContext;
 @class SPDisplayObject;
@@ -25,8 +26,8 @@ typedef void (^SPRootCreatedBlock)(id root);
  An SPViewController controls and displays a Sparrow display tree. It represents the main
  link between UIKit and Sparrow.
  
- The class acts just like a conventional view controller of UIKit. It extends `GLKViewController`,
- setting up a `GLKView` object that Sparrow can render into.
+ The class acts just like a conventional view controller of UIKit. It extends `UIViewController`,
+ setting up a `SPView` object that Sparrow can render into.
  
  To initialize the Sparrow display tree, call the 'startWithRoot:' method (or a variant)
  with the class that should act as the root object of your game. As soon as OpenGL is set up,
@@ -63,9 +64,7 @@ typedef void (^SPRootCreatedBlock)(id root);
  
  **Render Settings**
  
- Some of the basic render settings are controlled by the base class, `GLKViewController`:
- 
- * Set the desired framerate through the `preferredFramesPerSecond` property
+ * Set the desired framerate using the `targetFramesPerSecond` property
  * Pause or restart Sparrow through the `paused` property
 
  **Accessing the current controller**
@@ -80,7 +79,7 @@ typedef void (^SPRootCreatedBlock)(id root);
  
 ------------------------------------------------------------------------------------------------- */
 
-@interface SPViewController : GLKViewController
+@interface SPViewController : UIViewController <SPViewDelegate>
 
 /// -------------
 /// @name Startup
@@ -140,6 +139,12 @@ typedef void (^SPRootCreatedBlock)(id root);
 /// The OpenGL context used for rendering.
 @property (nonatomic, readonly) SPContext *context;
 
+/// A callback block that will be executed when the root object has been created.
+@property (nonatomic, copy) SPRootCreatedBlock onRootCreated;
+
+/// A Boolean value that indicates whether the rendering loop is paused.
+@property (nonatomic, assign) BOOL paused;
+
 /// Indicates if multitouch input is enabled.
 @property (nonatomic, assign) BOOL multitouchEnabled;
 
@@ -155,8 +160,12 @@ typedef void (^SPRootCreatedBlock)(id root);
 /// The current content scale factor, i.e. the ratio between display resolution and stage size.
 @property (nonatomic, readonly) float contentScaleFactor;
 
-/// A callback block that will be executed when the root object has been created.
-@property (nonatomic, copy) SPRootCreatedBlock onRootCreated;
+/// For setting the desired frames per second at which the update and drawing will take place.
+/// (default: is 60)
+@property (nonatomic, assign) int targetFramesPerSecond;
+
+/// The total number of frames displayed since drawing began.
+@property (nonatomic, readonly) int framesDisplayed;
 
 /// The width, in pixels, of the underlying framebuffer object.
 @property (nonatomic, readonly) int drawableWidth;

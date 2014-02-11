@@ -34,7 +34,6 @@ void onUncaughtException(NSException *exception)
     [SPAudioEngine start];
     
     _viewController = [[SPViewController alloc] init];
-    _viewController.multitouchEnabled = YES;
     [_viewController startWithRoot:[Game class] supportHighResolutions:YES doubleOnPad:YES];
     
     [_window setRootViewController:_viewController];

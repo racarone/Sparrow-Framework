@@ -9,7 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPDisplayLink.h"
+#import <Sparrow/SPDisplayLink.h>
 
 #import <QuartzCore/QuartzCore.h>
 #if !TARGET_OS_IPHONE
@@ -49,7 +49,7 @@
     BOOL _asynchronous;
     double _frameCountBeginTime;
     double _previousFrameTime;
-    double _averageFrameTime;
+    float _averageFrameTime;
     int _queuedFrameCount;
     int _maxQueuedFrameCount;
     int _frameInterval;
@@ -327,9 +327,6 @@ static CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef displayLink, const 
             OSAtomicAdd32(-1, &_queuedFrameCount);
         }
 
-        double intervalTime = _frameInterval / 60.0;
-        double deltaTime = frameTime - _previousFrameTime;
-
         _frameCount += 1;
         if (_frameCount >= 5)
         {
@@ -338,7 +335,9 @@ static CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef displayLink, const 
             _frameCount = 0;
         }
 
-        if ((intervalTime * 0.75) > deltaTime && (deltaTime - _averageFrameTime) < 0.002)
+        float interval = _frameInterval / 60.0f;
+        float delta = frameTime - _previousFrameTime;
+        if ((interval * 0.75f) > delta && fabsf(delta - _averageFrameTime) < 0.002f)
             [self restart];
         
         _previousFrameTime = frameTime;

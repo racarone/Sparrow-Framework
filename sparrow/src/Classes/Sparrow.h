@@ -66,4 +66,5 @@
 #import <Sparrow/SPURLConnection.h>
 #import <Sparrow/SPUtils.h>
 #import <Sparrow/SPVertexData.h>
+#import <Sparrow/SPView.h>
 #import <Sparrow/SPViewController.h>

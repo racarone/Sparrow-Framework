@@ -9,6 +9,8 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import <Availability.h>
+#import <TargetConditionals.h>
 #import <Foundation/Foundation.h>
 #import <math.h>
 

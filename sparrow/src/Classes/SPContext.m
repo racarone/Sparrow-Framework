@@ -15,6 +15,7 @@
 #import <Sparrow/SPOpenGL.h>
 #import <Sparrow/SPRectangle.h>
 #import <Sparrow/SPTexture.h>
+#import <Sparrow/SPView.h>
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
@@ -173,8 +174,7 @@ static NSMutableDictionary *framebufferCache = nil;
     }
     else
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, 1);
-        glViewport(0, 0, Sparrow.currentController.drawableWidth, Sparrow.currentController.drawableHeight);
+        [(SPView *)Sparrow.currentController.view bindDrawable];
     }
 
     SP_RELEASE_AND_RETAIN(_renderTarget, renderTarget);

@@ -15,6 +15,15 @@
 @protocol SPViewDelegate;
 @class SPContext;
 
+/** ------------------------------------------------------------------------------------------------
+
+ SPView manages and OpenGL context and framebuffer and should be used in conjunction with 
+ SPViewController in most cases.
+
+ _You don't have to use this class directly in most cases._
+
+------------------------------------------------------------------------------------------------- */
+
 @interface SPView : UIView
 
 /// ------------------
@@ -64,6 +73,7 @@
 
 @end
 
+/** A delegate that allows your to provide a drawing method to a SPView object without subclassing. */
 
 @protocol SPViewDelegate <NSObject>
 @required

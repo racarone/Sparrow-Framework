@@ -11,6 +11,7 @@
 
 #import <Sparrow/SparrowClass_Internal.h>
 #import <Sparrow/SPContext.h>
+#import <Sparrow/SPDisplayLink.h>
 #import <Sparrow/SPEnterFrameEvent.h>
 #import <Sparrow/SPMatrix.h>
 #import <Sparrow/SPOpenGL.h>
@@ -27,24 +28,20 @@
 #import <Sparrow/SPTouch_Internal.h>
 #import <Sparrow/SPViewController.h>
 
-// --- private interaface --------------------------------------------------------------------------
+#pragma mark - SPViewController
 
-@interface SPViewController()
+@interface SPViewController ()
 
-- (void)purgePools;
-- (void)createRoot;
-- (void)readjustStageSize;
-
-@property (nonatomic, readonly) GLKView *glkView;
+@property (nonatomic, readonly) SPView *spView;
 
 @end
-
 
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPViewController
 {
-    SPContext *_context;
+    SPView *_existingView;
+    SPDisplayLink *_displayLink;
     Class _rootClass;
     SPStage *_stage;
     SPDisplayObject *_root;
@@ -54,15 +51,21 @@
     SPRootCreatedBlock _onRootCreated;
     SPStatsDisplay *_statsDisplay;
     NSMutableDictionary *_programs;
-    
+
     dispatch_queue_t _resourceQueue;
     SPContext *_resourceContext;
-    
-    double _lastTouchTimestamp;
+
+    int _framesDisplayed;
+    int _targetFramesPerSecond;
     float _contentScaleFactor;
     float _viewScaleFactor;
+    double _previousFrameTime;
+    double _deltaTime;
+    double _lastTouchTimestamp;
+    BOOL _paused;
     BOOL _supportHighResolutions;
     BOOL _doubleOnPad;
+    BOOL _viewIsVisible;
 }
 
 #pragma mark Initialization
@@ -92,6 +95,7 @@
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [SPTexture purgeCache];
     [self purgePools];
 
@@ -99,7 +103,6 @@
     [Sparrow setCurrentController:nil];
 
     [(id)_resourceQueue release];
-    [_context release];
     [_resourceContext release];
     [_stage release];
     [_root release];
@@ -114,28 +117,25 @@
 
 - (void)setup
 {
+    _paused = YES;
     _contentScaleFactor = 1.0f;
     _stage = [[SPStage alloc] init];
     _juggler = [[SPJuggler alloc] init];
     _touchProcessor = [[SPTouchProcessor alloc] initWithRoot:_stage];
     _programs = [[NSMutableDictionary alloc] init];
-    _context = [[SPContext alloc] init];
-    
-    if (!_context || ![SPContext setCurrentContext:_context])
-        NSLog(@"Could not create render context");
-    
     _support = [[SPRenderSupport alloc] init];
-    
+
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self selector:@selector(pauseByNotification:)
+    	name:UIApplicationWillResignActiveNotification object:nil];
+    [nc addObserver:self selector:@selector(resumeByNotification:)
+    	name:UIApplicationDidBecomeActiveNotification object:nil];
+
+    [self createDisplayLink];
     [Sparrow setCurrentController:self];
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    [self glkView].context = _context.nativeContext;
-}
-
-#pragma mark Methods
+#pragma mark Startup
 
 - (void)startWithRoot:(Class)rootClass
 {
@@ -184,7 +184,8 @@
 - (void)executeInResourceQueue:(dispatch_block_t)block
 {
     if (!_resourceContext)
-         _resourceContext = [[SPContext alloc] initWithSharegroup:_context.sharegroup];
+         _resourceContext = [[SPContext alloc] initWithSharegroup:_existingView.context.sharegroup];
+
     if (!_resourceQueue)
          _resourceQueue = dispatch_queue_create("Sparrow-ResourceQueue", NULL);
     
@@ -195,9 +196,144 @@
     });
 }
 
-#pragma mark GLKViewDelegate Protocol
+#pragma mark View Controller
 
-- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
+- (void)didReceiveMemoryWarning
+{
+    [self purgePools];
+    [_support purgeBuffers];
+
+    [super didReceiveMemoryWarning];
+}
+
+- (void)loadView
+{
+    if (self.nibName && self.nibBundle)
+    {
+        [super loadView];
+
+        if (![_existingView isKindOfClass:[SPView class]])
+            [NSException raise:NSInternalInconsistencyException
+                        format:@"Loaded the nib but didn't get an SPView"];
+    }
+    else
+    {
+        SPView *view = [[SPView alloc] initWithFrame:_existingView.frame context:_existingView.context];
+        [view setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+        [self setView:view];
+    }
+}
+
+- (void)setView:(SPView *)view
+{
+    if (view != _existingView)
+    {
+        _existingView = view;
+        [super setView:view];
+
+        if ([_existingView isKindOfClass:[SPView class]] && !_existingView.delegate)
+            _existingView.delegate = self;
+    }
+}
+
+- (void)viewDidLoad
+{
+    [self stopDisplayLink];
+}
+
+- (void)viewDidUnload
+{
+    [self startDisplayLink];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self stopDisplayLink];
+    _viewIsVisible = YES;
+
+    [super viewWillAppear:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
+    _viewIsVisible = NO;
+    [self startDisplayLink];
+}
+
+#pragma mark Notifications
+
+- (void)pauseByNotification:(NSNotification *)notification
+{
+    self.paused = YES;
+}
+
+- (void)resumeByNotification:(NSNotification *)notification
+{
+    if (_viewIsVisible)
+        self.paused = NO;
+}
+
+#pragma mark Display
+
+- (void)createDisplayLink
+{
+    [_displayLink release];
+
+    __block id weakSelf = self;
+    _displayLink = [[SPDisplayLink alloc] initWithBlock:^(double frameTime) {
+        [weakSelf updateAndDraw:frameTime];
+    }];
+
+    _displayLink.asynchronous = NO;
+    [self setTargetFramesPerSecond:60];
+}
+
+- (void)startDisplayLink
+{
+    _displayLink.paused = NO;
+}
+
+- (void)stopDisplayLink
+{
+    _displayLink.paused = YES;
+}
+
+- (void)updateAndDraw:(double)frameTime
+{
+    _existingView.enableSetNeedsDisplay = NO;
+
+    if (_previousFrameTime <= 0.0)
+        _previousFrameTime = frameTime - 0.004;
+
+    double currentTime = CACurrentMediaTime();
+    if (frameTime - currentTime >= -0.025)
+        currentTime = frameTime;
+
+    _deltaTime = currentTime - _previousFrameTime;
+    _previousFrameTime = currentTime;
+
+    if (_deltaTime >= 0.004)
+    {
+        [self update];
+        [_existingView render];
+    }
+}
+
+- (void)update
+{
+    @autoreleasepool
+    {
+        [Sparrow setCurrentController:self];
+        [_stage advanceTime:_deltaTime];
+        [_juggler advanceTime:_deltaTime];
+    }
+}
+
+#pragma mark SPViewDelegate Protocol
+
+- (void)renderRect:(CGRect)rect view:(SPView *)view
 {
     @autoreleasepool
     {
@@ -211,12 +347,6 @@
         }
         
         [Sparrow setCurrentController:self];
-        [SPContext setCurrentContext:_context];
-        
-        glDisable(GL_CULL_FACE);
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        
         [_support nextFrame];
         [_stage render:_support];
         [_support finishQuadBatch];
@@ -224,31 +354,12 @@
         if (_statsDisplay)
             _statsDisplay.numDrawCalls = _support.numDrawCalls - 2; // stats display requires 2 itself
         
-        #if DEBUG
+      #if DEBUG
         [SPRenderSupport checkForOpenGLError];
-        #endif
+      #endif
+
+        ++_framesDisplayed;
     }
-}
-
-- (void)update
-{
-    @autoreleasepool
-    {
-        double passedTime = self.timeSinceLastUpdate;
-        
-        [Sparrow setCurrentController:self];
-        [_stage advanceTime:passedTime];
-        [_juggler advanceTime:passedTime];
-    }
-}
-
-#pragma mark UIViewController
-
-- (void)didReceiveMemoryWarning
-{
-    [self purgePools];
-    [_support purgeBuffers];
-    [super didReceiveMemoryWarning];
 }
 
 #pragma mark Touch Processing
@@ -299,9 +410,10 @@
                 touch.previousGlobalY = previousLocation.y * yConversion;
                 touch.tapCount = (int)uiTouch.tapCount;
                 touch.phase = (SPTouchPhase)uiTouch.phase;
-                touch.nativeTouch = uiTouch;
+                touch.touchID = (size_t)uiTouch;
                 [touches addObject:touch];
             }
+
             [_touchProcessor processTouches:touches];
             _lastTouchTimestamp = event.timestamp;
         }
@@ -347,7 +459,7 @@
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-                                         duration:(NSTimeInterval)duration
+                                         duration:(double)duration
 {
     // inform all display objects about the new game size
     BOOL isPortrait = UIInterfaceOrientationIsPortrait(interfaceOrientation);
@@ -371,6 +483,31 @@
 
 #pragma mark Properties
 
+- (SPContext *)context
+{
+    return _existingView.context;
+}
+
+- (void)setPaused:(BOOL)paused
+{
+    if (paused != _paused)
+    {
+        _paused = paused;
+
+        if (_paused)
+        {
+            [_existingView setEnableSetNeedsDisplay:YES];
+            [self stopDisplayLink];
+            _framesDisplayed = 0;
+        }
+        else
+        {
+            _framesDisplayed = 0;
+            [self startDisplayLink];
+        }
+    }
+}
+
 - (void)setMultitouchEnabled:(BOOL)multitouchEnabled
 {
     self.view.multipleTouchEnabled = multitouchEnabled;
@@ -379,16 +516,6 @@
 - (BOOL)multitouchEnabled
 {
     return self.view.multipleTouchEnabled;
-}
-
-- (int)drawableWidth
-{
-    return (int)self.glkView.drawableWidth;
-}
-
-- (int)drawableHeight
-{
-    return (int)self.glkView.drawableHeight;
 }
 
 - (BOOL)showStats
@@ -405,6 +532,26 @@
     }
 
     _statsDisplay.visible = showStats;
+}
+
+- (void)setTargetFramesPerSecond:(int)targetFramesPerSecond
+{
+    if (targetFramesPerSecond < 1)
+        targetFramesPerSecond = 1;
+
+    int frameInterval = ceilf(60.0f / (float)targetFramesPerSecond);
+    _targetFramesPerSecond = 60 / frameInterval;
+    _displayLink.frameInterval = frameInterval;
+}
+
+- (int)drawableWidth
+{
+    return _existingView.drawableWidth;
+}
+
+- (int)drawableHeight
+{
+    return _existingView.drawableHeight;
 }
 
 #pragma mark Private
@@ -425,7 +572,7 @@
         if ([_root isKindOfClass:[SPStage class]])
             [NSException raise:SPExceptionInvalidOperation
                         format:@"Root extends 'SPStage' but is expected to extend 'SPSprite' "
-             @"instead (different to Sparrow 1.x)"];
+                               @"instead (different to Sparrow 1.x)"];
         else
         {
             [_stage addChild:_root atIndex:0];
@@ -446,9 +593,9 @@
     _stage.height = viewSize.height * _viewScaleFactor / _contentScaleFactor;
 }
 
-- (GLKView *)glkView
+- (SPView *)spView
 {
-    return (GLKView *)self.view;
+    return (SPView *)self.view;
 }
 
 @end

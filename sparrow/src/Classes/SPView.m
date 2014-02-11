@@ -9,10 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import "SPContext.h"
-#import "SPDisplayLink.h"
-#import "SPOpenGL.h"
-#import "SPView.h"
+#import <Sparrow/SPContext.h>
+#import <Sparrow/SPDisplayLink.h>
+#import <Sparrow/SPOpenGL.h>
+#import <Sparrow/SPView.h>
 
 #pragma mark - SPView
 
@@ -73,9 +73,9 @@
 
 - (void)dealloc
 {
-    dispatch_sync(_renderQueue, ^{
+    [self executeBlockOnRenderQueue:^{
         [self deleteFramebuffer];
-    });
+    }];
 
     [(id)_renderQueue release];
     [_context release];
@@ -87,17 +87,19 @@
 - (void)render
 {
     __block id weakSelf = self;
-    dispatch_sync(_renderQueue, ^{
-        [weakSelf displayAndPresentRenderbuffer:YES];
-    });
+    [self executeBlockOnRenderQueue:^{
+        [weakSelf renderAndPresentRenderbuffer:YES];
+    }];
 }
 
 - (void)bindDrawable
 {
     if (_rendering)
-         [self setFramebuffer:NULL];
+        [self setFramebuffer:NULL];
     else
-        dispatch_sync(_renderQueue, ^{ [self setFramebuffer:NULL]; });
+        [self executeBlockOnRenderQueue:^{
+            [self setFramebuffer:NULL];
+        }];
 }
 
 - (void)deleteDrawable
@@ -105,7 +107,14 @@
     if (_rendering)
         [self deleteFramebuffer];
     else
-        dispatch_sync(_renderQueue, ^{ [self deleteFramebuffer]; });
+        [self executeBlockOnRenderQueue:^{
+            [self deleteFramebuffer];
+        }];
+}
+
+- (void)executeBlockOnRenderQueue:(dispatch_block_t)block
+{
+    dispatch_sync(_renderQueue, block);
 }
 
 #pragma mark View
@@ -123,7 +132,7 @@
 - (void)displayLayer:(CALayer *)layer
 {
     if (_enableSetNeedsDisplay)
-        [self displayAndPresentRenderbuffer:YES];
+        [self render];
 }
 
 - (void)layoutSubviews
@@ -240,7 +249,7 @@
     }
 }
 
-- (void)displayAndPresentRenderbuffer:(BOOL)presentRenderbuffer
+- (void)renderAndPresentRenderbuffer:(BOOL)presentRenderbuffer
 {
     _rendering = YES;
 
@@ -268,8 +277,8 @@
         else
             [self drawRect:self.bounds];
 
-        static const GLenum attachements[] = { GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT };
-        glDiscardFramebufferEXT(GL_FRAMEBUFFER, 2, attachements);
+        static const GLenum attachments[] = { GL_STENCIL_ATTACHMENT, GL_DEPTH_ATTACHMENT };
+        glDiscardFramebufferEXT(GL_FRAMEBUFFER, 2, attachments);
 
         if (presentRenderbuffer)
         {
