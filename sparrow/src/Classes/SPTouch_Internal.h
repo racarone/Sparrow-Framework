@@ -24,6 +24,6 @@
 
 + (SPTouch *)touch;
 
-@property (nonatomic, strong) id nativeTouch;
+@property (nonatomic, assign) size_t touchID;
 
 @end

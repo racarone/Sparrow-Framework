@@ -25,7 +25,7 @@
     int _tapCount;
     SPTouchPhase _phase;
     SPDisplayObject *_target;
-    id _nativeTouch;
+    size_t _touchID;
 }
 
 #pragma mark Initialization
@@ -67,7 +67,7 @@
 
 - (NSUInteger)hash
 {
-    return [_nativeTouch hash];
+    return _touchID;
 }
 
 - (NSString *)description
@@ -127,14 +127,14 @@
     return [[[SPTouch alloc] init] autorelease];
 }
 
-- (void)setNativeTouch:(id)nativeTouch
+- (void)setTouchID:(size_t)touchID
 {
-    _nativeTouch = nativeTouch;
+    _touchID = touchID;
 }
 
-- (id)nativeTouch
+- (size_t)touchID
 {
-    return _nativeTouch;
+    return _touchID;
 }
 
 @end

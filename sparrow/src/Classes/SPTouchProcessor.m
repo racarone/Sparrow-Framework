@@ -84,7 +84,7 @@
             if (existingTouch.phase == SPTouchPhaseEnded || existingTouch.phase == SPTouchPhaseCancelled)
                 continue;
             
-            if (existingTouch.nativeTouch == touch.nativeTouch)
+            if (existingTouch.touchID == touch.touchID)
             {
                 // existing touch; update values
                 existingTouch.timestamp = touch.timestamp;
