@@ -379,12 +379,11 @@
 
 - (void)createBuffers
 {
+    [self destroyBuffers];
+
     int numVertices = _vertexData.numVertices;
     int numIndices = numVertices / 4 * 6;
-
-    if (_vertexBufferName) glDeleteBuffers(1, &_vertexBufferName);
-    if (_indexBufferName)  glDeleteBuffers(1, &_indexBufferName);
-    if (numVertices == 0)  return;
+    if (numVertices == 0) return;
 
     glGenBuffers(1, &_vertexBufferName);
     glGenBuffers(1, &_indexBufferName);
@@ -396,6 +395,21 @@
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * numIndices, _indexData, GL_STATIC_DRAW);
 
     _syncRequired = YES;
+}
+
+- (void)destroyBuffers
+{
+    if (_vertexBufferName)
+    {
+        glDeleteBuffers(1, &_vertexBufferName);
+        _vertexBufferName = 0;
+    }
+
+    if (_indexBufferName)
+    {
+        glDeleteBuffers(1, &_indexBufferName);
+        _indexBufferName = 0;
+    }
 }
 
 - (void)syncBuffers
@@ -441,7 +455,8 @@
         _indexData[i*6+5] = i*4 + 2;
     }
 
-    [self createBuffers];
+    [self destroyBuffers];
+    _syncRequired = YES;
 }
 
 @end
