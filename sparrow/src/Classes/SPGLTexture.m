@@ -56,12 +56,12 @@
         _mipmaps = mipmaps;
         _scale = scale;
         _premultipliedAlpha = pma;
+        _format = format;
+        _repeat = YES;
 
-        _repeat = YES; // force first update
         self.repeat = NO;
         self.smoothing = SPTextureSmoothingBilinear;
     }
-    
     return self;
 }
 
