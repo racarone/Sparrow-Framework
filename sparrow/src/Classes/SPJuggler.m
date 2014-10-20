@@ -13,6 +13,7 @@
 #import <Sparrow/SPDelayedInvocation.h>
 #import <Sparrow/SPEventDispatcher.h>
 #import <Sparrow/SPJuggler.h>
+#import <Sparrow/SPTween.h>
 
 @implementation SPJuggler
 {
@@ -57,11 +58,6 @@
             [(SPEventDispatcher *)object addEventListener:@selector(onRemove:) atObject:self
                                                   forType:SPEventTypeRemoveFromJuggler];
     }
-}
-
-- (void)onRemove:(SPEvent *)event
-{
-    [self removeObject:(id<SPAnimatable>)event.target];
 }
 
 - (void)removeObject:(id<SPAnimatable>)object
@@ -122,6 +118,35 @@
     return delayedInv;
 }
 
+- (id)repeatInvocationAtTarget:(id)target interval:(double)interval repeatCount:(int)repeatCount
+{
+    SPDelayedInvocation *delayedInv = [SPDelayedInvocation invocationWithTarget:target delay:interval];
+    delayedInv.repeatCount = repeatCount;
+    [self addObject:delayedInv];
+    return delayedInv;
+}
+
+- (id)tweenWithTarget:(id)target time:(double)time properties:(NSDictionary *)properties
+{
+    SPTween *tween = [SPTween tweenWithTarget:target time:time];
+
+    for (NSString *property in properties)
+    {
+        id value = properties[property];
+        SEL selector = NSSelectorFromString(property);
+
+        if ([tween respondsToSelector:selector])
+            [tween setValue:value forKey:property];
+        else if ([target respondsToSelector:selector])
+            [tween animateProperty:property targetValue:[value floatValue]];
+        else
+            [NSException raise:SPExceptionInvalidOperation format:@"invalid property %@", property];
+    }
+
+    [self addObject:tween];
+    return tween;
+}
+
 #pragma mark SPAnimatable
 
 - (void)advanceTime:(double)seconds
@@ -153,6 +178,19 @@
         [NSException raise:SPExceptionInvalidOperation format:@"speed must be positive"];
     else
         _speed = speed;
+}
+
+#pragma mark Events
+
+- (void)onRemove:(SPEvent *)event
+{
+    [self removeObject:(id<SPAnimatable>)[[event.target retain] autorelease]];
+
+    if ([event.target isKindOfClass:[SPTween class]])
+    {
+        SPTween *tween = (SPTween *)event.target;
+        if (tween.isComplete) [self addObject:tween.nextTween];
+    }
 }
 
 @end

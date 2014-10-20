@@ -41,6 +41,14 @@
  Alternatively, you can use the block-based verson of the method:
 
 	[juggler delayInvocationByTime:2.0 block:^{ [object removeFromParent]; };
+ 
+ You can also create tweens easily using the following method:
+ 
+    [juggler tweenWithTarget:object time:2.0 properties: @{
+        @"transition" : SPTransitionEaseInOut,
+        @"delay"      : @(20), // -> tween.delay = 20
+        @"x"          : @(50)  // -> [tween animateProperty:@"x" targetValue:50];
+    }];
 
 ------------------------------------------------------------------------------------------------- */
 
@@ -79,6 +87,14 @@
 
 /// Delays the execution of a block by a certain time in seconds.
 - (id)delayInvocationByTime:(double)time block:(SPCallbackBlock)block;
+
+/// Runs a function at a specified interval (in seconds). A 'repeatCount' of 0 means that it
+/// runs indefinitely.
+- (id)repeatInvocationAtTarget:(id)target interval:(double)interval repeatCount:(int)repeatCount;
+
+/// Creates a tween to animate the target over 'time' seconds. This method provides a convenient
+/// alternative for creating and adding a tween manually.
+- (id)tweenWithTarget:(id)target time:(double)time properties:(NSDictionary *)properties;
 
 /// ----------------
 /// @name Properties
