@@ -125,14 +125,7 @@
 
 - (void)setupContext
 {
-    static dispatch_once_t onceToken;
-    static SPContext *globalContext;
-
-    dispatch_once(&onceToken, ^{
-        globalContext = [[SPContext alloc] init];
-    });
-
-    self.context = [[[SPContext alloc] initWithSharegroup:globalContext.sharegroup] autorelease];
+    self.context = [[[SPContext alloc] initWithShareContext:[SPContext globalShareContext]] autorelease];
     if (!_context || ![SPContext setCurrentContext:_context])
         NSLog(@"Could not create render context");
 
@@ -199,7 +192,8 @@
 - (void)executeInResourceQueue:(dispatch_block_t)block
 {
     if (!_resourceContext)
-         _resourceContext = [[SPContext alloc] initWithSharegroup:_context.sharegroup];
+         _resourceContext = [[SPContext alloc] initWithShareContext:[SPContext globalShareContext]];
+
     if (!_resourceQueue)
          _resourceQueue = dispatch_queue_create("Sparrow-ResourceQueue", NULL);
     

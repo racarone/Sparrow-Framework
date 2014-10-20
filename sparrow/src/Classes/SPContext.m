@@ -18,10 +18,31 @@
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
+#import <objc/runtime.h>
 
-#define currentThreadDictionary [[NSThread currentThread] threadDictionary]
-static NSString *const currentContextKey = @"SPCurrentContext";
-static NSMutableDictionary *framebufferCache = nil;
+// --- EAGLContext category ------------------------------------------------------------------------
+
+@interface EAGLContext (SPNSExtensions)
+
+@property (nonatomic, assign) SPContext *spContext;
+
+@end
+
+@implementation EAGLContext (SPNSExtensions)
+
+@dynamic spContext;
+
+- (SPContext *)spContext
+{
+    return objc_getAssociatedObject(self, @selector(spContext));
+}
+
+- (void)setSpContext:(SPContext *)spContext
+{
+    objc_setAssociatedObject(self, @selector(spContext), spContext, OBJC_ASSOCIATION_ASSIGN);
+}
+
+@end
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -29,43 +50,56 @@ static NSMutableDictionary *framebufferCache = nil;
 {
     EAGLContext *_nativeContext;
     SPTexture *_renderTarget;
-    SGLStateCacheRef _glStateCache;
+    sglStateCacheRef _stateCache;
+
+    NSMutableDictionary *_frameBufferCache;
+    SPProgram *_program;
 }
 
 #pragma mark Initialization
 
-- (instancetype)initWithSharegroup:(id)sharegroup
+- (instancetype)initWithShareContext:(SPContext *)shareContext
 {
     if ((self = [super init]))
     {
-        _nativeContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 sharegroup:sharegroup];
-        _glStateCache = sglStateCacheCreate();
+        _nativeContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2
+                                               sharegroup:shareContext.nativeContext.sharegroup];
+        _nativeContext.spContext = self;
+
+        _stateCache = sglStateCacheCreate();
+        _frameBufferCache = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
 - (instancetype)init
 {
-    return [self initWithSharegroup:nil];
+    return [self initWithShareContext:nil];
+}
+
++ (instancetype)globalShareContext
+{
+    static SPContext *globalContext = nil;
+    static dispatch_once_t onceToken;
+
+    dispatch_once(&onceToken, ^
+     {
+         globalContext = [[SPContext alloc] init];
+     });
+
+    return globalContext;
 }
 
 - (void)dealloc
 {
-    sglStateCacheRelease(_glStateCache);
-    _glStateCache = NULL;
+    [self makeCurrentContext];
+
+    sglStateCacheDestroy(_stateCache);
 
     [_nativeContext release];
     [_renderTarget release];
-
+    [_frameBufferCache release];
     [super dealloc];
-}
-
-+ (void)initialize
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        framebufferCache = [[NSMutableDictionary alloc] init];
-    });
 }
 
 #pragma mark Methods
@@ -75,9 +109,30 @@ static NSMutableDictionary *framebufferCache = nil;
     [self setRenderTarget:nil];
 }
 
-- (void)presentBufferForDisplay
+- (void)present
 {
+    [self makeCurrentContext];
     [_nativeContext presentRenderbuffer:GL_RENDERBUFFER];
+}
+
+- (void)clear
+{
+    [self clearWithColor:0 alpha:1];
+}
+
+- (void)clearWithColor:(uint)color
+{
+    [self clearWithColor:color alpha:1];
+}
+
+- (void)clearWithColor:(uint)color alpha:(float)alpha
+{
+    float red   = SP_COLOR_PART_RED(color)   / 255.0f;
+    float green = SP_COLOR_PART_GREEN(color) / 255.0f;
+    float blue  = SP_COLOR_PART_BLUE(color)  / 255.0f;
+
+    glClearColor(red, green, blue, alpha);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 - (BOOL)makeCurrentContext
@@ -87,24 +142,18 @@ static NSMutableDictionary *framebufferCache = nil;
 
 + (BOOL)setCurrentContext:(SPContext *)context
 {
-    if (context && [EAGLContext setCurrentContext:context->_nativeContext])
+    if ([EAGLContext setCurrentContext:context.nativeContext])
     {
-        currentThreadDictionary[currentContextKey] = context;
-        sglStateCacheSetCurrent(context->_glStateCache);
+        sglStateCacheSetCurrent(context->_stateCache);
         return YES;
     }
 
-    if (!context) sglStateCacheSetCurrent(NULL);
     return NO;
 }
 
 + (SPContext *)currentContext
 {
-    SPContext *current = currentThreadDictionary[currentContextKey];
-    if (!current || current->_nativeContext != [EAGLContext currentContext])
-        return nil;
-
-    return current;
+    return [EAGLContext currentContext].spContext;
 }
 
 + (BOOL)deviceSupportsOpenGLExtension:(NSString *)extensionName
@@ -112,25 +161,18 @@ static NSMutableDictionary *framebufferCache = nil;
     static dispatch_once_t once;
     static NSArray *extensions = nil;
 
-    dispatch_once(&once, ^{
-        NSString *extensionsString = [NSString stringWithCString:(const char *)glGetString(GL_EXTENSIONS) encoding:NSASCIIStringEncoding];
-        extensions = [[extensionsString componentsSeparatedByString:@" "] retain];
-    });
+    dispatch_once(&once, ^
+     {
+         NSString *extensionsString = [NSString stringWithCString:(const char *)glGetString(GL_EXTENSIONS)
+                                       encoding:NSASCIIStringEncoding];
+
+         extensions = [[extensionsString componentsSeparatedByString:@" "] retain];
+     });
 
     return [extensions containsObject:extensionName];
 }
 
 #pragma mark Properties
-
-- (id)sharegroup
-{
-    return _nativeContext.sharegroup;
-}
-
-- (id)nativeContext
-{
-    return _nativeContext;
-}
 
 - (SPRectangle *)viewport
 {
@@ -141,10 +183,8 @@ static NSMutableDictionary *framebufferCache = nil;
 
 - (void)setViewport:(SPRectangle *)viewport
 {
-    if (viewport)
-        glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-    else
-        glViewport(0, 0, (int)Sparrow.currentController.view.drawableWidth, (int)Sparrow.currentController.view.drawableHeight);
+    if (viewport) glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+    else          glViewport(0, 0, (int)[[[Sparrow currentController] view] drawableWidth], (int)[[[Sparrow currentController] view] drawableHeight]);
 }
 
 - (SPRectangle *)scissorBox
@@ -171,12 +211,12 @@ static NSMutableDictionary *framebufferCache = nil;
 {
     if (renderTarget)
     {
-        uint framebuffer = [framebufferCache[@(renderTarget.name)] unsignedIntValue];
+        uint framebuffer = [_frameBufferCache[@(renderTarget.name)] unsignedIntValue];
         if (!framebuffer)
         {
             // create and cache the framebuffer
             framebuffer = [self createFramebufferForTexture:renderTarget];
-            framebufferCache[@(renderTarget.name)] = @(framebuffer);
+            _frameBufferCache[@(renderTarget.name)] = @(framebuffer);
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -184,11 +224,7 @@ static NSMutableDictionary *framebufferCache = nil;
     }
     else
     {
-        // HACK: GLKView does not use the OpenGL state cache, so we have to 'reset' these values
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, 0, 0);
-
-        [Sparrow.currentController.view bindDrawable];
+        [[[Sparrow currentController] view] bindDrawable];
     }
 
   #if DEBUG
@@ -209,25 +245,21 @@ static NSMutableDictionary *framebufferCache = nil;
 {
     uint framebuffer = -1;
 
-    // create framebuffer
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    // attach renderbuffer
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.name, 0);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        NSLog(@"failed to create frame buffer for render texture");
 
     return framebuffer;
 }
 
 - (void)destroyFramebufferForTexture:(SPTexture *)texture
 {
-    uint framebuffer = [framebufferCache[@(texture.name)] unsignedIntValue];
+    uint framebuffer = [_frameBufferCache[@(texture.name)] unsignedIntValue];
     if (framebuffer)
     {
         glDeleteFramebuffers(1, &framebuffer);
-        [framebufferCache removeObjectForKey:@(texture.name)];
+        [_frameBufferCache removeObjectForKey:@(texture.name)];
     }
 }
 

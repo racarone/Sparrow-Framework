@@ -9,10 +9,11 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import <Foundation/Foundation.h>
+#import <Sparrow/SPMacros.h>
+
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
-
-#import <Sparrow/SPMacros.h>
 
 // -----------------------------------------------------------
 // EXPERIMENTAL FEATURE: Activate the OpenGL state cache here!
@@ -20,34 +21,31 @@
 
 #define SP_ENABLE_GL_STATE_CACHE 0
 
-/// Sparrow's OpenGL state cache reference type.
-typedef struct SGLStateCache *SGLStateCacheRef;
+typedef struct _sglStateCache * sglStateCacheRef;
 
-/// Allocates a new state cache.
-SP_EXTERN SGLStateCacheRef sglStateCacheCreate(void);
+/// Creates and returns a state cache.
+SP_EXTERN sglStateCacheRef sglStateCacheCreate(void);
 
-/// Returns a copy of a state cache.
-SP_EXTERN SGLStateCacheRef sglStateCacheCopy(SGLStateCacheRef stateCache);
+/// Destroys a state cache instance.
+SP_EXTERN void sglStateCacheDestroy(sglStateCacheRef cache);
 
-/// Deallocates a state cache.
-SP_EXTERN void sglStateCacheRelease(SGLStateCacheRef stateCache);
+/// Resets all state cache values.
+SP_EXTERN void sglStateCacheReset(sglStateCacheRef cache);
 
-/// Resets the state cache's values to an null state.
-SP_EXTERN void sglStateCacheReset(SGLStateCacheRef stateCache);
+/// Returns the state cache for the current thread.
+SP_EXTERN sglStateCacheRef sglStateCacheGetCurrent(void);
 
-/// Returns the current global state cache.
-SP_EXTERN SGLStateCacheRef sglStateCacheGetCurrent(void);
-
-/// Sets the current global state cache, if NULL will use a default state cache.
-SP_EXTERN void sglStateCacheSetCurrent(SGLStateCacheRef stateCache);
+/// Sets the state cache for the current thread.
+SP_EXTERN void sglStateCacheSetCurrent(sglStateCacheRef cache);
 
 /// Returns a string representing an OpenGL error code.
 SP_EXTERN const char* sglGetErrorString(uint error);
 
 /// Extension remappings
+#define GL_DEPTH24_STENCIL8             GL_DEPTH24_STENCIL8_OES
+
 #if GL_OES_vertex_array_object
     #undef GL_VERTEX_ARRAY_BINDING
-
     #define GL_VERTEX_ARRAY_BINDING     GL_VERTEX_ARRAY_BINDING_OES
     #define glBindVertexArray           glBindVertexArrayOES
     #define glGenVertexArrays           glGenVertexArraysOES
@@ -66,7 +64,10 @@ SP_EXTERN const char* sglGetErrorString(uint error);
     #define glBindRenderbuffer          sglBindRenderbuffer
     #define glBindTexture               sglBindTexture
     #define glBindVertexArray           sglBindVertexArray
+    #define glBlendEquation             sglBlendEquation
+    #define glBlendEquationSeparate     sglBlendEquationSeparate
     #define glBlendFunc                 sglBlendFunc
+    #define glBlendFuncSeparate         sglBlendFuncSeparate
     #define glDeleteBuffers             sglDeleteBuffers
     #define glDeleteFramebuffers        sglDeleteFramebuffers
     #define glDeleteProgram             sglDeleteProgram
@@ -86,7 +87,10 @@ SP_EXTERN const char* sglGetErrorString(uint error);
     SP_EXTERN void                      sglBindRenderbuffer(GLenum target, GLuint renderbuffer);
     SP_EXTERN void                      sglBindTexture(GLenum target, GLuint texture);
     SP_EXTERN void                      sglBindVertexArray(GLuint array);
+    SP_EXTERN void                      sglBlendEquation(GLenum mode);
+    SP_EXTERN void                      sglBlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
     SP_EXTERN void                      sglBlendFunc(GLenum sfactor, GLenum dfactor);
+    SP_EXTERN void                      sglBlendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
     SP_EXTERN void                      sglDeleteBuffers(GLsizei n, const GLuint* buffers);
     SP_EXTERN void                      sglDeleteFramebuffers(GLsizei n, const GLuint* framebuffers);
     SP_EXTERN void                      sglDeleteProgram(GLuint program);
