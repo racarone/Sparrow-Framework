@@ -78,11 +78,9 @@ static SPTextureCache *textureCache = nil;
 
     if ([SPTexture isPVRFile:fullPath])
     {
-        BOOL isCompressed = [SPTexture isCompressedFile:fullPath];
         float scale = [fullPath contentScaleFactor];
-        
         NSData *rawData = [[NSData alloc] initWithContentsOfFile:fullPath];
-        SPPVRData *pvrData = [[SPPVRData alloc] initWithData:rawData compressed:isCompressed];
+        SPPVRData *pvrData = [[SPPVRData alloc] initWithData:rawData];
         
         [self release]; // we'll return a subclass!
         self = [[SPGLTexture alloc] initWithPVRData:pvrData scale:scale];
@@ -442,11 +440,6 @@ static SPTextureCache *textureCache = nil;
 {
     path = [path lowercaseString];
     return [path hasSuffix:@".pvr"] || [path hasSuffix:@".pvr.gz"];
-}
-
-+ (BOOL)isCompressedFile:(NSString *)path
-{
-    return [[path lowercaseString] hasSuffix:@".gz"];
 }
 
 @end

@@ -43,6 +43,9 @@
 /// If you pass a relative path, the resource folder of the application bundle will be searched.
 + (BOOL)fileExistsAtPath:(NSString *)path;
 
+/// Returns true if the data is GZip compressed.
++ (BOOL)isGZIPCompressed:(NSData *)data;
+
 /// Finds the full path for a file, favoring those with the given scale factor and
 /// device idiom. Relative paths are searched in the application bundle. If no suitable file can
 /// be found, the method returns nil.

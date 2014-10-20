@@ -3,16 +3,20 @@
 //  Sparrow
 //
 //  Created by Daniel Sperl on 23.11.13.
+//  Copyright 2011-2014 Gamua. All rights reserved.
 //
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the Simplified BSD License.
 //
 
 #import <Sparrow/SPMacros.h>
 #import <Sparrow/SPPVRData.h>
 #import <Sparrow/SPNSExtensions.h>
+#import <Sparrow/SPUtils.h>
 
 // --- PVR structs & enums -------------------------------------------------------------------------
 
-#define PVRTEX_IDENTIFIER 0x21525650 // = the characters 'P', 'V', 'R'
+static const char PVR_IDENTIFIER[4] = "PVR!";
 
 typedef struct
 {
@@ -58,23 +62,21 @@ enum PVRPixelType
 
 - (instancetype)initWithData:(NSData *)data
 {
-    return [self initWithData:data compressed:NO];
-}
-
-- (instancetype)initWithData:(NSData *)data compressed:(BOOL)isCompressed
-{
     if ((self = [super init]))
     {
-        if (isCompressed) _data = [[data gzipInflate] retain];
-        else              _data =  [data retain];
+        if ([SPUtils isGZIPCompressed:data]) _data = [[data gzipInflate] retain];
+        else                                 _data =  [data retain];
+
+        if (![[self class] isPVRData:_data])
+            [NSException raise:SPExceptionInvalidOperation format:@"Data is not a PVR image"];
         
         PVRTextureHeader *header = (PVRTextureHeader *)[_data bytes];
         bool hasAlpha = header->alphaBitMask ? YES : NO;
-        
-        _width      = header->width;
-        _height     = header->height;
+
+        _width = header->width;
+        _height = header->height;
         _numMipmaps = header->numMipmaps;
-        
+
         switch (header->pfFlags & 0xff)
         {
             case OGL_RGB_565:   _format = SPTextureFormat565;   break;
@@ -111,6 +113,22 @@ enum PVRPixelType
 {
     PVRTextureHeader *header = (PVRTextureHeader *)[_data bytes];
     return (unsigned char *)header + header->headerSize;
+}
+
+#pragma mark Private
+
++ (BOOL)isPVRData:(NSData *)data
+{
+    PVRTextureHeader *header = (PVRTextureHeader *)[data bytes];
+    int pvrTag = CFSwapInt32LittleToHost(header->pvr);
+
+    if (PVR_IDENTIFIER[0] != ((pvrTag >>  0) & 0xff) ||
+        PVR_IDENTIFIER[1] != ((pvrTag >>  8) & 0xff) ||
+        PVR_IDENTIFIER[2] != ((pvrTag >> 16) & 0xff) ||
+        PVR_IDENTIFIER[3] != ((pvrTag >> 24) & 0xff))
+        return NO;
+
+    return YES;
 }
 
 @end
