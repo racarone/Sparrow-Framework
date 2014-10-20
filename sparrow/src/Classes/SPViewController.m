@@ -117,7 +117,7 @@
     _contentScaleFactor = 1.0f;
     _stage = [[SPStage alloc] init];
     _juggler = [[SPJuggler alloc] init];
-    _touchProcessor = [[SPTouchProcessor alloc] initWithRoot:_stage];
+    _touchProcessor = [[SPTouchProcessor alloc] initWithStage:_stage];
     _programs = [[NSMutableDictionary alloc] init];
     _support = [[SPRenderSupport alloc] init];
     [Sparrow setCurrentController:self];
@@ -249,6 +249,7 @@
         double passedTime = self.timeSinceLastUpdate;
         
         [Sparrow setCurrentController:self];
+        [_touchProcessor advanceTime:passedTime];
         [_stage advanceTime:passedTime];
         [_juggler advanceTime:passedTime];
     }
@@ -297,7 +298,6 @@
             float yConversion = _stage.height / viewSize.height;
             
             // convert to SPTouches and forward to stage
-            NSMutableSet *touches = [NSMutableSet set];
             double now = CACurrentMediaTime();
             for (UITouch *uiTouch in [event touchesForView:self.view])
             {
@@ -313,10 +313,9 @@
                 touch.tapCount = (int)uiTouch.tapCount;
                 touch.phase = [self touchPhaseForUITouch:uiTouch];
                 touch.touchID = (size_t)uiTouch;
-                [touches addObject:touch];
+                [_touchProcessor enqueueTouch:touch];
             }
 
-            [_touchProcessor processTouches:touches];
             _lastTouchTimestamp = event.timestamp;
         }
     }
