@@ -17,6 +17,8 @@
 
 typedef float (*FnPtrTransition) (id, SEL, float);
 
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPTween
 {
     id _target;
@@ -27,6 +29,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     double _totalTime;
     double _currentTime;
     double _delay;
+    float _progress;
     
     int _repeatCount;
     double _repeatDelay;
@@ -37,6 +40,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     SPCallbackBlock _onUpdate;
     SPCallbackBlock _onRepeat;
     SPCallbackBlock _onComplete;
+    SPTween *_nextTween;
 }
 
 #pragma mark Initialization
@@ -78,6 +82,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     [_onUpdate release];
     [_onRepeat release];
     [_onComplete release];
+    [_nextTween release];
     [super dealloc];
 }
 
@@ -115,6 +120,11 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     [self animateProperty:@"scaleY" targetValue:scale];
 }
 
+- (void)fadeTo:(float)alpha
+{
+    [self animateProperty:@"alpha" targetValue:alpha];
+}
+
 #pragma mark SPAnimatable
 
 - (void)advanceTime:(double)time
@@ -146,9 +156,9 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     for (SPTweenedProperty *prop in _properties)
     {
         if (isStarting) prop.startValue = prop.currentValue;
-        float transitionValue = reversed ? transFunc(transClass, _transition, 1.0 - ratio) :
-        transFunc(transClass, _transition, ratio);
-        prop.currentValue = prop.startValue + prop.delta * transitionValue;
+        _progress = reversed ? transFunc(transClass, _transition, 1.0 - ratio)
+                             : transFunc(transClass, _transition, ratio);
+        prop.currentValue = prop.startValue + prop.delta * _progress;
     }
 
     if (_onUpdate) _onUpdate();
@@ -174,11 +184,6 @@ typedef float (*FnPtrTransition) (id, SEL, float);
 }
 
 #pragma mark Properties
-
-- (void)fadeTo:(float)alpha
-{
-    [self animateProperty:@"alpha" targetValue:alpha];
-}
 
 - (NSString *)transition
 {
