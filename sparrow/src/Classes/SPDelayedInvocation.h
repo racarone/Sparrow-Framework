@@ -62,13 +62,16 @@
 /// The target object to which messages will be forwarded.
 @property (nonatomic, readonly) id target;
 
+/// Indicates if the total time has passed and the invocations have been executed.
+@property (nonatomic, readonly) BOOL isComplete;
+
 /// The time messages will be delayed (in seconds).
 @property (nonatomic, readonly) double totalTime;
 
 /// The time that has already passed (in seconds).
-@property (nonatomic, assign)   double currentTime;
+@property (nonatomic, readonly) double currentTime;
 
-/// Indicates if the total time has passed and the invocations have been executed.
-@property (nonatomic, readonly) BOOL isComplete;
+/// The number of times the invocations will be repeated.
+@property (nonatomic, assign)   int repeatCount;
 
 @end
