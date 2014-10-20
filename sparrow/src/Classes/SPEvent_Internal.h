@@ -11,12 +11,13 @@
 
 #import <Sparrow/SPEvent.h>
 
-@interface SPEvent (Internal)
+@interface SPEvent ()
 
-- (BOOL)stopsImmediatePropagation;
-- (BOOL)stopsPropagation;
-- (void)setTarget:(SPEventDispatcher *)target;
-- (void)setCurrentTarget:(SPEventDispatcher *)currentTarget;
+@property (nonatomic, weak) SPEventDispatcher *target;
+@property (nonatomic, weak) SPEventDispatcher *currentTarget;
+@property (nonatomic, strong) id data;
+@property (nonatomic, readonly) BOOL stopsPropagation;
+@property (nonatomic, readonly) BOOL stopsImmediatePropagation;
 
 @end
 

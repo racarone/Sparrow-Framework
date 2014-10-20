@@ -91,6 +91,9 @@ typedef void (^SPEventBlock)(id event);
 /// Creates a new event object and dispatches it.
 - (void)dispatchEventWithType:(NSString *)type bubbles:(BOOL)bubbles;
 
+/// Creates a new event object and dispatches it.
+- (void)dispatchEventWithType:(NSString *)type bubbles:(BOOL)bubbles data:(id)object;
+
 /// Returns if there are listeners registered for a certain event type.
 - (BOOL)hasEventListenerForType:(NSString *)eventType;
 

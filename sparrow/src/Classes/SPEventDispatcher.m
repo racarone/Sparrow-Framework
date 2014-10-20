@@ -116,19 +116,19 @@
 
 - (void)dispatchEventWithType:(NSString *)type
 {
-    if ([self hasEventListenerForType:type])
-    {
-        SPEvent* event = [[SPEvent alloc] initWithType:type bubbles:NO];
-        [self dispatchEvent:event];
-        [event release];
-    }
+    [self dispatchEventWithType:type bubbles:NO data:nil];
 }
 
 - (void)dispatchEventWithType:(NSString *)type bubbles:(BOOL)bubbles
 {
-    if (bubbles || [self hasEventListenerForType:type])
+    [self dispatchEventWithType:type bubbles:bubbles data:nil];
+}
+
+- (void)dispatchEventWithType:(NSString *)type bubbles:(BOOL)bubbles data:(id)object
+{
+    if (bubbles || _eventListeners[type])
     {
-        SPEvent* event = [[SPEvent alloc] initWithType:type bubbles:bubbles];
+        SPEvent* event = [[SPEvent alloc] initWithType:type bubbles:bubbles data:object];
         [self dispatchEvent:event];
         [event release];
     }
@@ -158,9 +158,7 @@
     NSArray *listeners = _eventListeners[eventType];
     if (!listeners)
     {
-        listeners = [[NSArray alloc] initWithObjects:listener, nil];
-        _eventListeners[eventType] = listeners;
-        [listeners release];
+        _eventListeners[eventType] = @[listener];
     }
     else
     {
