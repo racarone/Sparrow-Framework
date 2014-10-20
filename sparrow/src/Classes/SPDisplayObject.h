@@ -107,13 +107,17 @@
 /// Transforms a point from global (stage) coordinates to the local coordinate system.
 - (SPPoint *)globalToLocal:(SPPoint *)globalPoint;
 
+/// Evaluates the bounding box to see if it overlaps or intersects with the bounding box of the
+/// specified display object.
+- (BOOL)hitTestObject:(SPDisplayObject *)object;
+
 /// Returns the object that is found topmost on a point in local coordinates, or nil if the test fails.
 - (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint;
 
-/// Dispatches an event on all children (recursively). The event must not bubble. */
+/// Dispatches an event on all children (recursively). The event must not bubble.
 - (void)broadcastEvent:(SPEvent *)event;
 
-/// Creates an event and dispatches it on all children (recursively). */
+/// Creates an event and dispatches it on all children (recursively).
 - (void)broadcastEventWithType:(NSString *)type;
 
 /// ----------------

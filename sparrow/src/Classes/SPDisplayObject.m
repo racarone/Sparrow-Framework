@@ -224,6 +224,14 @@
     return nil;
 }
 
+- (BOOL)hitTestObject:(SPDisplayObject *)object
+{
+    if (_parent && object && object.parent)
+        return [[self boundsInSpace:self] intersectsRectangle:[object boundsInSpace:self]];
+
+    return false;
+}
+
 - (SPDisplayObject *)hitTestPoint:(SPPoint *)localPoint
 {
     // invisible or untouchable objects cause the test to fail
@@ -306,12 +314,12 @@
 
 - (void)addEnterFrameListenerToStage
 {
-    [Sparrow.currentController.stage addEnterFrameListener:self];
+    [Sparrow.stage addEnterFrameListener:self];
 }
 
 - (void)removeEnterFrameListenerFromStage
 {
-    [Sparrow.currentController.stage removeEnterFrameListener:self];
+    [Sparrow.stage removeEnterFrameListener:self];
 }
 
 #pragma mark Properties

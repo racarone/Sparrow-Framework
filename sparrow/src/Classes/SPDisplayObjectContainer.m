@@ -125,7 +125,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
 - (int)childIndex:(SPDisplayObject *)child
 {
     NSUInteger index = [_children indexOfObject:child];
-    if (index == NSNotFound) return SP_NOT_FOUND;
+    if (index == NSNotFound) return SPNotFound;
     else                     return (int)index;
 }
 
@@ -146,7 +146,7 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
 - (void)removeChild:(SPDisplayObject *)child
 {
     int childIndex = [self childIndex:child];
-    if (childIndex != SP_NOT_FOUND)
+    if (childIndex != SPNotFound)
         [self removeChildAtIndex:childIndex];
 }
 
