@@ -12,7 +12,17 @@
 #import <Foundation/Foundation.h>
 #import <Sparrow/SPDisplayObjectContainer.h>
 
+@class SPSprite;
 @class SPTexture;
+
+/// Values for the states of a button object.
+typedef NS_ENUM(int, SPButtonState)
+{
+    SPButtonStateUp,       // The button's default state.
+    SPButtonStateDown,     // The button is pressed.
+    SPButtonStateOver,     // The mouse hovers over the button.
+    SPButtonStateDisabled, // The button was disabled altogether.
+};
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -37,7 +47,11 @@
 /// @name Initialization
 /// --------------------
 
-/// Initializes a button with textures for up- and down-state. _Designated Initializer_.
+/// Initializes a button with textures for up-, down-, over- and disabled-state. _Designated Initializer_.
+- (instancetype)initWithUpState:(SPTexture *)upState downState:(SPTexture *)downState
+                      overState:(SPTexture *)overState disabledState:(SPTexture *)disabledState;
+
+/// Initializes a button with textures for up- and down-state.
 - (instancetype)initWithUpState:(SPTexture *)upState downState:(SPTexture *)downState;
 
 /// Initializes a button with an up state texture and text.
@@ -58,6 +72,9 @@
 /// ----------------
 /// @name Properties
 /// ----------------
+
+/// The current state of the button.
+@property (nonatomic, assign) SPButtonState state;
 
 /// The scale factor of the button on touch. Per default, a button with a down state texture won't scale.
 @property (nonatomic, assign) float scaleWhenDown;
@@ -80,20 +97,33 @@
 /// The color of the font.
 @property (nonatomic, assign) uint fontColor;
 
+/// The horizontal alignment of the text on the button.
+@property (nonatomic, assign) SPHAlign textHAlign;
+
+/// The vertical alignment of the text on the button.
+@property (nonatomic, assign) SPVAlign textVAlign;
+
 /// The texture that is displayed when the button is not being touched.
 @property (nonatomic, strong) SPTexture *upState;
 
 /// The texture that is displayed while the button is touched.
 @property (nonatomic, strong) SPTexture *downState;
 
+/// The texture that is displayed while mouse hovers over the button.
+@property (nonatomic, strong) SPTexture *overState;
+
+/// The texture that is displayed when the button is disabled.
+@property (nonatomic, strong) SPTexture *disabledState;
+
 /// The bounds of the textfield on the button. Allows moving the text to a custom position.
 @property (nonatomic, copy)   SPRectangle *textBounds;
-
-/// Indicates if the button is currently being pressed.
-@property (nonatomic, readonly) BOOL isDown;
 
 /// The color of the button's state image. Just like every image object, each pixel's
 /// color is multiplied with this value.
 @property (nonatomic, assign) uint color;
+
+/// The overlay sprite is displayed on top of the button contents. It scales with the
+/// button when pressed. Use it to add additional objects to the button (e.g. an icon).
+@property (nonatomic, readonly) SPSprite *overlay;
 
 @end
