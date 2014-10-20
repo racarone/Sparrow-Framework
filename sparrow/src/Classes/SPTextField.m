@@ -14,6 +14,7 @@
 #import <Sparrow/SPEnterFrameEvent.h>
 #import <Sparrow/SPGLTexture.h>
 #import <Sparrow/SPImage.h>
+#import <Sparrow/SPNSExtensions.h>
 #import <Sparrow/SPQuad.h>
 #import <Sparrow/SPQuadBatch.h>
 #import <Sparrow/SPRectangle.h>
@@ -22,8 +23,6 @@
 #import <Sparrow/SPSubTexture.h>
 #import <Sparrow/SPTextField.h>
 #import <Sparrow/SPTexture.h>
-
-#import <UIKit/UIKit.h>
 
 // --- public constants ----------------------------------------------------------------------------
 
@@ -354,36 +353,57 @@ static NSMutableDictionary *bitmapFonts = nil;
     }
 }
 
+- (NSTextAlignment)textAlignmentForHAlign:(SPHAlign)hAlign
+{
+    switch (hAlign)
+    {
+        case SPHAlignLeft:   return NSTextAlignmentLeft;
+        case SPHAlignCenter: return NSTextAlignmentCenter;
+        case SPHAlignRight:  return NSTextAlignmentRight;
+    }
+
+    return NSTextAlignmentLeft;
+}
+
 - (void)createRenderedContents
 {
     float width  = _hitArea.width;
     float height = _hitArea.height;    
     float fontSize = _fontSize == SPNativeFontSize ? SPDefaultFontSize : _fontSize;
-    
-  #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_6_0
-    NSLineBreakMode lbm = NSLineBreakByTruncatingTail;
-  #else
-    UILineBreakMode lbm = UILineBreakModeTailTruncation;
-  #endif
+
+    NSRange textRange = (NSRange){ 0, _text.length };
+    NSMutableAttributedString *attributedText =
+        [[[NSMutableAttributedString alloc] initWithString:_text] autorelease];
+
+    NSMutableParagraphStyle *paragraphStyle = [[[NSMutableParagraphStyle alloc] init] autorelease];
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    paragraphStyle.alignment = [self textAlignmentForHAlign:_hAlign];
+    [attributedText addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:textRange];
+
+    UIFont *font = [UIFont fontWithName:_fontName size:fontSize];
+    [attributedText addAttribute:NSFontAttributeName value:font range:textRange];
 
     CGSize textSize;
-    
+
     if (_autoScale)
     {
         CGSize maxSize = CGSizeMake(width, FLT_MAX);
         fontSize += 1.0f;
-        
+
         do
         {
             fontSize -= 1.0f;
-            textSize = [_text sizeWithFont:[UIFont fontWithName:_fontName size:fontSize]
-                         constrainedToSize:maxSize lineBreakMode:lbm];
+
+            font = [UIFont fontWithName:_fontName size:fontSize];
+            [attributedText addAttribute:NSFontAttributeName value:font range:textRange];
+
+            textSize = [attributedText boundingRectWithSize:maxSize].size;
+
         } while (textSize.height > height);
     }
     else
     {
-        textSize = [_text sizeWithFont:[UIFont fontWithName:_fontName size:fontSize]
-                     constrainedToSize:CGSizeMake(width, height) lineBreakMode:lbm];
+        textSize = [attributedText boundingRectWithSize:CGSizeMake(width, height)].size;
     }
     
     float xOffset = 0;
@@ -405,12 +425,9 @@ static NSMutableDictionary *bitmapFonts = nil;
           float blue  = SP_COLOR_PART_BLUE(_color)  / 255.0f;
           
           CGContextSetRGBFillColor(context, red, green, blue, 1.0f);
-          
-          [_text drawInRect:CGRectMake(0, yOffset, width, height)
-                   withFont:[UIFont fontWithName:_fontName size:fontSize] 
-              lineBreakMode:lbm alignment:(NSTextAlignment)_hAlign];
+          [attributedText drawWithRect:CGRectMake(0, yOffset, width, height)];
       }];
-    
+
     SPImage *image = [[SPImage alloc] initWithTexture:texture];
     [texture release];
 

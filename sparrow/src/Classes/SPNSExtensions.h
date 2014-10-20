@@ -9,7 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 typedef void (^SPXMLElementHandler)(NSString *elementName, NSDictionary *attributes);
 
@@ -19,6 +19,21 @@ typedef void (^SPXMLElementHandler)(NSString *elementName, NSDictionary *attribu
 
 /// Creates an invocation with a specified target and selector.
 + (instancetype)invocationWithTarget:(id)target selector:(SEL)selector;
+
+@end
+
+
+/** Sparrow extensions for the NSAttributedString class. */
+@interface NSAttributedString (SPNSExtensions)
+
+/// Draws the receiver with NSStringDrawingUsesLineFragmentOrigin, within the given rectangle
+/// in the current graphics context.
+- (void)drawWithRect:(CGRect)rect;
+
+/// Calculates and returns bounding rectangle for the receiver drawn using
+/// NSStringDrawingUsesLineFragmentOrigin, within the given rectangle in the current
+/// graphics context.
+- (CGRect)boundingRectWithSize:(CGSize)size;
 
 @end
 
