@@ -311,7 +311,7 @@
                 touch.previousGlobalX = previousLocation.x * xConversion;
                 touch.previousGlobalY = previousLocation.y * yConversion;
                 touch.tapCount = (int)uiTouch.tapCount;
-                touch.phase = (SPTouchPhase)uiTouch.phase;
+                touch.phase = [self touchPhaseForUITouch:uiTouch];
                 touch.touchID = (size_t)uiTouch;
                 [touches addObject:touch];
             }
@@ -319,6 +319,18 @@
             [_touchProcessor processTouches:touches];
             _lastTouchTimestamp = event.timestamp;
         }
+    }
+}
+
+- (SPTouchPhase)touchPhaseForUITouch:(UITouch *)touch
+{
+    switch (touch.phase)
+    {
+        case UITouchPhaseBegan:      return SPTouchPhaseBegan;
+        case UITouchPhaseCancelled:  return SPTouchPhaseCancelled;
+        case UITouchPhaseEnded:      return SPTouchPhaseEnded;
+        case UITouchPhaseMoved:      return SPTouchPhaseMoved;
+        case UITouchPhaseStationary: return SPTouchPhaseStationary;
     }
 }
 

@@ -9,7 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPDisplayObject.h>
+#import <Sparrow/SPDisplayObjectContainer.h>
 #import <Sparrow/SPPoint.h>
 #import <Sparrow/SPMatrix.h>
 #import <Sparrow/SPTouch.h>
@@ -30,15 +30,33 @@
 
 #pragma mark Initialization
 
+- (instancetype)initWithID:(size_t)touchID
+{
+    if (self = [super init])
+        _touchID = touchID;
+
+    return self;
+}
+
 - (instancetype)init
 {
-    return [super init];
+    return [self initWithID:0];
 }
 
 - (void)dealloc
 {
     [_target release];
     [super dealloc];
+}
+
++ (instancetype)touchWithID:(size_t)touchID
+{
+    return [[[self alloc] initWithID:touchID] autorelease];
+}
+
++ (instancetype)touch
+{
+    return [[[self alloc] init] autorelease];
 }
 
 #pragma mark Methods
@@ -63,11 +81,29 @@
     return [curLoc subtractPoint:preLoc];
 }
 
+- (BOOL)isTouchingTarget:(SPDisplayObject *)target
+{
+    return target == _target || ([target isKindOfClass:[SPDisplayObjectContainer class]] &&
+                                 [(SPDisplayObjectContainer *)target containsChild:_target]);
+}
+
 #pragma mark NSObject
 
 - (NSUInteger)hash
 {
     return _touchID;
+}
+
+- (BOOL)isEqualTo:(id)object
+{
+    if (!object)
+        return NO;
+    else if (object == self)
+        return YES;
+    else if ([object isKindOfClass:[SPTouch class]])
+        return [object touchID] == _touchID;
+
+    return NO;
 }
 
 - (NSString *)description
@@ -76,65 +112,20 @@
             _globalX, _globalY, _phase, _tapCount];
 }
 
-@end
+#pragma mark NSCopying
 
-// -------------------------------------------------------------------------------------------------
-
-@implementation SPTouch (Internal)
-
-- (void)setTimestamp:(double)timestamp
+- (id)copyWithZone:(NSZone *)zone
 {
-    _timestamp = timestamp;
-}
-
-- (void)setGlobalX:(float)x
-{
-    _globalX = x;
-}
-
-- (void)setGlobalY:(float)y
-{
-    _globalY = y;
-}
-
-- (void)setPreviousGlobalX:(float)x
-{
-    _previousGlobalX = x;
-}
-
-- (void)setPreviousGlobalY:(float)y
-{
-    _previousGlobalY = y;
-}
-
-- (void)setTapCount:(int)tapCount
-{
-    _tapCount = tapCount;
-}
-
-- (void)setPhase:(SPTouchPhase)phase
-{
-    _phase = phase;
-}
-
-- (void)setTarget:(SPDisplayObject *)target
-{
-    SP_RELEASE_AND_RETAIN(_target, target);
-}
-
-+ (SPTouch *)touch
-{
-    return [[[SPTouch alloc] init] autorelease];
-}
-
-- (void)setTouchID:(size_t)touchID
-{
-    _touchID = touchID;
-}
-
-- (size_t)touchID
-{
-    return _touchID;
+    SPTouch *clone = [[SPTouch alloc] initWithID:_touchID];
+    clone->_globalX = _globalX;
+    clone->_globalY = _globalY;
+    clone->_previousGlobalX = _previousGlobalX;
+    clone->_previousGlobalY = _previousGlobalY;
+    clone->_phase = _phase;
+    clone->_tapCount = _tapCount;
+    clone->_timestamp = _timestamp;
+    clone->_target = [_target retain];
+    return clone;
 }
 
 @end

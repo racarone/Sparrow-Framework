@@ -16,12 +16,13 @@
 
 /// SPTouchPhase describes the phases in the life-cycle of a touch.
 typedef NS_ENUM(int, SPTouchPhase)
-{    
+{
+    SPTouchPhaseHover,      /// The cursor hovers over an object without a pressed button (Only available for mouse input)
     SPTouchPhaseBegan,      /// The finger just touched the screen.
-    SPTouchPhaseMoved,      /// The finger moves around.    
-    SPTouchPhaseStationary, /// The finger has not moved since the last frame.    
-    SPTouchPhaseEnded,      /// The finger was lifted from the screen.    
-    SPTouchPhaseCancelled   /// The touch was aborted by the system (e.g. because of an AlertBox popping up)
+    SPTouchPhaseMoved,      /// The finger moves around.
+    SPTouchPhaseStationary, /// The finger has not moved since the last frame.
+    SPTouchPhaseEnded,      /// The finger was lifted from the screen.
+    SPTouchPhaseCancelled,  /// The touch was aborted by the system (e.g. because of an AlertBox popping up)
 };
 
 /** ------------------------------------------------------------------------------------------------
@@ -53,7 +54,20 @@ typedef NS_ENUM(int, SPTouchPhase)
  
 ------------------------------------------------------------------------------------------------- */
 
-@interface SPTouch : NSObject
+@interface SPTouch : NSObject <NSCopying>
+
+/// --------------------
+/// @name Initialization
+/// --------------------
+
+/// Initializes a new touch object with the specified id. _Designated Initializer_.
+- (instancetype)initWithID:(size_t)touchID;
+
+/// Factory method.
++ (instancetype)touchWithID:(size_t)touchID;
+
+/// Factory method.
++ (instancetype)touch;
 
 /// -------------
 /// @name Methods
@@ -68,9 +82,15 @@ typedef NS_ENUM(int, SPTouchPhase)
 /// Returns the movement of the touch between the current and previous location.
 - (SPPoint *)movementInSpace:(SPDisplayObject *)space;
 
+/// Indicates if the target or one of its children is touched.
+- (BOOL)isTouchingTarget:(SPDisplayObject *)target;
+
 /// ----------------
 /// @name Properties
 /// ----------------
+
+/// The identifier of a touch. '0' for mouse events, an increasing number for touches.
+@property (nonatomic, readonly) size_t touchID;
 
 /// The moment the event occurred (in seconds since application start).
 @property (nonatomic, readonly) double timestamp;
