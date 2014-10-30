@@ -11,7 +11,7 @@ class Game : SPSprite {
     
     var _contents: SPSprite!
 
-    init() {
+    override init() {
         super.init()
         setup()
     }
@@ -67,13 +67,13 @@ class Game : SPSprite {
         image.addEventListener("onImageTouched:", atObject: self, forType: SPEventTypeTouch)
         
         // and animate it a little
-        let tween = SPTween.tweenWithTarget(image, time: 1.5, transition: SPTransitionEaseInOut)
-        tween.animateProperty("y", targetValue: image.y + 30)
-        tween.animateProperty("rotation", targetValue: 0.1)
-        tween.repeatCount = 0 // repeat indefinitely
-        tween.reverse = true
-        Sparrow.juggler().addObject(tween)
-        
+        Sparrow.juggler().tweenWithTarget(image, time: 1.5, properties: [
+                "transition"  : SPTransitionEaseInOut,
+                "repeatCount" : 1,
+                "reverse"     : true,
+                "y"           : image.y + 30,
+                "rotation"    : 0.1
+            ]);
         
         // The controller autorotates the game to all supported device orientations.
         // Choose the orienations you want to support in the Xcode Target Settings ("Summary"-tab).
@@ -104,9 +104,9 @@ class Game : SPSprite {
         _contents.y = Float(Int((gameHeight - _contents.height) / 2))
     }
     
-    func onImageTouched(event:SPTouchEvent) {
+    func onImageTouched(event: SPTouchEvent) {
         let touches = event.touchesWithTarget(self, andPhase: SPTouchPhase.Ended)
-        if touches.anyObject() {
+        if touches.anyObject() != nil {
             Media.playSound("sound.caf")
         }
     }

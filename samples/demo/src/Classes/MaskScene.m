@@ -58,7 +58,7 @@
         scissorRect.y = (stageHeight - scissorRect.height) / 2 + 5;
         [_contents setClipRect:scissorRect];
 
-        _clipQuad = [SPQuad quadWithWidth:scissorRect.width height:scissorRect.height color:SP_RED];
+        _clipQuad = [SPQuad quadWithWidth:scissorRect.width height:scissorRect.height color:SPColorRed];
         _clipQuad.x = scissorRect.x;
         _clipQuad.y = scissorRect.y;
         _clipQuad.alpha = 0.1f;

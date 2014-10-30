@@ -44,8 +44,12 @@ SP_EXTERN const char* sglGetErrorString(uint error);
 /// Extension remappings
 
 #if SP_TARGET_IOS
+  #ifndef GL_DEPTH24_STENCIL8
     #define GL_DEPTH24_STENCIL8         GL_DEPTH24_STENCIL8_OES
+  #endif
+  #ifndef GL_VERTEX_ARRAY_BINDING
     #define GL_VERTEX_ARRAY_BINDING     GL_VERTEX_ARRAY_BINDING_OES
+  #endif
     #define glBindVertexArray           glBindVertexArrayOES
     #define glGenVertexArrays           glGenVertexArraysOES
     #define glDeleteVertexArrays        glDeleteVertexArraysOES
