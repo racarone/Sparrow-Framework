@@ -466,14 +466,11 @@
 
 - (SPTexture *)texureWithWidth:(int)width height:(int)height scale:(float)scale
 {
-    int legalWidth  = [SPUtils nextPowerOfTwo:width  * scale];
-    int legalHeight = [SPUtils nextPowerOfTwo:height * scale];
-
     SPTextureProperties properties = {
         .format = SPTextureFormatRGBA,
         .scale  = scale,
-        .width  = legalWidth,
-        .height = legalHeight,
+        .width  = width  * scale,
+        .height = height * scale,
         .numMipmaps = 0,
         .generateMipmaps = NO,
         .premultipliedAlpha = YES

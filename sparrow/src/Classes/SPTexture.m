@@ -129,9 +129,19 @@ static SPTextureCache *textureCache = nil;
 {
     [self release]; // class factory - we'll return a subclass!
 
-    // only textures with sidelengths that are powers of 2 support all OpenGL ES features.
-    int legalWidth  = [SPUtils nextPowerOfTwo:width  * scale];
-    int legalHeight = [SPUtils nextPowerOfTwo:height * scale];
+    int legalWidth;
+    int legalHeight;
+    if (mipmaps)
+    {
+        // only textures with sidelengths that are powers of 2 support all OpenGL ES features.
+        legalWidth  = [SPUtils nextPowerOfTwo:width  * scale];
+        legalHeight = [SPUtils nextPowerOfTwo:height * scale];
+    }
+    else
+    {
+        legalWidth  = width  * scale;
+        legalHeight = height * scale;
+    }
     
     CGColorSpaceRef cgColorSpace = CGColorSpaceCreateDeviceRGB();
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaPremultipliedLast;
