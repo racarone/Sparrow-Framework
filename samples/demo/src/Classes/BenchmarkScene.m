@@ -61,7 +61,7 @@
     
     if (_frameCount % _waitFrames == 0)
     {
-        float targetFPS = Sparrow.currentController.framesPerSecond;
+        float targetFPS = Sparrow.currentController.targetFramesPerSecond;
         float realFPS = _waitFrames / _elapsed;
         
         if (ceilf(realFPS) >= targetFPS)
@@ -110,7 +110,7 @@
     _started = NO;
     _startButton.visible = YES;
     
-    int frameRate = (int)Sparrow.currentController.framesPerSecond;
+    int frameRate = (int)Sparrow.currentController.targetFramesPerSecond;
     
     NSLog(@"benchmark complete!");
     NSLog(@"fps: %d", frameRate);

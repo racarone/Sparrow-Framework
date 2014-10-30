@@ -43,6 +43,11 @@
 /// @name Methods
 /// -------------
 
+/// Sets the viewport dimensions and other attributes of the rendering buffer.
+- (void)configureBackBufferForView:(SPView *)view antiAlias:(int)antiAlias
+             enableDepthAndStencil:(BOOL)enableDepthAndStencil
+               wantsBestResolution:(BOOL)wantsBestResolution;
+
 /// Sets the back rendering buffer as the render target.
 - (void)renderToBackBuffer;
 
@@ -85,5 +90,13 @@
 
 /// The specified texture as the rendering target or nil if rendering to the default framebuffer.
 @property (nonatomic, retain) SPTexture *renderTarget;
+
+/// Specifies the width of the back buffer, which can be changed by a successful call to the
+/// 'configureBackBuffer:' method.
+@property (nonatomic, readonly) int backBufferWidth;
+
+/// Specifies the height of the back buffer, which can be changed by a successful call to the
+/// 'configureBackBuffer:' method.
+@property (nonatomic, readonly) int backBufferHeight;
 
 @end

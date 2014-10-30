@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		872CCA221A02C42200CC4861 /* SPDisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 872CCA1E1A02C42200CC4861 /* SPDisplayLink.h */; };
+		872CCA231A02C42200CC4861 /* SPDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 872CCA1F1A02C42200CC4861 /* SPDisplayLink.m */; };
+		872CCA261A02C53B00CC4861 /* SPView.h in Headers */ = {isa = PBXBuildFile; fileRef = 872CCA241A02C53B00CC4861 /* SPView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		872CCA271A02C53B00CC4861 /* SPView.m in Sources */ = {isa = PBXBuildFile; fileRef = 872CCA251A02C53B00CC4861 /* SPView.m */; };
 		872F5C3D1880C9E30016071B /* SPFragmentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 872F5C3B1880C9E30016071B /* SPFragmentFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		872F5C3E1880C9E30016071B /* SPFragmentFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 872F5C3C1880C9E30016071B /* SPFragmentFilter.m */; };
 		872F5C471880E2B50016071B /* SPBlurFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 872F5C451880E2B50016071B /* SPBlurFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -197,6 +201,10 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		28FD14FF0DC6FC520079059D /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		28FD15070DC6FC5B0079059D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		872CCA1E1A02C42200CC4861 /* SPDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPDisplayLink.h; sourceTree = "<group>"; };
+		872CCA1F1A02C42200CC4861 /* SPDisplayLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPDisplayLink.m; sourceTree = "<group>"; };
+		872CCA241A02C53B00CC4861 /* SPView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPView.h; sourceTree = "<group>"; };
+		872CCA251A02C53B00CC4861 /* SPView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPView.m; sourceTree = "<group>"; };
 		872F5C3B1880C9E30016071B /* SPFragmentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPFragmentFilter.h; sourceTree = "<group>"; };
 		872F5C3C1880C9E30016071B /* SPFragmentFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPFragmentFilter.m; sourceTree = "<group>"; };
 		872F5C451880E2B50016071B /* SPBlurFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPBlurFilter.h; sourceTree = "<group>"; };
@@ -526,6 +534,8 @@
 			children = (
 				DEB057851801D20800A8F726 /* SparrowClass_Internal.h */,
 				872F5C67188241460016071B /* SPContext_Internal.h */,
+				872CCA1E1A02C42200CC4861 /* SPDisplayLink.h */,
+				872CCA1F1A02C42200CC4861 /* SPDisplayLink.m */,
 				DE0BA5D61703513D00637533 /* SPStatsDisplay.h */,
 				DE0BA5D71703513D00637533 /* SPStatsDisplay.m */,
 			);
@@ -655,6 +665,8 @@
 				872F5C64188236D80016071B /* SPContext.m */,
 				DEAAF3D916BC0E46004EB9D5 /* SPOverlayView.h */,
 				DEAAF3DA16BC0E46004EB9D5 /* SPOverlayView.m */,
+				872CCA241A02C53B00CC4861 /* SPView.h */,
+				872CCA251A02C53B00CC4861 /* SPView.m */,
 				DE8E6A8016B430C4007EE8BA /* SPViewController.h */,
 				DE8E6A8116B430C4007EE8BA /* SPViewController.m */,
 			);
@@ -778,6 +790,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				872CCA261A02C53B00CC4861 /* SPView.h in Headers */,
 				DE611373134F8F6C00AB742E /* SPALSound.h in Headers */,
 				DE611374134F8F6C00AB742E /* SPALSoundChannel.h in Headers */,
 				DE611391134F8FBD00AB742E /* SPAnimatable.h in Headers */,
@@ -788,6 +801,7 @@
 				DE611372134F8F6C00AB742E /* SPAVSoundChannel.h in Headers */,
 				DE82240C16EF468E00A172EE /* SPBaseEffect.h in Headers */,
 				DE611382134F8F8300AB742E /* SPBitmapChar.h in Headers */,
+				872CCA221A02C42200CC4861 /* SPDisplayLink.h in Headers */,
 				DE611381134F8F8300AB742E /* SPBitmapFont.h in Headers */,
 				DE574D5F1705B83D008B03D7 /* SPBlendMode.h in Headers */,
 				872F5C471880E2B50016071B /* SPBlurFilter.h in Headers */,
@@ -1028,6 +1042,7 @@
 				DEFE4BE0101B31DF00E22471 /* SPSubTexture.m in Sources */,
 				DEFE4BE1101B31DF00E22471 /* SPButton.m in Sources */,
 				DEFE4BD2101B31DF00E22471 /* SPEvent.m in Sources */,
+				872CCA271A02C53B00CC4861 /* SPView.m in Sources */,
 				DEFE4BD3101B31DF00E22471 /* SPEventDispatcher.m in Sources */,
 				DEFE4BD4101B31DF00E22471 /* SPTouch.m in Sources */,
 				872F5C481880E2B50016071B /* SPBlurFilter.m in Sources */,
@@ -1070,6 +1085,7 @@
 				DED29C0816DFB48E000C2BD7 /* SPEventListener.m in Sources */,
 				87C7DCC3180480A7005E8CFB /* SPOpenGL.m in Sources */,
 				DEC87D0816E0CDD80050EA95 /* SPQuadBatch.m in Sources */,
+				872CCA231A02C42200CC4861 /* SPDisplayLink.m in Sources */,
 				DE82240D16EF468E00A172EE /* SPBaseEffect.m in Sources */,
 				DE97B93116F1EA5E00DC1077 /* SPProgram.m in Sources */,
 				DE0BA5D91703513D00637533 /* SPStatsDisplay.m in Sources */,

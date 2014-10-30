@@ -10,15 +10,18 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <GLKit/GLKit.h>
+#import <Sparrow/SPMacros.h>
+#import <Sparrow/SPView.h>
 
 @class SPContext;
 @class SPDisplayObject;
 @class SPJuggler;
 @class SPProgram;
 @class SPStage;
+@class SPTouchProcessor;
 
-typedef void (^SPRootCreatedBlock)(id root);
+SP_EXTERN NSString *const SPNotificationContextCreated;
+SP_EXTERN NSString *const SPNotificationRootCreated;
 
 /** ------------------------------------------------------------------------------------------------
  
@@ -80,7 +83,7 @@ typedef void (^SPRootCreatedBlock)(id root);
  
 ------------------------------------------------------------------------------------------------- */
 
-@interface SPViewController : GLKViewController
+@interface SPViewController : UIViewController
 
 /// -------------
 /// @name Startup
@@ -98,6 +101,23 @@ typedef void (^SPRootCreatedBlock)(id root);
 /// you can double the size of iPad content, which will give you a stage size of `384x512`. That
 /// simplifies the creation of universal apps (see class documentation).
 - (void)startWithRoot:(Class)rootClass supportHighResolutions:(BOOL)hd doubleOnPad:(BOOL)doubleOnPad;
+
+/// -------------
+/// @name Methods
+/// -------------
+
+/// Make this Sparrow instance the current one.
+- (void)makeCurrent;
+
+/// Calls 'advanceTime:' (with the time that has passed since the last frame) and render.
+- (void)nextFrame;
+
+/// Dispatches enter frame events on the display list, advances the guggler and processes touches.
+- (void)advanceTime:(double)passedTime;
+
+/// Renders the complete display list. Before rendering, the context is cleared; afterwards,
+/// it is presented.
+- (void)render;
 
 /// ------------------------
 /// @name Program Management
@@ -129,7 +149,27 @@ typedef void (^SPRootCreatedBlock)(id root);
 /// ----------------
 
 /// The GLKView instance used as the root view for Sparrow.
-@property (nonatomic, strong) GLKView *view;
+@property (nonatomic, strong) SPView *view;
+
+/// Determines if Sparrow is currently processing logic and input.
+@property (nonatomic, assign) BOOL paused;
+
+/// Determines if Sparrow is currently rendering frames or not.
+@property (nonatomic, assign) BOOL rendering;
+
+/// Indicates if a small statistics box (with FPS and draw count) is displayed.
+@property (nonatomic, assign) BOOL showStats;
+
+/// Indicates if retina display support is enabled.
+@property (nonatomic, assign) BOOL supportHighResolutions;
+
+/// For setting the desired frames per second at which the update and drawing will take place.
+@property (nonatomic, assign) int targetFramesPerSecond;
+
+/// The touch processor is passed all mouse and touch input and is responsible for
+/// dispatching SPTouchEvents to the Sparrow display tree. If you want to handle these
+/// types of input manually, pass your own custom subclass to this property.
+@property (nonatomic, strong) SPTouchProcessor *touchProcessor;
 
 /// The instance of the root class provided in `start:`method.
 @property (nonatomic, readonly) SPDisplayObject *root;
@@ -143,22 +183,10 @@ typedef void (^SPRootCreatedBlock)(id root);
 /// The OpenGL context used for rendering.
 @property (nonatomic, readonly) SPContext *context;
 
-/// Indicates if multitouch input is enabled.
-@property (nonatomic, assign) BOOL multitouchEnabled;
-
-/// Indicates if a small statistics box (with FPS and draw count) is displayed.
-@property (nonatomic, assign) BOOL showStats;
-
-/// Indicates if retina display support is enabled.
-@property (nonatomic, readonly) BOOL supportHighResolutions;
-
 /// Indicates if display list contents will doubled on iPad devices (see class documentation).
 @property (nonatomic, readonly) BOOL doubleOnPad;
 
 /// The current content scale factor, i.e. the ratio between display resolution and stage size.
 @property (nonatomic, readonly) float contentScaleFactor;
-
-/// A callback block that will be executed when the root object has been created.
-@property (nonatomic, copy) SPRootCreatedBlock onRootCreated;
 
 @end
