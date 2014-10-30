@@ -27,6 +27,28 @@ typedef void (^SPCallbackBlock)();
     #define SP_EXTERN               extern __attribute__((visibility ("default")))
 #endif
 
+#if TARGET_OS_IPHONE
+    #define SP_TARGET_IOS 1
+    #define SP_TARGET_OSX 0
+#else
+    #define SP_TARGET_IOS 0
+    #define SP_TARGET_OSX 1
+#endif
+
+#if SP_TARGET_IOS
+    #define SP_EXECUTE_ON_IOS(_code_) do { _code_; } while (0)
+    #define SP_EXECUTE_ON_OSX(_code_) do {} while (0)
+#else
+    #define SP_EXECUTE_ON_IOS(_code_) do {} while (0)
+    #define SP_EXECUTE_ON_OSX(_code_) do { _code_; } while (0)
+#endif
+
+#if SP_TARGET_IOS
+    #define SP_NONATOMIC_IOS nonatomic
+#else
+    #define SP_NONATOMIC_IOS atomic
+#endif
+
 // constants
 
 #define PI                          3.14159265359f

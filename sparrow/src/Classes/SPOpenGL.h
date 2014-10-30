@@ -42,10 +42,9 @@ SP_EXTERN void sglStateCacheSetCurrent(sglStateCacheRef cache);
 SP_EXTERN const char* sglGetErrorString(uint error);
 
 /// Extension remappings
-#define GL_DEPTH24_STENCIL8             GL_DEPTH24_STENCIL8_OES
 
-#if GL_OES_vertex_array_object
-    #undef GL_VERTEX_ARRAY_BINDING
+#if SP_TARGET_IOS
+    #define GL_DEPTH24_STENCIL8         GL_DEPTH24_STENCIL8_OES
     #define GL_VERTEX_ARRAY_BINDING     GL_VERTEX_ARRAY_BINDING_OES
     #define glBindVertexArray           glBindVertexArrayOES
     #define glGenVertexArrays           glGenVertexArraysOES
