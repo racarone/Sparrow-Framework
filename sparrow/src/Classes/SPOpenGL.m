@@ -92,7 +92,7 @@ typedef struct _sglStateCache
     int  scissor[4];
 } sglStateCache;
 
-static sglStateCache invalidStateCache = { INVALID_STATE };
+static const sglStateCache invalidStateCache = { INVALID_STATE };
 static pthread_key_t cacheKey;
 
 __attribute__((constructor))
@@ -101,9 +101,21 @@ SP_INLINE void makeCacheKey()
     pthread_key_create(&cacheKey, NULL);
 }
 
+__attribute__((destructor))
+SP_INLINE void destroyCacheKey()
+{
+    pthread_key_delete(cacheKey);
+    cacheKey = 0;
+}
+
 SP_INLINE sglStateCache* getCurrentStateCache()
 {
     return pthread_getspecific(cacheKey);
+}
+
+SP_INLINE void setCurrentStateCache(sglStateCache* cache)
+{
+    pthread_setspecific(cacheKey, cache);
 }
 
 /** --------------------------------------------------------------------------------------------- */
@@ -210,7 +222,7 @@ void sglStateCacheSetCurrent(sglStateCacheRef cache)
 
     // use a temporary invalid state cache to force any changes in states
     sglStateCache tempInvalidCache = invalidStateCache;
-    pthread_setspecific(cacheKey, &tempInvalidCache);
+    setCurrentStateCache(&tempInvalidCache);
 
     if (cache->framebuffer != INVALID_STATE)
         sglBindFramebuffer(GL_FRAMEBUFFER, cache->framebuffer);
@@ -271,7 +283,7 @@ void sglStateCacheSetCurrent(sglStateCacheRef cache)
             sglDisable(getCapabilityForIndex(i));
     }
 
-    pthread_setspecific(cacheKey, cache);
+    setCurrentStateCache(cache);
 }
 
 /** --------------------------------------------------------------------------------------------- */
