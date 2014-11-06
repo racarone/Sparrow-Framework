@@ -15,6 +15,7 @@
 @class SPImage;
 @class SPQuad;
 @class SPTexture;
+@class SPVertexData;
 
 /** ------------------------------------------------------------------------------------------------
  
@@ -40,6 +41,9 @@
  
 ------------------------------------------------------------------------------------------------- */
 @interface SPQuadBatch : SPDisplayObject
+{
+    SPVertexData *_vertexData;
+}
 
 /// --------------------
 /// @name Initialization
@@ -102,11 +106,59 @@
 - (BOOL)isStateChangeWithTinted:(BOOL)tinted texture:(SPTexture *)texture alpha:(float)alpha
              premultipliedAlpha:(BOOL)pma blendMode:(uint)blendMode numQuads:(int)numQuads;
 
+/// ---------------------
+/// @name Utility Methods
+/// ---------------------
+
+/// Call this method after manually changing the contents of '_vertexData'.
+- (void)vertexDataDidChange;
+
+/// Transforms the vertices of a certain quad by the given matrix.
+- (void)transformQuadAtIndex:(int)quadID matrix:(SPMatrix *)matrix;
+
+/// Returns the color of one vertex of a specific quad.
+- (uint)vertexColorOfQuad:(int)quadID atIndex:(int)vertexID;
+
+/// Updates the color of one vertex of a specific quad.
+- (void)setVertexColor:(uint)color ofQuad:(int)quadID atIndex:(int)vertexID;
+
+/// Returns the alpha value of one vertex of a specific quad.
+- (float)vertexAlphaOfQuad:(int)quadID atIndex:(int)vertexID;
+
+/// Updates the alpha value of one vertex of a specific quad.
+- (void)setVertexAlpha:(float)alpha ofQuad:(int)quadID atIndex:(int)vertexID;
+
+/// Returns the color of the first vertex of a specific quad.
+- (uint)vertexColorOfQuad:(int)quadID;
+
+/// Updates the color of a specific quad.
+- (void)setVertexColor:(uint)color ofQuad:(int)quadID;
+
+/// Returns the alpha value of the first vertex of a specific quad.
+- (float)vertexAlphaOfQuad:(int)quadID;
+
+/// Updates the alpha value of a specific quad.
+- (void)setVertexAlpha:(float)alpha ofQuad:(int)quadID;
+
+/// Calculates the bounds of a specific quad.
+- (SPRectangle *)boundsOfQuad:(int)quadID;
+
+/// Calculates the bounds of a specific quad transformed by a matrix.
+- (SPRectangle *)boundsOfQuad:(int)quadID afterTransformation:(SPMatrix *)matrix;
+
+/// ----------------------
+/// @name Custom Rendering
+/// ----------------------
+
 /// Renders the batch with custom alpha and blend mode values, as well as a custom mvp matrix.
 - (void)renderWithMvpMatrix:(SPMatrix *)matrix alpha:(float)alpha blendMode:(uint)blendMode;
 
 /// Renders the batch with a custom mvp matrix.
 - (void)renderWithMvpMatrix:(SPMatrix *)matrix;
+
+/// -----------------
+/// @name Compilation
+/// -----------------
 
 /// Analyses an object that is made up exclusively of quads (or other containers) and creates an
 /// array of `SPQuadBatch` objects representing it. This can be used to render the container very
@@ -132,5 +184,11 @@
 
 /// Indicates if the rgb values are stored premultiplied with the alpha value.
 @property (nonatomic, readonly) BOOL premultipliedAlpha;
+
+/// Indicates the number of quads for which space is allocated (vertex- and index-buffers).
+/// If you add more quads than what fits into the current capacity, the QuadBatch is
+/// expanded automatically. However, if you know beforehand how many vertices you need,
+/// you can manually set the right capacity with this method.
+@property (nonatomic, assign) int capacity;
 
 @end

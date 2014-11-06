@@ -33,7 +33,6 @@
     BOOL _tinted;
     
     SPBaseEffect *_baseEffect;
-    SPVertexData *_vertexData;
     uint _vertexBufferName;
     ushort *_indexData;
     uint _indexBufferName;
@@ -207,6 +206,79 @@
     }
 }
 
+#pragma mark Utility Methods
+
+- (void)vertexDataDidChange
+{
+    _syncRequired = YES;
+}
+
+- (void)transformQuadAtIndex:(int)quadID matrix:(SPMatrix *)matrix
+{
+    [_vertexData transformVerticesWithMatrix:matrix atIndex:quadID * 4 numVertices:4];
+    _syncRequired = YES;
+}
+
+- (uint)vertexColorOfQuad:(int)quadID atIndex:(int)vertexID
+{
+    return [_vertexData colorAtIndex:quadID * 4 + vertexID];
+}
+
+- (void)setVertexColor:(uint)color ofQuad:(int)quadID atIndex:(int)vertexID
+{
+    [_vertexData setColor:color atIndex:quadID * 4 + vertexID];
+    _syncRequired = YES;
+}
+
+- (float)vertexAlphaOfQuad:(int)quadID atIndex:(int)vertexID
+{
+    return [_vertexData alphaAtIndex:quadID * 4 + vertexID];
+}
+
+- (void)setVertexAlpha:(float)alpha ofQuad:(int)quadID atIndex:(int)vertexID
+{
+    [_vertexData setAlpha:alpha atIndex:quadID * 4 + vertexID];
+    _syncRequired = YES;
+}
+
+- (uint)vertexColorOfQuad:(int)quadID
+{
+    return [_vertexData colorAtIndex:quadID * 4];
+}
+
+- (void)setVertexColor:(uint)color ofQuad:(int)quadID
+{
+    for (int i=0; i<4; ++i)
+        [_vertexData setColor:color atIndex:quadID * 4 + i];
+
+    _syncRequired = YES;
+}
+
+- (float)vertexAlphaOfQuad:(int)quadID
+{
+    return [_vertexData alphaAtIndex:quadID * 4];
+}
+
+- (void)setVertexAlpha:(float)alpha ofQuad:(int)quadID
+{
+    for (int i=0; i<4; ++i)
+        [_vertexData setAlpha:alpha atIndex:quadID * 4 + i];
+
+    _syncRequired = YES;
+}
+
+- (SPRectangle *)boundsOfQuad:(int)quadID
+{
+    return [self boundsOfQuad:quadID afterTransformation:nil];
+}
+
+- (SPRectangle *)boundsOfQuad:(int)quadID afterTransformation:(SPMatrix *)matrix
+{
+    return [_vertexData boundsAfterTransformation:matrix atIndex:quadID * 4 numVertices:4];
+}
+
+#pragma mark Custom Rendering
+
 - (void)renderWithMvpMatrix:(SPMatrix *)matrix
 {
     [self renderWithMvpMatrix:matrix alpha:1.0f blendMode:self.blendMode];
@@ -365,6 +437,40 @@
     return quadBatchID;
 }
 
+#pragma mark Properties
+
+- (int)capacity
+{
+    return _vertexData.numVertices / 4;
+}
+
+- (void)setCapacity:(int)newCapacity
+{
+    NSAssert(newCapacity > 0, @"capacity must not be zero");
+
+    int oldCapacity = self.capacity;
+    int numVertices = newCapacity * 4;
+    int numIndices  = newCapacity * 6;
+
+    _vertexData.numVertices = numVertices;
+
+    if (!_indexData) _indexData = malloc(sizeof(ushort) * numIndices);
+    else             _indexData = realloc(_indexData, sizeof(ushort) * numIndices);
+
+    for (int i=oldCapacity; i<newCapacity; ++i)
+    {
+        _indexData[i*6  ] = i*4;
+        _indexData[i*6+1] = i*4 + 1;
+        _indexData[i*6+2] = i*4 + 2;
+        _indexData[i*6+3] = i*4 + 1;
+        _indexData[i*6+4] = i*4 + 3;
+        _indexData[i*6+5] = i*4 + 2;
+    }
+
+    [self destroyBuffers];
+    _syncRequired = YES;
+}
+
 #pragma mark Private
 
 - (void)expand
@@ -421,38 +527,6 @@
                  _vertexData.vertices, GL_STATIC_DRAW);
 
     _syncRequired = NO;
-}
-
-- (int)capacity
-{
-    return _vertexData.numVertices / 4;
-}
-
-- (void)setCapacity:(int)newCapacity
-{
-    NSAssert(newCapacity > 0, @"capacity must not be zero");
-
-    int oldCapacity = self.capacity;
-    int numVertices = newCapacity * 4;
-    int numIndices  = newCapacity * 6;
-
-    _vertexData.numVertices = numVertices;
-
-    if (!_indexData) _indexData = malloc(sizeof(ushort) * numIndices);
-    else             _indexData = realloc(_indexData, sizeof(ushort) * numIndices);
-
-    for (int i=oldCapacity; i<newCapacity; ++i)
-    {
-        _indexData[i*6  ] = i*4;
-        _indexData[i*6+1] = i*4 + 1;
-        _indexData[i*6+2] = i*4 + 2;
-        _indexData[i*6+3] = i*4 + 1;
-        _indexData[i*6+4] = i*4 + 3;
-        _indexData[i*6+5] = i*4 + 2;
-    }
-
-    [self destroyBuffers];
-    _syncRequired = YES;
 }
 
 @end
