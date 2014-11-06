@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <Sparrow/SPDisplayObject.h>
 
+@class SPEffect;
 @class SPImage;
 @class SPQuad;
 @class SPTexture;
@@ -101,10 +102,11 @@
               matrix:(SPMatrix *)matrix;
 
 /// Indicates if specific quads can be added to the batch without causing a state change.
-/// A state change occurs if the quad uses a different base texture, has a different `smoothing`,
-/// `repeat` or 'tinted' setting, or if the batch is full (one batch can contain up to 8192 quads).
-- (BOOL)isStateChangeWithTinted:(BOOL)tinted texture:(SPTexture *)texture alpha:(float)alpha
-             premultipliedAlpha:(BOOL)pma blendMode:(uint)blendMode numQuads:(int)numQuads;
+/// A state change occurs if the quad uses a different effect, base texture, or 'tinted' setting,
+/// or if the batch is full (one batch can contain up to 16383 quads).
+- (BOOL)isStateChangeWithEffect:(SPEffect *)effect texture:(SPTexture *)texture tinted:(BOOL)tinted
+                          alpha:(float)alpha premultipliedAlpha:(BOOL)pma blendMode:(uint)blendMode
+                       numQuads:(int)numQuads;
 
 /// ---------------------
 /// @name Utility Methods
@@ -184,6 +186,10 @@
 
 /// Indicates if the rgb values are stored premultiplied with the alpha value.
 @property (nonatomic, readonly) BOOL premultipliedAlpha;
+
+/// The current effect of the batch, if there is one. Set this manually if you want a custom effect
+/// for the entire batch.
+@property (nonatomic, strong) SPEffect *effect;
 
 /// Indicates the number of quads for which space is allocated (vertex- and index-buffers).
 /// If you add more quads than what fits into the current capacity, the QuadBatch is

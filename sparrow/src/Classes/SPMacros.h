@@ -147,24 +147,43 @@ SP_EXTERN NSString *const SPExceptionOperationFailed;
 
 // macros
 
-#define SP_R2D(rad)                 ((rad) / PI * 180.0f)
-#define SP_D2R(deg)                 ((deg) / 180.0f * PI)
+#define SP_R2D(rad)                         ((rad) / PI * 180.0f)
+#define SP_D2R(deg)                         ((deg) / 180.0f * PI)
 
-#define SP_COLOR_PART_ALPHA(color)  (((color) >> 24) & 0xff)
-#define SP_COLOR_PART_RED(color)    (((color) >> 16) & 0xff)
-#define SP_COLOR_PART_GREEN(color)  (((color) >>  8) & 0xff)
-#define SP_COLOR_PART_BLUE(color)   ( (color)        & 0xff)
+#define SP_COLOR_PART_ALPHA(color)          (((color) >> 24) & 0xff)
+#define SP_COLOR_PART_RED(color)            (((color) >> 16) & 0xff)
+#define SP_COLOR_PART_GREEN(color)          (((color) >>  8) & 0xff)
+#define SP_COLOR_PART_BLUE(color)           ( (color)        & 0xff)
 
-#define SP_COLOR(r, g, b)			(((int)(r) << 16) | ((int)(g) << 8) | (int)(b))
-#define SP_COLOR_ARGB(a, r, g, b)   (((int)(a) << 24) | ((int)(r) << 16) | ((int)(g) << 8) | (int)(b))
+#define SP_COLOR_FLOAT_PART_ALPHA(color)    (SP_COLOR_PART_ALPHA(color) / 255.0f)
+#define SP_COLOR_FLOAT_PART_RED(color)      (SP_COLOR_PART_RED(color)   / 255.0f)
+#define SP_COLOR_FLOAT_PART_GREEN(color)    (SP_COLOR_PART_GREEN(color) / 255.0f)
+#define SP_COLOR_FLOAT_PART_BLUE(color)     (SP_COLOR_PART_BLUE(color)  / 255.0f)
 
-#define SP_IS_FLOAT_EQUAL(f1, f2)   (fabsf((f1)-(f2)) < SP_FLOAT_EPSILON)
+#define SP_COLOR(r, g, b)                   (((int)(r) << 16) | ((int)(g) << 8) | (int)(b))
+#define SP_COLOR_ARGB(a, r, g, b)           (((int)(a) << 24) | ((int)(r) << 16) | ((int)(g) << 8) | (int)(b))
 
-#define SP_CLAMP(value, min, max)   MIN((max), MAX((value), (min)))
+#define SP_COLOR_FLOAT(r, g, b)             (((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255))
+#define SP_COLOR_FLOAT_ARGB(a, r, g, b)     (((int)(a * 255) << 24) | ((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255))
 
-#define SP_SWAP(x, y, T)            do { T temp##x##y = x; x = y; y = temp##x##y; } while (0)
+#define SP_COLOR_MULTIPLY(color1, color2) \
+    SP_COLOR_FLOAT( \
+        SP_COLOR_FLOAT_PART_RED(color1)   * SP_COLOR_FLOAT_PART_RED(color2), \
+        SP_COLOR_FLOAT_PART_GREEN(color1) * SP_COLOR_FLOAT_PART_GREEN(color2), \
+        SP_COLOR_FLOAT_PART_BLUE(color1)  * SP_COLOR_FLOAT_PART_BLUE(color2))
 
-#define SP_SQUARE(x)                ((x)*(x))
+#define SP_COLOR_MIX(color1, color2, ratio) \
+    SP_COLOR_FLOAT( \
+        (1.0f - ratio) * SP_COLOR_FLOAT_PART_RED(color1)   + ratio * SP_COLOR_FLOAT_PART_RED(color2), \
+        (1.0f - ratio) * SP_COLOR_FLOAT_PART_GREEN(color1) + ratio * SP_COLOR_FLOAT_PART_GREEN(color2), \
+        (1.0f - ratio) * SP_COLOR_FLOAT_PART_BLUE(color1)  + ratio * SP_COLOR_FLOAT_PART_BLUE(color2), \
+
+#define SP_IS_FLOAT_EQUAL(f1, f2)           (fabsf((f1)-(f2)) < SP_FLOAT_EPSILON)
+
+#define SP_CLAMP(value, min, max)           MIN((max), MAX((value), (min)))
+#define SP_SWAP(x, y, T)                    do { T temp##x##y = x; x = y; y = temp##x##y; } while (0)
+
+#define SP_SQUARE(x)                        ((x)*(x))
 
 // release and set value to nil
 

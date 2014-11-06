@@ -207,14 +207,31 @@
     uint blendMode = _stateStackTop->_blendMode;
     SPMatrix *modelviewMatrix = _stateStackTop->_modelviewMatrix;
 
-    if ([_quadBatchTop isStateChangeWithTinted:quad.tinted texture:quad.texture alpha:alpha
-                            premultipliedAlpha:quad.premultipliedAlpha blendMode:blendMode
-                                      numQuads:1])
+    if ([_quadBatchTop isStateChangeWithEffect:quad.effect texture:quad.texture tinted:quad.tinted
+                                         alpha:alpha premultipliedAlpha:quad.premultipliedAlpha
+                                     blendMode:blendMode numQuads:1])
     {
         [self finishQuadBatch]; // next batch
     }
 
     [_quadBatchTop addQuad:quad alpha:alpha blendMode:blendMode matrix:modelviewMatrix];
+}
+
+- (void)batchQuadBatch:(SPQuadBatch *)quadBatch
+{
+    float alpha = _stateStackTop->_alpha;
+    uint blendMode = _stateStackTop->_blendMode;
+    SPMatrix *modelviewMatrix = _stateStackTop->_modelviewMatrix;
+
+    if ([_quadBatchTop isStateChangeWithEffect:quadBatch.effect texture:quadBatch.texture
+                                        tinted:quadBatch.tinted alpha:alpha
+                            premultipliedAlpha:quadBatch.premultipliedAlpha
+                                     blendMode:blendMode numQuads:1])
+    {
+        [self finishQuadBatch]; // next batch
+    }
+
+    [_quadBatchTop addQuadBatch:quadBatch alpha:alpha blendMode:blendMode matrix:modelviewMatrix];
 }
 
 - (void)finishQuadBatch

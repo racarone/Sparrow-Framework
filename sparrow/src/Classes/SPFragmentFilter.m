@@ -14,8 +14,10 @@
 #import <Sparrow/SPContext.h>
 #import <Sparrow/SPDisplayObject.h>
 #import <Sparrow/SPImage.h>
+#import <Sparrow/SPEffect.h>
 #import <Sparrow/SPMatrix.h>
 #import <Sparrow/SPOpenGL.h>
+#import <Sparrow/SPProgram.h>
 #import <Sparrow/SPQuadBatch.h>
 #import <Sparrow/SPRectangle.h>
 #import <Sparrow/SPRenderSupport.h>
@@ -29,15 +31,13 @@
 
 #define MIN_TEXTURE_SIZE 64
 
-// --- private interface ---------------------------------------------------------------------------
+// --- class extension -----------------------------------------------------------------------------
 
 @interface SPFragmentFilter ()
 
 @property (nonatomic, assign) float marginX;
 @property (nonatomic, assign) float marginY;
 @property (nonatomic, assign) int numPasses;
-@property (nonatomic, assign) int vertexPosID;
-@property (nonatomic, assign) int texCoordsID;
 
 @end
 
@@ -46,8 +46,6 @@
 @implementation SPFragmentFilter
 {
     int _numPasses;
-    int _vertexPosID;
-    int _texCoordsID;
     float _marginX;
     float _marginY;
     float _offsetX;
@@ -99,8 +97,8 @@
         _indexData[3] = 1;
         _indexData[4] = 3;
         _indexData[5] = 2;
-
-        [self createPrograms];
+        
+        [self createEffects];
     }
     return self;
 }
@@ -173,12 +171,18 @@
 
 #pragma mark Subclasses
 
-- (void)createPrograms
+- (void)createEffects
 {
     [NSException raise:SPExceptionAbstractMethod format:@"Method has to be implemented in subclass!"];
 }
 
-- (void)activateWithPass:(int)pass texture:(SPTexture *)texture mvpMatrix:(SPMatrix *)matrix
+- (SPEffect *)effectForPass:(int)pass
+{
+    [NSException raise:SPExceptionAbstractMethod format:@"Method has to be implemented in subclass!"];
+    return nil;
+}
+
+- (void)activateWithPass:(int)pass texture:(SPTexture *)texture
 {
     [NSException raise:SPExceptionAbstractMethod format:@"Method has to be implemented in subclass!"];
 }
@@ -191,34 +195,32 @@
 + (NSString *)standardVertexShader
 {
     return
-    @"attribute vec4 aPosition; \n"
-    @"attribute lowp vec2 aTexCoords; \n"
-    @"uniform mat4 uMvpMatrix; \n"
-    @"varying lowp vec2 vTexCoords; \n"
-    @"void main() { \n"
-    @"  gl_Position = uMvpMatrix * aPosition; \n"
-    @"  vTexCoords  = aTexCoords; \n"
-    @"} \n";
+        @"attribute vec4 aPosition; \n"
+        @"attribute lowp vec2 aTexCoords; \n"
+        @"uniform mat4 uMvpMatrix; \n"
+        @"varying lowp vec2 vTexCoords; \n"
+
+        @"void main() { \n"
+        @"  gl_Position = uMvpMatrix * aPosition; \n"
+        @"  vTexCoords  = aTexCoords; \n"
+        @"} \n";
 }
 
 + (NSString *)standardFragmentShader
 {
     return
-    @"uniform lowp sampler2D uTexture;"
-    @"varying lowp vec2 vTexCoords;"
-    @"void main() { \n"
-    @"  gl_FragColor = texture2D(uTexture, vTexCoords); \n"
-    @"} \n";
+        @"uniform lowp sampler2D uTexture;"
+        @"varying lowp vec2 vTexCoords;"
+
+        @"void main() { \n"
+        @"  gl_FragColor = texture2D(uTexture, vTexCoords); \n"
+        @"} \n";
 }
 
 #pragma mark Private
 
-- (void)calcBoundsWithObject:(SPDisplayObject *)object
-                       stage:(SPStage *)stage
-                       scale:(float)scale
-                   intersect:(BOOL)intersectWithStage
-                  intoBounds:(out SPRectangle **)bounds
-               intoBoundsPOT:(out SPRectangle **)boundsPOT
+- (void)calcBoundsWithObject:(SPDisplayObject *)object stage:(SPStage *)stage scale:(float)scale
+                   intersect:(BOOL)intersectWithStage intoBounds:(out SPRectangle **)bounds
 {
     float marginX;
     float marginY;
@@ -244,17 +246,11 @@
     {
         // the bounds are a rectangle around the object, in stage coordinates,
         // and with an optional margin.
-        [*bounds inflateXBy:marginX yBy:marginY];
+        [result inflateXBy:marginX yBy:marginY];
 
-        // To fit into a POT-texture, we extend it towards the right and bottom.
         int minSize = MIN_TEXTURE_SIZE / scale;
-        float minWidth  = result.width  > minSize ? result.width  : minSize;
-        float minHeight = result.height > minSize ? result.height : minSize;
-
-        *boundsPOT = [SPRectangle rectangleWithX:result.x
-                                               y:result.y
-                                           width:[SPUtils nextPowerOfTwo:minWidth  * scale] / scale
-                                          height:[SPUtils nextPowerOfTwo:minHeight * scale] / scale];
+        result.width  = result.width  > minSize ? result.width  : minSize;
+        result.height = result.height > minSize ? result.height : minSize;
     }
 }
 
@@ -292,8 +288,7 @@
     return _passTextures[pass % 2];
 }
 
-- (SPQuadBatch *)renderPassesWithObject:(SPDisplayObject *)object
-                                support:(SPRenderSupport *)support
+- (SPQuadBatch *)renderPassesWithObject:(SPDisplayObject *)object support:(SPRenderSupport *)support
                               intoCache:(BOOL)intoCache
 {
     SPTexture *cacheTexture = nil;
@@ -304,10 +299,8 @@
         [NSException raise:SPExceptionInvalidOperation format:@"Filtered object must be on the stage."];
 
     // the bounds of the object in stage coordinates
-    SPRectangle *boundsPOT = nil;
     SPRectangle *bounds = nil;
-    [self calcBoundsWithObject:object stage:stage scale:scale intersect:!intoCache
-                    intoBounds:&bounds intoBoundsPOT:&boundsPOT];
+    [self calcBoundsWithObject:object stage:stage scale:scale intersect:!intoCache intoBounds:&bounds];
 
     if (bounds.isEmpty)
     {
@@ -315,8 +308,8 @@
         return intoCache ? [SPQuadBatch quadBatch] : nil;
     }
 
-    [self updateBuffers:boundsPOT];
-    [self updatePassTexturesWithWidth:boundsPOT.width height:boundsPOT.height scale:scale];
+    [self updateBuffers:bounds];
+    [self updatePassTexturesWithWidth:bounds.width height:bounds.height scale:scale];
 
     [support finishQuadBatch];
     [support addDrawCalls:_numPasses];
@@ -328,13 +321,13 @@
 
     // use cache?
     if (intoCache)
-        cacheTexture = [self texureWithWidth:boundsPOT.width height:boundsPOT.height scale:scale];
+        cacheTexture = [self texureWithWidth:bounds.width height:bounds.height scale:scale];
 
     // draw the original object into a texture
     [support setRenderTarget:_passTextures[0]];
     [support clear];
     [support setBlendMode:SPBlendModeNormal];
-    [support setupOrthographicProjectionWithLeft:boundsPOT.left right:boundsPOT.right top:boundsPOT.bottom bottom:boundsPOT.top];
+    [support setupOrthographicProjectionWithLeft:bounds.left right:bounds.right top:bounds.bottom bottom:bounds.top];
     [object render:support];
     [support finishQuadBatch];
 
@@ -346,12 +339,12 @@
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
 
-    glEnableVertexAttribArray(_vertexPosID);
-    glVertexAttribPointer(_vertexPosID, 2, GL_FLOAT, false, sizeof(SPVertex),
+    glEnableVertexAttribArray(SPAttributePosition);
+    glVertexAttribPointer(SPAttributePosition, 2, GL_FLOAT, false, sizeof(SPVertex),
                           (void *)(offsetof(SPVertex, position)));
 
-    glEnableVertexAttribArray(_texCoordsID);
-    glVertexAttribPointer(_texCoordsID, 2, GL_FLOAT, false, sizeof(SPVertex),
+    glEnableVertexAttribArray(SPAttributeTexCoords);
+    glVertexAttribPointer(SPAttributeTexCoords, 2, GL_FLOAT, false, sizeof(SPVertex),
                           (void *)(offsetof(SPVertex, texCoords)));
 
     // draw all passes
@@ -382,17 +375,16 @@
             }
         }
 
+        SPEffect* passEffect = [self effectForPass:i];
         SPTexture* passTexture = [self passTextureForPass:i];
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, passTexture.name);
 
-        [self activateWithPass:i texture:passTexture mvpMatrix:support.mvpMatrix];
+        passEffect.mainTexture = passTexture;
+        passEffect.mvpMatrix = [support.mvpMatrix convertToGLKMatrix4];
+
+        [self activateWithPass:i texture:passTexture];
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
         [self deactivateWithPass:i texture:passTexture];
     }
-
-    glDisableVertexAttribArray(_vertexPosID);
-    glDisableVertexAttribArray(_texCoordsID);
 
     [support popState];
     [support popClipRect];
@@ -451,8 +443,8 @@
 {
     int numPassTextures = _numPasses > 1 ? 2 : 1;
     BOOL needsUpdate = _passTextures.count != numPassTextures ||
-                            [(SPTexture *)_passTextures[0] width]  != width ||
-                            [(SPTexture *)_passTextures[0] height] != height;
+                       [(SPTexture *)_passTextures[0] width]  != width ||
+                       [(SPTexture *)_passTextures[0] height] != height;
 
     if (needsUpdate)
     {

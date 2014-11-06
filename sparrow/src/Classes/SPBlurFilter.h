@@ -9,6 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import <Foundation/Foundation.h>
 #import <Sparrow/SPFragmentFilter.h>
 
 /** ------------------------------------------------------------------------------------------------
@@ -69,13 +70,16 @@
 + (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color;
 
 /// Creates a drop shadow with a specified distance, angle, color and alpha.
-+ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color alpha:(float)alpha;
++ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color
+                                 alpha:(float)alpha;
 
 /// Creates a drop shadow with a specified distance, angle, color, alpha and blur.
-+ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color alpha:(float)alpha blur:(float)blur;
++ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color
+                                 alpha:(float)alpha blur:(float)blur;
 
 /// Creates a drop shadow with a specified distance, angle, color, alpha, blur and resolution.
-+ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color alpha:(float)alpha blur:(float)blur resolution:(float)resolution;
++ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color
+                                 alpha:(float)alpha blur:(float)blur resolution:(float)resolution;
 
 /// ----------
 /// @name Glow
@@ -94,23 +98,8 @@
 + (instancetype)glowWithColor:(uint)color alpha:(float)alpha blur:(float)blur;
 
 /// Creates a glow with a specified color, alpha, blur and resolution.
-+ (instancetype)glowWithColor:(uint)color alpha:(float)alpha blur:(float)blur resolution:(float)resolution;
-
-/// -------------
-/// @name Methods
-/// -------------
-
-/// The current uniform color will replace the RGB values of the input color. Pass NO to deactivate
-/// the uniform color.
-- (void)setUniformColor:(BOOL)enable;
-
-/// The passed color will replace the RGB values of the input color. Pass NO as the first parameter
-/// to deactivate the uniform color.
-- (void)setUniformColor:(BOOL)enable color:(uint)color;
-
-/// A uniform color will replace the RGB values of the input color, while the alpha value will be
-/// multiplied with the given factor. Pass NO as the first parameter to deactivate the uniform color.
-- (void)setUniformColor:(BOOL)enable color:(uint)color alpha:(float)alpha;
++ (instancetype)glowWithColor:(uint)color alpha:(float)alpha blur:(float)blur
+                   resolution:(float)resolution;
 
 /// ----------------
 /// @name Properties
@@ -121,5 +110,14 @@
 
 /// The blur factor in y-direction (stage coordinates).
 @property (nonatomic, assign) float blurY;
+
+/// Set to NO to deactivate the uniform color.
+@property (nonatomic, assign) BOOL enableColor;
+
+/// The color will replace the RGB values of the input color. (When set color is enabled.)
+@property (nonatomic, assign) uint color;
+
+/// The alpha will be multiplied by the input alpha. (When set color is enabled.)
+@property (nonatomic, assign) float alpha;
 
 @end

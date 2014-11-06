@@ -11,6 +11,14 @@
 
 #import <Foundation/Foundation.h>
 
+/// SPProgram maps the attributes 'aPosition', 'aColor' and 'aTexCoords' to these locations.
+typedef NS_ENUM(int, SPAttribute)
+{
+    SPAttributePosition  = 0, // 'aPosition'
+    SPAttributeColor     = 1, // 'aColor'
+    SPAttributeTexCoords = 2, // 'aTexCoords'
+};
+
 /** ------------------------------------------------------------------------------------------------
  
  An SPProgram wraps a GLSL program (containing the source code for both vertex and fragment shader)

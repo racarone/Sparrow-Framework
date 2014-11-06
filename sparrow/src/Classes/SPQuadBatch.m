@@ -41,7 +41,8 @@ enum
     SPTexture *_texture;
     BOOL _premultipliedAlpha;
     BOOL _tinted;
-    
+
+    SPEffect *_effect;
     SPBaseEffect *_baseEffect;
     uint _vertexBufferName;
     ushort *_indexData;
@@ -97,8 +98,8 @@ enum
 {
     _numQuads = 0;
     _syncRequired = YES;
-    _baseEffect.texture = nil;
     SP_RELEASE_AND_NIL(_texture);
+    SP_RELEASE_AND_NIL(_effect);
 }
 
 - (void)addQuad:(SPQuad *)quad
@@ -122,6 +123,7 @@ enum
     if (_numQuads + 1 > self.capacity) [self expand];
     if (_numQuads == 0)
     {
+        SP_RELEASE_AND_RETAIN(_effect, quad.effect);
         SP_RELEASE_AND_RETAIN(_texture, quad.texture);
         _premultipliedAlpha = quad.premultipliedAlpha;
         self.blendMode = blendMode;
@@ -169,6 +171,7 @@ enum
     if (_numQuads + numQuads > self.capacity) self.capacity = _numQuads + numQuads;
     if (_numQuads == 0)
     {
+        SP_RELEASE_AND_RETAIN(_effect, quadBatch.effect);
         SP_RELEASE_AND_RETAIN(_texture, quadBatch.texture);
         _premultipliedAlpha = quadBatch.premultipliedAlpha;
         self.blendMode = blendMode;
@@ -188,13 +191,16 @@ enum
     _numQuads += numQuads;
 }
 
-- (BOOL)isStateChangeWithTinted:(BOOL)tinted texture:(SPTexture *)texture alpha:(float)alpha
-             premultipliedAlpha:(BOOL)pma blendMode:(uint)blendMode numQuads:(int)numQuads
+- (BOOL)isStateChangeWithEffect:(SPEffect *)effect texture:(SPTexture *)texture tinted:(BOOL)tinted
+                          alpha:(float)alpha premultipliedAlpha:(BOOL)pma blendMode:(uint)blendMode
+                       numQuads:(int)numQuads
 {
     if (_numQuads == 0) return NO;
     else if (_numQuads + numQuads > MAX_NUM_QUADS) return YES; // maximum buffer size
+    else if (_effect != effect)
+        return YES;
     else if (!_texture && !texture)
-        return _premultipliedAlpha != pma || self.blendMode != blendMode;
+        return self.blendMode != blendMode;
     else if (_texture && texture)
         return _tinted != (tinted || alpha != 1.0f) ||
                _texture.name != texture.name ||
@@ -214,6 +220,7 @@ enum
     {
         [support finishQuadBatch];
         [support addDrawCalls:1];
+
         [self renderWithMvpMatrix:support.mvpMatrix alpha:support.alpha blendMode:support.blendMode];
     }
 }
@@ -303,14 +310,25 @@ enum
     if (blendMode == SPBlendModeAuto)
         [NSException raise:SPExceptionInvalidOperation
                     format:@"cannot render object with blend mode AUTO"];
+
+    BOOL tinted = _tinted || alpha != 1.0f;
+    SPEffect *currentEffect = _effect ?: _baseEffect;
+
+    if (currentEffect == _baseEffect)
+        _baseEffect.useTinting = tinted;
+
+    if (tinted)
+    {
+        if (_premultipliedAlpha)
+            currentEffect.tintColor = GLKVector4Make(alpha, alpha, alpha, alpha);
+        else
+            currentEffect.tintColor = GLKVector4Make(1.0f, 1.0f, 1.0f, alpha);
+    }
+
+    currentEffect.mainTexture = _texture;
+    currentEffect.mvpMatrix = [matrix convertToGLKMatrix4];
     
-    _baseEffect.texture = _texture;
-    _baseEffect.premultipliedAlpha = _premultipliedAlpha;
-    _baseEffect.mvpMatrix = matrix;
-    _baseEffect.useTinting = _tinted || alpha != 1.0f;
-    _baseEffect.alpha = alpha;
-    
-    [_baseEffect prepareToDraw];
+    [currentEffect prepareToDraw];
 
     [SPBlendMode applyBlendFactorsForBlendMode:blendMode premultipliedAlpha:_premultipliedAlpha];
 
@@ -325,6 +343,16 @@ enum
         _attribCache[ATTRIB_COLOR]    != attribColor ||
         _attribCache[ATTRIB_TEXCOORD] != attribTexCoord)
     {
+        // disable previous attributes
+
+        if (_attribCache[ATTRIB_COLOR] != SPNotFound)
+            glDisableVertexAttribArray(_attribCache[ATTRIB_COLOR]);
+
+        if (_attribCache[ATTRIB_TEXCOORD] != SPNotFound)
+            glDisableVertexAttribArray(_attribCache[ATTRIB_TEXCOORD]);
+
+        // enable current attributes
+
         glEnableVertexAttribArray(attribPosition);
 
         if (attribColor != SPNotFound)
@@ -332,6 +360,8 @@ enum
 
         if (attribTexCoord != SPNotFound)
             glEnableVertexAttribArray(attribTexCoord);
+
+        // setup attribute pointers
 
         glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
 
@@ -345,6 +375,8 @@ enum
         if (attribTexCoord != SPNotFound)
             glVertexAttribPointer(attribTexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
                                   (void *)(offsetof(SPVertex, texCoords)));
+
+        // bind element buffer
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
 
@@ -419,15 +451,17 @@ enum
     }
     else if (quad || batch)
     {
+        SPEffect *effect = [(id)object effect];
         SPTexture *texture = [(id)object texture];
         BOOL tinted = [(id)object tinted];
         BOOL pma = [(id)object premultipliedAlpha];
         int numQuads = batch ? batch.numQuads : 1;
         
         SPQuadBatch *currentBatch = quadBatches[quadBatchID];
-        
-        if ([currentBatch isStateChangeWithTinted:tinted texture:texture alpha:alpha * objectAlpha
-                               premultipliedAlpha:pma blendMode:blendMode numQuads:numQuads])
+
+        if ([currentBatch isStateChangeWithEffect:effect texture:texture tinted:tinted
+                                            alpha:alpha * objectAlpha premultipliedAlpha:pma
+                                        blendMode:blendMode numQuads:numQuads])
         {
             quadBatchID++;
             if (quadBatches.count <= quadBatchID) [quadBatches addObject:[SPQuadBatch quadBatch]];

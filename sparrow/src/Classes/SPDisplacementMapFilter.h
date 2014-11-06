@@ -9,6 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import <Foundation/Foundation.h>
 #import <Sparrow/SPFragmentFilter.h>
 
 @class SPPoint;
@@ -64,11 +65,11 @@ typedef NS_ENUM(uint, SPColorChannel)
 @property (nonatomic, assign) float scaleY;
 
 /// The texture that will be used to calculate displacement.
-@property (nonatomic, retain) SPTexture* mapTexture;
+@property (nonatomic, retain) SPTexture *mapTexture;
 
 /// A value that contains the offset of the upper-left corner of the target display object from the
 /// upper-left corner of the map image.
-@property (nonatomic, copy) SPPoint* mapPoint;
+@property (nonatomic, copy) SPPoint *mapPoint;
 
 /// Indicates how the pixels at the edge of the input image (the filtered object) will be wrapped
 /// at the edge.

@@ -11,186 +11,99 @@
 
 #import <Sparrow/SparrowClass.h>
 #import <Sparrow/SPBlurFilter.h>
+#import <Sparrow/SPEffect.h>
 #import <Sparrow/SPMatrix.h>
 #import <Sparrow/SPNSExtensions.h>
 #import <Sparrow/SPOpenGL.h>
 #import <Sparrow/SPProgram.h>
 #import <Sparrow/SPTexture.h>
 
-#pragma mark - SPBlurProgram
+static NSString *const SPBlurProgram = @"SSPBlurProgram";
 
-@interface SPBlurProgram : SPProgram
+// --- shaders -------------------------------------------------------------------------------------
 
-- (instancetype)initWithTintedFragmentShader:(BOOL)isTinted;
+static NSString *const SPBlurVertexShader =
+    @"attribute vec4 aPosition; \n"
+    @"attribute vec2 aTexCoords; \n"
 
-@property (nonatomic, readonly) BOOL tinted;
-@property (nonatomic, readonly) int aPosition;
-@property (nonatomic, readonly) int aTexCoords;
-@property (nonatomic, readonly) int uOffsets;
-@property (nonatomic, readonly) int uWeights;
-@property (nonatomic, readonly) int uColor;
-@property (nonatomic, readonly) int uMvpMatrix;
+    @"uniform mat4 uMvpMatrix; \n"
+    @"uniform vec4 uOffsets; \n"
 
-@end
+    @"varying lowp vec2 v0; \n"
+    @"varying lowp vec2 v1; \n"
+    @"varying lowp vec2 v2; \n"
+    @"varying lowp vec2 v3; \n"
+    @"varying lowp vec2 v4; \n"
 
+    @"void main() { \n"
+    @"  gl_Position = uMvpMatrix * aPosition; \n" // 4x4 matrix transform to output space
+    @"  v0 = aTexCoords; \n"                      // pos:  0 |
+    @"  v1 = aTexCoords - uOffsets.zw; \n"        // pos: -2 |
+    @"  v2 = aTexCoords - uOffsets.xy; \n"        // pos: -1 | --> kernel positions
+    @"  v3 = aTexCoords + uOffsets.xy; \n"        // pos: +1 |     (only 1st two parts are relevant)
+    @"  v4 = aTexCoords + uOffsets.zw; \n"        // pos: +2 |
+    @"} \n";
 
-// --- blur implementation -------------------------------------------------------------------------
+static NSString *const SPBlurFragmentShader =
+    @"uniform lowp sampler2D uTexture; \n"
+    @"uniform lowp vec4 uTintColor; \n"
+    @"uniform lowp vec4 uWeights; \n"
+    @"uniform lowp float uTinted; \n"
 
-@implementation SPBlurProgram
-{
-    BOOL _tinted;
-    int _aPosition;
-    int _aTexCoords;
-    int _uOffsets;
-    int _uWeights;
-    int _uColor;
-    int _uMvpMatrix;
-}
+    @"varying lowp vec2 v0; \n"
+    @"varying lowp vec2 v1; \n"
+    @"varying lowp vec2 v2; \n"
+    @"varying lowp vec2 v3; \n"
+    @"varying lowp vec2 v4; \n"
 
-#pragma mark Initialization
+    @"void main() { \n"
+    @"  lowp vec4 ft0; \n"
+    @"  lowp vec4 ft1; \n"
+    @"  lowp vec4 ft2; \n"
+    @"  lowp vec4 ft3; \n"
+    @"  lowp vec4 ft4; \n"
+    @"  lowp vec4 ft5; \n"
 
-- (instancetype)initWithTintedFragmentShader:(BOOL)isTinted
-{
-    if ((self = [super initWithVertexShader:[self vertexShader]
-                             fragmentShader:[self fragmentShader:isTinted]]))
-    {
-        _tinted = isTinted;
-        _aPosition = [self attributeByName:@"aPosition"];
-        _aTexCoords = [self attributeByName:@"aTexCoords"];
-        _uOffsets = [self uniformByName:@"uOffsets"];
-        _uWeights = [self uniformByName:@"uWeights"];
-        _uColor = [self uniformByName:@"uColor"];
-        _uMvpMatrix = [self uniformByName:@"uMvpMatrix"];
-    }
-    return self;
-}
+    @"  ft0 = texture2D(uTexture,v0); \n"             // read center pixel
+    @"  ft5 = ft0 * uWeights.xxxx; \n"                // multiply with center weight
 
-#pragma mark Methods
+    @"  ft1 = texture2D(uTexture,v1); \n"             // read pixel -2
+    @"  ft1 = ft1 * uWeights.zzzz; \n"                // multiply with weight
+    @"  ft5 = ft5 + ft1; \n"                          // add to output color
 
-- (NSString *)vertexShader
-{
-    NSMutableString *vertSource = [NSMutableString string];
+    @"  ft2 = texture2D(uTexture,v2); \n"             // read pixel -1
+    @"  ft2 = ft2 * uWeights.yyyy; \n"                // multiply with weight
+    @"  ft5 = ft5 + ft2; \n"                          // add to output color
 
-    // attributes
-    [vertSource appendLine:@"attribute vec4 aPosition;"];
-    [vertSource appendLine:@"attribute lowp vec2 aTexCoords;"];
+    @"  ft3 = texture2D(uTexture,v3); \n"             // read pixel +1
+    @"  ft3 = ft3 * uWeights.yyyy; \n"                // multiply with weight
+    @"  ft5 = ft5 + ft3; \n"                          // add to output color
 
-    // uniforms
-    [vertSource appendLine:@"uniform mat4 uMvpMatrix;"];
-    [vertSource appendLine:@"uniform lowp vec4 uOffsets;"];
+    @"  ft4 = texture2D(uTexture,v4); \n"             // read pixel +2
+    @"  ft4 = ft4 * uWeights.zzzz; \n"                // multiply with weight
 
-    // varying
-    [vertSource appendLine:@"varying lowp vec2 v0;"];
-    [vertSource appendLine:@"varying lowp vec2 v1;"];
-    [vertSource appendLine:@"varying lowp vec2 v2;"];
-    [vertSource appendLine:@"varying lowp vec2 v3;"];
-    [vertSource appendLine:@"varying lowp vec2 v4;"];
-
-    // main
-    [vertSource appendLine:@"void main() {"];
-
-    [vertSource appendLine:@"  gl_Position = uMvpMatrix * aPosition;"];     // 4x4 matrix transform to output space
-    [vertSource appendLine:@"  v0 = aTexCoords;"];                          // pos:  0 |
-    [vertSource appendLine:@"  v1 = aTexCoords - uOffsets.zw;"];            // pos: -2 |
-    [vertSource appendLine:@"  v2 = aTexCoords - uOffsets.xy;"];            // pos: -1 | --> kernel positions
-    [vertSource appendLine:@"  v3 = aTexCoords + uOffsets.xy;"];            // pos: +1 |     (only 1st two parts are relevant)
-    [vertSource appendLine:@"  v4 = aTexCoords + uOffsets.zw;"];            // pos: +2 |
-
-    [vertSource appendLine:@"}"];
-
-    return vertSource;
-}
-
-- (NSString *)fragmentShader:(BOOL)isTinted
-{
-    NSMutableString *fragSource = [NSMutableString string];
-
-    // variables
-
-    [fragSource appendLine:@"varying lowp vec2 v0;"];
-    [fragSource appendLine:@"varying lowp vec2 v1;"];
-    [fragSource appendLine:@"varying lowp vec2 v2;"];
-    [fragSource appendLine:@"varying lowp vec2 v3;"];
-    [fragSource appendLine:@"varying lowp vec2 v4;"];
-
-    if (isTinted) [fragSource appendLine:@"uniform lowp vec4 uColor;"];
-    [fragSource appendLine:@"uniform sampler2D uTexture;"];
-    [fragSource appendLine:@"uniform lowp vec4 uWeights;"];
-
-    // main
-
-    [fragSource appendLine:@"void main() {"];
-
-    [fragSource appendLine:@"  lowp vec4 ft0;"];
-    [fragSource appendLine:@"  lowp vec4 ft1;"];
-    [fragSource appendLine:@"  lowp vec4 ft2;"];
-    [fragSource appendLine:@"  lowp vec4 ft3;"];
-    [fragSource appendLine:@"  lowp vec4 ft4;"];
-    [fragSource appendLine:@"  lowp vec4 ft5;"];
-
-    [fragSource appendLine:@"  ft0 = texture2D(uTexture,v0);"];  // read center pixel
-    [fragSource appendLine:@"  ft5 = ft0 * uWeights.xxxx;"];     // multiply with center weight
-
-    [fragSource appendLine:@"  ft1 = texture2D(uTexture,v1);"];  // read pixel -2
-    [fragSource appendLine:@"  ft1 = ft1 * uWeights.zzzz;"];     // multiply with weight
-    [fragSource appendLine:@"  ft5 = ft5 + ft1;"];               // add to output color
-
-    [fragSource appendLine:@"  ft2 = texture2D(uTexture,v2);"];  // read pixel -1
-    [fragSource appendLine:@"  ft2 = ft2 * uWeights.yyyy;"];     // multiply with weight
-    [fragSource appendLine:@"  ft5 = ft5 + ft2;"];               // add to output color
-
-    [fragSource appendLine:@"  ft3 = texture2D(uTexture,v3);"];  // read pixel +1
-    [fragSource appendLine:@"  ft3 = ft3 * uWeights.yyyy;"];     // multiply with weight
-    [fragSource appendLine:@"  ft5 = ft5 + ft3;"];               // add to output color
-
-    [fragSource appendLine:@"  ft4 = texture2D(uTexture,v4);"];  // read pixel +2
-    [fragSource appendLine:@"  ft4 = ft4 * uWeights.zzzz;"];     // multiply with weight
-
-    if (isTinted)
-    {
-        [fragSource appendLine:@"  ft5 = ft5 + ft4;"];                   // add to output color
-        [fragSource appendLine:@"  ft5.xyz = uColor.xyz * ft5.www;"];    // set rgb with correct alpha
-        [fragSource appendLine:@"  gl_FragColor = ft5 * uColor.wwww;"];  // multiply alpha
-    }
-    else
-    {
-        [fragSource appendLine:@"  gl_FragColor = ft5 + ft4;"];          // add to output color
-    }
-    
-    [fragSource appendLine:@"}"];
-    
-    return fragSource;
-}
-
-#pragma mark Class
-
-+ (NSString *)programNameForTinting:(BOOL)tinting
-{
-    if (tinting) return @"SPBlurFilter#01";
-    else         return @"SPBlurFilter#00";
-}
-
-@end
-
-#pragma mark - SPBlurFilter
-
-@interface SPBlurFilter ()
-
-- (void)updateParamatersWithPass:(int)pass texWidth:(int)texWidth texHeight:(int)texHeight;
-- (void)updateMarginsAndPasses;
-
-@end
+    @"  if (uTinted == 1.0) { \n"
+    @"      ft5 = ft5 + ft4;"                         // add to output color
+    @"      ft5.xyz = uTintColor.xyz * ft5.www; \n"   // set rgb with correct alpha
+    @"      gl_FragColor = ft5 * uTintColor.wwww; \n" // multiply alpha
+    @"  } else { \n"
+    @"      gl_FragColor = ft5 + ft4; \n"             // add to output color
+    @"  } \n"
+    @"} \n";
 
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPBlurFilter
 {
-    BOOL _enableColorUniform;
-    float _offsets[4];
-    float _weights[4];
-    float _color[4];
-    SPBlurProgram *_program;
-    SPBlurProgram *_tintedProgram;
+    BOOL _enableColor;
+    GLKVector4 _offsets;
+    GLKVector4 _weights;
+    GLKVector4 _color;
+
+    SPEffect *_effect;
+    SPUniform *_uOffsets;
+    SPUniform *_uWeights;
+    SPUniform *_uTinted;
 }
 
 #pragma mark Initialization
@@ -211,6 +124,7 @@
     {
         _blurX = blur;
         _blurY = blur;
+        _color.a = 1.0f;
 
         [self updateMarginsAndPasses];
     }
@@ -219,9 +133,10 @@
 
 - (void)dealloc
 {
-    [_program release];
-    [_tintedProgram release];
-
+    [_effect release];
+    [_uOffsets release];
+    [_uWeights release];
+    [_uTinted release];
     [super dealloc];
 }
 
@@ -240,76 +155,45 @@
     return [[[self alloc] initWithBlur:blur resolution:resolution] autorelease];
 }
 
-#pragma mark Methods
-
-- (void)setUniformColor:(BOOL)enable
-{
-    [self setUniformColor:enable color:SPColorBlack];
-}
-
-- (void)setUniformColor:(BOOL)enable color:(uint)color
-{
-    [self setUniformColor:enable color:color alpha:1.0f];
-}
-
-- (void)setUniformColor:(BOOL)enable color:(uint)color alpha:(float)alpha
-{
-    _color[0] = SP_COLOR_PART_RED(color) / 255.0;
-    _color[1] = SP_COLOR_PART_GREEN(color) / 255.0;
-    _color[2] = SP_COLOR_PART_BLUE(color) / 255.0;
-    _color[3] = alpha;
-    _enableColorUniform = enable;
-}
-
 #pragma mark SPFragmentFilter (Subclasses)
 
-- (void)createPrograms
+- (void)createEffects
 {
-    if (!_program)
+    SPProgram *program = [[Sparrow currentController] programByName:SPBlurProgram];
+    if (!program)
     {
-        NSString *programName = [SPBlurProgram programNameForTinting:NO];
-        _program = (SPBlurProgram *)[[[Sparrow currentController] programByName:programName] retain];
+        program = [[SPProgram alloc] initWithVertexShader:SPBlurVertexShader
+                                           fragmentShader:SPBlurFragmentShader];
 
-        if (!_program)
-        {
-            _program = [[SPBlurProgram alloc] initWithTintedFragmentShader:NO];
-            [[Sparrow currentController] registerProgram:_program name:programName];
-        }
+        [[Sparrow currentController] registerProgram:program name:SPBlurProgram];
     }
 
-    if (!_tintedProgram)
-    {
-        NSString *programName = [SPBlurProgram programNameForTinting:YES];
-        _tintedProgram = (SPBlurProgram *)[[[Sparrow currentController] programByName:programName] retain];
+    _effect = [[SPEffect alloc] initWithProgram:program];
+    _uOffsets = [[SPUniform alloc] initWithName:@"uOffsets"];
+    _uWeights = [[SPUniform alloc] initWithName:@"uWeights"];
+    _uTinted  = [[SPUniform alloc] initWithName:@"uTinted"];
 
-        if (!_tintedProgram)
-        {
-            _tintedProgram = [[SPBlurProgram alloc] initWithTintedFragmentShader:YES];
-            [[Sparrow currentController] registerProgram:_tintedProgram name:programName];
-        }
-    }
-
-    self.vertexPosID = _program.aPosition;
-    self.texCoordsID = _program.aTexCoords;
+    [_effect addUniformsFromArray:@[_uOffsets, _uWeights, _uTinted]];
 }
 
-- (void)activateWithPass:(int)pass texture:(SPTexture *)texture mvpMatrix:(SPMatrix *)matrix
+- (SPEffect *)effectForPass:(int)pass
+{
+    return _effect;
+}
+
+- (void)activateWithPass:(int)pass texture:(SPTexture *)texture
 {
     [self updateParamatersWithPass:pass texWidth:texture.nativeWidth texHeight:texture.nativeHeight];
 
-    BOOL isColorPass = _enableColorUniform && pass == self.numPasses - 1;
-    SPBlurProgram *program = isColorPass ? _tintedProgram : _program;
+    BOOL isColorPass = _enableColor && pass == self.numPasses - 1;
 
-    glUseProgram(program.name);
+    _effect.tintColor = _color;
+    _uTinted.floatValue = isColorPass ? 1 : 0;
 
-    GLKMatrix4 mvp = [matrix convertToGLKMatrix4];
-    glUniformMatrix4fv(program.uMvpMatrix, 1, false, mvp.m);
+    _uOffsets.vector4Value = _offsets;
+    _uWeights.vector4Value = _weights;
 
-    glUniform4fv(program.uOffsets, 1, _offsets);
-    glUniform4fv(program.uWeights, 1, _weights);
-
-    if (isColorPass)
-        glUniform4fv(program.uColor, 1, _color);
+    [_effect prepareToDraw];
 }
 
 #pragma mark Properties
@@ -326,6 +210,31 @@
     [self updateMarginsAndPasses];
 }
 
+- (uint)color
+{
+    return SP_COLOR(_color.r * 255, _color.g * 255, _color.b * 255);
+}
+
+- (void)setColor:(uint)color
+{
+    _color = GLKVector4Make(SP_COLOR_PART_RED(color)   / 255.0f,
+                            SP_COLOR_PART_GREEN(color) / 255.0f,
+                            SP_COLOR_PART_BLUE(color)  / 255.0f,
+                            _color.a);
+    _enableColor = YES;
+}
+
+- (float)alpha
+{
+    return _color.a;
+}
+
+- (void)setAlpha:(float)alpha
+{
+    _color.a = alpha;
+    _enableColor = YES;
+}
+
 #pragma mark Private
 
 - (void)updateParamatersWithPass:(int)pass texWidth:(int)texWidth texHeight:(int)texHeight
@@ -338,7 +247,7 @@
     // Normally, we'd have to use 9 texture lookups in the fragment shader. But by making smart
     // use of linear texture sampling, we can produce the same output with only 5 lookups.
 
-    bool horizontal = pass < _blurX;
+    const bool horizontal = pass < _blurX;
     float sigma;
     float pixelSize;
 
@@ -362,39 +271,39 @@
     for (int i = 0; i < 5; ++i)
         sTmpWeights[i] = multiplier * expf(-i*i / twoSigmaSq);
 
-    _weights[0] = sTmpWeights[0];
-    _weights[1] = sTmpWeights[1] + sTmpWeights[2];
-    _weights[2] = sTmpWeights[3] + sTmpWeights[4];
+    _weights.v[0] = sTmpWeights[0];
+    _weights.v[1] = sTmpWeights[1] + sTmpWeights[2];
+    _weights.v[2] = sTmpWeights[3] + sTmpWeights[4];
 
     // normalize weights so that sum equals "1.0"
 
-    float weightSum = _weights[0] + (2.0f * _weights[1]) + (2.0f * _weights[2]);
-    float invWeightSum = 1.0f / weightSum;
+    const float weightSum = _weights.v[0] + (2.0f * _weights.v[1]) + (2.0f * _weights.v[2]);
+    const float invWeightSum = 1.0f / weightSum;
 
-    _weights[0] *= invWeightSum;
-    _weights[1] *= invWeightSum;
-    _weights[2] *= invWeightSum;
+    _weights.v[0] *= invWeightSum;
+    _weights.v[1] *= invWeightSum;
+    _weights.v[2] *= invWeightSum;
 
     // calculate intermediate offsets
 
-    float offset1 = (pixelSize * sTmpWeights[1] + 2*pixelSize * sTmpWeights[2]) / _weights[1];
-    float offset2 = (3*pixelSize * sTmpWeights[3] + 4*pixelSize * sTmpWeights[4]) / _weights[2];
+    float offset1 = (  pixelSize * sTmpWeights[1] + 2*pixelSize * sTmpWeights[2]) / _weights.v[1];
+    float offset2 = (3*pixelSize * sTmpWeights[3] + 4*pixelSize * sTmpWeights[4]) / _weights.v[2];
 
     // depending on pass, we move in x- or y-direction
 
     if (horizontal)
     {
-        _offsets[0] = offset1;
-        _offsets[1] = 0;
-        _offsets[2] = offset2;
-        _offsets[3] = 0;
+        _offsets.v[0] = offset1;
+        _offsets.v[1] = 0;
+        _offsets.v[2] = offset2;
+        _offsets.v[3] = 0;
     }
     else
     {
-        _offsets[0] = 0;
-        _offsets[1] = offset1;
-        _offsets[2] = 0;
-        _offsets[3] = offset2;
+        _offsets.v[0] = 0;
+        _offsets.v[1] = offset1;
+        _offsets.v[2] = 0;
+        _offsets.v[3] = offset2;
     }
 }
 
@@ -430,23 +339,28 @@
     return [self dropShadowWithDistance:distance angle:angle color:color alpha:0.5f];
 }
 
-+ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color alpha:(float)alpha
++ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color
+                                 alpha:(float)alpha
 {
     return [self dropShadowWithDistance:distance angle:angle color:color alpha:alpha blur:1.0f];
 }
 
-+ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color alpha:(float)alpha blur:(float)blur
++ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color
+                                 alpha:(float)alpha blur:(float)blur
 {
     return [self dropShadowWithDistance:distance angle:angle color:color alpha:alpha blur:blur resolution:0.5f];
 }
 
-+ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color alpha:(float)alpha blur:(float)blur resolution:(float)resolution
++ (instancetype)dropShadowWithDistance:(float)distance angle:(float)angle color:(uint)color
+                                 alpha:(float)alpha blur:(float)blur resolution:(float)resolution
 {
     SPBlurFilter *dropShadow = [SPBlurFilter blurFilterWithBlur:blur resolution:resolution];
     dropShadow.offsetX = cosf(angle) * distance;
     dropShadow.offsetY = sinf(angle) * distance;
     dropShadow.mode = SPFragmentFilterModeBelow;
-    [dropShadow setUniformColor:YES color:color alpha:alpha];
+    dropShadow.color = color;
+    dropShadow.alpha = alpha;
+    dropShadow.enableColor = YES;
     return dropShadow;
 }
 
@@ -472,11 +386,14 @@
     return [self glowWithColor:color alpha:alpha blur:blur resolution:0.5f];
 }
 
-+ (instancetype)glowWithColor:(uint)color alpha:(float)alpha blur:(float)blur resolution:(float)resolution
++ (instancetype)glowWithColor:(uint)color alpha:(float)alpha blur:(float)blur
+                   resolution:(float)resolution
 {
     SPBlurFilter *glow = [SPBlurFilter blurFilterWithBlur:blur resolution:resolution];
     glow.mode = SPFragmentFilterModeBelow;
-    [glow setUniformColor:YES color:color alpha:alpha];
+    glow.color = color;
+    glow.alpha = alpha;
+    glow.enableColor = YES;
     return glow;
 }
 

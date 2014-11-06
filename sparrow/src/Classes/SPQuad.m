@@ -23,6 +23,7 @@
 
 @implementation SPQuad
 {
+    SPEffect *_effect;
     BOOL _tinted;
 }
 

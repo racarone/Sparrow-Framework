@@ -86,6 +86,11 @@
 - (void)compile
 {
     uint program = glCreateProgram();
+
+    glBindAttribLocation(program, SPAttributePosition,  "aPosition");
+    glBindAttribLocation(program, SPAttributeColor,     "aColor");
+    glBindAttribLocation(program, SPAttributeTexCoords, "aTexCoords");
+
     uint vertexShader   = [self compileShader:_vertexShader type:GL_VERTEX_SHADER];
     uint fragmentShader = [self compileShader:_fragmentShader type:GL_FRAGMENT_SHADER];
     

@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <Sparrow/SPDisplayObject.h>
 
+@class SPEffect;
 @class SPTexture;
 @class SPVertexData;
 
@@ -116,6 +117,10 @@
 /// Indicates if the rgb values are stored premultiplied with the alpha value. This can have
 /// effect on the rendering. (Most developers don't have to care, though.)
 @property (nonatomic, assign) BOOL premultipliedAlpha;
+
+/// The effect that is used to display the quad. If none is provied a default effect will be used
+/// to render the quad. (Default: nil)
+@property (nonatomic, strong) SPEffect *effect;
 
 /// Indicates if any vertices have a non-white color or are not fully opaque. Any alpha value
 /// other than '1' will also cause tinting.

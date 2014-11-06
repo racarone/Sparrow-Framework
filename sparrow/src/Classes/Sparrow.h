@@ -19,7 +19,6 @@
 
 #import <Sparrow/SparrowClass.h>
 #import <Sparrow/SPAudioEngine.h>
-#import <Sparrow/SPBaseEffect.h>
 #import <Sparrow/SPBitmapFont.h>
 #import <Sparrow/SPBlendMode.h>
 #import <Sparrow/SPBlurFilter.h>
@@ -31,6 +30,7 @@
 #import <Sparrow/SPDisplacementMapFilter.h>
 #import <Sparrow/SPDisplayObject.h>
 #import <Sparrow/SPDisplayObjectContainer.h>
+#import <Sparrow/SPEffect.h>
 #import <Sparrow/SPEnterFrameEvent.h>
 #import <Sparrow/SPEvent.h>
 #import <Sparrow/SPEventDispatcher.h>
@@ -63,6 +63,7 @@
 #import <Sparrow/SPTouchEvent.h>
 #import <Sparrow/SPTransitions.h>
 #import <Sparrow/SPTween.h>
+#import <Sparrow/SPUniform.h>
 #import <Sparrow/SPURLConnection.h>
 #import <Sparrow/SPUtils.h>
 #import <Sparrow/SPVertexData.h>
