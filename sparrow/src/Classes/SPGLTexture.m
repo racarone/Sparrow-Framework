@@ -16,6 +16,7 @@
 #import <Sparrow/SPOpenGL.h>
 #import <Sparrow/SPPVRData.h>
 #import <Sparrow/SPRectangle.h>
+#import <Sparrow/SPUtils.h>
 
 @implementation SPGLTexture
 {
@@ -29,6 +30,7 @@
     BOOL _premultipliedAlpha;
     BOOL _mipmaps;
     BOOL _dataUploaded;
+    BOOL _isPowerOf2;
 }
 
 @synthesize name = _name;
@@ -50,11 +52,16 @@
         if (width <= 0.0f)  [NSException raise:SPExceptionInvalidOperation format:@"invalid width"];
         if (height <= 0.0f) [NSException raise:SPExceptionInvalidOperation format:@"invalid height"];
         if (scale <= 0.0f)  [NSException raise:SPExceptionInvalidOperation format:@"invalid scale"];
+
+        BOOL isPowerOf2 = [SPUtils isPowerOfTwo:width] && [SPUtils isPowerOfTwo:height];
+        if (!isPowerOf2 && mipmaps)
+            NSLog(@"Mipmaping enabled for non power of two texture. No mimaps will be created");
         
         _name = name;
         _width = width;
         _height = height;
-        _mipmaps = mipmaps;
+        _isPowerOf2 = isPowerOf2;
+        _mipmaps = mipmaps && isPowerOf2;
         _scale = scale;
         _format = format;
         _premultipliedAlpha = pma;
@@ -290,6 +297,12 @@
 
 - (void)setRepeat:(BOOL)value
 {
+    if (!_isPowerOf2 && value)
+    {
+        value = NO;
+        NSLog(@"Can't repeat textures that are non power of two.");
+    }
+
     _repeat = value;
     glBindTexture(GL_TEXTURE_2D, _name);
 
