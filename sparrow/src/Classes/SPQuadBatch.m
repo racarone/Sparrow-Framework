@@ -21,18 +21,6 @@
 #import <Sparrow/SPTexture.h>
 #import <Sparrow/SPVertexData.h>
 
-// --- private interface ---------------------------------------------------------------------------
-
-@interface SPQuadBatch ()
-
-- (void)expand;
-- (void)createBuffers;
-- (void)syncBuffers;
-
-@property (nonatomic, assign) int capacity;
-
-@end
-
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPQuadBatch
@@ -247,9 +235,11 @@
     int attribTexCoords = _baseEffect.attribTexCoords;
     
     glEnableVertexAttribArray(attribPosition);
-    glEnableVertexAttribArray(attribColor);
+
+    if (attribColor != SPNotFound)
+        glEnableVertexAttribArray(attribColor);
     
-    if (_texture)
+    if (attribTexCoords != SPNotFound)
         glEnableVertexAttribArray(attribTexCoords);
     
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
@@ -257,18 +247,23 @@
     
     glVertexAttribPointer(attribPosition, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
                           (void *)(offsetof(SPVertex, position)));
-    
-    glVertexAttribPointer(attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SPVertex),
-                          (void *)(offsetof(SPVertex, color)));
-    
-    if (_texture)
-    {
+
+    if (attribColor != SPNotFound)
+        glVertexAttribPointer(attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SPVertex),
+                              (void *)(offsetof(SPVertex, color)));
+
+    if (attribTexCoords != SPNotFound)
         glVertexAttribPointer(attribTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
                               (void *)(offsetof(SPVertex, texCoords)));
-    }
     
     int numIndices = _numQuads * 6;
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
+
+    if (attribColor != SPNotFound)
+        glDisableVertexAttribArray(attribColor);
+
+    if (attribTexCoords != SPNotFound)
+        glDisableVertexAttribArray(attribTexCoords);
 }
 
 #pragma mark Compilation Methods
