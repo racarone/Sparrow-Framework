@@ -21,6 +21,8 @@
 #import <Sparrow/SPTexture.h>
 #import <Sparrow/SPVertexData.h>
 
+#define MAX_NUM_QUADS 16383
+
 enum
 {
     ATTRIB_POSITION,
@@ -190,7 +192,7 @@ enum
              premultipliedAlpha:(BOOL)pma blendMode:(uint)blendMode numQuads:(int)numQuads
 {
     if (_numQuads == 0) return NO;
-    else if (_numQuads + numQuads > 8192) return YES; // maximum buffer size
+    else if (_numQuads + numQuads > MAX_NUM_QUADS) return YES; // maximum buffer size
     else if (!_texture && !texture)
         return _premultipliedAlpha != pma || self.blendMode != blendMode;
     else if (_texture && texture)
