@@ -332,7 +332,6 @@
 
     // draw the original object into a texture
     [support setRenderTarget:_passTextures[0]];
-    [Sparrow.context setScissorBox:nil]; // we want the entire texture cleared
     [support clear];
     [support setBlendMode:SPBlendModeNormal];
     [support setupOrthographicProjectionWithLeft:boundsPOT.left right:boundsPOT.right top:boundsPOT.bottom bottom:boundsPOT.top];

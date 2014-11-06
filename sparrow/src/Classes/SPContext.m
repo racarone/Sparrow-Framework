@@ -260,8 +260,17 @@
     float green = SP_COLOR_PART_GREEN(color) / 255.0f;
     float blue  = SP_COLOR_PART_BLUE(color)  / 255.0f;
 
+    int scissorEnabled = 0;
+    glGetIntegerv(GL_SCISSOR_TEST, &scissorEnabled);
+
+    if (scissorEnabled == GL_TRUE)
+        glDisable(GL_SCISSOR_TEST);
+
     glClearColor(red, green, blue, alpha);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    if (scissorEnabled == GL_TRUE)
+        glEnable(GL_SCISSOR_TEST);
 }
 
 - (BOOL)makeCurrentContext

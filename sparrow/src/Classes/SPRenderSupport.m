@@ -165,12 +165,7 @@
 
 + (void)clearWithColor:(uint)color alpha:(float)alpha;
 {
-    float red   = SP_COLOR_PART_RED(color)   / 255.0f;
-    float green = SP_COLOR_PART_GREEN(color) / 255.0f;
-    float blue  = SP_COLOR_PART_BLUE(color)  / 255.0f;
-
-    glClearColor(red, green, blue, alpha);
-    glClear(GL_COLOR_BUFFER_BIT);
+    [[Sparrow context] clearWithColor:color alpha:alpha];
 }
 
 + (uint)checkForOpenGLError
