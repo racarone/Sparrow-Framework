@@ -21,6 +21,14 @@
 #import <Sparrow/SPTexture.h>
 #import <Sparrow/SPVertexData.h>
 
+enum
+{
+    ATTRIB_POSITION,
+    ATTRIB_COLOR,
+    ATTRIB_TEXCOORD,
+    ATTRIB_MAX,
+};
+
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPQuadBatch
@@ -36,6 +44,9 @@
     uint _vertexBufferName;
     ushort *_indexData;
     uint _indexBufferName;
+
+    uint _vertexArrayName;
+    uint _attribCache[ATTRIB_MAX];
 }
 
 #pragma mark Initialization
@@ -64,9 +75,8 @@
 - (void)dealloc
 {
     free(_indexData);
-    
-    glDeleteBuffers(1, &_vertexBufferName);
-    glDeleteBuffers(1, &_indexBufferName);
+
+    [self destroyBuffers];
 
     [_texture release];
     [_vertexData release];
@@ -301,41 +311,50 @@
     [_baseEffect prepareToDraw];
 
     [SPBlendMode applyBlendFactorsForBlendMode:blendMode premultipliedAlpha:_premultipliedAlpha];
-    
-    int attribPosition  = _baseEffect.attribPosition;
-    int attribColor     = _baseEffect.attribColor;
-    int attribTexCoords = _baseEffect.attribTexCoords;
-    
-    glEnableVertexAttribArray(attribPosition);
 
-    if (attribColor != SPNotFound)
-        glEnableVertexAttribArray(attribColor);
-    
-    if (attribTexCoords != SPNotFound)
-        glEnableVertexAttribArray(attribTexCoords);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
-    
-    glVertexAttribPointer(attribPosition, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
-                          (void *)(offsetof(SPVertex, position)));
+    int attribPosition = _baseEffect.attribPosition;
+    int attribColor    = _baseEffect.attribColor;
+    int attribTexCoord = _baseEffect.attribTexCoords;
 
-    if (attribColor != SPNotFound)
-        glVertexAttribPointer(attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SPVertex),
-                              (void *)(offsetof(SPVertex, color)));
+    glBindVertexArray(_vertexArrayName);
 
-    if (attribTexCoords != SPNotFound)
-        glVertexAttribPointer(attribTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
-                              (void *)(offsetof(SPVertex, texCoords)));
+    // if the cache values differ, reconfigure the vertex array
+    if (_attribCache[ATTRIB_POSITION] != attribPosition ||
+        _attribCache[ATTRIB_COLOR]    != attribColor ||
+        _attribCache[ATTRIB_TEXCOORD] != attribTexCoord)
+    {
+        glEnableVertexAttribArray(attribPosition);
+
+        if (attribColor != SPNotFound)
+            glEnableVertexAttribArray(attribColor);
+
+        if (attribTexCoord != SPNotFound)
+            glEnableVertexAttribArray(attribTexCoord);
+
+        glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
+
+        glVertexAttribPointer(attribPosition, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
+                              (void *)(offsetof(SPVertex, position)));
+
+        if (attribColor != SPNotFound)
+            glVertexAttribPointer(attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SPVertex),
+                                  (void *)(offsetof(SPVertex, color)));
+
+        if (attribTexCoord != SPNotFound)
+            glVertexAttribPointer(attribTexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
+                                  (void *)(offsetof(SPVertex, texCoords)));
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
+
+        _attribCache[ATTRIB_POSITION] = attribPosition;
+        _attribCache[ATTRIB_COLOR]    = attribColor;
+        _attribCache[ATTRIB_TEXCOORD] = attribTexCoord;
+    }
     
     int numIndices = _numQuads * 6;
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
 
-    if (attribColor != SPNotFound)
-        glDisableVertexAttribArray(attribColor);
-
-    if (attribTexCoords != SPNotFound)
-        glDisableVertexAttribArray(attribTexCoords);
+    glBindVertexArray(0);
 }
 
 #pragma mark Compilation Methods
@@ -489,12 +508,14 @@
 
     glGenBuffers(1, &_vertexBufferName);
     glGenBuffers(1, &_indexBufferName);
+    glGenVertexArrays(1, &_vertexArrayName);
 
     if (!_vertexBufferName || !_indexBufferName)
         [NSException raise:SPExceptionOperationFailed format:@"could not create vertex buffers"];
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * numIndices, _indexData, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     _syncRequired = YES;
 }
@@ -512,6 +533,14 @@
         glDeleteBuffers(1, &_indexBufferName);
         _indexBufferName = 0;
     }
+
+    if (_vertexArrayName)
+    {
+        glDeleteVertexArrays(1, &_vertexArrayName);
+        _vertexArrayName = 0;
+    }
+
+    memset(_attribCache, SPNotFound, sizeof(_attribCache));
 }
 
 - (void)syncBuffers
@@ -525,6 +554,7 @@
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
     glBufferData(GL_ARRAY_BUFFER, sizeof(SPVertex) * _vertexData.numVertices,
                  _vertexData.vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     _syncRequired = NO;
 }
