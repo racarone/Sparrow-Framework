@@ -77,7 +77,7 @@ typedef NS_ENUM(uint, SPVAlign)
     SPVAlignBottom
 };
 
-// colors
+// colors helpers
 
 SP_EXTERN const uint SPColorWhite;
 SP_EXTERN const uint SPColorSilver;
@@ -101,9 +101,19 @@ SP_INLINE uint SPColorMake(uchar r, uchar g, uchar b)
     return ((int)(r) << 16) | ((int)(g) << 8) | (int)(b);
 }
 
+SP_INLINE uint SPColorMakeWithFloat(float r, float g, float b)
+{
+    return SPColorMake(r * 255, g * 255, b * 255);
+}
+
 SP_INLINE uint SPColorMakeARGB(uchar r, uchar g, uchar b, uchar a)
 {
     return ((int)(a) << 24) | ((int)(r) << 16) | ((int)(g) << 8) | (int)(b);
+}
+
+SP_INLINE uint SPColorMakeARGBWithFloat(float r, float g, float b, float a)
+{
+    return SPColorMakeARGB(r * 255, g * 255, b * 255, a * 255);
 }
 
 SP_INLINE uchar SPColorGetAlpha(uint color)
@@ -111,9 +121,19 @@ SP_INLINE uchar SPColorGetAlpha(uint color)
     return (color >> 24) & 0xff;
 }
 
+SP_INLINE float SPColorGetAlphaFloat(uint color)
+{
+    return (SPColorGetAlpha(color) / 255.0f);
+}
+
 SP_INLINE uchar SPColorGetRed(uint color)
 {
     return (color >> 16) & 0xff;
+}
+
+SP_INLINE float SPColorGetRedFloat(uint color)
+{
+    return (SPColorGetRed(color) / 255.0f);
 }
 
 SP_INLINE uchar SPColorGetGreen(uint color)
@@ -121,9 +141,48 @@ SP_INLINE uchar SPColorGetGreen(uint color)
     return (color >> 8) & 0xff;
 }
 
+SP_INLINE float SPColorGetGreenFloat(uint color)
+{
+    return (SPColorGetGreen(color) / 255.0f);
+}
+
 SP_INLINE uchar SPColorGetBlue(uint color)
 {
     return (color & 0xff);
+}
+
+SP_INLINE float SPColorGetBlueFloat(uint color)
+{
+    return (SPColorGetBlue(color) / 255.0f);
+}
+
+SP_INLINE uint SPColorMultiply(uint color1, uint color2)
+{
+    const float r1 = SPColorGetRedFloat(color1);
+    const float g1 = SPColorGetGreenFloat(color1);
+    const float b1 = SPColorGetBlueFloat(color1);
+
+    const float r2 = SPColorGetRedFloat(color2);
+    const float g2 = SPColorGetGreenFloat(color2);
+    const float b2 = SPColorGetBlueFloat(color2);
+
+    return SPColorMakeWithFloat(r1 * r2, g1 * g2, b1 * b2);
+}
+
+SP_INLINE uint SPColorMix(uint color1, uint color2, float ratio)
+{
+    const float r1 = SPColorGetRedFloat(color1);
+    const float g1 = SPColorGetGreenFloat(color1);
+    const float b1 = SPColorGetBlueFloat(color1);
+
+    const float r2 = SPColorGetRedFloat(color2);
+    const float g2 = SPColorGetGreenFloat(color2);
+    const float b2 = SPColorGetBlueFloat(color2);
+
+    const float invRatio = 1.0f - ratio;
+    return SPColorMakeWithFloat(invRatio * r1 + r2 * ratio,
+                                invRatio * g1 + g2 * ratio,
+                                invRatio * b1 + b2 * ratio);
 }
 
 // hashing
