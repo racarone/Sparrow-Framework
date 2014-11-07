@@ -9,10 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPPVRData.h>
-#import <Sparrow/SPNSExtensions.h>
-#import <Sparrow/SPUtils.h>
+#import "SPMacros.h"
+#import "SPPVRData.h"
+#import "SPNSExtensions.h"
+#import "SPUtils.h"
 
 // --- PVR structs & enums -------------------------------------------------------------------------
 

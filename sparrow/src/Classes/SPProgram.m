@@ -9,9 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPOpenGL.h>
-#import <Sparrow/SPProgram.h>
+#import "SPMacros.h"
+#import "SPOpenGL.h"
+#import "SPProgram.h"
 
 // --- class implementation ------------------------------------------------------------------------
 

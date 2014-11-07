@@ -9,9 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPEventListener.h>
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPNSExtensions.h>
+#import "SPEventListener.h"
+#import "SPMacros.h"
+#import "SPNSExtensions.h"
 
 #import <objc/message.h>
 

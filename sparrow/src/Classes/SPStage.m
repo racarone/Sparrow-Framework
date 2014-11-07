@@ -9,12 +9,12 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPEnterFrameEvent.h>
-#import <Sparrow/SPDisplayObject_Internal.h>
-#import <Sparrow/SPDisplayObjectContainer_Internal.h>
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPRenderSupport.h>
-#import <Sparrow/SPStage.h>
+#import "SPEnterFrameEvent.h"
+#import "SPDisplayObject_Internal.h"
+#import "SPDisplayObjectContainer_Internal.h"
+#import "SPMacros.h"
+#import "SPRenderSupport.h"
+#import "SPStage.h"
 
 #import <UIKit/UIKit.h>
 

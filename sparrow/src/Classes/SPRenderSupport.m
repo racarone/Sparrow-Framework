@@ -9,20 +9,20 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass.h>
-#import <Sparrow/SPBlendMode.h>
-#import <Sparrow/SPContext.h>
-#import <Sparrow/SPDisplayObject.h>
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPMatrix.h>
-#import <Sparrow/SPOpenGL.h>
-#import <Sparrow/SPPoint.h>
-#import <Sparrow/SPQuad.h>
-#import <Sparrow/SPQuadBatch.h>
-#import <Sparrow/SPRectangle.h>
-#import <Sparrow/SPRenderSupport.h>
-#import <Sparrow/SPTexture.h>
-#import <Sparrow/SPVertexData.h>
+#import "SparrowClass.h"
+#import "SPBlendMode.h"
+#import "SPContext.h"
+#import "SPDisplayObject.h"
+#import "SPMacros.h"
+#import "SPMatrix.h"
+#import "SPOpenGL.h"
+#import "SPPoint.h"
+#import "SPQuad.h"
+#import "SPQuadBatch.h"
+#import "SPRectangle.h"
+#import "SPRenderSupport.h"
+#import "SPTexture.h"
+#import "SPVertexData.h"
 
 #pragma mark - SPRenderState
 

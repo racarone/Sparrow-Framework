@@ -9,14 +9,14 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPGLTexture.h>
-#import <Sparrow/SPImage.h>
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPPoint.h>
-#import <Sparrow/SPRectangle.h>
-#import <Sparrow/SPRenderSupport.h>
-#import <Sparrow/SPTexture.h>
-#import <Sparrow/SPVertexData.h>
+#import "SPGLTexture.h"
+#import "SPImage.h"
+#import "SPMacros.h"
+#import "SPPoint.h"
+#import "SPRectangle.h"
+#import "SPRenderSupport.h"
+#import "SPTexture.h"
+#import "SPVertexData.h"
 
 @implementation SPImage
 {

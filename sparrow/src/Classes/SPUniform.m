@@ -9,6 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import "SPMacros.h"
 #import "SPMatrix.h"
 #import "SPPoint.h"
 #import "SPProgram.h"

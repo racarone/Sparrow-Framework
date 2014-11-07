@@ -9,8 +9,8 @@
 //	in accordance with the terms of the accompanying license agreement.
 //
 
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPURLConnection.h>
+#import "SPMacros.h"
+#import "SPURLConnection.h"
 
 @implementation SPURLConnection
 {

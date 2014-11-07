@@ -9,15 +9,15 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPButton.h>
-#import <Sparrow/SPGLTexture.h>
-#import <Sparrow/SPImage.h>
-#import <Sparrow/SPRectangle.h>
-#import <Sparrow/SPSprite.h>
-#import <Sparrow/SPStage.h>
-#import <Sparrow/SPTextField.h>
-#import <Sparrow/SPTexture.h>
-#import <Sparrow/SPTouchEvent.h>
+#import "SPButton.h"
+#import "SPGLTexture.h"
+#import "SPImage.h"
+#import "SPRectangle.h"
+#import "SPSprite.h"
+#import "SPStage.h"
+#import "SPTextField.h"
+#import "SPTexture.h"
+#import "SPTouchEvent.h"
 
 #define MAX_DRAG_DIST 40
 

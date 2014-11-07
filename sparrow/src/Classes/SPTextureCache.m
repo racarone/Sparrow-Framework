@@ -8,8 +8,8 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPTexture.h>
-#import <Sparrow/SPTextureCache.h>
+#import "SPTexture.h"
+#import "SPTextureCache.h"
 
 @implementation SPTextureCache
 {

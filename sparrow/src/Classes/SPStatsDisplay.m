@@ -9,12 +9,12 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPBlendMode.h>
-#import <Sparrow/SPBitmapFont.h>
-#import <Sparrow/SPEnterFrameEvent.h>
-#import <Sparrow/SPQuad.h>
-#import <Sparrow/SPStatsDisplay.h>
-#import <Sparrow/SPTextField.h>
+#import "SPBlendMode.h"
+#import "SPBitmapFont.h"
+#import "SPEnterFrameEvent.h"
+#import "SPQuad.h"
+#import "SPStatsDisplay.h"
+#import "SPTextField.h"
 
 @implementation SPStatsDisplay
 {

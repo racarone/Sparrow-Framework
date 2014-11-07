@@ -9,7 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPDisplayLink.h>
+#import "SPDisplayLink.h"
 
 #import <QuartzCore/QuartzCore.h>
 #if SP_TARGET_OSX

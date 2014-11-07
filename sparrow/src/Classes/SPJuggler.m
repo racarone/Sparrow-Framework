@@ -9,11 +9,11 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPAnimatable.h>
-#import <Sparrow/SPDelayedInvocation.h>
-#import <Sparrow/SPEventDispatcher.h>
-#import <Sparrow/SPJuggler.h>
-#import <Sparrow/SPTween.h>
+#import "SPAnimatable.h"
+#import "SPDelayedInvocation.h"
+#import "SPEventDispatcher.h"
+#import "SPJuggler.h"
+#import "SPTween.h"
 
 @implementation SPJuggler
 {

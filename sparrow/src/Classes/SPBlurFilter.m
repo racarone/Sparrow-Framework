@@ -9,14 +9,14 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass.h>
-#import <Sparrow/SPBlurFilter.h>
-#import <Sparrow/SPEffect.h>
-#import <Sparrow/SPMatrix.h>
-#import <Sparrow/SPNSExtensions.h>
-#import <Sparrow/SPOpenGL.h>
-#import <Sparrow/SPProgram.h>
-#import <Sparrow/SPTexture.h>
+#import "SparrowClass.h"
+#import "SPBlurFilter.h"
+#import "SPEffect.h"
+#import "SPMatrix.h"
+#import "SPNSExtensions.h"
+#import "SPOpenGL.h"
+#import "SPProgram.h"
+#import "SPTexture.h"
 
 static NSString *const SPBlurProgram = @"SSPBlurProgram";
 

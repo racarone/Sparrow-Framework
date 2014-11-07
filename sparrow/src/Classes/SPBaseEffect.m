@@ -9,10 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass.h>
-#import <Sparrow/SPBaseEffect.h>
-#import <Sparrow/SPNSExtensions.h>
-#import <Sparrow/SPProgram.h>
+#import "SparrowClass.h"
+#import "SPBaseEffect.h"
+#import "SPNSExtensions.h"
+#import "SPProgram.h"
 
 // --- class implementation ------------------------------------------------------------------------
 

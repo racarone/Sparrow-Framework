@@ -9,7 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPOpenGL.h>
+#import "SPOpenGL.h"
 
 #import <malloc/malloc.h>
 #import <pthread.h>

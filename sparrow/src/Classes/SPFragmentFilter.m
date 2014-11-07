@@ -9,25 +9,25 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass.h>
-#import <Sparrow/SPBlendMode.h>
-#import <Sparrow/SPContext.h>
-#import <Sparrow/SPDisplayObject.h>
-#import <Sparrow/SPImage.h>
-#import <Sparrow/SPEffect.h>
-#import <Sparrow/SPMatrix.h>
-#import <Sparrow/SPOpenGL.h>
-#import <Sparrow/SPProgram.h>
-#import <Sparrow/SPQuadBatch.h>
-#import <Sparrow/SPRectangle.h>
-#import <Sparrow/SPRenderSupport.h>
-#import <Sparrow/SPRenderTexture.h>
-#import <Sparrow/SPFragmentFilter.h>
-#import <Sparrow/SPStage.h>
-#import <Sparrow/SPGLTexture.h>
-#import <Sparrow/SPTexture.h>
-#import <Sparrow/SPUtils.h>
-#import <Sparrow/SPVertexData.h>
+#import "SparrowClass.h"
+#import "SPBlendMode.h"
+#import "SPContext.h"
+#import "SPDisplayObject.h"
+#import "SPImage.h"
+#import "SPEffect.h"
+#import "SPMatrix.h"
+#import "SPOpenGL.h"
+#import "SPProgram.h"
+#import "SPQuadBatch.h"
+#import "SPRectangle.h"
+#import "SPRenderSupport.h"
+#import "SPRenderTexture.h"
+#import "SPFragmentFilter.h"
+#import "SPStage.h"
+#import "SPGLTexture.h"
+#import "SPTexture.h"
+#import "SPUtils.h"
+#import "SPVertexData.h"
 
 #define MIN_TEXTURE_SIZE 64
 

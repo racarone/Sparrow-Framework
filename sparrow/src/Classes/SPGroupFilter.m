@@ -9,17 +9,17 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass.h>
-#import <Sparrow/SPBaseEffect.h>
-#import <Sparrow/SPDisplayObject.h>
-#import <Sparrow/SPGroupFilter.h>
-#import <Sparrow/SPGLTexture.h>
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPMatrix.h>
-#import <Sparrow/SPOpenGL.h>
-#import <Sparrow/SPRectangle.h>
-#import <Sparrow/SPRenderSupport.h>
-#import <Sparrow/SPStage.h>
+#import "SparrowClass.h"
+#import "SPBaseEffect.h"
+#import "SPDisplayObject.h"
+#import "SPGroupFilter.h"
+#import "SPGLTexture.h"
+#import "SPMacros.h"
+#import "SPMatrix.h"
+#import "SPOpenGL.h"
+#import "SPRectangle.h"
+#import "SPRenderSupport.h"
+#import "SPStage.h"
 
 @interface SPFragmentFilter (Internal)
 

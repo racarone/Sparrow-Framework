@@ -9,8 +9,8 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPPoolObject.h>
+#import "SPMacros.h"
+#import "SPPoolObject.h"
 
 #import <libkern/OSAtomic.h>
 #import <malloc/malloc.h>

@@ -9,15 +9,15 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPBlendMode.h>
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPMatrix.h>
-#import <Sparrow/SPPoint.h>
-#import <Sparrow/SPQuadBatch.h>
-#import <Sparrow/SPRectangle.h>
-#import <Sparrow/SPRenderSupport.h>
-#import <Sparrow/SPSprite.h>
-#import <Sparrow/SPStage.h>
+#import "SPBlendMode.h"
+#import "SPMacros.h"
+#import "SPMatrix.h"
+#import "SPPoint.h"
+#import "SPQuadBatch.h"
+#import "SPRectangle.h"
+#import "SPRenderSupport.h"
+#import "SPSprite.h"
+#import "SPStage.h"
 
 // --- class implementation ------------------------------------------------------------------------
 

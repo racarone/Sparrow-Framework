@@ -9,9 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPMatrix.h>
-#import <Sparrow/SPPoint.h>
+#import "SPMacros.h"
+#import "SPMatrix.h"
+#import "SPPoint.h"
 
 // --- class implementation ------------------------------------------------------------------------
 

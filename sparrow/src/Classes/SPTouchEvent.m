@@ -9,11 +9,11 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPDisplayObject.h>
-#import <Sparrow/SPDisplayObjectContainer.h>
-#import <Sparrow/SPEvent_Internal.h>
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPTouchEvent.h>
+#import "SPDisplayObject.h"
+#import "SPDisplayObjectContainer.h"
+#import "SPEvent_Internal.h"
+#import "SPMacros.h"
+#import "SPTouchEvent.h"
 
 NSString *const SPEventTypeTouch = @"SPEventTypeTouch";
 

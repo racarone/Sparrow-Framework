@@ -9,18 +9,18 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass.h>
-#import <Sparrow/SPBlendMode.h>
-#import <Sparrow/SPDisplayObject_Internal.h>
-#import <Sparrow/SPDisplayObjectContainer.h>
-#import <Sparrow/SPEnterFrameEvent.h>
-#import <Sparrow/SPEventDispatcher_Internal.h>
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPMatrix.h>
-#import <Sparrow/SPPoint.h>
-#import <Sparrow/SPRectangle.h>
-#import <Sparrow/SPStage_Internal.h>
-#import <Sparrow/SPTouchEvent.h>
+#import "SparrowClass.h"
+#import "SPBlendMode.h"
+#import "SPDisplayObject_Internal.h"
+#import "SPDisplayObjectContainer.h"
+#import "SPEnterFrameEvent.h"
+#import "SPEventDispatcher_Internal.h"
+#import "SPMacros.h"
+#import "SPMatrix.h"
+#import "SPPoint.h"
+#import "SPRectangle.h"
+#import "SPStage_Internal.h"
+#import "SPTouchEvent.h"
 
 // --- class implementation ------------------------------------------------------------------------
 

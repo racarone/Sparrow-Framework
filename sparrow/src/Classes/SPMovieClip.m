@@ -9,9 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPMovieClip.h>
-#import <Sparrow/SPSoundChannel.h>
+#import "SPMacros.h"
+#import "SPMovieClip.h"
+#import "SPSoundChannel.h"
 
 // --- private interface ---------------------------------------------------------------------------
 

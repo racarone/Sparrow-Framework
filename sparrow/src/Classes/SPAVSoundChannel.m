@@ -9,9 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPAudioEngine.h>
-#import <Sparrow/SPAVSound.h>
-#import <Sparrow/SPAVSoundChannel.h>
+#import "SPAudioEngine.h"
+#import "SPAVSound.h"
+#import "SPAVSoundChannel.h"
 
 @implementation SPAVSoundChannel
 {

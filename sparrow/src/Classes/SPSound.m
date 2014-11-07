@@ -9,12 +9,12 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPALSound.h>
-#import <Sparrow/SPAVSound.h>
-#import <Sparrow/SPEvent.h>
-#import <Sparrow/SPSound.h>
-#import <Sparrow/SPSoundChannel.h>
-#import <Sparrow/SPUtils.h>
+#import "SPALSound.h"
+#import "SPAVSound.h"
+#import "SPEvent.h"
+#import "SPSound.h"
+#import "SPSoundChannel.h"
+#import "SPUtils.h"
 
 #import <AudioToolbox/AudioToolbox.h> 
 

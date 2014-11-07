@@ -9,7 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPMacros.h>
+#import "SPMacros.h"
 
 const uint SPColorWhite     = 0xffffff;
 const uint SPColorSilver    = 0xc0c0c0;

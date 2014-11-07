@@ -9,7 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPSoundChannel.h>
+#import "SPSoundChannel.h"
 
 @implementation SPSoundChannel
 

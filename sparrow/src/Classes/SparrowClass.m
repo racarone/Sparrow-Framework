@@ -9,7 +9,7 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass.h>
+#import "SparrowClass.h"
 
 static __weak SPViewController *controller = nil;
 

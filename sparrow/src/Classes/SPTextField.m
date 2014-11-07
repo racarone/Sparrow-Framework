@@ -9,20 +9,20 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass.h>
-#import <Sparrow/SPBitmapFont.h>
-#import <Sparrow/SPEnterFrameEvent.h>
-#import <Sparrow/SPGLTexture.h>
-#import <Sparrow/SPImage.h>
-#import <Sparrow/SPNSExtensions.h>
-#import <Sparrow/SPQuad.h>
-#import <Sparrow/SPQuadBatch.h>
-#import <Sparrow/SPRectangle.h>
-#import <Sparrow/SPStage.h>
-#import <Sparrow/SPSprite.h>
-#import <Sparrow/SPSubTexture.h>
-#import <Sparrow/SPTextField.h>
-#import <Sparrow/SPTexture.h>
+#import "SparrowClass.h"
+#import "SPBitmapFont.h"
+#import "SPEnterFrameEvent.h"
+#import "SPGLTexture.h"
+#import "SPImage.h"
+#import "SPNSExtensions.h"
+#import "SPQuad.h"
+#import "SPQuadBatch.h"
+#import "SPRectangle.h"
+#import "SPStage.h"
+#import "SPSprite.h"
+#import "SPSubTexture.h"
+#import "SPTextField.h"
+#import "SPTexture.h"
 
 // --- public constants ----------------------------------------------------------------------------
 

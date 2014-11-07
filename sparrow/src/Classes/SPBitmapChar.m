@@ -9,10 +9,10 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPBitmapChar.h>
-#import <Sparrow/SPImage.h>
-#import <Sparrow/SPMacros.h>
-#import <Sparrow/SPTexture.h>
+#import "SPBitmapChar.h"
+#import "SPImage.h"
+#import "SPMacros.h"
+#import "SPTexture.h"
 
 @implementation SPBitmapChar
 {

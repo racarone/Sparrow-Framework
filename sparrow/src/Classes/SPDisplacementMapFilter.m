@@ -9,15 +9,15 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass.h>
-#import <Sparrow/SPDisplacementMapFilter.h>
-#import <Sparrow/SPEffect.h>
-#import <Sparrow/SPMatrix.h>
-#import <Sparrow/SPNSExtensions.h>
-#import <Sparrow/SPOpenGL.h>
-#import <Sparrow/SPPoint.h>
-#import <Sparrow/SPProgram.h>
-#import <Sparrow/SPTexture.h>
+#import "SparrowClass.h"
+#import "SPDisplacementMapFilter.h"
+#import "SPEffect.h"
+#import "SPMatrix.h"
+#import "SPNSExtensions.h"
+#import "SPOpenGL.h"
+#import "SPPoint.h"
+#import "SPProgram.h"
+#import "SPTexture.h"
 
 static NSString *const SPDisplacementMapProgram = @"SPDisplacementMapProgram";
 

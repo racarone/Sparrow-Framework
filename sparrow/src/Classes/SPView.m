@@ -9,11 +9,11 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass_Internal.h>
-#import <Sparrow/SPContext.h>
-#import <Sparrow/SPOpenGL.h>
-#import <Sparrow/SPView.h>
-#import <Sparrow/SPViewController.h>
+#import "SparrowClass_Internal.h"
+#import "SPContext.h"
+#import "SPOpenGL.h"
+#import "SPView.h"
+#import "SPViewController.h"
 
 @implementation SPView
 {

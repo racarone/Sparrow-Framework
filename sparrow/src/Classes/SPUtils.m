@@ -9,9 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SparrowClass.h>
-#import <Sparrow/SPNSExtensions.h>
-#import <Sparrow/SPUtils.h>
+#import "SparrowClass.h"
+#import "SPNSExtensions.h"
+#import "SPUtils.h"
 
 #import <sys/stat.h>
 
