@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 
 @class SPDisplayObject;
+@class SPEffect;
 @class SPMatrix;
 @class SPRenderSupport;
 @class SPTexture;
@@ -120,19 +121,23 @@ typedef NS_ENUM(uint, SPFragmentFilterMode)
 /// @name Methods
 /// -------------
 
-/// Subclasses must override this method and use it to create their fragment and vertex shaders.
-- (void)createPrograms;
+/// Subclasses must override this method and use it to create their effect shaders.
+- (void)createEffects;
+
+/// Subclasses must override this method and use it to return the correct effect for use in the
+/// current pass.
+- (SPEffect *)effectForPass:(int)pass;
 
 /// Subclasses must override this method and use it to activate their shader program.
-/// The 'activate' call directly precedes the call to 'glDrawElements'.
-- (void)activateWithPass:(int)pass texture:(SPTexture *)texture mvpMatrix:(SPMatrix *)matrix;
+/// The 'activate' call directly precedes the call to 'glDrawElements'. The uniforms 'uTexture'
+/// and 'uMvpMatrix' will be set before this call automatically.
+- (void)activateWithPass:(int)pass texture:(SPTexture *)texture;
 
 /// This method is called directly after 'glDrawElements'.
 /// If you need to clean up any resources, you can do so in this method.
 - (void)deactivateWithPass:(int)pass texture:(SPTexture *)texture;
 
-/// The standard vertex shader code. It will be used automatically if you don't create a custom
-/// vertex shader yourself.
+/// The standard vertex shader code.
 + (NSString *)standardVertexShader;
 
 /// The standard fragment shader code. It just forwards the texture color to the output.
@@ -153,11 +158,5 @@ typedef NS_ENUM(uint, SPFragmentFilterMode)
 /// The number of passes the filter is applied. The "activate" and "deactivate" methods will be
 /// called that often.
 @property (nonatomic, assign) int numPasses;
-
-/// The ID of the vertex buffer attribute that stores the vertex position.
-@property (nonatomic, assign) int vertexPosID;
-
-/// The ID of the vertex buffer attribute that stores the SPTexture coordinates.
-@property (nonatomic, assign) int texCoordsID;
 
 @end

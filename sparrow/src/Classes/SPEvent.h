@@ -48,11 +48,17 @@ SP_EXTERN NSString *const SPEventTypeFlatten;
 /// @name Initialization
 /// --------------------
 
-/// Initializes an event object that can be passed to listeners. _Designated Initializer_.
+/// Initializes an event object that can be passed to listeners with a data object. _Designated Initializer_.
+- (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles data:(id)object;
+
+/// Initializes an event object that can be passed to listeners.
 - (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles;
 
 /// Initializes a non-bubbling event.
 - (instancetype)initWithType:(NSString *)type;
+
+/// Factory method.
++ (instancetype)eventWithType:(NSString *)type bubbles:(BOOL)bubbles data:(id)object;
 
 /// Factory method.
 + (instancetype)eventWithType:(NSString *)type bubbles:(BOOL)bubbles;
@@ -78,7 +84,10 @@ SP_EXTERN NSString *const SPEventTypeFlatten;
 @property (nonatomic, readonly) NSString *type; 
 
 /// Indicates if event will bubble.
-@property (nonatomic, readonly) BOOL bubbles; 
+@property (nonatomic, readonly) BOOL bubbles;
+
+/// Arbitrary data that is attached to the event.
+@property (nonatomic, readonly) id data;
 
 /// The object that dispatched the event.
 @property (weak, nonatomic, readonly) SPEventDispatcher *target; 

@@ -9,10 +9,12 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <Sparrow/SPEventDispatcher.h>
 
 @class SPRectangle;
 @class SPTexture;
+@class SPView;
 
 /** ------------------------------------------------------------------------------------------------
  
@@ -22,24 +24,44 @@
 
 ------------------------------------------------------------------------------------------------- */
 
-@interface SPContext : NSObject
+@interface SPContext : SPEventDispatcher
 
 /// --------------------
 /// @name Initialization
 /// --------------------
 
-/// Initializes and returns a rendering context with the specified sharegroup.
-- (instancetype)initWithSharegroup:(id)sharegroup;
+/// Initializes and returns a rendering context with the specified share context.
+- (instancetype)initWithShareContext:(SPContext *)shareContext;
+
+/// Initializes and returns a rendering context.
+- (instancetype)init;
+
+/// Returns the global context used for sharing.
++ (instancetype)globalShareContext;
 
 /// -------------
 /// @name Methods
 /// -------------
 
+/// Sets the viewport dimensions and other attributes of the rendering buffer.
+- (void)configureBackBufferForView:(SPView *)view antiAlias:(int)antiAlias
+             enableDepthAndStencil:(BOOL)enableDepthAndStencil
+               wantsBestResolution:(BOOL)wantsBestResolution;
+
 /// Sets the back rendering buffer as the render target.
 - (void)renderToBackBuffer;
 
-/// Displays a renderbuffer’s contents on screen.
-- (void)presentBufferForDisplay;
+/// Displays the back rendering buffer.
+- (void)present;
+
+/// Clears the contexts of the current render target.
+- (void)clear;
+
+/// Clears the contexts of the current render target with a specified color.
+- (void)clearWithColor:(uint)color;
+
+/// Clears the contexts of the current render target with a specified color and alpha.
+- (void)clearWithColor:(uint)color alpha:(float)alpha;
 
 /// Returns an image of the current render target.
 - (UIImage *)snapshot;
@@ -66,11 +88,8 @@
 /// @name Properties
 /// ----------------
 
-/// The receiver’s sharegroup object.
-@property (atomic, readonly) id sharegroup;
-
 /// The receiver’s native context object.
-@property (atomic, readonly) id nativeContext;
+@property (atomic, readonly) EAGLContext *nativeContext;
 
 /// The current OpenGL viewport rectangle in pixels.
 @property (nonatomic, assign) SPRectangle *viewport;
@@ -80,5 +99,13 @@
 
 /// The specified texture as the rendering target or nil if rendering to the default framebuffer.
 @property (nonatomic, retain) SPTexture *renderTarget;
+
+/// Specifies the width of the back buffer, which can be changed by a successful call to the
+/// 'configureBackBuffer:' method.
+@property (nonatomic, readonly) int backBufferWidth;
+
+/// Specifies the height of the back buffer, which can be changed by a successful call to the
+/// 'configureBackBuffer:' method.
+@property (nonatomic, readonly) int backBufferHeight;
 
 @end

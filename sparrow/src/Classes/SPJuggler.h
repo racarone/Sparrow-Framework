@@ -88,6 +88,10 @@
 /// Delays the execution of a block by a certain time in seconds.
 - (id)delayInvocationByTime:(double)time block:(SPCallbackBlock)block;
 
+/// Runs a function at a specified interval (in seconds). A 'repeatCount' of 0 means that it
+/// runs indefinitely.
+- (id)repeatInvocationAtTarget:(id)target interval:(double)interval repeatCount:(int)repeatCount;
+
 /// Creates a tween to animate the target over 'time' seconds. This method provides a convenient
 /// alternative for creating and adding a tween manually.
 - (id)tweenWithTarget:(id)target time:(double)time properties:(NSDictionary *)properties;

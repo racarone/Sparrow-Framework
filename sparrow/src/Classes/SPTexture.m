@@ -79,11 +79,9 @@ static SPTextureCache *textureCache = nil;
 
     if ([SPTexture isPVRFile:fullPath])
     {
-        BOOL isCompressed = [SPTexture isCompressedFile:fullPath];
         float scale = [fullPath contentScaleFactor];
-        
         NSData *rawData = [[NSData alloc] initWithContentsOfFile:fullPath];
-        SPPVRData *pvrData = [[SPPVRData alloc] initWithData:rawData compressed:isCompressed];
+        SPPVRData *pvrData = [[SPPVRData alloc] initWithData:rawData];
         
         [self release]; // we'll return a subclass!
         self = [[SPGLTexture alloc] initWithPVRData:pvrData scale:scale];
@@ -132,9 +130,19 @@ static SPTextureCache *textureCache = nil;
 {
     [self release]; // class factory - we'll return a subclass!
 
-    // only textures with sidelengths that are powers of 2 support all OpenGL ES features.
-    int legalWidth  = [SPUtils nextPowerOfTwo:width  * scale];
-    int legalHeight = [SPUtils nextPowerOfTwo:height * scale];
+    int legalWidth;
+    int legalHeight;
+    if (mipmaps)
+    {
+        // only textures with sidelengths that are powers of 2 support all OpenGL ES features.
+        legalWidth  = [SPUtils nextPowerOfTwo:width  * scale];
+        legalHeight = [SPUtils nextPowerOfTwo:height * scale];
+    }
+    else
+    {
+        legalWidth  = width  * scale;
+        legalHeight = height * scale;
+    }
     
     CGColorSpaceRef cgColorSpace = CGColorSpaceCreateDeviceRGB();
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaPremultipliedLast;
@@ -448,11 +456,6 @@ static SPTextureCache *textureCache = nil;
 {
     path = [path lowercaseString];
     return [path hasSuffix:@".pvr"] || [path hasSuffix:@".pvr.gz"];
-}
-
-+ (BOOL)isCompressedFile:(NSString *)path
-{
-    return [[path lowercaseString] hasSuffix:@".gz"];
 }
 
 @end

@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <GLKit/GLKMath.h>
+#import <QuartzCore/QuartzCore.h>
 #import <Sparrow/SPPoolObject.h>
 
 /** The SPPoint class describes a two dimensional point or vector. */
@@ -37,6 +38,12 @@
 
 /// Factory method.
 + (instancetype)pointWithX:(float)x y:(float)y;
+
+/// Factory method.
++ (instancetype)pointWithCGPoint:(CGPoint)point;
+
+/// Factory method.
++ (instancetype)pointWithGLKVector2:(GLKVector2)vector;
 
 /// Factory method.
 + (instancetype)point;
@@ -83,6 +90,9 @@
 
 /// Creates a GLKit vector that is equivalent to this instance.
 - (GLKVector2)convertToGLKVector;
+
+/// Creates a CGPoint that is equivalent to this instance.
+- (CGPoint)convertToCGPoint;
 
 /// Calculates the distance between two points.
 + (float)distanceFromPoint:(SPPoint *)p1 toPoint:(SPPoint *)p2;

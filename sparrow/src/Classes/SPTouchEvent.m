@@ -17,6 +17,11 @@
 
 NSString *const SPEventTypeTouch = @"SPEventTypeTouch";
 
+#define ANY_PHASE ((SPTouchPhase)-1)
+#define ANY_TOUCH ((size_t)-1)
+
+// --- class implementation ------------------------------------------------------------------------
+
 @implementation SPTouchEvent
 {
     NSSet *_touches;
@@ -25,16 +30,16 @@ NSString *const SPEventTypeTouch = @"SPEventTypeTouch";
 #pragma mark Initialization
 
 - (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles touches:(NSSet *)touches
-{   
-    if ((self = [super initWithType:type bubbles:bubbles]))
-    {        
+{
+    if ((self = [super initWithType:type bubbles:bubbles data:nil]))
+    {
         _touches = [touches retain];
     }
     return self;
 }
 
 - (instancetype)initWithType:(NSString *)type touches:(NSSet *)touches
-{   
+{
     return [self initWithType:type bubbles:YES touches:touches];
 }
 
@@ -58,17 +63,7 @@ NSString *const SPEventTypeTouch = @"SPEventTypeTouch";
 
 - (NSSet *)touchesWithTarget:(SPDisplayObject *)target
 {
-    NSMutableSet *touchesFound = [NSMutableSet set];
-    for (SPTouch *touch in _touches)
-    {
-        if ([target isEqual:touch.target] ||
-            ([target isKindOfClass:[SPDisplayObjectContainer class]] &&
-             [(SPDisplayObjectContainer *)target containsChild:touch.target]))
-        {
-            [touchesFound addObject: touch];
-        }
-    }    
-    return touchesFound;    
+    return [self touchesWithTarget:target andPhase:ANY_PHASE];
 }
 
 - (NSSet *)touchesWithTarget:(SPDisplayObject *)target andPhase:(SPTouchPhase)phase
@@ -76,22 +71,48 @@ NSString *const SPEventTypeTouch = @"SPEventTypeTouch";
     NSMutableSet *touchesFound = [NSMutableSet set];
     for (SPTouch *touch in _touches)
     {
-        if (touch.phase == phase &&
-            ([target isEqual:touch.target] || 
-             ([target isKindOfClass:[SPDisplayObjectContainer class]] &&
-              [(SPDisplayObjectContainer *)target containsChild:touch.target])))
-        {
-            [touchesFound addObject: touch];
-        }
+        BOOL correctPhase = phase == ANY_PHASE || touch.phase == phase;
+        if (correctPhase && [touch isTouchingTarget:target])
+            [touchesFound addObject:touch];
     }    
     return touchesFound;    
 }
 
-#pragma mark Private
-
-- (SPEvent *)clone
+- (SPTouch *)touchWithTarget:(SPDisplayObject *)target
 {
-    return [SPTouchEvent eventWithType:self.type touches:self.touches];
+    return [self touchWithTarget:target andPhase:ANY_PHASE touchID:ANY_TOUCH];
+}
+
+- (SPTouch *)touchWithTarget:(SPDisplayObject *)target andPhase:(SPTouchPhase)phase
+{
+    return [self touchWithTarget:target andPhase:phase touchID:ANY_TOUCH];
+}
+
+- (SPTouch *)touchWithTarget:(SPDisplayObject *)target andPhase:(SPTouchPhase)phase touchID:(size_t)touchID
+{
+    NSSet *touches = [self touchesWithTarget:target andPhase:phase];
+    if (touches.count > 0)
+    {
+        if (touchID == ANY_TOUCH) return [touches anyObject];
+        else
+        {
+            for (SPTouch *touch in touches)
+                if (touch.touchID == touchID)
+                    return touch;
+        }
+    }
+
+    return nil;
+}
+
+- (BOOL)interactsWithTarget:(SPDisplayObject *)target
+{
+    NSSet *touches = [self touchesWithTarget:target andPhase:ANY_PHASE];
+    for (SPTouch *touch in touches)
+        if (touch.phase != SPTouchPhaseEnded)
+            return YES;
+
+    return NO;
 }
 
 #pragma mark Properties

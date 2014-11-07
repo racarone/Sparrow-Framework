@@ -6,7 +6,7 @@ import Foundation
 
 class Game : SPSprite {
 
-    init() {
+    override init() {
         super.init()
 
         // This is where the code of your game will start;

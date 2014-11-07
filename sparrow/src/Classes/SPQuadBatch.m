@@ -21,17 +21,15 @@
 #import <Sparrow/SPTexture.h>
 #import <Sparrow/SPVertexData.h>
 
-// --- private interface ---------------------------------------------------------------------------
+#define MAX_NUM_QUADS 16383
 
-@interface SPQuadBatch ()
-
-- (void)expand;
-- (void)createBuffers;
-- (void)syncBuffers;
-
-@property (nonatomic, assign) int capacity;
-
-@end
+enum
+{
+    ATTRIB_POSITION,
+    ATTRIB_COLOR,
+    ATTRIB_TEXCOORD,
+    ATTRIB_MAX,
+};
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -43,12 +41,15 @@
     SPTexture *_texture;
     BOOL _premultipliedAlpha;
     BOOL _tinted;
-    
+
+    SPEffect *_effect;
     SPBaseEffect *_baseEffect;
-    SPVertexData *_vertexData;
     uint _vertexBufferName;
     ushort *_indexData;
     uint _indexBufferName;
+
+    uint _vertexArrayName;
+    uint _attribCache[ATTRIB_MAX];
 }
 
 #pragma mark Initialization
@@ -77,9 +78,8 @@
 - (void)dealloc
 {
     free(_indexData);
-    
-    glDeleteBuffers(1, &_vertexBufferName);
-    glDeleteBuffers(1, &_indexBufferName);
+
+    [self destroyBuffers];
 
     [_texture release];
     [_vertexData release];
@@ -98,8 +98,8 @@
 {
     _numQuads = 0;
     _syncRequired = YES;
-    _baseEffect.texture = nil;
     SP_RELEASE_AND_NIL(_texture);
+    SP_RELEASE_AND_NIL(_effect);
 }
 
 - (void)addQuad:(SPQuad *)quad
@@ -123,6 +123,7 @@
     if (_numQuads + 1 > self.capacity) [self expand];
     if (_numQuads == 0)
     {
+        SP_RELEASE_AND_RETAIN(_effect, quad.effect);
         SP_RELEASE_AND_RETAIN(_texture, quad.texture);
         _premultipliedAlpha = quad.premultipliedAlpha;
         self.blendMode = blendMode;
@@ -170,6 +171,7 @@
     if (_numQuads + numQuads > self.capacity) self.capacity = _numQuads + numQuads;
     if (_numQuads == 0)
     {
+        SP_RELEASE_AND_RETAIN(_effect, quadBatch.effect);
         SP_RELEASE_AND_RETAIN(_texture, quadBatch.texture);
         _premultipliedAlpha = quadBatch.premultipliedAlpha;
         self.blendMode = blendMode;
@@ -189,13 +191,16 @@
     _numQuads += numQuads;
 }
 
-- (BOOL)isStateChangeWithTinted:(BOOL)tinted texture:(SPTexture *)texture alpha:(float)alpha
-             premultipliedAlpha:(BOOL)pma blendMode:(uint)blendMode numQuads:(int)numQuads
+- (BOOL)isStateChangeWithEffect:(SPEffect *)effect texture:(SPTexture *)texture tinted:(BOOL)tinted
+                          alpha:(float)alpha premultipliedAlpha:(BOOL)pma blendMode:(uint)blendMode
+                       numQuads:(int)numQuads
 {
     if (_numQuads == 0) return NO;
-    else if (_numQuads + numQuads > 8192) return YES; // maximum buffer size
+    else if (_numQuads + numQuads > MAX_NUM_QUADS) return YES; // maximum buffer size
+    else if (_effect != effect)
+        return YES;
     else if (!_texture && !texture)
-        return _premultipliedAlpha != pma || self.blendMode != blendMode;
+        return self.blendMode != blendMode;
     else if (_texture && texture)
         return _tinted != (tinted || alpha != 1.0f) ||
                _texture.name != texture.name ||
@@ -215,9 +220,83 @@
     {
         [support finishQuadBatch];
         [support addDrawCalls:1];
+
         [self renderWithMvpMatrix:support.mvpMatrix alpha:support.alpha blendMode:support.blendMode];
     }
 }
+
+#pragma mark Utility Methods
+
+- (void)vertexDataDidChange
+{
+    _syncRequired = YES;
+}
+
+- (void)transformQuadAtIndex:(int)quadID matrix:(SPMatrix *)matrix
+{
+    [_vertexData transformVerticesWithMatrix:matrix atIndex:quadID * 4 numVertices:4];
+    _syncRequired = YES;
+}
+
+- (uint)vertexColorOfQuad:(int)quadID atIndex:(int)vertexID
+{
+    return [_vertexData colorAtIndex:quadID * 4 + vertexID];
+}
+
+- (void)setVertexColor:(uint)color ofQuad:(int)quadID atIndex:(int)vertexID
+{
+    [_vertexData setColor:color atIndex:quadID * 4 + vertexID];
+    _syncRequired = YES;
+}
+
+- (float)vertexAlphaOfQuad:(int)quadID atIndex:(int)vertexID
+{
+    return [_vertexData alphaAtIndex:quadID * 4 + vertexID];
+}
+
+- (void)setVertexAlpha:(float)alpha ofQuad:(int)quadID atIndex:(int)vertexID
+{
+    [_vertexData setAlpha:alpha atIndex:quadID * 4 + vertexID];
+    _syncRequired = YES;
+}
+
+- (uint)vertexColorOfQuad:(int)quadID
+{
+    return [_vertexData colorAtIndex:quadID * 4];
+}
+
+- (void)setVertexColor:(uint)color ofQuad:(int)quadID
+{
+    for (int i=0; i<4; ++i)
+        [_vertexData setColor:color atIndex:quadID * 4 + i];
+
+    _syncRequired = YES;
+}
+
+- (float)vertexAlphaOfQuad:(int)quadID
+{
+    return [_vertexData alphaAtIndex:quadID * 4];
+}
+
+- (void)setVertexAlpha:(float)alpha ofQuad:(int)quadID
+{
+    for (int i=0; i<4; ++i)
+        [_vertexData setAlpha:alpha atIndex:quadID * 4 + i];
+
+    _syncRequired = YES;
+}
+
+- (SPRectangle *)boundsOfQuad:(int)quadID
+{
+    return [self boundsOfQuad:quadID afterTransformation:nil];
+}
+
+- (SPRectangle *)boundsOfQuad:(int)quadID afterTransformation:(SPMatrix *)matrix
+{
+    return [_vertexData boundsAfterTransformation:matrix atIndex:quadID * 4 numVertices:4];
+}
+
+#pragma mark Custom Rendering
 
 - (void)renderWithMvpMatrix:(SPMatrix *)matrix
 {
@@ -231,44 +310,85 @@
     if (blendMode == SPBlendModeAuto)
         [NSException raise:SPExceptionInvalidOperation
                     format:@"cannot render object with blend mode AUTO"];
+
+    BOOL tinted = _tinted || alpha != 1.0f;
+    SPEffect *currentEffect = _effect ?: _baseEffect;
+
+    if (currentEffect == _baseEffect)
+        _baseEffect.useTinting = tinted;
+
+    if (tinted)
+    {
+        if (_premultipliedAlpha)
+            currentEffect.tintColor = GLKVector4Make(alpha, alpha, alpha, alpha);
+        else
+            currentEffect.tintColor = GLKVector4Make(1.0f, 1.0f, 1.0f, alpha);
+    }
+
+    currentEffect.mainTexture = _texture;
+    currentEffect.mvpMatrix = [matrix convertToGLKMatrix4];
     
-    _baseEffect.texture = _texture;
-    _baseEffect.premultipliedAlpha = _premultipliedAlpha;
-    _baseEffect.mvpMatrix = matrix;
-    _baseEffect.useTinting = _tinted || alpha != 1.0f;
-    _baseEffect.alpha = alpha;
-    
-    [_baseEffect prepareToDraw];
+    [currentEffect prepareToDraw];
 
     [SPBlendMode applyBlendFactorsForBlendMode:blendMode premultipliedAlpha:_premultipliedAlpha];
-    
-    int attribPosition  = _baseEffect.attribPosition;
-    int attribColor     = _baseEffect.attribColor;
-    int attribTexCoords = _baseEffect.attribTexCoords;
-    
-    glEnableVertexAttribArray(attribPosition);
-    glEnableVertexAttribArray(attribColor);
-    
-    if (_texture)
-        glEnableVertexAttribArray(attribTexCoords);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
-    
-    glVertexAttribPointer(attribPosition, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
-                          (void *)(offsetof(SPVertex, position)));
-    
-    glVertexAttribPointer(attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SPVertex),
-                          (void *)(offsetof(SPVertex, color)));
-    
-    if (_texture)
+
+    int attribPosition = _baseEffect.attribPosition;
+    int attribColor    = _baseEffect.attribColor;
+    int attribTexCoord = _baseEffect.attribTexCoords;
+
+    glBindVertexArray(_vertexArrayName);
+
+    // if the cache values differ, reconfigure the vertex array
+    if (_attribCache[ATTRIB_POSITION] != attribPosition ||
+        _attribCache[ATTRIB_COLOR]    != attribColor ||
+        _attribCache[ATTRIB_TEXCOORD] != attribTexCoord)
     {
-        glVertexAttribPointer(attribTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
-                              (void *)(offsetof(SPVertex, texCoords)));
+        // disable previous attributes
+
+        if (_attribCache[ATTRIB_COLOR] != SPNotFound)
+            glDisableVertexAttribArray(_attribCache[ATTRIB_COLOR]);
+
+        if (_attribCache[ATTRIB_TEXCOORD] != SPNotFound)
+            glDisableVertexAttribArray(_attribCache[ATTRIB_TEXCOORD]);
+
+        // enable current attributes
+
+        glEnableVertexAttribArray(attribPosition);
+
+        if (attribColor != SPNotFound)
+            glEnableVertexAttribArray(attribColor);
+
+        if (attribTexCoord != SPNotFound)
+            glEnableVertexAttribArray(attribTexCoord);
+
+        // setup attribute pointers
+
+        glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
+
+        glVertexAttribPointer(attribPosition, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
+                              (void *)(offsetof(SPVertex, position)));
+
+        if (attribColor != SPNotFound)
+            glVertexAttribPointer(attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(SPVertex),
+                                  (void *)(offsetof(SPVertex, color)));
+
+        if (attribTexCoord != SPNotFound)
+            glVertexAttribPointer(attribTexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
+                                  (void *)(offsetof(SPVertex, texCoords)));
+
+        // bind element buffer
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
+
+        _attribCache[ATTRIB_POSITION] = attribPosition;
+        _attribCache[ATTRIB_COLOR]    = attribColor;
+        _attribCache[ATTRIB_TEXCOORD] = attribTexCoord;
     }
     
     int numIndices = _numQuads * 6;
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
+
+    glBindVertexArray(0);
 }
 
 #pragma mark Compilation Methods
@@ -331,15 +451,17 @@
     }
     else if (quad || batch)
     {
+        SPEffect *effect = [(id)object effect];
         SPTexture *texture = [(id)object texture];
         BOOL tinted = [(id)object tinted];
         BOOL pma = [(id)object premultipliedAlpha];
         int numQuads = batch ? batch.numQuads : 1;
         
         SPQuadBatch *currentBatch = quadBatches[quadBatchID];
-        
-        if ([currentBatch isStateChangeWithTinted:tinted texture:texture alpha:alpha * objectAlpha
-                               premultipliedAlpha:pma blendMode:blendMode numQuads:numQuads])
+
+        if ([currentBatch isStateChangeWithEffect:effect texture:texture tinted:tinted
+                                            alpha:alpha * objectAlpha premultipliedAlpha:pma
+                                        blendMode:blendMode numQuads:numQuads])
         {
             quadBatchID++;
             if (quadBatches.count <= quadBatchID) [quadBatches addObject:[SPQuadBatch quadBatch]];
@@ -370,63 +492,7 @@
     return quadBatchID;
 }
 
-#pragma mark Private
-
-- (void)expand
-{
-    int oldCapacity = self.capacity;
-    self.capacity = oldCapacity < 8 ? 16 : oldCapacity * 2;
-}
-
-- (void)createBuffers
-{
-    [self destroyBuffers];
-
-    int numVertices = _vertexData.numVertices;
-    int numIndices = numVertices / 4 * 6;
-    if (numVertices == 0) return;
-
-    glGenBuffers(1, &_vertexBufferName);
-    glGenBuffers(1, &_indexBufferName);
-
-    if (!_vertexBufferName || !_indexBufferName)
-        [NSException raise:SPExceptionOperationFailed format:@"could not create vertex buffers"];
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * numIndices, _indexData, GL_STATIC_DRAW);
-
-    _syncRequired = YES;
-}
-
-- (void)destroyBuffers
-{
-    if (_vertexBufferName)
-    {
-        glDeleteBuffers(1, &_vertexBufferName);
-        _vertexBufferName = 0;
-    }
-
-    if (_indexBufferName)
-    {
-        glDeleteBuffers(1, &_indexBufferName);
-        _indexBufferName = 0;
-    }
-}
-
-- (void)syncBuffers
-{
-    if (!_vertexBufferName)
-        [self createBuffers];
-
-    // don't use 'glBufferSubData'! It's much slower than uploading
-    // everything via 'glBufferData', at least on the iPad 1.
-
-    glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(SPVertex) * _vertexData.numVertices,
-                 _vertexData.vertices, GL_STATIC_DRAW);
-
-    _syncRequired = NO;
-}
+#pragma mark Properties
 
 - (int)capacity
 {
@@ -458,6 +524,75 @@
 
     [self destroyBuffers];
     _syncRequired = YES;
+}
+
+#pragma mark Private
+
+- (void)expand
+{
+    int oldCapacity = self.capacity;
+    self.capacity = oldCapacity < 8 ? 16 : oldCapacity * 2;
+}
+
+- (void)createBuffers
+{
+    [self destroyBuffers];
+
+    int numVertices = _vertexData.numVertices;
+    int numIndices = numVertices / 4 * 6;
+    if (numVertices == 0) return;
+
+    glGenBuffers(1, &_vertexBufferName);
+    glGenBuffers(1, &_indexBufferName);
+    glGenVertexArrays(1, &_vertexArrayName);
+
+    if (!_vertexBufferName || !_indexBufferName)
+        [NSException raise:SPExceptionOperationFailed format:@"could not create vertex buffers"];
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBufferName);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * numIndices, _indexData, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    _syncRequired = YES;
+}
+
+- (void)destroyBuffers
+{
+    if (_vertexBufferName)
+    {
+        glDeleteBuffers(1, &_vertexBufferName);
+        _vertexBufferName = 0;
+    }
+
+    if (_indexBufferName)
+    {
+        glDeleteBuffers(1, &_indexBufferName);
+        _indexBufferName = 0;
+    }
+
+    if (_vertexArrayName)
+    {
+        glDeleteVertexArrays(1, &_vertexArrayName);
+        _vertexArrayName = 0;
+    }
+
+    memset(_attribCache, SPNotFound, sizeof(_attribCache));
+}
+
+- (void)syncBuffers
+{
+    if (!_vertexBufferName)
+        [self createBuffers];
+
+    // don't use 'glBufferSubData'! It's much slower than uploading
+    // everything via 'glBufferData', at least on the iPad 1.
+
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferName);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SPVertex) * _vertexData.numVertices,
+                 _vertexData.vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    _syncRequired = NO;
 }
 
 @end

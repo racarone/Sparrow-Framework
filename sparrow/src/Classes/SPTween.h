@@ -103,6 +103,9 @@
 /// The time that has passed since the tween was started (in seconds).
 @property (nonatomic, readonly) double currentTime;
 
+/// The current progress between 0 and 1, as calculated by the transition function.
+@property (nonatomic, readonly) float progress;
+
 /// Indicates if the total time has passed and the tweened properties have finished.
 @property (nonatomic, readonly) BOOL isComplete;
 

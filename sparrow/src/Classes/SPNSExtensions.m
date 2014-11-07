@@ -41,6 +41,22 @@ static char encodingTable[64] = {
 
 @end
 
+#pragma mark - NSAttributedString
+
+@implementation NSAttributedString (SPNSExtensions)
+
+- (void)drawWithRect:(CGRect)rect
+{
+    [self drawWithRect:rect options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+}
+
+- (CGRect)boundingRectWithSize:(CGSize)size
+{
+    return [self boundingRectWithSize:size options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+}
+
+@end
+
 #pragma mark - NSString
 
 @implementation NSString (SPNSExtensions)

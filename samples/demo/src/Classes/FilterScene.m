@@ -62,8 +62,10 @@
 {
     _filterInfos = [@[ @"Identity",    [SPColorMatrixFilter colorMatrixFilter],
                        @"Blur",        [SPBlurFilter blurFilter],
-                       @"Drop Shadow", [SPBlurFilter dropShadow],
-                       @"Glow",        [SPBlurFilter glow]] mutableCopy];
+                       @"Drop Shadow", [SPBlurFilter dropShadow]] mutableCopy];
+
+    SPBlurFilter *glowFilter = [SPBlurFilter glowWithColor:SPColorYellow alpha:1.0f blur:3.0f];
+    [_filterInfos addObjectsFromArray:@[@"Glow", glowFilter]];
 
     SPTexture *noiseTexture = [SPTexture textureWithContentsOfFile:@"noise.jpg"];
     SPDisplacementMapFilter *dispMapFilter = [SPDisplacementMapFilter
@@ -96,6 +98,11 @@
     SPColorMatrixFilter *hueFilter = [SPColorMatrixFilter colorMatrixFilter];
     [hueFilter adjustHue:1];
     [_filterInfos addObjectsFromArray:@[@"Hue", hueFilter]];
+
+    SPGroupFilter *filterStack = [SPGroupFilter groupFilterWithFilters:@[hueFilter, glowFilter]];
+    filterStack.resolution = 0.5;
+    [_filterInfos addObjectsFromArray:@[@"Hue and Glow", filterStack]];
+
 }
 
 @end

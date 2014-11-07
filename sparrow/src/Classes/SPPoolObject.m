@@ -27,46 +27,44 @@ typedef struct
     Class key;
     OSQueueHead value;
 }
-Pair;
+SPClassQueuePair;
 
 typedef struct
 {
-    Pair table[SP_POOL_OBJECT_MAX_CLASSES];
+    SPClassQueuePair table[SP_POOL_OBJECT_MAX_CLASSES];
 }
-PoolCache;
+SPPoolCache;
 
-SP_INLINE PoolCache *poolCache(void)
+SP_INLINE SPPoolCache *getPoolCache(void)
 {
-    static PoolCache instance = (PoolCache){{ nil, OS_ATOMIC_QUEUE_INIT }};
-    return &instance;
-}
-
-SP_INLINE Pair *getPairWith(PoolCache *cache, unsigned key)
-{
-    unsigned h = key & HASH_MASK;
-    return &(cache->table[h]);
+    static SPPoolCache globalCache = (SPPoolCache){{ nil, OS_ATOMIC_QUEUE_INIT }};
+    return &globalCache;
 }
 
-SP_INLINE void initPoolWith(PoolCache *cache, Class class)
+SP_INLINE SPClassQueuePair *getPairWith(SPPoolCache *cache, uint key)
 {
-    unsigned key = SPHashPointer(class);
-    Pair *pair = getPairWith(cache, key);
+    uint index = key & HASH_MASK;
+    return &(cache->table[index]);
+}
+
+SP_INLINE void initPoolWith(SPPoolCache *cache, Class class)
+{
+    uint key = SPHashPointer(class);
+    SPClassQueuePair *pair = getPairWith(cache, key);
     pair->key = class;
     pair->value = (OSQueueHead)OS_ATOMIC_QUEUE_INIT;
 }
 
-SP_INLINE OSQueueHead *getPoolWith(PoolCache *cache, Class class)
+SP_INLINE OSQueueHead *getPoolWith(SPPoolCache *cache, Class class)
 {
-    unsigned key = SPHashPointer(class);
-    Pair *pair = getPairWith(cache, key);
-    //assert(pair->key == class);
+    uint key = SPHashPointer(class);
+    SPClassQueuePair *pair = getPairWith(cache, key);
     return &pair->value;
 }
 
 // --- queue ---------------------------------------------------------------------------------------
 
-#define QUEUE_OFFSET sizeof(Class)
-
+#define QUEUE_OFFSET        sizeof(Class)
 #define DEQUEUE(pool)       OSAtomicDequeue(pool, QUEUE_OFFSET)
 #define ENQUEUE(pool, obj)  OSAtomicEnqueue(pool, obj, QUEUE_OFFSET)
 
@@ -87,12 +85,12 @@ typedef volatile int32_t RCint;
     if (self == [SPPoolObject class])
         return;
 
-    initPoolWith(poolCache(), self);
+    initPoolWith(getPoolCache(), self);
 }
 
 + (instancetype)alloc
 {
-    OSQueueHead *poolQueue = getPoolWith(poolCache(), self);
+    OSQueueHead *poolQueue = getPoolWith(getPoolCache(), self);
     SPPoolObject *object = DEQUEUE(poolQueue);
 
     if (object)
@@ -133,7 +131,7 @@ typedef volatile int32_t RCint;
     if (OSAtomicDecrement32(&_rc))
         return;
 
-    OSQueueHead *poolQueue = getPoolWith(poolCache(), object_getClass(self));
+    OSQueueHead *poolQueue = getPoolWith(getPoolCache(), object_getClass(self));
     ENQUEUE(poolQueue, self);
 }
 
@@ -145,7 +143,7 @@ typedef volatile int32_t RCint;
 
 + (NSUInteger)purgePool
 {
-    OSQueueHead *poolQueue = getPoolWith(poolCache(), self);
+    OSQueueHead *poolQueue = getPoolWith(getPoolCache(), self);
     SPPoolObject *lastElement;
 
     NSUInteger count = 0;

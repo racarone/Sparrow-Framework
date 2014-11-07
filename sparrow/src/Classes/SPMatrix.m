@@ -72,6 +72,24 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
     return [[[self alloc] initWithA:1 b:0 c:0 d:1 tx:tx ty:ty] autorelease];
 }
 
++ (instancetype)matrixWithCGAffineTransform:(CGAffineTransform)transform
+{
+    return [[[self alloc] initWithA:transform.a   b:transform.b c:transform.c d:transform.d
+                                 tx:transform.tx ty:transform.ty] autorelease];
+}
+
++ (instancetype)matrixWithGLKMatrix3:(GLKMatrix3)matrix
+{
+    return [[[self alloc] initWithA:matrix.m00  b:matrix.m01 c:matrix.m10 d:matrix.m11
+                                 tx:matrix.m20 ty:matrix.m21] autorelease];
+}
+
++ (instancetype)matrixWithGLKMatrix4:(GLKMatrix4)matrix
+{
+    return [[[self alloc] initWithA:matrix.m00  b:matrix.m01 c:matrix.m10 d:matrix.m11
+                                 tx:matrix.m30 ty:matrix.m31] autorelease];
+}
+
 #pragma mark Methods
 
 - (void)setA:(float)a b:(float)b c:(float)c d:(float)d tx:(float)tx ty:(float)ty
@@ -181,6 +199,11 @@ static inline void setValues(SPMatrix *matrix, float a, float b, float c, float 
 - (void)copyFromMatrix:(SPMatrix *)matrix
 {
     memcpy(&_a, &matrix->_a, sizeof(float) * 6);
+}
+
+- (CGAffineTransform)convertToCGAffineTransform
+{
+    return CGAffineTransformMake(_a, _b, _c, _d, _tx, _ty);
 }
 
 - (GLKMatrix4)convertToGLKMatrix4

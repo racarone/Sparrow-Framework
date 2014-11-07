@@ -11,6 +11,7 @@
 
 #import <Sparrow/SparrowClass.h>
 #import <Sparrow/SPDisplacementMapFilter.h>
+#import <Sparrow/SPEffect.h>
 #import <Sparrow/SPMatrix.h>
 #import <Sparrow/SPNSExtensions.h>
 #import <Sparrow/SPOpenGL.h>
@@ -18,24 +19,44 @@
 #import <Sparrow/SPProgram.h>
 #import <Sparrow/SPTexture.h>
 
-// --- private interface ---------------------------------------------------------------------------
+static NSString *const SPDisplacementMapProgram = @"SPDisplacementMapProgram";
 
-static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilterProgram";
+// --- shaders -------------------------------------------------------------------------------------
 
-@interface SPDisplacementMapFilter ()
+static NSString *const SPDisplacementMapVertexShader =
+    @"attribute vec4 aPosition; \n"
+    @"attribute vec4 aTexCoords; \n"
+    @"attribute vec4 aMapTexCoords; \n"
 
-- (NSString *)fragmentShader;
-- (NSString *)vertexShader;
-- (void)updateParametersWithWidth:(int)width height:(int)height;
+    @"uniform mat4 uMvpMatrix; \n"
 
-@end
+    @"varying lowp vec4 vTexCoords; \n"
+    @"varying lowp vec4 vMapTexCoords; \n"
 
+    @"void main() { \n"
+    @"  gl_Position = uMvpMatrix * aPosition; \n"
+    @"  vTexCoords = aTexCoords; \n"
+    @"  vMapTexCoords = aMapTexCoords; \n"
+    @"} \n";
+
+static NSString *const SPDisplacementMapFragmentShader =
+    @"uniform lowp mat4 uMapMatrix; \n"
+    @"uniform lowp sampler2D uTexture; \n"
+    @"uniform lowp sampler2D uMapTexture; \n"
+
+    @"varying lowp vec4 vTexCoords; \n"
+    @"varying lowp vec4 vMapTexCoords; \n"
+
+    @"void main() { \n"
+    @"  lowp vec4 tmpColor; \n"
+    @"  tmpColor = texture2D(uTexture, (vTexCoords + (uMapMatrix * (texture2D(uMapTexture, vMapTexCoords.xy) - vec4(0.5, 0.5, 0.5, 0.5)))).xy); \n"
+    @"  gl_FragColor = tmpColor; \n"
+    @"} \n";
 
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPDisplacementMapFilter
 {
-    SPTexture *_mapTexture;
     SPPoint *_mapPoint;
     SPColorChannel _componentX;
     SPColorChannel _componentY;
@@ -44,17 +65,14 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
     BOOL _mapRepeat;
     BOOL _repeat;
 
-    float _mapTexCoords[8];
+    SPEffect *_effect;
+    SPUniform *_uMapMatrix;
+    SPUniform *_uMapTexture;
+
     GLKMatrix4 _mapMatrix;
 
-    SPProgram *_shaderProgram;
+    float _mapTexCoords[8];
     uint _mapTexCoordBuffer;
-
-    int _aMapTexCoords;
-    int _uMapMatrix;
-    int _uMvpMatrix;
-    int _uTexture;
-    int _uMapTexture;
 }
 
 #pragma mark Initialization
@@ -63,7 +81,6 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
 {
     if ((self = [super initWithNumPasses:1 resolution:1.0f]))
     {
-        _mapTexture = [mapTexture retain];
         _mapPoint = [[SPPoint alloc] init];
         _componentX = 0;
         _componentY = 0;
@@ -74,6 +91,8 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
         glGenBuffers(1, &_mapTexCoordBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, _mapTexCoordBuffer);
         glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(float) * 2, NULL, GL_STATIC_DRAW);
+        
+        self.mapTexture = mapTexture;
     }
     return self;
 }
@@ -86,9 +105,10 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
 
 - (void)dealloc
 {
-    [_mapTexture release];
     [_mapPoint release];
-    [_shaderProgram release];
+    [_effect release];
+    [_uMapMatrix release];
+    [_uMapTexture release];
     [super dealloc];
 }
 
@@ -99,67 +119,46 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
 
 #pragma mark SPFragmentFilter (Subclasses)
 
-- (void)createPrograms
+- (void)createEffects
 {
-    if (!_shaderProgram)
+    SPProgram *program = [[Sparrow currentController] programByName:SPDisplacementMapProgram];
+    if (!program)
     {
-        _shaderProgram = [[[Sparrow currentController] programByName:SPDisplacementMapFilterProgram] retain];
+        program = [[SPProgram alloc] initWithVertexShader:SPDisplacementMapVertexShader
+                                           fragmentShader:SPDisplacementMapFragmentShader];
 
-        if (!_shaderProgram)
-        {
-            NSString *vertexShader = [self vertexShader];
-            NSString *fragmentShader = [self fragmentShader];
-
-            _shaderProgram = [[SPProgram alloc] initWithVertexShader:vertexShader fragmentShader:fragmentShader];
-            [[Sparrow currentController] registerProgram:_shaderProgram name:SPDisplacementMapFilterProgram];
-        }
-
-        self.vertexPosID = [_shaderProgram attributeByName:@"aPosition"];
-        self.texCoordsID = [_shaderProgram attributeByName:@"aTexCoords"];
-        _aMapTexCoords   = [_shaderProgram attributeByName:@"aMapTexCoords"];
-
-        _uTexture       = [_shaderProgram uniformByName:@"uTexture"];
-        _uMapTexture    = [_shaderProgram uniformByName:@"uMapTexture"];
-        _uMvpMatrix     = [_shaderProgram uniformByName:@"uMvpMatrix"];
-        _uMapMatrix     = [_shaderProgram uniformByName:@"uMapMatrix"];
+        [[Sparrow currentController] registerProgram:program name:SPDisplacementMapProgram];
     }
+
+    _effect = [[SPEffect alloc] initWithProgram:program];
+    _uMapMatrix  = [[SPUniform alloc] initWithName:@"uMapMatrix"];
+    _uMapTexture = [[SPUniform alloc] initWithName:@"uMapTexture"];
+
+    [_effect addUniformsFromArray:@[_uMapMatrix, _uMapTexture]];
 }
 
-- (void)activateWithPass:(int)pass texture:(SPTexture *)texture mvpMatrix:(SPMatrix *)matrix
+- (SPEffect *)effectForPass:(int)pass
 {
-    // already set by super class:
-    //
-    // vertex constants 0-3: mvpMatrix (3D)
-    // vertex attribute 0:   vertex position (FLOAT_2)
-    // vertex attribute 1:   texture coordinates (FLOAT_2)
-    // texture 0:            input texture
+    return _effect;
+}
 
+- (void)activateWithPass:(int)pass texture:(SPTexture *)texture
+{
     [self updateParametersWithWidth:texture.nativeWidth height:texture.nativeHeight];
 
+    int aMapTexCoords = [_effect.program attributeByName:@"aMapTexCoords"];
     glBindBuffer(GL_ARRAY_BUFFER, _mapTexCoordBuffer);
-    glEnableVertexAttribArray(_aMapTexCoords);
-    glVertexAttribPointer(_aMapTexCoords, 2, GL_FLOAT, false, 0, 0);
+    glEnableVertexAttribArray(aMapTexCoords);
+    glVertexAttribPointer(aMapTexCoords, 2, GL_FLOAT, false, 0, 0);
 
-    glUseProgram(_shaderProgram.name);
+    _uMapTexture.textureValue.repeat = _repeat;
+    _uMapMatrix.matrix4Value = _mapMatrix;
 
-    glUniform1i(_uTexture, 0);
-    glUniform1i(_uMapTexture, 1);
-
-    GLKMatrix4 mvp = [matrix convertToGLKMatrix4];
-    glUniformMatrix4fv(_uMvpMatrix, 1, false, mvp.m);
-    glUniformMatrix4fv(_uMapMatrix, 1, false, _mapMatrix.m);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, _mapTexture.name);
-
-    _mapRepeat = _mapTexture.repeat;
-    _mapTexture.repeat = _repeat;
+    [_effect prepareToDraw];
 }
 
 - (void)deactivateWithPass:(int)pass texture:(SPTexture *)texture
 {
-    _mapTexture.repeat = _mapRepeat;
-
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -175,55 +174,17 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
     else          [_mapPoint setX:0 y:0];
 }
 
+- (SPTexture *)mapTexture
+{
+    return _uMapTexture.textureValue;
+}
+
+- (void)setMapTexture:(SPTexture *)mapTexture
+{
+    _uMapTexture.textureValue = mapTexture;
+}
+
 #pragma mark Private
-
-- (NSString *)fragmentShader
-{
-    NSMutableString *source = [NSMutableString string];
-
-    [source appendLine:@"uniform lowp mat4 uMapMatrix;"];
-    [source appendLine:@"uniform sampler2D uTexture;"];
-    [source appendLine:@"uniform sampler2D uMapTexture;"];
-
-    [source appendLine:@"varying lowp vec4 vTexCoords;"];
-    [source appendLine:@"varying lowp vec4 vMapTexCoords;"];
-
-    [source appendLine:@"void main() {"];
-
-    // optimized with PVRShader
-    [source appendLine:@"  lowp vec4 tmpColor;"];
-    [source appendLine:@"  tmpColor = texture2D(uTexture, (vTexCoords + (uMapMatrix * (texture2D(uMapTexture, vMapTexCoords.xy) - vec4(0.5, 0.5, 0.5, 0.5)))).xy);"];
-    [source appendLine:@"  gl_FragColor = tmpColor;"];
-
-    [source appendLine:@"}"];
-
-    return source;
-}
-
-- (NSString *)vertexShader
-{
-    NSMutableString *source = [NSMutableString string];
-
-    // variables
-    [source appendLine:@"attribute vec4 aPosition;"];
-    [source appendLine:@"attribute vec4 aTexCoords;"];
-    [source appendLine:@"attribute vec4 aMapTexCoords;"];
-
-    [source appendLine:@"uniform mat4 uMvpMatrix;"];
-
-    [source appendLine:@"varying vec4 vTexCoords;"];
-    [source appendLine:@"varying vec4 vMapTexCoords;"];
-
-    [source appendLine:@"void main() {"];
-
-    [source appendLine:@"  gl_Position = uMvpMatrix * aPosition;"];
-    [source appendLine:@"  vTexCoords = aTexCoords;"];
-    [source appendLine:@"  vMapTexCoords = aMapTexCoords;"];
-
-    [source appendLine:@"}"];
-
-    return source;
-}
 
 - (void)updateParametersWithWidth:(int)width height:(int)height
 {
@@ -242,9 +203,9 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
     else if (_componentY == SPColorChannelBlue)     columnY = 2;
     else                                            columnY = 3;
 
-    memset(&_mapMatrix, 0, sizeof(_mapMatrix));
-
     float scale = Sparrow.contentScaleFactor;
+
+    _mapMatrix = (GLKMatrix4){ 0 };
     _mapMatrix.m[(columnX * 4    )] = _scaleX * scale / width;
     _mapMatrix.m[(columnY * 4 + 1)] = _scaleY * scale / height;
 
@@ -252,17 +213,19 @@ static NSString *const SPDisplacementMapFilterProgram = @"SPDisplacementMapFilte
     // The size of input texture and map texture may be different. We need to calculate
     // the right values for the texture coordinates at the filter vertices.
 
-    float mapX = _mapPoint.x / _mapTexture.width;
-    float mapY = _mapPoint.y / _mapTexture.height;
-    float maxU = width       / _mapTexture.nativeWidth;
-    float maxV = height      / _mapTexture.nativeHeight;
+    SPTexture *mapTexture = self.mapTexture;
+
+    float mapX = _mapPoint.x / mapTexture.width;
+    float mapY = _mapPoint.y / mapTexture.height;
+    float maxU = width       / mapTexture.nativeWidth;
+    float maxV = height      / mapTexture.nativeHeight;
 
     _mapTexCoords[0] = -mapX;        _mapTexCoords[1] = -mapY;
     _mapTexCoords[2] = -mapX + maxU; _mapTexCoords[3] = -mapY;
     _mapTexCoords[4] = -mapX;        _mapTexCoords[5] = -mapY + maxV;
     _mapTexCoords[6] = -mapX + maxU; _mapTexCoords[7] = -mapY + maxV;
 
-    [_mapTexture adjustTexCoords:_mapTexCoords numVertices:4 stride:0];
+    [mapTexture adjustTexCoords:_mapTexCoords numVertices:4 stride:0];
     
     glBindBuffer(GL_ARRAY_BUFFER, _mapTexCoordBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*8, _mapTexCoords, GL_STATIC_DRAW);

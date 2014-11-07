@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		872CCA221A02C42200CC4861 /* SPDisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 872CCA1E1A02C42200CC4861 /* SPDisplayLink.h */; };
+		872CCA231A02C42200CC4861 /* SPDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 872CCA1F1A02C42200CC4861 /* SPDisplayLink.m */; };
+		872CCA261A02C53B00CC4861 /* SPView.h in Headers */ = {isa = PBXBuildFile; fileRef = 872CCA241A02C53B00CC4861 /* SPView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		872CCA271A02C53B00CC4861 /* SPView.m in Sources */ = {isa = PBXBuildFile; fileRef = 872CCA251A02C53B00CC4861 /* SPView.m */; };
 		872F5C3D1880C9E30016071B /* SPFragmentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 872F5C3B1880C9E30016071B /* SPFragmentFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		872F5C3E1880C9E30016071B /* SPFragmentFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 872F5C3C1880C9E30016071B /* SPFragmentFilter.m */; };
 		872F5C471880E2B50016071B /* SPBlurFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 872F5C451880E2B50016071B /* SPBlurFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -20,6 +24,12 @@
 		872F5C65188236D80016071B /* SPContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 872F5C63188236D80016071B /* SPContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		872F5C66188236D80016071B /* SPContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 872F5C64188236D80016071B /* SPContext.m */; };
 		872F5C68188241810016071B /* SPContext_Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 872F5C67188241460016071B /* SPContext_Internal.h */; };
+		87A6A2231A0C00F2007649B3 /* SPEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 87A6A21F1A0C00F2007649B3 /* SPEffect.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		87A6A2241A0C00F2007649B3 /* SPEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6A2201A0C00F2007649B3 /* SPEffect.m */; };
+		87A6A2251A0C00F2007649B3 /* SPUniform.h in Headers */ = {isa = PBXBuildFile; fileRef = 87A6A2211A0C00F2007649B3 /* SPUniform.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		87A6A2261A0C00F2007649B3 /* SPUniform.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6A2221A0C00F2007649B3 /* SPUniform.m */; };
+		87A6A2341A0C248F007649B3 /* SPGroupFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 87A6A2321A0C248F007649B3 /* SPGroupFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		87A6A2351A0C248F007649B3 /* SPGroupFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A6A2331A0C248F007649B3 /* SPGroupFilter.m */; };
 		87C7DCC2180480A7005E8CFB /* SPOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 87C7DCC0180480A7005E8CFB /* SPOpenGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		87C7DCC3180480A7005E8CFB /* SPOpenGL.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C7DCC1180480A7005E8CFB /* SPOpenGL.m */; };
 		87C7DCF118061354005E8CFB /* SPMacros.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C7DCF018061354005E8CFB /* SPMacros.m */; };
@@ -91,7 +101,7 @@
 		DE61139A134F8FBD00AB742E /* SPNSExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = DE68EA150FBB5660004DBC95 /* SPNSExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE61139B134F8FBD00AB742E /* SPPoolObject.h in Headers */ = {isa = PBXBuildFile; fileRef = DED9B51B10629D9F00989853 /* SPPoolObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE61139C134F8FD400AB742E /* Sparrow.h in Headers */ = {isa = PBXBuildFile; fileRef = DEEA9402101E44F10071DD21 /* Sparrow.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DE82240C16EF468E00A172EE /* SPBaseEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = DE82240A16EF468E00A172EE /* SPBaseEffect.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE82240C16EF468E00A172EE /* SPBaseEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = DE82240A16EF468E00A172EE /* SPBaseEffect.h */; };
 		DE82240D16EF468E00A172EE /* SPBaseEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = DE82240B16EF468E00A172EE /* SPBaseEffect.m */; };
 		DE85778E16B58E4B00725EC0 /* SparrowClass.h in Headers */ = {isa = PBXBuildFile; fileRef = DE85778C16B58E4B00725EC0 /* SparrowClass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE85778F16B58E4B00725EC0 /* SparrowClass.m in Sources */ = {isa = PBXBuildFile; fileRef = DE85778D16B58E4B00725EC0 /* SparrowClass.m */; };
@@ -197,6 +207,10 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		28FD14FF0DC6FC520079059D /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		28FD15070DC6FC5B0079059D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		872CCA1E1A02C42200CC4861 /* SPDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPDisplayLink.h; sourceTree = "<group>"; };
+		872CCA1F1A02C42200CC4861 /* SPDisplayLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPDisplayLink.m; sourceTree = "<group>"; };
+		872CCA241A02C53B00CC4861 /* SPView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPView.h; sourceTree = "<group>"; };
+		872CCA251A02C53B00CC4861 /* SPView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPView.m; sourceTree = "<group>"; };
 		872F5C3B1880C9E30016071B /* SPFragmentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPFragmentFilter.h; sourceTree = "<group>"; };
 		872F5C3C1880C9E30016071B /* SPFragmentFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPFragmentFilter.m; sourceTree = "<group>"; };
 		872F5C451880E2B50016071B /* SPBlurFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPBlurFilter.h; sourceTree = "<group>"; };
@@ -210,6 +224,12 @@
 		872F5C63188236D80016071B /* SPContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPContext.h; sourceTree = "<group>"; };
 		872F5C64188236D80016071B /* SPContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPContext.m; sourceTree = "<group>"; };
 		872F5C67188241460016071B /* SPContext_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPContext_Internal.h; sourceTree = "<group>"; };
+		87A6A21F1A0C00F2007649B3 /* SPEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPEffect.h; sourceTree = "<group>"; };
+		87A6A2201A0C00F2007649B3 /* SPEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPEffect.m; sourceTree = "<group>"; };
+		87A6A2211A0C00F2007649B3 /* SPUniform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPUniform.h; sourceTree = "<group>"; };
+		87A6A2221A0C00F2007649B3 /* SPUniform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPUniform.m; sourceTree = "<group>"; };
+		87A6A2321A0C248F007649B3 /* SPGroupFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPGroupFilter.h; sourceTree = "<group>"; };
+		87A6A2331A0C248F007649B3 /* SPGroupFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPGroupFilter.m; sourceTree = "<group>"; };
 		87C7DCA0180333C3005E8CFB /* SPDisplayObjectContainer_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPDisplayObjectContainer_Internal.h; sourceTree = "<group>"; };
 		87C7DCA118033498005E8CFB /* SPEventDispatcher_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPEventDispatcher_Internal.h; sourceTree = "<group>"; };
 		87C7DCA2180336A9005E8CFB /* SPStage_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPStage_Internal.h; sourceTree = "<group>"; };
@@ -466,8 +486,19 @@
 				872F5C4E1880E2DD0016071B /* SPDisplacementMapFilter.m */,
 				872F5C3B1880C9E30016071B /* SPFragmentFilter.h */,
 				872F5C3C1880C9E30016071B /* SPFragmentFilter.m */,
+				87A6A2321A0C248F007649B3 /* SPGroupFilter.h */,
+				87A6A2331A0C248F007649B3 /* SPGroupFilter.m */,
 			);
 			name = Filters;
+			sourceTree = "<group>";
+		};
+		87A6A21E1A0C00E6007649B3 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				DE82240A16EF468E00A172EE /* SPBaseEffect.h */,
+				DE82240B16EF468E00A172EE /* SPBaseEffect.m */,
+			);
+			name = Internal;
 			sourceTree = "<group>";
 		};
 		DE0E8A1218E1BCB400A6ACC8 /* Internal */ = {
@@ -509,14 +540,17 @@
 		DE82240916EF462700A172EE /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
-				DE82240A16EF468E00A172EE /* SPBaseEffect.h */,
-				DE82240B16EF468E00A172EE /* SPBaseEffect.m */,
+				87A6A21E1A0C00E6007649B3 /* Internal */,
+				87A6A21F1A0C00F2007649B3 /* SPEffect.h */,
+				87A6A2201A0C00F2007649B3 /* SPEffect.m */,
 				87C7DCC0180480A7005E8CFB /* SPOpenGL.h */,
 				87C7DCC1180480A7005E8CFB /* SPOpenGL.m */,
 				DE97B92E16F1EA5E00DC1077 /* SPProgram.h */,
 				DE97B92F16F1EA5E00DC1077 /* SPProgram.m */,
 				DE20D9C910713B0C006658C9 /* SPRenderSupport.h */,
 				DE20D9CA10713B0C006658C9 /* SPRenderSupport.m */,
+				87A6A2211A0C00F2007649B3 /* SPUniform.h */,
+				87A6A2221A0C00F2007649B3 /* SPUniform.m */,
 			);
 			name = Rendering;
 			sourceTree = "<group>";
@@ -526,6 +560,8 @@
 			children = (
 				DEB057851801D20800A8F726 /* SparrowClass_Internal.h */,
 				872F5C67188241460016071B /* SPContext_Internal.h */,
+				872CCA1E1A02C42200CC4861 /* SPDisplayLink.h */,
+				872CCA1F1A02C42200CC4861 /* SPDisplayLink.m */,
 				DE0BA5D61703513D00637533 /* SPStatsDisplay.h */,
 				DE0BA5D71703513D00637533 /* SPStatsDisplay.m */,
 			);
@@ -655,6 +691,8 @@
 				872F5C64188236D80016071B /* SPContext.m */,
 				DEAAF3D916BC0E46004EB9D5 /* SPOverlayView.h */,
 				DEAAF3DA16BC0E46004EB9D5 /* SPOverlayView.m */,
+				872CCA241A02C53B00CC4861 /* SPView.h */,
+				872CCA251A02C53B00CC4861 /* SPView.m */,
 				DE8E6A8016B430C4007EE8BA /* SPViewController.h */,
 				DE8E6A8116B430C4007EE8BA /* SPViewController.m */,
 			);
@@ -778,6 +816,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				872CCA261A02C53B00CC4861 /* SPView.h in Headers */,
 				DE611373134F8F6C00AB742E /* SPALSound.h in Headers */,
 				DE611374134F8F6C00AB742E /* SPALSoundChannel.h in Headers */,
 				DE611391134F8FBD00AB742E /* SPAnimatable.h in Headers */,
@@ -788,6 +827,9 @@
 				DE611372134F8F6C00AB742E /* SPAVSoundChannel.h in Headers */,
 				DE82240C16EF468E00A172EE /* SPBaseEffect.h in Headers */,
 				DE611382134F8F8300AB742E /* SPBitmapChar.h in Headers */,
+				87A6A2251A0C00F2007649B3 /* SPUniform.h in Headers */,
+				87A6A2341A0C248F007649B3 /* SPGroupFilter.h in Headers */,
+				872CCA221A02C42200CC4861 /* SPDisplayLink.h in Headers */,
 				DE611381134F8F8300AB742E /* SPBitmapFont.h in Headers */,
 				DE574D5F1705B83D008B03D7 /* SPBlendMode.h in Headers */,
 				872F5C471880E2B50016071B /* SPBlurFilter.h in Headers */,
@@ -804,6 +846,7 @@
 				DE611379134F8F6C00AB742E /* SPEvent.h in Headers */,
 				DE61137A134F8F6C00AB742E /* SPEventDispatcher.h in Headers */,
 				DED29C0716DFB48E000C2BD7 /* SPEventListener.h in Headers */,
+				87A6A2231A0C00F2007649B3 /* SPEffect.h in Headers */,
 				872F5C3D1880C9E30016071B /* SPFragmentFilter.h in Headers */,
 				DE61138D134F8FA600AB742E /* SPGLTexture.h in Headers */,
 				DE611388134F8F8300AB742E /* SPImage.h in Headers */,
@@ -1015,6 +1058,7 @@
 				DEFE4C3A101B5FB100E22471 /* SPTouchProcessor.m in Sources */,
 				DEFE4BE2101B31DF00E22471 /* SPMatrix.m in Sources */,
 				DEFE4BE3101B31DF00E22471 /* SPPoint.m in Sources */,
+				87A6A2261A0C00F2007649B3 /* SPUniform.m in Sources */,
 				DEFE4BE4101B31DF00E22471 /* SPRectangle.m in Sources */,
 				DEFE4BD7101B31DF00E22471 /* SPDisplayObject.m in Sources */,
 				DEFE4BD8101B31DF00E22471 /* SPDisplayObjectContainer.m in Sources */,
@@ -1022,12 +1066,14 @@
 				DEFE4BDA101B31DF00E22471 /* SPStage.m in Sources */,
 				DEFE4BDB101B31DF00E22471 /* SPQuad.m in Sources */,
 				DEFE4BDC101B31DF00E22471 /* SPImage.m in Sources */,
+				87A6A2241A0C00F2007649B3 /* SPEffect.m in Sources */,
 				DEFE4BDD101B31DF00E22471 /* SPTextField.m in Sources */,
 				DEFE4BDE101B31DF00E22471 /* SPTexture.m in Sources */,
 				DEFE4BDF101B31DF00E22471 /* SPGLTexture.m in Sources */,
 				DEFE4BE0101B31DF00E22471 /* SPSubTexture.m in Sources */,
 				DEFE4BE1101B31DF00E22471 /* SPButton.m in Sources */,
 				DEFE4BD2101B31DF00E22471 /* SPEvent.m in Sources */,
+				872CCA271A02C53B00CC4861 /* SPView.m in Sources */,
 				DEFE4BD3101B31DF00E22471 /* SPEventDispatcher.m in Sources */,
 				DEFE4BD4101B31DF00E22471 /* SPTouch.m in Sources */,
 				872F5C481880E2B50016071B /* SPBlurFilter.m in Sources */,
@@ -1069,7 +1115,9 @@
 				DE19443316D27E9E00E5CCD9 /* SPVertexData.m in Sources */,
 				DED29C0816DFB48E000C2BD7 /* SPEventListener.m in Sources */,
 				87C7DCC3180480A7005E8CFB /* SPOpenGL.m in Sources */,
+				87A6A2351A0C248F007649B3 /* SPGroupFilter.m in Sources */,
 				DEC87D0816E0CDD80050EA95 /* SPQuadBatch.m in Sources */,
+				872CCA231A02C42200CC4861 /* SPDisplayLink.m in Sources */,
 				DE82240D16EF468E00A172EE /* SPBaseEffect.m in Sources */,
 				DE97B93116F1EA5E00DC1077 /* SPProgram.m in Sources */,
 				DE0BA5D91703513D00637533 /* SPStatsDisplay.m in Sources */,

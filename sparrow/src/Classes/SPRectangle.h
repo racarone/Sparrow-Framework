@@ -10,6 +10,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
 #import <Sparrow/SPPoolObject.h>
 
 @class SPPoint;
@@ -35,6 +36,9 @@
 
 /// Factory method.
 + (instancetype)rectangleWithX:(float)x y:(float)y width:(float)width height:(float)height;
+
+/// Factory method.
++ (instancetype)rectangleWithCGRect:(CGRect)rect;
 
 /// Factory method.
 + (instancetype)rectangle;
@@ -82,6 +86,9 @@
 /// If the rectangle contains negative values for width or height, all coordinates
 /// are adjusted so that the rectangle describes the same region with positive values.
 - (void)normalize;
+
+/// Creates a CGRect that is equivalent to this instance.
+- (CGRect)convertToCGRect;
 
 /// ----------------
 /// @name Properties

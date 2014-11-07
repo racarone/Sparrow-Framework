@@ -71,16 +71,16 @@
     [self updateLocations];
     
     // play a sound when the image is touched
-    [image addEventListener:@selector(onImageTouched:) atObject:self forType:SP_EVENT_TYPE_TOUCH];
+    [image addEventListener:@selector(onImageTouched:) atObject:self forType:SPEventTypeTouch];
     
     // and animate it a little
-    SPTween *tween = [SPTween tweenWithTarget:image time:1.5 transition:SP_TRANSITION_EASE_IN_OUT];
-    [tween animateProperty:@"y" targetValue:image.y + 30];
-    [tween animateProperty:@"rotation" targetValue:0.1];
-    tween.repeatCount = 0; // repeat indefinitely
-    tween.reverse = YES;
-    [Sparrow.juggler addObject:tween];
-    
+    [[Sparrow juggler] tweenWithTarget:image time:1.6 properties:@{
+    	@"transition"  : SPTransitionEaseInOut,
+        @"repeatCount" : @0,
+        @"reverse"     : @YES,
+        @"y"           : @(image.y + 30),
+        @"rotation"    : @0.1
+    }];
 
     // The controller autorotates the game to all supported device orientations. 
     // Choose the orienations you want to support in the Xcode Target Settings ("Summary"-tab).
@@ -90,7 +90,7 @@
     // To force the game to start up in landscape, add the key "Initial Interface Orientation"
     // to the "App-Info.plist" file and choose any landscape orientation.
     
-    [self addEventListener:@selector(onResize:) atObject:self forType:SP_EVENT_TYPE_RESIZE];
+    [self addEventListener:@selector(onResize:) atObject:self forType:SPEventTypeResize];
     
     // Per default, this project compiles as a universal application. To change that, enter the 
     // project info screen, and in the "Build"-tab, find the setting "Targeted device family".

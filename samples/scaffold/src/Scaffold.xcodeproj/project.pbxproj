@@ -214,7 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				DE4A3DB010FFB0DB00FDA492 /* libSparrow.a */,
-				DE4A3DB210FFB0DB00FDA492 /* UnitTest.octest */,
+				DE4A3DB210FFB0DB00FDA492 /* UnitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -297,6 +297,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0450;
+				TargetAttributes = {
+					1D6058900D05DD3D006BFB54 = {
+						DevelopmentTeam = 2S4K3SB69U;
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Scaffold" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -331,10 +336,10 @@
 			remoteRef = DE4A3DAF10FFB0DB00FDA492 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DE4A3DB210FFB0DB00FDA492 /* UnitTest.octest */ = {
+		DE4A3DB210FFB0DB00FDA492 /* UnitTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = UnitTest.octest;
+			path = UnitTests.xctest;
 			remoteRef = DE4A3DB110FFB0DB00FDA492 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -392,16 +397,22 @@
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "App-Info.plist";
 				PRODUCT_NAME = Scaffold;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
 		1D6058950D05DD3E006BFB54 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "App-Info.plist";
 				PRODUCT_NAME = Scaffold;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

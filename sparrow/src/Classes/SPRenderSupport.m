@@ -165,12 +165,7 @@
 
 + (void)clearWithColor:(uint)color alpha:(float)alpha;
 {
-    float red   = SPColorGetRed(color)   / 255.0f;
-    float green = SPColorGetGreen(color) / 255.0f;
-    float blue  = SPColorGetBlue(color)  / 255.0f;
-
-    glClearColor(red, green, blue, alpha);
-    glClear(GL_COLOR_BUFFER_BIT);
+    [[Sparrow context] clearWithColor:color alpha:alpha];
 }
 
 + (uint)checkForOpenGLError
@@ -225,14 +220,31 @@
     uint blendMode = _stateStackTop->_blendMode;
     SPMatrix *modelviewMatrix = _stateStackTop->_modelviewMatrix;
 
-    if ([_quadBatchTop isStateChangeWithTinted:quad.tinted texture:quad.texture alpha:alpha
-                            premultipliedAlpha:quad.premultipliedAlpha blendMode:blendMode
-                                      numQuads:1])
+    if ([_quadBatchTop isStateChangeWithEffect:quad.effect texture:quad.texture tinted:quad.tinted
+                                         alpha:alpha premultipliedAlpha:quad.premultipliedAlpha
+                                     blendMode:blendMode numQuads:1])
     {
         [self finishQuadBatch]; // next batch
     }
 
     [_quadBatchTop addQuad:quad alpha:alpha blendMode:blendMode matrix:modelviewMatrix];
+}
+
+- (void)batchQuadBatch:(SPQuadBatch *)quadBatch
+{
+    float alpha = _stateStackTop->_alpha;
+    uint blendMode = _stateStackTop->_blendMode;
+    SPMatrix *modelviewMatrix = _stateStackTop->_modelviewMatrix;
+
+    if ([_quadBatchTop isStateChangeWithEffect:quadBatch.effect texture:quadBatch.texture
+                                        tinted:quadBatch.tinted alpha:alpha
+                            premultipliedAlpha:quadBatch.premultipliedAlpha
+                                     blendMode:blendMode numQuads:1])
+    {
+        [self finishQuadBatch]; // next batch
+    }
+
+    [_quadBatchTop addQuadBatch:quadBatch alpha:alpha blendMode:blendMode matrix:modelviewMatrix];
 }
 
 - (void)finishQuadBatch
@@ -335,8 +347,8 @@
         }
         else
         {
-            width  = (int)Sparrow.currentController.view.drawableWidth;
-            height = (int)Sparrow.currentController.view.drawableHeight;
+            width  = context.backBufferWidth;
+            height = context.backBufferHeight;
         }
 
         // convert to pixel coordinates (matrix transformation ends up in range [-1, 1])

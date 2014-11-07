@@ -60,17 +60,6 @@
     }
 }
 
-- (void)onRemove:(SPEvent *)event
-{
-    [self removeObject:(id<SPAnimatable>)[[event.target retain] autorelease]];
-
-    if ([event.target isKindOfClass:[SPTween class]])
-    {
-        SPTween *tween = (SPTween *)event.target;
-        if (tween.isComplete) [self addObject:tween.nextTween];
-    }
-}
-
 - (void)removeObject:(id<SPAnimatable>)object
 {
     [_objects removeObject:object];
@@ -129,6 +118,14 @@
     return delayedInv;
 }
 
+- (id)repeatInvocationAtTarget:(id)target interval:(double)interval repeatCount:(int)repeatCount
+{
+    SPDelayedInvocation *delayedInv = [SPDelayedInvocation invocationWithTarget:target delay:interval];
+    delayedInv.repeatCount = repeatCount;
+    [self addObject:delayedInv];
+    return delayedInv;
+}
+
 - (id)tweenWithTarget:(id)target time:(double)time properties:(NSDictionary *)properties
 {
     SPTween *tween = [SPTween tweenWithTarget:target time:time];
@@ -143,7 +140,7 @@
         else if ([target respondsToSelector:selector])
             [tween animateProperty:property targetValue:[value floatValue]];
         else
-            [NSException raise:SPExceptionInvalidOperation format:@"Invalid property %@", property];
+            [NSException raise:SPExceptionInvalidOperation format:@"invalid property %@", property];
     }
 
     [self addObject:tween];
@@ -181,6 +178,19 @@
         [NSException raise:SPExceptionInvalidOperation format:@"speed must be positive"];
     else
         _speed = speed;
+}
+
+#pragma mark Events
+
+- (void)onRemove:(SPEvent *)event
+{
+    [self removeObject:(id<SPAnimatable>)[[event.target retain] autorelease]];
+
+    if ([event.target isKindOfClass:[SPTween class]])
+    {
+        SPTween *tween = (SPTween *)event.target;
+        if (tween.isComplete) [self addObject:tween.nextTween];
+    }
 }
 
 @end

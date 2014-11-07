@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <GLKit/GLKMath.h>
+#import <QuartzCore/QuartzCore.h>
 #import <Sparrow/SPPoolObject.h>
 
 @class SPPoint;
@@ -60,6 +61,15 @@
 /// Factory method.
 + (instancetype)matrixWithTranslationX:(float)tx translationY:(float)ty;
 
+/// Factory method.
++ (instancetype)matrixWithCGAffineTransform:(CGAffineTransform)transform;
+
+/// Factory method.
++ (instancetype)matrixWithGLKMatrix3:(GLKMatrix3)matrix;
+
+/// Factory method.
++ (instancetype)matrixWithGLKMatrix4:(GLKMatrix4)matrix;
+
 /// -------------
 /// @name Methods
 /// -------------
@@ -104,6 +114,9 @@
 
 // Copies all of the matrix data from the source object into the calling Matrix object.
 - (void)copyFromMatrix:(SPMatrix *)matrix;
+
+/// Creates a 3D CGAffineTransform that is equivalent to this instance.
+- (CGAffineTransform)convertToCGAffineTransform;
 
 /// Creates a 3D GLKit matrix that is equivalent to this instance.
 - (GLKMatrix4)convertToGLKMatrix4;

@@ -14,6 +14,8 @@
 @implementation SPDelayedInvocation
 {
     id _target;
+
+    int _repeatCount;
     double _totalTime;
     double _currentTime;
     
@@ -25,11 +27,15 @@
 
 - (instancetype)initWithTarget:(id)target delay:(double)time block:(SPCallbackBlock)block
 {
+    if (!target && !block)
+        [NSException raise:SPExceptionInvalidOperation format:@"Target and block cannot both be nil"];
+
     if ((self = [super init]))
     {
         _totalTime = MAX(0.0001, time); // zero is not allowed
         _currentTime = 0;
         _block = [block copy];
+        _repeatCount = 1;
         
         if (target)
         {
@@ -42,7 +48,7 @@
 
 - (instancetype)initWithTarget:(id)target delay:(double)time
 {
-    return [self initWithTarget:target delay:time block:NULL];
+    return [self initWithTarget:target delay:time block:nil];
 }
 
 - (instancetype)initWithDelay:(double)time block:(SPCallbackBlock)block
@@ -52,7 +58,7 @@
 
 - (instancetype)init
 {
-    return nil;
+    return [self initWithTarget:nil delay:0 block:nil];
 }
 
 - (void)dealloc
@@ -96,28 +102,41 @@
 
 - (void)advanceTime:(double)seconds
 {
-    self.currentTime = _currentTime + seconds;
+    double previousTime = _currentTime;
+    _currentTime = MIN(_totalTime, _currentTime + seconds);
+
+    if (previousTime < _totalTime && _currentTime >= _totalTime)
+    {
+        if (_repeatCount == 0 || _repeatCount > 1)
+        {
+            [self invoke];
+
+            if (_repeatCount > 0) --_repeatCount;
+            _currentTime = 0;
+
+            [self advanceTime:(previousTime + _currentTime) - _totalTime];
+        }
+        else
+        {
+            [self invoke];
+            [self dispatchEventWithType:SPEventTypeRemoveFromJuggler];
+        }
+    }
 }
 
 #pragma mark Properties
 
-- (void)setCurrentTime:(double)currentTime
-{
-    double previousTime = _currentTime;    
-    _currentTime = MIN(_totalTime, currentTime);
-    
-    if (previousTime < _totalTime && _currentTime >= _totalTime)
-    {
-        if (_invocations) [_invocations makeObjectsPerformSelector:@selector(invoke)];
-        if (_block) _block();
-        
-        [self dispatchEventWithType:SPEventTypeRemoveFromJuggler];
-    }
-}
-
 - (BOOL)isComplete
 {
-    return _currentTime >= _totalTime;
+    return _repeatCount == 1 && _currentTime >= _totalTime;
+}
+
+#pragma mark Private
+
+- (void)invoke
+{
+    if (_invocations) [_invocations makeObjectsPerformSelector:@selector(invoke)];
+    if (_block) _block();
 }
 
 @end

@@ -9,9 +9,8 @@
 //  it under the terms of the Simplified BSD License.
 //
 
-#import <Sparrow/SPEvent.h>
-#import <Sparrow/SPEventDispatcher.h>
 #import <Sparrow/SPEvent_Internal.h>
+#import <Sparrow/SPEventDispatcher.h>
 #import <Sparrow/SPMacros.h>
 
 // --- event types ---------------------------------------------------------------------------------
@@ -24,6 +23,7 @@ NSString *const SPEventTypeRemoveFromJuggler    = @"SPEventTypeRemoveFromJuggler
 NSString *const SPEventTypeCompleted            = @"SPEventTypeCompleted";
 NSString *const SPEventTypeTriggered            = @"SPEventTypeTriggered";
 NSString *const SPEventTypeFlatten              = @"SPEventTypeFlatten";
+
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -39,14 +39,20 @@ NSString *const SPEventTypeFlatten              = @"SPEventTypeFlatten";
 
 #pragma mark Initialization
 
-- (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles
+- (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles data:(id)object
 {    
     if ((self = [super init]))
     {        
         _type = [[NSString alloc] initWithString:type];
+        _data = [object retain];
         _bubbles = bubbles;
     }
     return self;
+}
+
+- (instancetype)initWithType:(NSString *)type bubbles:(BOOL)bubbles
+{
+    return [self initWithType:type bubbles:bubbles data:nil];
 }
 
 - (instancetype)initWithType:(NSString *)type
@@ -63,6 +69,11 @@ NSString *const SPEventTypeFlatten              = @"SPEventTypeFlatten";
 {
     [_type release];
     [super dealloc];
+}
+
++ (instancetype)eventWithType:(NSString *)type bubbles:(BOOL)bubbles data:(id)object
+{
+    return [[[self alloc] initWithType:type bubbles:bubbles data:object] autorelease];
 }
 
 + (instancetype)eventWithType:(NSString *)type bubbles:(BOOL)bubbles
@@ -93,34 +104,6 @@ NSString *const SPEventTypeFlatten              = @"SPEventTypeFlatten";
 {
     return [NSString stringWithFormat:@"[%@: type=\"%@\", bubbles=%@]",
             NSStringFromClass([self class]), _type, _bubbles ? @"YES" : @"NO"];
-}
-
-@end
-
-// --- internal implementation ---------------------------------------------------------------------
-
-@implementation SPEvent (Internal)
-
-- (BOOL)stopsImmediatePropagation
-{ 
-    return _stopsImmediatePropagation;
-}
-
-- (BOOL)stopsPropagation
-{ 
-    return _stopsPropagation;
-}
-
-- (void)setTarget:(SPEventDispatcher *)target
-{
-    if (_target != target)
-        _target = target;
-}
-
-- (void)setCurrentTarget:(SPEventDispatcher *)currentTarget
-{
-    if (_currentTarget != currentTarget)
-        _currentTarget = currentTarget;
 }
 
 @end

@@ -334,16 +334,20 @@ BOOL isOpaqueWhite(SPVertexColor color)
     
     if (matrix)
     {
+        GLKMatrix3 glkMatrix = [matrix convertToGLKMatrix3];
+
         for (int i=index; i<endIndex; ++i)
         {
-            GLKVector2 position = _vertices[i].position;
-            SPPoint *transformedPoint = [matrix transformPointWithX:position.x y:position.y];
-            float tfX = transformedPoint.x;
-            float tfY = transformedPoint.y;
-            minX = MIN(minX, tfX);
-            maxX = MAX(maxX, tfX);
-            minY = MIN(minY, tfY);
-            maxY = MAX(maxY, tfY);
+            GLKVector2 pos = _vertices[i].position;
+
+            GLKVector2 transformedPoint;
+            transformedPoint.x = glkMatrix.m00 * pos.x + glkMatrix.m10 * pos.y + glkMatrix.m20;
+            transformedPoint.y = glkMatrix.m11 * pos.y + glkMatrix.m01 * pos.x + glkMatrix.m21;
+
+            minX = MIN(minX, transformedPoint.x);
+            maxX = MAX(maxX, transformedPoint.x);
+            minY = MIN(minY, transformedPoint.y);
+            maxY = MAX(maxY, transformedPoint.y);
         }
     }
     else

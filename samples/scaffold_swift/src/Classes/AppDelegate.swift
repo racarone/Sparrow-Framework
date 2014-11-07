@@ -18,12 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         _window = UIWindow(frame: UIScreen.mainScreen().bounds)
         _viewController = SPViewController()
-        
-        // Enable some common settings here:
+
         _viewController.showStats = true;
-        _viewController.multitouchEnabled = true;
-        _viewController.preferredFramesPerSecond = 60;
-        
         _viewController.startWithRoot(Game.self, supportHighResolutions: true, doubleOnPad: true)
         
         _window.rootViewController = _viewController

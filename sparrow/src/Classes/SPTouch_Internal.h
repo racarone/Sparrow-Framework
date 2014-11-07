@@ -11,19 +11,16 @@
 
 #import <Sparrow/SPTouch.h>
 
-@interface SPTouch (Internal)
+@interface SPTouch ()
 
-- (void)setTimestamp:(double)timestamp;
-- (void)setGlobalX:(float)x;
-- (void)setGlobalY:(float)y;
-- (void)setPreviousGlobalX:(float)x;
-- (void)setPreviousGlobalY:(float)y;
-- (void)setTapCount:(int)tapCount;
-- (void)setPhase:(SPTouchPhase)phase;
-- (void)setTarget:(SPDisplayObject *)target;
-
-+ (SPTouch *)touch;
-
+@property (nonatomic, assign) double timestamp;
+@property (nonatomic, assign) float globalX;
+@property (nonatomic, assign) float globalY;
+@property (nonatomic, assign) float previousGlobalX;
+@property (nonatomic, assign) float previousGlobalY;
+@property (nonatomic, assign) int tapCount;
+@property (nonatomic, assign) SPTouchPhase phase;
+@property (nonatomic, strong) SPDisplayObject *target;
 @property (nonatomic, assign) size_t touchID;
 
 @end

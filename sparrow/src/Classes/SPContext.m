@@ -11,6 +11,7 @@
 
 #import <Sparrow/SparrowClass.h>
 #import <Sparrow/SPContext_Internal.h>
+#import <Sparrow/SPGLTexture.h>
 #import <Sparrow/SPDisplayObject.h>
 #import <Sparrow/SPMacros.h>
 #import <Sparrow/SPOpenGL.h>
@@ -19,10 +20,31 @@
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
+#import <objc/runtime.h>
 
-#define currentThreadDictionary [[NSThread currentThread] threadDictionary]
-static NSString *const currentContextKey = @"SPCurrentContext";
-static NSMutableDictionary *framebufferCache = nil;
+// --- EAGLContext category ------------------------------------------------------------------------
+
+@interface EAGLContext (SPNSExtensions)
+
+@property (nonatomic, assign) SPContext *spContext;
+
+@end
+
+@implementation EAGLContext (SPNSExtensions)
+
+@dynamic spContext;
+
+- (SPContext *)spContext
+{
+    return objc_getAssociatedObject(self, @selector(spContext));
+}
+
+- (void)setSpContext:(SPContext *)spContext
+{
+    objc_setAssociatedObject(self, @selector(spContext), spContext, OBJC_ASSOCIATION_ASSIGN);
+}
+
+@end
 
 // --- class implementation ------------------------------------------------------------------------
 
@@ -30,56 +52,226 @@ static NSMutableDictionary *framebufferCache = nil;
 {
     EAGLContext *_nativeContext;
     SPTexture *_renderTarget;
-    SGLStateCacheRef _glStateCache;
+    sglStateCacheRef _stateCache;
+
+    NSMutableDictionary *_frameBufferCache;
+    SPProgram *_program;
+
+    int _backBufferWidth;
+    int _backBufferHeight;
+    uint _colorRenderBuffer;
+    uint _depthStencilRenderBuffer;
+    uint _frameBuffer;
+    uint _msaaFrameBuffer;
+    uint _msaaColorRenderBuffer;
 }
 
 #pragma mark Initialization
 
-- (instancetype)initWithSharegroup:(id)sharegroup
+- (instancetype)initWithShareContext:(SPContext *)shareContext
 {
     if ((self = [super init]))
     {
-        _nativeContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 sharegroup:sharegroup];
-        _glStateCache = sglStateCacheCreate();
+        _nativeContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2
+                                               sharegroup:shareContext.nativeContext.sharegroup];
+        _nativeContext.spContext = self;
+
+        _stateCache = sglStateCacheCreate();
+        _frameBufferCache = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
 - (instancetype)init
 {
-    return [self initWithSharegroup:nil];
+    return [self initWithShareContext:nil];
+}
+
++ (instancetype)globalShareContext
+{
+    static SPContext *globalContext = nil;
+    static dispatch_once_t onceToken;
+
+    dispatch_once(&onceToken, ^
+     {
+         globalContext = [[SPContext alloc] init];
+     });
+
+    return globalContext;
 }
 
 - (void)dealloc
 {
-    sglStateCacheRelease(_glStateCache);
-    _glStateCache = NULL;
+    [self makeCurrentContext];
+
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    if (_frameBuffer)
+    {
+        glDeleteFramebuffers(1, &_frameBuffer);
+        _frameBuffer = 0;
+    }
+
+    if (_colorRenderBuffer)
+    {
+        glDeleteRenderbuffers(1, &_colorRenderBuffer);
+        _colorRenderBuffer = 0;
+    }
+
+    if (_depthStencilRenderBuffer)
+    {
+        glDeleteRenderbuffers(1, &_depthStencilRenderBuffer);
+        _depthStencilRenderBuffer = 0;
+    }
+
+    if (_msaaFrameBuffer)
+    {
+        glDeleteFramebuffers(1, &_msaaFrameBuffer);
+        _msaaFrameBuffer = 0;
+    }
+
+    if (_msaaColorRenderBuffer)
+    {
+        glDeleteRenderbuffers(1, &_msaaColorRenderBuffer);
+        _msaaColorRenderBuffer = 0;
+    }
+
+    sglStateCacheDestroy(_stateCache);
 
     [_nativeContext release];
     [_renderTarget release];
-
+    [_frameBufferCache release];
     [super dealloc];
 }
 
-+ (void)initialize
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^
-    {
-        framebufferCache = [[NSMutableDictionary alloc] init];
-    });
-}
-
 #pragma mark Methods
+
+- (void)configureBackBufferForView:(SPView *)view antiAlias:(int)antiAlias
+             enableDepthAndStencil:(BOOL)enableDepthAndStencil
+               wantsBestResolution:(BOOL)wantsBestResolution
+{
+    [self makeCurrentContext];
+
+    view.layer.contentsScale = wantsBestResolution ? view.window.screen.scale : 1.0f;
+
+    if (!_frameBuffer)
+    {
+        glGenFramebuffers(1, &_frameBuffer);
+        glGenRenderbuffers(1, &_colorRenderBuffer);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderBuffer);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);
+
+    [_nativeContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer *)view.layer];
+
+    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_backBufferWidth);
+    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_backBufferHeight);
+
+    if (antiAlias && !_msaaFrameBuffer)
+    {
+        glGenFramebuffers(1, &_msaaFrameBuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, _msaaFrameBuffer);
+
+        glGenRenderbuffers(1, &_msaaColorRenderBuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, _msaaColorRenderBuffer);
+
+        glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, antiAlias, GL_RGBA8_OES, _backBufferWidth, _backBufferHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _msaaColorRenderBuffer);
+    }
+    else if (!antiAlias && _msaaFrameBuffer)
+    {
+        glDeleteFramebuffers(1, &_msaaFrameBuffer);
+        _msaaFrameBuffer = 0;
+
+        glDeleteRenderbuffers(1, &_msaaColorRenderBuffer);
+        _msaaColorRenderBuffer = 0;
+    }
+
+    if (enableDepthAndStencil && !_depthStencilRenderBuffer)
+    {
+        glGenRenderbuffers(1, &_depthStencilRenderBuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilRenderBuffer);
+
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilRenderBuffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilRenderBuffer);
+
+        if (_msaaFrameBuffer)
+            glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, antiAlias, GL_DEPTH24_STENCIL8, _backBufferWidth, _backBufferHeight);
+        else
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _backBufferWidth, _backBufferHeight);
+    }
+    else if (!enableDepthAndStencil && _depthStencilRenderBuffer)
+    {
+        glDeleteRenderbuffers(1, &_depthStencilRenderBuffer);
+        _depthStencilRenderBuffer = 0;
+    }
+}
 
 - (void)renderToBackBuffer
 {
     [self setRenderTarget:nil];
 }
 
-- (void)presentBufferForDisplay
+- (void)present
 {
+    [self makeCurrentContext];
+
+    if (_msaaFrameBuffer)
+    {
+        if (_depthStencilRenderBuffer)
+        {
+            GLenum attachments[] = { GL_COLOR_ATTACHMENT0, GL_STENCIL_ATTACHMENT, GL_DEPTH_ATTACHMENT };
+            glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 3, attachments);
+        }
+        else
+        {
+            GLenum attachments[] = { GL_COLOR_ATTACHMENT0 };
+            glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 1, attachments);
+        }
+    }
+    else if (_depthStencilRenderBuffer)
+    {
+        GLenum attachments[] = { GL_STENCIL_ATTACHMENT, GL_DEPTH_ATTACHMENT };
+        glDiscardFramebufferEXT(GL_FRAMEBUFFER, 2, attachments);
+    }
+    
+    glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);
     [_nativeContext presentRenderbuffer:GL_RENDERBUFFER];
+}
+
+- (void)clear
+{
+    [self clearWithColor:0 alpha:1];
+}
+
+- (void)clearWithColor:(uint)color
+{
+    [self clearWithColor:color alpha:1];
+}
+
+- (void)clearWithColor:(uint)color alpha:(float)alpha
+{
+    float red   = SP_COLOR_PART_RED(color)   / 255.0f;
+    float green = SP_COLOR_PART_GREEN(color) / 255.0f;
+    float blue  = SP_COLOR_PART_BLUE(color)  / 255.0f;
+
+    int scissorEnabled = 0;
+    glGetIntegerv(GL_SCISSOR_TEST, &scissorEnabled);
+
+    if (scissorEnabled == GL_TRUE)
+        glDisable(GL_SCISSOR_TEST);
+
+    glClearColor(red, green, blue, alpha);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if (scissorEnabled == GL_TRUE)
+        glEnable(GL_SCISSOR_TEST);
 }
 
 - (UIImage *)snapshot
@@ -96,8 +288,8 @@ static NSMutableDictionary *framebufferCache = nil;
         if ([_renderTarget isKindOfClass:[SPSubTexture class]])
         {
             SPRectangle *region = [(SPSubTexture *)_renderTarget region];
-            x = region.x;
-            y = region.y;
+            x      = region.x;
+            y      = region.y;
             width  = region.width;
             height = region.height;
         }
@@ -109,8 +301,8 @@ static NSMutableDictionary *framebufferCache = nil;
     }
     else
     {
-        width  = (int)Sparrow.currentController.view.drawableWidth;
-        height = (int)Sparrow.currentController.view.drawableHeight;
+        width  = _backBufferWidth;
+        height = _backBufferHeight;
     }
 
     GLubyte *pixels = malloc(4 * width * height);
@@ -121,26 +313,32 @@ static NSMutableDictionary *framebufferCache = nil;
 
         glGetIntegerv(GL_PACK_ALIGNMENT, &prevPackAlignment);
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
         glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
         glPixelStorei(GL_PACK_ALIGNMENT, prevPackAlignment);
 
         CFDataRef data = CFDataCreate(kCFAllocatorDefault, pixels, bytesPerRow * height);
+
         if (data)
         {
             CGDataProviderRef provider = CGDataProviderCreateWithCFData(data);
+
             if (provider)
             {
                 CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
                 CGImageRef cgImage = CGImageCreate(width, height, 8, 32, bytesPerRow, space, 1, provider, nil, NO, 0);
+
                 if (cgImage)
                 {
                     UIGraphicsBeginImageContextWithOptions(CGSizeMake(width, height), NO, scale);
                     {
                         CGContextRef context = UIGraphicsGetCurrentContext();
+
                         CGContextSetBlendMode(context, kCGBlendModeCopy);
                         CGContextTranslateCTM(context, 0.0f, height);
                         CGContextScaleCTM(context, scale, -scale);
                         CGContextDrawImage(context, CGRectMake(0, 0, width, height), cgImage);
+
                         uiImage = UIGraphicsGetImageFromCurrentImageContext();
                     }
                     UIGraphicsEndImageContext();
@@ -188,24 +386,18 @@ static NSMutableDictionary *framebufferCache = nil;
 
 + (BOOL)setCurrentContext:(SPContext *)context
 {
-    if (context && [EAGLContext setCurrentContext:context->_nativeContext])
+    if ([EAGLContext setCurrentContext:context.nativeContext])
     {
-        currentThreadDictionary[currentContextKey] = context;
-        sglStateCacheSetCurrent(context->_glStateCache);
+        sglStateCacheSetCurrent(context->_stateCache);
         return YES;
     }
 
-    if (!context) sglStateCacheSetCurrent(NULL);
     return NO;
 }
 
 + (SPContext *)currentContext
 {
-    SPContext *current = currentThreadDictionary[currentContextKey];
-    if (!current || current->_nativeContext != [EAGLContext currentContext])
-        return nil;
-
-    return current;
+    return [EAGLContext currentContext].spContext;
 }
 
 + (BOOL)deviceSupportsOpenGLExtension:(NSString *)extensionName
@@ -213,25 +405,18 @@ static NSMutableDictionary *framebufferCache = nil;
     static dispatch_once_t once;
     static NSArray *extensions = nil;
 
-    dispatch_once(&once, ^{
-        NSString *extensionsString = [NSString stringWithCString:(const char *)glGetString(GL_EXTENSIONS) encoding:NSASCIIStringEncoding];
-        extensions = [[extensionsString componentsSeparatedByString:@" "] retain];
-    });
+    dispatch_once(&once, ^
+     {
+         NSString *extensionsString = [NSString stringWithCString:(const char *)glGetString(GL_EXTENSIONS)
+                                       encoding:NSASCIIStringEncoding];
+
+         extensions = [[extensionsString componentsSeparatedByString:@" "] retain];
+     });
 
     return [extensions containsObject:extensionName];
 }
 
 #pragma mark Properties
-
-- (id)sharegroup
-{
-    return _nativeContext.sharegroup;
-}
-
-- (id)nativeContext
-{
-    return _nativeContext;
-}
 
 - (SPRectangle *)viewport
 {
@@ -242,10 +427,8 @@ static NSMutableDictionary *framebufferCache = nil;
 
 - (void)setViewport:(SPRectangle *)viewport
 {
-    if (viewport)
-        glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-    else
-        glViewport(0, 0, (int)Sparrow.currentController.view.drawableWidth, (int)Sparrow.currentController.view.drawableHeight);
+    if (viewport) glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+    else          glViewport(0, 0, _backBufferWidth, _backBufferHeight);
 }
 
 - (SPRectangle *)scissorBox
@@ -272,12 +455,12 @@ static NSMutableDictionary *framebufferCache = nil;
 {
     if (renderTarget)
     {
-        uint framebuffer = [framebufferCache[@(renderTarget.name)] unsignedIntValue];
+        uint framebuffer = [_frameBufferCache[@(renderTarget.name)] unsignedIntValue];
         if (!framebuffer)
         {
             // create and cache the framebuffer
             framebuffer = [self createFramebufferForTexture:renderTarget];
-            framebufferCache[@(renderTarget.name)] = @(framebuffer);
+            _frameBufferCache[@(renderTarget.name)] = @(framebuffer);
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -285,11 +468,8 @@ static NSMutableDictionary *framebufferCache = nil;
     }
     else
     {
-        // HACK: GLKView does not use the OpenGL state cache, so we have to 'reset' these values
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, 0, 0);
-
-        [Sparrow.currentController.view bindDrawable];
+        glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+        glViewport(0, 0, _backBufferWidth, _backBufferHeight);
     }
 
   #if DEBUG
@@ -308,27 +488,26 @@ static NSMutableDictionary *framebufferCache = nil;
 
 - (uint)createFramebufferForTexture:(SPTexture *)texture
 {
+    if (!texture.root.dataUploaded)
+        [texture.root uploadData:NULL];
+
     uint framebuffer = -1;
 
-    // create framebuffer
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    // attach renderbuffer
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.name, 0);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        NSLog(@"failed to create frame buffer for render texture");
 
     return framebuffer;
 }
 
 - (void)destroyFramebufferForTexture:(SPTexture *)texture
 {
-    uint framebuffer = [framebufferCache[@(texture.name)] unsignedIntValue];
+    uint framebuffer = [_frameBufferCache[@(texture.name)] unsignedIntValue];
     if (framebuffer)
     {
         glDeleteFramebuffers(1, &framebuffer);
-        [framebufferCache removeObjectForKey:@(texture.name)];
+        [_frameBufferCache removeObjectForKey:@(texture.name)];
     }
 }
 

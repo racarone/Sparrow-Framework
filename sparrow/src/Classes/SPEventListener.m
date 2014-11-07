@@ -42,7 +42,8 @@
     
     return [self initWithTarget:target selector:selector block:^(SPEvent *event)
             {
-                objc_msgSend(weakTarget, selector, event);
+                typedef void (*EventIMP)(id, SEL, id);
+                ((EventIMP)objc_msgSend)(weakTarget, selector, event);
             }];
 }
 

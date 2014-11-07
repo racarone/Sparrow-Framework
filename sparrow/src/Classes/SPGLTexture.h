@@ -57,4 +57,31 @@ typedef struct
 /// Initializes a PVR texture with with a certain scale factor.
 - (instancetype)initWithPVRData:(SPPVRData *)pvrData scale:(float)scale;
 
+/// -------------
+/// @name Methods
+/// -------------
+
+/// Uploads image data.
+- (void)uploadData:(const void *)imgData;
+
+/// Uploads pvr image data.
+- (void)uploadPVRData:(SPPVRData *)data;
+
+/// Clears the texture. The previous contents of the texture is wiped out.
+- (void)clear;
+
+/// Clears the texture with a certain color. The previous contents of the texture is wiped out.
+- (void)clearWithColor:(uint)color;
+
+/// Clears the texture with a certain color and alpha value. The previous contents of the
+/// texture is wiped out.
+- (void)clearWithColor:(uint)color alpha:(float)alpha;
+
+/// ----------------
+/// @name Properties
+/// ----------------
+
+/// Returns YES if image data has been uploaded to this texture, NO otherwise.
+@property (nonatomic, readonly) BOOL dataUploaded;
+
 @end

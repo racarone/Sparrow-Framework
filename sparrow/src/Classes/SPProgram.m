@@ -13,18 +13,6 @@
 #import <Sparrow/SPOpenGL.h>
 #import <Sparrow/SPProgram.h>
 
-// --- private interface ---------------------------------------------------------------------------
-
-@interface SPProgram ()
-
-- (void)compile;
-- (uint)compileShader:(NSString *)source type:(GLenum)type;
-- (void)updateUniforms;
-- (void)updateAttributes;
-
-@end
-
-
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPProgram
@@ -74,12 +62,14 @@
 
 - (int)uniformByName:(NSString *)name
 {
-    return [_uniforms[name] intValue];
+    NSNumber *location = _uniforms[name];
+    return location ? [location intValue] : SPNotFound;
 }
 
 - (int)attributeByName:(NSString *)name
 {
-    return [_attributes[name] intValue];
+    NSNumber *location = _attributes[name];
+    return location ? [location intValue] : SPNotFound;
 }
 
 #pragma mark NSObject
@@ -96,6 +86,11 @@
 - (void)compile
 {
     uint program = glCreateProgram();
+
+    glBindAttribLocation(program, SPAttributePosition,  "aPosition");
+    glBindAttribLocation(program, SPAttributeColor,     "aColor");
+    glBindAttribLocation(program, SPAttributeTexCoords, "aTexCoords");
+
     uint vertexShader   = [self compileShader:_vertexShader type:GL_VERTEX_SHADER];
     uint fragmentShader = [self compileShader:_fragmentShader type:GL_FRAGMENT_SHADER];
     

@@ -43,6 +43,16 @@
     return [[[self alloc] initWithPolarLength:length angle:angle] autorelease];
 }
 
++ (instancetype)pointWithCGPoint:(CGPoint)point
+{
+    return [[[self alloc] initWithX:point.x y:point.y] autorelease];
+}
+
++ (instancetype)pointWithGLKVector2:(GLKVector2)vector
+{
+    return [[[self alloc] initWithX:vector.x y:vector.y] autorelease];
+}
+
 + (instancetype)pointWithX:(float)x y:(float)y
 {
     return [[[self alloc] initWithX:x y:y] autorelease];
@@ -138,6 +148,11 @@
 - (GLKVector2)convertToGLKVector
 {
     return GLKVector2Make(_x, _y);
+}
+
+- (CGPoint)convertToCGPoint
+{
+    return CGPointMake(_x, _y);
 }
 
 + (float)distanceFromPoint:(SPPoint *)p1 toPoint:(SPPoint *)p2

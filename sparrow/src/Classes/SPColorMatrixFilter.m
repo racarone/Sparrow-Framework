@@ -12,35 +12,48 @@
 #import <Sparrow/SparrowClass.h>
 #import <Sparrow/SPColorMatrix.h>
 #import <Sparrow/SPColorMatrixFilter.h>
+#import <Sparrow/SPEffect.h>
 #import <Sparrow/SPMatrix.h>
 #import <Sparrow/SPNSExtensions.h>
 #import <Sparrow/SPOpenGL.h>
 #import <Sparrow/SPProgram.h>
 
-// --- private interface ---------------------------------------------------------------------------
-
 static NSString *const SPColorMatrixProgram = @"SPColorMatrixProgram";
 
-@interface SPColorMatrixFilter ()
+// --- shaders -------------------------------------------------------------------------------------
 
-- (NSString *)fragmentShader;
-- (void)updateShaderMatrix;
+static NSString *const SPColorMatrixShader =
+    @"uniform lowp mat4 uColorMatrix;"
+    @"uniform lowp vec4 uColorOffset;"
+    @"uniform lowp sampler2D uTexture;"
 
-@end
+    @"varying lowp vec2 vTexCoords;"
 
+    @"const lowp vec4 MIN_COLOR = vec4(0, 0, 0, 0.0001);"
+
+    @"void main() {"
+    @"  lowp vec4 texColor = texture2D(uTexture, vTexCoords);" // read texture color
+    @"  texColor = max(texColor, MIN_COLOR);"                  // avoid division through zero in next step
+    @"  texColor.xyz /= texColor.www;"                         // restore original(non-PMA) RGB values
+    @"  texColor *= uColorMatrix;"                             // multiply color with 4x4 matrix
+    @"  texColor += uColorOffset;"                             // add offset
+    @"  texColor.xyz *= texColor.www;"                         // multiply with alpha again(PMA)
+    @"  gl_FragColor = texColor;"                              // copy to output
+    @"}";
 
 // --- class implementation ------------------------------------------------------------------------
 
 @implementation SPColorMatrixFilter
 {
-    SPProgram *_shaderProgram;
+    SPEffect *_effect;
+    SPUniform *_uColorMatrix;
+    SPUniform *_uColorOffset;
+
+    GLKMatrix4 _shaderMatrix;
+    GLKVector4 _shaderOffset;
+
     SPColorMatrix *_colorMatrix;
     BOOL _colorMatrixDirty;
-    GLKMatrix4 _shaderMatrix; // offset in range 0-1, changed order
-    GLKVector4 _shaderOffset;
-    int _uMvpMatrix;
-    int _uColorMatrix;
-    int _uColorOffset;
 }
 
 #pragma mark Initialization
@@ -61,7 +74,9 @@ static NSString *const SPColorMatrixProgram = @"SPColorMatrixProgram";
 
 - (void)dealloc
 {
-    [_shaderProgram release];
+    [_effect release];
+    [_uColorMatrix release];
+    [_uColorOffset release];
     [_colorMatrix release];
     [super dealloc];
 }
@@ -128,71 +143,41 @@ static NSString *const SPColorMatrixProgram = @"SPColorMatrixProgram";
 
 #pragma mark SPFragmentFilter (Subclasses)
 
-- (void)createPrograms
+- (void)createEffects
 {
-    if (!_shaderProgram)
+    SPProgram *program = [[Sparrow currentController] programByName:SPColorMatrixProgram];
+    if (!program)
     {
-        _shaderProgram = [[[Sparrow currentController] programByName:SPColorMatrixProgram] retain];
+        program = [[SPProgram alloc] initWithVertexShader:[SPFragmentFilter standardVertexShader]
+                                           fragmentShader:SPColorMatrixShader];
 
-        if (!_shaderProgram)
-        {
-            _shaderProgram = [[SPProgram alloc] initWithVertexShader:[SPFragmentFilter standardVertexShader]
-                                                      fragmentShader:[self fragmentShader]];
-
-            [[Sparrow currentController] registerProgram:_shaderProgram name:SPColorMatrixProgram];
-        }
-
-        self.vertexPosID = [_shaderProgram attributeByName:@"aPosition"];
-        self.texCoordsID = [_shaderProgram attributeByName:@"aTexCoords"];
-
-        _uColorMatrix   = [_shaderProgram uniformByName:@"uColorMatrix"];
-        _uColorOffset   = [_shaderProgram uniformByName:@"uColorOffset"];
-        _uMvpMatrix     = [_shaderProgram uniformByName:@"uMvpMatrix"];
+        [[Sparrow currentController] registerProgram:program name:SPColorMatrixProgram];
     }
+
+    _effect = [[SPEffect alloc] initWithProgram:program];
+    _uColorMatrix = [[SPUniform alloc] initWithName:@"uColorMatrix"];
+    _uColorOffset = [[SPUniform alloc] initWithName:@"uColorOffset"];
+
+    [_effect addUniformsFromArray:@[_uColorMatrix, _uColorOffset]];
 }
 
-- (void)activateWithPass:(int)pass texture:(SPTexture *)texture mvpMatrix:(SPMatrix *)matrix
+- (SPEffect *)effectForPass:(int)pass
+{
+    return _effect;
+}
+
+- (void)activateWithPass:(int)pass texture:(SPTexture *)texture
 {
     if (_colorMatrixDirty)
         [self updateShaderMatrix];
 
-    glUseProgram(_shaderProgram.name);
+    _uColorMatrix.matrix4Value = _shaderMatrix;
+    _uColorOffset.vector4Value = _shaderOffset;
 
-    GLKMatrix4 mvp = [matrix convertToGLKMatrix4];
-    glUniformMatrix4fv(_uMvpMatrix, 1, false, mvp.m);
-
-    glUniformMatrix4fv(_uColorMatrix, 1, false, _shaderMatrix.m);
-    glUniform4fv(_uColorOffset, 1, _shaderOffset.v);
+    [_effect prepareToDraw];
 }
 
 #pragma mark Private
-
-- (NSString *)fragmentShader
-{
-    NSMutableString *source = [NSMutableString string];
-
-    [source appendLine:@"uniform lowp mat4 uColorMatrix;"];
-    [source appendLine:@"uniform lowp vec4 uColorOffset;"];
-    [source appendLine:@"uniform lowp sampler2D uTexture;"];
-
-    [source appendLine:@"varying lowp vec2 vTexCoords;"];
-
-    [source appendLine:@"const lowp vec4 MIN_COLOR = vec4(0, 0, 0, 0.0001);"];
-
-    [source appendLine:@"void main() {"];
-
-    [source appendLine:@"  lowp vec4 texColor = texture2D(uTexture, vTexCoords);"]; // read texture color
-    [source appendLine:@"  texColor = max(texColor, MIN_COLOR);"];                  // avoid division through zero in next step
-    [source appendLine:@"  texColor.xyz /= texColor.www;"];                         // restore original(non-PMA) RGB values
-    [source appendLine:@"  texColor *= uColorMatrix;"];                             // multiply color with 4x4 matrix
-    [source appendLine:@"  texColor += uColorOffset;"];                             // add offset
-    [source appendLine:@"  texColor.xyz *= texColor.www;"];                         // multiply with alpha again(PMA)
-    [source appendLine:@"  gl_FragColor = texColor;"];                              // copy to output
-
-    [source appendLine:@"}"];
-
-    return source;
-}
 
 - (void)updateShaderMatrix
 {
@@ -201,14 +186,16 @@ static NSString *const SPColorMatrixProgram = @"SPColorMatrixProgram";
 
     const float *matrix = _colorMatrix.values;
 
-    _shaderMatrix = (GLKMatrix4){
+    _shaderMatrix = (GLKMatrix4)
+    {
         matrix[ 0], matrix[ 1], matrix[ 2], matrix[ 3],
         matrix[ 5], matrix[ 6], matrix[ 7], matrix[ 8],
         matrix[10], matrix[11], matrix[12], matrix[13],
         matrix[15], matrix[16], matrix[17], matrix[18]
     };
 
-    _shaderOffset = (GLKVector4){
+    _shaderOffset = (GLKVector4)
+    {
         matrix[4] / 255.0f, matrix[9] / 255.0f, matrix[14] / 255.0f, matrix[19] / 255.0f
     };
 

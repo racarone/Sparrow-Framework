@@ -3,7 +3,10 @@
 //  Sparrow
 //
 //  Created by Daniel Sperl on 23.11.13.
+//  Copyright 2011-2014 Gamua. All rights reserved.
 //
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the Simplified BSD License.
 //
 
 #import <Foundation/Foundation.h>
@@ -16,11 +19,15 @@
 /// @name Initialization
 /// --------------------
 
-/// Initializes the object with uncompressed PVR data.
+/// Initializes the object with PVR data that's optionally GZIP compressed..
 - (instancetype)initWithData:(NSData *)data;
 
-/// Initialzes the object with PVR data that's optional GZIP compressed.
-- (instancetype)initWithData:(NSData *)data compressed:(BOOL)isCompressed;
+/// -------------
+/// @name Methods
+/// -------------
+
+/// Returns YES if the data is a PVR encoded image.
++ (BOOL)isPVRData:(NSData *)data;
 
 /// ----------------
 /// @name Properties

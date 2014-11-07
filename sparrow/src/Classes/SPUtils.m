@@ -65,6 +65,12 @@
     return stat([path UTF8String], &buffer) == 0;
 }
 
++ (BOOL)isGZIPCompressed:(NSData *)data
+{
+    const char gzip[] = { 0x1F, 0x8B };
+    return memcmp(gzip, data.bytes, 2) == 0;
+}
+
 + (NSString *)absolutePathToFile:(NSString *)path withScaleFactor:(float)factor 
                            idiom:(UIUserInterfaceIdiom)idiom
 {
