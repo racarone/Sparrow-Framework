@@ -10,6 +10,7 @@
 //
 
 #import <Sparrow/SparrowClass.h>
+#import <Sparrow/SPContext.h>
 #import <Sparrow/SPGLTexture.h>
 #import <Sparrow/SPMacros.h>
 #import <Sparrow/SPNSExtensions.h>
@@ -437,6 +438,11 @@ static SPTextureCache *textureCache = nil;
 }
 
 #pragma mark Private
+
+- (id)debugQuickLookObject
+{
+    return [[SPContext currentContext] snapshotOfTexture:self];
+}
 
 + (BOOL)isPVRFile:(NSString *)path
 {

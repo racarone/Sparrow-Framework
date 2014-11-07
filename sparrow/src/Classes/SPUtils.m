@@ -89,7 +89,7 @@
     else if ([SPUtils fileExistsAtPath:absolutePath])
         return absolutePath;
     else if (factor >= 2.0f)
-        return [SPUtils absolutePathToFile:originalPath withScaleFactor:factor/2.0f idiom:idiom];
+        return [SPUtils absolutePathToFile:originalPath withScaleFactor:factor-1.0f idiom:idiom];
     else
         return nil;
 }

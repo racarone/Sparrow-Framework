@@ -400,9 +400,9 @@ static NSMutableDictionary *bitmapFonts = nil;
     SPTexture *texture = [[SPTexture alloc] initWithWidth:width height:height generateMipmaps:NO
                                                      draw:^(CGContextRef context)
       {
-          float red   = SP_COLOR_PART_RED(_color)   / 255.0f;
-          float green = SP_COLOR_PART_GREEN(_color) / 255.0f;
-          float blue  = SP_COLOR_PART_BLUE(_color)  / 255.0f;
+          float red   = SPColorGetRed(_color)   / 255.0f;
+          float green = SPColorGetGreen(_color) / 255.0f;
+          float blue  = SPColorGetBlue(_color)  / 255.0f;
           
           CGContextSetRGBFillColor(context, red, green, blue, 1.0f);
           

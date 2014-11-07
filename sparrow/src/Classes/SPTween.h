@@ -75,6 +75,9 @@
 /// on one tween.
 - (void)animateProperty:(NSString *)property targetValue:(float)value;
 
+/// Animates the properties of an object to the specified target values.
+- (void)animateProperties:(NSDictionary *)properties;
+
 /// Animates the `x` and `y` properties of an object simultaneously.
 - (void)moveToX:(float)x y:(float)y;
 
@@ -128,5 +131,9 @@
 
 /// A block that will be called when the tween is complete.
 @property (nonatomic, copy) SPCallbackBlock onComplete;
+
+/// Another tween that will be started (i.e. added to the same juggler) as soon as
+/// this tween is completed.
+@property (nonatomic, strong) SPTween *nextTween;
 
 @end

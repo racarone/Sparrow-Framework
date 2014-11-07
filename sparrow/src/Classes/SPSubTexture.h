@@ -53,6 +53,9 @@
 /// The texture which the subtexture is based on.
 @property (nonatomic, readonly) SPTexture *parent;
 
+/// The clipping rectangle, which is the region provided on initialization.
+@property (nonatomic, readonly) SPRectangle *region;
+
 /// The clipping rectangle, which is the region provided on initialization, scaled into [0.0, 1.0].
 @property (nonatomic, readonly) SPRectangle *clipping;
 

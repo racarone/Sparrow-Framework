@@ -13,6 +13,7 @@
 #import <Sparrow/SPDelayedInvocation.h>
 #import <Sparrow/SPEventDispatcher.h>
 #import <Sparrow/SPJuggler.h>
+#import <Sparrow/SPTween.h>
 
 @implementation SPJuggler
 {
@@ -61,7 +62,13 @@
 
 - (void)onRemove:(SPEvent *)event
 {
-    [self removeObject:(id<SPAnimatable>)event.target];
+    [self removeObject:(id<SPAnimatable>)[[event.target retain] autorelease]];
+
+    if ([event.target isKindOfClass:[SPTween class]])
+    {
+        SPTween *tween = (SPTween *)event.target;
+        if (tween.isComplete) [self addObject:tween.nextTween];
+    }
 }
 
 - (void)removeObject:(id<SPAnimatable>)object
@@ -120,6 +127,27 @@
     SPDelayedInvocation *delayedInv = [SPDelayedInvocation invocationWithDelay:time block:block];
     [self addObject:delayedInv];
     return delayedInv;
+}
+
+- (id)tweenWithTarget:(id)target time:(double)time properties:(NSDictionary *)properties
+{
+    SPTween *tween = [SPTween tweenWithTarget:target time:time];
+
+    for (NSString *property in properties)
+    {
+        id value = properties[property];
+        SEL selector = NSSelectorFromString(property);
+
+        if ([tween respondsToSelector:selector])
+            [tween setValue:value forKey:property];
+        else if ([target respondsToSelector:selector])
+            [tween animateProperty:property targetValue:[value floatValue]];
+        else
+            [NSException raise:SPExceptionInvalidOperation format:@"Invalid property %@", property];
+    }
+
+    [self addObject:tween];
+    return tween;
 }
 
 #pragma mark SPAnimatable

@@ -37,6 +37,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     SPCallbackBlock _onUpdate;
     SPCallbackBlock _onRepeat;
     SPCallbackBlock _onComplete;
+    SPTween *_nextTween;
 }
 
 #pragma mark Initialization
@@ -78,6 +79,7 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     [_onUpdate release];
     [_onRepeat release];
     [_onComplete release];
+    [_nextTween release];
     [super dealloc];
 }
 
@@ -101,6 +103,12 @@ typedef float (*FnPtrTransition) (id, SEL, float);
         initWithTarget:_target name:property endValue:value];
     [_properties addObject:tweenedProp];
     [tweenedProp release];
+}
+
+- (void)animateProperties:(NSDictionary *)properties
+{
+    for (NSString *property in properties)
+        [self animateProperty:property targetValue:[properties[property] floatValue]];
 }
 
 - (void)moveToX:(float)x y:(float)y

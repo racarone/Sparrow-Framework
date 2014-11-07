@@ -221,40 +221,40 @@
     [xmlData release];
 
     BOOL success = [parser parseElementsWithBlock:^(NSString *elementName, NSDictionary *attributes)
-                    {
-                        if ([elementName isEqualToString:@"SubTexture"])
-                        {
-                            float scale = _atlasTexture.scale;
+    {
+        if ([elementName isEqualToString:@"SubTexture"])
+        {
+            float scale = _atlasTexture.scale;
 
-                            NSString *name = attributes[@"name"];
-                            float x = [attributes[@"x"] floatValue] / scale;
-                            float y = [attributes[@"y"] floatValue] / scale;
-                            float width = [attributes[@"width"] floatValue] / scale;
-                            float height = [attributes[@"height"] floatValue] / scale;
-                            float frameX = [attributes[@"frameX"] floatValue] / scale;
-                            float frameY = [attributes[@"frameY"] floatValue] / scale;
-                            float frameWidth = [attributes[@"frameWidth"] floatValue] / scale;
-                            float frameHeight = [attributes[@"frameHeight"] floatValue] / scale;
-                            BOOL  rotated = [attributes[@"rotated"] boolValue];
+            NSString *name = attributes[@"name"];
+            float x = [attributes[@"x"] floatValue] / scale;
+            float y = [attributes[@"y"] floatValue] / scale;
+            float width = [attributes[@"width"] floatValue] / scale;
+            float height = [attributes[@"height"] floatValue] / scale;
+            float frameX = [attributes[@"frameX"] floatValue] / scale;
+            float frameY = [attributes[@"frameY"] floatValue] / scale;
+            float frameWidth = [attributes[@"frameWidth"] floatValue] / scale;
+            float frameHeight = [attributes[@"frameHeight"] floatValue] / scale;
+            BOOL  rotated = [attributes[@"rotated"] boolValue];
 
-                            SPRectangle *region = [SPRectangle rectangleWithX:x y:y width:width height:height];
-                            SPRectangle *frame = nil;
+            SPRectangle *region = [SPRectangle rectangleWithX:x y:y width:width height:height];
+            SPRectangle *frame = nil;
 
-                            if (frameWidth && frameHeight)
-                                frame = [SPRectangle rectangleWithX:frameX y:frameY width:frameWidth height:frameHeight];
+            if (frameWidth && frameHeight)
+                frame = [SPRectangle rectangleWithX:frameX y:frameY width:frameWidth height:frameHeight];
 
-                            [self addRegion:region withName:name frame:frame rotated:rotated];
-                        }
-                        else if ([elementName isEqualToString:@"TextureAtlas"] && !_atlasTexture)
-                        {
-                            // load atlas texture
-                            NSString *filename = [attributes valueForKey:@"imagePath"];
-                            NSString *textureFolder = [path stringByDeletingLastPathComponent];
-                            NSString *texturePath = [textureFolder stringByAppendingPathComponent:filename];
-                            _atlasTexture = [[SPTexture alloc] initWithContentsOfFile:texturePath];
-                        }
-                    }];
-    
+            [self addRegion:region withName:name frame:frame rotated:rotated];
+        }
+        else if ([elementName isEqualToString:@"TextureAtlas"] && !_atlasTexture)
+        {
+            // load atlas texture
+            NSString *filename = [attributes valueForKey:@"imagePath"];
+            NSString *textureFolder = [path stringByDeletingLastPathComponent];
+            NSString *texturePath = [textureFolder stringByAppendingPathComponent:filename];
+            _atlasTexture = [[SPTexture alloc] initWithContentsOfFile:texturePath];
+        }
+    }];
+
     [parser release];
     
     if (!success)

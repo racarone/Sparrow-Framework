@@ -247,6 +247,15 @@ static GLKVector2 transformVector2WithMatrix3(const GLKMatrix3 *glkMatrix, const
 
 #pragma mark Properties
 
+- (SPRectangle *)region
+{
+    SPRectangle *clipping = self.clipping;
+    return [SPRectangle rectangleWithX:clipping.x      * _parent.root.nativeWidth
+                                     y:clipping.y      * _parent.root.nativeHeight
+                                 width:clipping.width  * _parent.root.nativeWidth
+                                height:clipping.height * _parent.root.nativeHeight];
+}
+
 - (SPRectangle *)clipping
 {
     SPPoint *topLeft      = [_transformationMatrix transformPointWithX:0.0f y:0.0f];

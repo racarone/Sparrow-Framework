@@ -41,6 +41,15 @@
 /// Displays a renderbuffer’s contents on screen.
 - (void)presentBufferForDisplay;
 
+/// Returns an image of the current render target.
+- (UIImage *)snapshot;
+
+/// Returns an image of a specified texture.
+- (UIImage *)snapshotOfTexture:(SPTexture *)texture;
+
+/// Returns an image of a display object and it's children.
+- (UIImage *)snapshotOfDisplayObject:(SPDisplayObject *)object;
+
 /// Makes the receiver the current current rendering context.
 - (BOOL)makeCurrentContext;
 

@@ -11,10 +11,11 @@
 
 #import <Sparrow/SparrowClass.h>
 #import <Sparrow/SPContext_Internal.h>
+#import <Sparrow/SPDisplayObject.h>
 #import <Sparrow/SPMacros.h>
 #import <Sparrow/SPOpenGL.h>
 #import <Sparrow/SPRectangle.h>
-#import <Sparrow/SPTexture.h>
+#import <Sparrow/SPRenderTexture.h>
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
@@ -63,7 +64,8 @@ static NSMutableDictionary *framebufferCache = nil;
 + (void)initialize
 {
     static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    dispatch_once(&onceToken, ^
+    {
         framebufferCache = [[NSMutableDictionary alloc] init];
     });
 }
@@ -79,6 +81,105 @@ static NSMutableDictionary *framebufferCache = nil;
 {
     [_nativeContext presentRenderbuffer:GL_RENDERBUFFER];
 }
+
+- (UIImage *)snapshot
+{
+    UIImage *uiImage = nil;
+    float scale = _renderTarget ? _renderTarget.scale : Sparrow.currentController.contentScaleFactor;
+    int x = 0;
+    int y = 0;
+    int width = 0;
+    int height = 0;
+
+    if (_renderTarget)
+    {
+        if ([_renderTarget isKindOfClass:[SPSubTexture class]])
+        {
+            SPRectangle *region = [(SPSubTexture *)_renderTarget region];
+            x = region.x;
+            y = region.y;
+            width  = region.width;
+            height = region.height;
+        }
+        else
+        {
+            width  = _renderTarget.nativeWidth;
+            height = _renderTarget.nativeHeight;
+        }
+    }
+    else
+    {
+        width  = (int)Sparrow.currentController.view.drawableWidth;
+        height = (int)Sparrow.currentController.view.drawableHeight;
+    }
+
+    GLubyte *pixels = malloc(4 * width * height);
+    if (pixels)
+    {
+        GLint prevPackAlignment;
+        GLint bytesPerRow = 4 * width;
+
+        glGetIntegerv(GL_PACK_ALIGNMENT, &prevPackAlignment);
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        glPixelStorei(GL_PACK_ALIGNMENT, prevPackAlignment);
+
+        CFDataRef data = CFDataCreate(kCFAllocatorDefault, pixels, bytesPerRow * height);
+        if (data)
+        {
+            CGDataProviderRef provider = CGDataProviderCreateWithCFData(data);
+            if (provider)
+            {
+                CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+                CGImageRef cgImage = CGImageCreate(width, height, 8, 32, bytesPerRow, space, 1, provider, nil, NO, 0);
+                if (cgImage)
+                {
+                    UIGraphicsBeginImageContextWithOptions(CGSizeMake(width, height), NO, scale);
+                    {
+                        CGContextRef context = UIGraphicsGetCurrentContext();
+                        CGContextSetBlendMode(context, kCGBlendModeCopy);
+                        CGContextTranslateCTM(context, 0.0f, height);
+                        CGContextScaleCTM(context, scale, -scale);
+                        CGContextDrawImage(context, CGRectMake(0, 0, width, height), cgImage);
+                        uiImage = UIGraphicsGetImageFromCurrentImageContext();
+                    }
+                    UIGraphicsEndImageContext();
+
+                    CGImageRelease(cgImage);
+                }
+
+                CGColorSpaceRelease(space);
+                CGDataProviderRelease(provider);
+            }
+
+            CFRelease(data);
+        }
+        
+        free(pixels);
+    }
+
+    return uiImage;
+}
+
+- (UIImage *)snapshotOfTexture:(SPTexture *)texture
+{
+    SPTexture *previousRenderTarget = [_renderTarget retain];
+    self.renderTarget = texture;
+
+    UIImage *image = [self snapshot];
+
+    self.renderTarget = previousRenderTarget;
+    return image;
+}
+
+- (UIImage *)snapshotOfDisplayObject:(SPDisplayObject *)object
+{
+    SPRenderTexture *renderTexture = [SPRenderTexture textureWithWidth:object.width height:object.height];
+    [renderTexture drawObject:object];
+    return [self snapshotOfTexture:renderTexture];
+}
+
+#pragma mark EAGLContext
 
 - (BOOL)makeCurrentContext
 {

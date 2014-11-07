@@ -164,14 +164,14 @@ static char encodingTable[64] = {
     {
         unsigned long ixtext = 0;
         unsigned long lentext = 0;
-        unsigned char ch = 0;
-        unsigned char inbuf[4] = { 0, 0, 0, 0 };
-        unsigned char outbuf[3] = { 0, 0, 0 };
+        uchar ch = 0;
+        uchar inbuf[4] = { 0, 0, 0, 0 };
+        uchar outbuf[3] = { 0, 0, 0 };
         short i = 0, ixinbuf = 0;
         BOOL flignore = NO;
         BOOL flendtext = NO;
         NSData *base64Data = nil;
-        const unsigned char *base64Bytes = nil;
+        const uchar *base64Bytes = nil;
         
         // Convert the string to ASCII data.
         base64Data = [string dataUsingEncoding:NSASCIIStringEncoding];
@@ -236,12 +236,12 @@ static char encodingTable[64] = {
 
 - (NSString *)base64EncodingWithLineLength:(uint)lineLength
 {
-    const unsigned char *bytes = [self bytes];
+    const uchar *bytes = [self bytes];
     NSMutableString *result = [NSMutableString stringWithCapacity:[self length]];
     unsigned long ixtext = 0;
     unsigned long lentext = [self length];
     long ctremaining = 0;
-    unsigned char inbuf[3], outbuf[4];
+    uchar inbuf[3], outbuf[4];
     short i = 0;
     short charsonline = 0, ctcopy = 0;
     unsigned long ix = 0;

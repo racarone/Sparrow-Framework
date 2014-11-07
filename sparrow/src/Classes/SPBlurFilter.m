@@ -254,9 +254,9 @@
 
 - (void)setUniformColor:(BOOL)enable color:(uint)color alpha:(float)alpha
 {
-    _color[0] = SP_COLOR_PART_RED(color) / 255.0;
-    _color[1] = SP_COLOR_PART_GREEN(color) / 255.0;
-    _color[2] = SP_COLOR_PART_BLUE(color) / 255.0;
+    _color[0] = SPColorGetRed(color)   / 255.0;
+    _color[1] = SPColorGetGreen(color) / 255.0;
+    _color[2] = SPColorGetBlue(color)  / 255.0;
     _color[3] = alpha;
     _enableColorUniform = enable;
 }

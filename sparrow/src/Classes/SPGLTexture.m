@@ -139,7 +139,7 @@
     {
         int levelWidth  = properties.width;
         int levelHeight = properties.height;
-        unsigned char *levelData = (unsigned char *)imgData;
+        uchar *levelData = (uchar *)imgData;
         
         for (int level=0; level<=properties.numMipmaps; ++level)
         {
@@ -158,7 +158,7 @@
     {
         int levelWidth  = properties.width;
         int levelHeight = properties.height;
-        unsigned char *levelData = (unsigned char *)imgData;
+        uchar *levelData = (uchar *)imgData;
         
         for (int level=0; level<=properties.numMipmaps; ++level)
         {

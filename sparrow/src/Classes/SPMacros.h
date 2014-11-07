@@ -15,6 +15,7 @@
 // typedefs
 
 typedef void (^SPCallbackBlock)();
+typedef unsigned char uchar;
 
 // defines
 
@@ -36,23 +37,6 @@ typedef void (^SPCallbackBlock)();
 #define SP_FLOAT_EPSILON            0.0001f
 #define SP_MAX_DISPLAY_TREE_DEPTH   32
 
-SP_EXTERN const uint SPColorWhite;
-SP_EXTERN const uint SPColorSilver;
-SP_EXTERN const uint SPColorGray;
-SP_EXTERN const uint SPColorBlack;
-SP_EXTERN const uint SPColorRed;
-SP_EXTERN const uint SPColorMaroon;
-SP_EXTERN const uint SPColorYellow;
-SP_EXTERN const uint SPColorOlive;
-SP_EXTERN const uint SPColorLime;
-SP_EXTERN const uint SPColorGreen;
-SP_EXTERN const uint SPColorAqua;
-SP_EXTERN const uint SPColorTeal;
-SP_EXTERN const uint SPColorBlue;
-SP_EXTERN const uint SPColorNavy;
-SP_EXTERN const uint SPColorFuchsia;
-SP_EXTERN const uint SPColorPurple;
-
 enum { SPNotFound = -1 };
 
 // horizontal alignment
@@ -71,7 +55,56 @@ typedef NS_ENUM(uint, SPVAlign)
     SPVAlignBottom
 };
 
-// functions
+// colors
+
+SP_EXTERN const uint SPColorWhite;
+SP_EXTERN const uint SPColorSilver;
+SP_EXTERN const uint SPColorGray;
+SP_EXTERN const uint SPColorBlack;
+SP_EXTERN const uint SPColorRed;
+SP_EXTERN const uint SPColorMaroon;
+SP_EXTERN const uint SPColorYellow;
+SP_EXTERN const uint SPColorOlive;
+SP_EXTERN const uint SPColorLime;
+SP_EXTERN const uint SPColorGreen;
+SP_EXTERN const uint SPColorAqua;
+SP_EXTERN const uint SPColorTeal;
+SP_EXTERN const uint SPColorBlue;
+SP_EXTERN const uint SPColorNavy;
+SP_EXTERN const uint SPColorFuchsia;
+SP_EXTERN const uint SPColorPurple;
+
+SP_INLINE uint SPColorMake(uchar r, uchar g, uchar b)
+{
+    return ((int)(r) << 16) | ((int)(g) << 8) | (int)(b);
+}
+
+SP_INLINE uint SPColorMakeARGB(uchar r, uchar g, uchar b, uchar a)
+{
+    return ((int)(a) << 24) | ((int)(r) << 16) | ((int)(g) << 8) | (int)(b);
+}
+
+SP_INLINE uchar SPColorGetAlpha(uint color)
+{
+    return (color >> 24) & 0xff;
+}
+
+SP_INLINE uchar SPColorGetRed(uint color)
+{
+    return (color >> 16) & 0xff;
+}
+
+SP_INLINE uchar SPColorGetGreen(uint color)
+{
+    return (color >> 8) & 0xff;
+}
+
+SP_INLINE uchar SPColorGetBlue(uint color)
+{
+    return (color & 0xff);
+}
+
+// hashing
 
 SP_INLINE uint SPHashInt(uint value)
 {
@@ -99,6 +132,8 @@ SP_INLINE uint SPHashPointer(void *ptr)
   #endif
 }
 
+// helpers
+
 SP_INLINE uint SPShiftAndRotate(uint value, int shift)
 {
     return (value << 1) | (value >> ((sizeof(uint) * CHAR_BIT) - shift));
@@ -109,6 +144,21 @@ SP_INLINE int SPSign(int value)
     if (value > 0)      return  1;
     else if (value < 0) return -1;
     else                return  0;
+}
+
+SP_INLINE float SPRadiansToDegrees(float radians)
+{
+    return radians / PI * 180.0f;
+}
+
+SP_INLINE float SPDegreesToRadians(float degrees)
+{
+    return degrees / 180.0f * PI;
+}
+
+SP_INLINE BOOL SPIsFloatEqual(float f1, float f2)
+{
+    return fabsf(f1 - f2) < SP_FLOAT_EPSILON;
 }
 
 // exceptions
@@ -125,23 +175,8 @@ SP_EXTERN NSString *const SPExceptionOperationFailed;
 
 // macros
 
-#define SP_R2D(rad)                 ((rad) / PI * 180.0f)
-#define SP_D2R(deg)                 ((deg) / 180.0f * PI)
-
-#define SP_COLOR_PART_ALPHA(color)  (((color) >> 24) & 0xff)
-#define SP_COLOR_PART_RED(color)    (((color) >> 16) & 0xff)
-#define SP_COLOR_PART_GREEN(color)  (((color) >>  8) & 0xff)
-#define SP_COLOR_PART_BLUE(color)   ( (color)        & 0xff)
-
-#define SP_COLOR(r, g, b)			(((int)(r) << 16) | ((int)(g) << 8) | (int)(b))
-#define SP_COLOR_ARGB(a, r, g, b)   (((int)(a) << 24) | ((int)(r) << 16) | ((int)(g) << 8) | (int)(b))
-
-#define SP_IS_FLOAT_EQUAL(f1, f2)   (fabsf((f1)-(f2)) < SP_FLOAT_EPSILON)
-
 #define SP_CLAMP(value, min, max)   MIN((max), MAX((value), (min)))
-
 #define SP_SWAP(x, y, T)            do { T temp##x##y = x; x = y; y = temp##x##y; } while (0)
-
 #define SP_SQUARE(x)                ((x)*(x))
 
 // release and set value to nil
@@ -208,6 +243,17 @@ SP_EXTERN NSString *const SPExceptionOperationFailed;
 #endif
 
 // deprecated
+
+#define SP_COLOR_PART_ALPHA(color)                  SPColorGetAlpha(color)
+#define SP_COLOR_PART_RED(color)                    SPColorGetRed(color)
+#define SP_COLOR_PART_GREEN(color)                  SPColorGetGreen(color)
+#define SP_COLOR_PART_BLUE(color)                   SPColorGetBlue(color)
+#define SP_COLOR(r, g, b)                           SPColorMake(r, g, b)
+#define SP_COLOR_ARGB(a, r, g, b)                   SPColorMakeARGB(r, g, b, a)
+
+#define SP_R2D(rad)                                 SPRadiansToDegrees(rad)
+#define SP_D2R(deg)                                 SPDegreesToRadians(deg)
+#define SP_IS_FLOAT_EQUAL(f1, f2)                   SPIsFloatEqual(f1, f2)
 
 #define SP_NOT_FOUND                                SPNotFound
 
