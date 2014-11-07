@@ -82,7 +82,6 @@
         _numPasses = numPasses;
         _resolution = resolution;
         _mode = SPFragmentFilterModeReplace;
-        _passTextures = [[NSMutableArray alloc] initWithCapacity:numPasses];
         _projMatrix = [[SPMatrix alloc] init];
 
         _vertexData = [[SPVertexData alloc] initWithSize:4 premultipliedAlpha:true];
@@ -448,7 +447,10 @@
 
     if (needsUpdate)
     {
-        [_passTextures removeAllObjects];
+        if (_passTextures)
+            [_passTextures removeAllObjects];
+        else
+            _passTextures = [[NSMutableArray alloc] initWithCapacity:numPassTextures];
 
         for (int i=0; i<numPassTextures; ++i)
             [_passTextures addObject:[self texureWithWidth:width height:height scale:scale]];

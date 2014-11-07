@@ -34,6 +34,7 @@
 #import <Sparrow/SPEnterFrameEvent.h>
 #import <Sparrow/SPEvent.h>
 #import <Sparrow/SPEventDispatcher.h>
+#import <Sparrow/SPGroupFilter.h>
 #import <Sparrow/SPGLTexture.h>
 #import <Sparrow/SPJuggler.h>
 #import <Sparrow/SPImage.h>
