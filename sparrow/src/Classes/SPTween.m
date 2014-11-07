@@ -108,6 +108,12 @@ typedef float (*FnPtrTransition) (id, SEL, float);
     [tweenedProp release];
 }
 
+- (void)animateProperties:(NSDictionary *)properties
+{
+    for (NSString *property in properties)
+        [self animateProperty:property targetValue:[properties[property] floatValue]];
+}
+
 - (void)moveToX:(float)x y:(float)y
 {
     [self animateProperty:@"x" targetValue:x];

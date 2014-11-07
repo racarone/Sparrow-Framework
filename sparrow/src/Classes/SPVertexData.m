@@ -19,7 +19,7 @@
 
 /// --- C methods ----------------------------------------------------------------------------------
 
-SPVertexColor SPVertexColorMake(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+SPVertexColor SPVertexColorMake(uchar r, uchar g, uchar b, uchar a)
 {
     SPVertexColor vertexColor = { .r = r, .g = g, .b = b, .a = a };
     return vertexColor;
@@ -28,10 +28,10 @@ SPVertexColor SPVertexColorMake(unsigned char r, unsigned char g, unsigned char 
 SPVertexColor SPVertexColorMakeWithColorAndAlpha(uint rgb, float alpha)
 {
     SPVertexColor vertexColor = {
-        .r = SP_COLOR_PART_RED(rgb),
-        .g = SP_COLOR_PART_GREEN(rgb),
-        .b = SP_COLOR_PART_BLUE(rgb),
-        .a = (unsigned char)(alpha * 255.0f)
+        .r = SPColorGetRed(rgb),
+        .g = SPColorGetGreen(rgb),
+        .b = SPColorGetBlue(rgb),
+        .a = (uchar)(alpha * 255.0f)
     };
     return vertexColor;
 }
@@ -269,7 +269,7 @@ BOOL isOpaqueWhite(SPVertexColor color)
     {
         SPVertex *vertex = &_vertices[i];
         SPVertexColor vertexColor = vertex->color;
-        unsigned char newAlpha = SP_CLAMP(vertexColor.a * factor, minAlpha, 255);
+        uchar newAlpha = SP_CLAMP(vertexColor.a * factor, minAlpha, 255);
         
         if (_premultipliedAlpha)
         {

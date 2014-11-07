@@ -19,10 +19,10 @@
 
 typedef struct
 {
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-    unsigned char a;
+    uchar r;
+    uchar g;
+    uchar b;
+    uchar a;
 } SPVertexColor;
 
 typedef struct
@@ -32,7 +32,7 @@ typedef struct
     SPVertexColor color;
 } SPVertex;
 
-SP_EXTERN SPVertexColor SPVertexColorMake(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+SP_EXTERN SPVertexColor SPVertexColorMake(uchar r, uchar g, uchar b, uchar a);
 SP_EXTERN SPVertexColor SPVertexColorMakeWithColorAndAlpha(uint rgb, float alpha);
 
 /** ------------------------------------------------------------------------------------------------

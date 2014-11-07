@@ -104,12 +104,23 @@
 /// Sorts the children using the given NSComparator block.
 - (void)sortChildren:(NSComparator)comparator;
 
+/// Returns a child object at the subscript index.
+- (SPDisplayObject *)objectAtIndexedSubscript:(int)index;
+
+/// Assigns a child object at the subscript index. If a child object already exists at the index
+/// it is removed first.
+- (void)setObject:(SPDisplayObject *)child atIndexedSubscript:(int)index;
+
 /// ----------------
 /// @name Properties
 /// ----------------
 
 /// The number of children of this container.
 @property (nonatomic, readonly) int numChildren;
+
+/// A copy of the children in this container. You can also assign the children of this contianer
+/// using this property. The previous children will be removed first.
+@property (nonatomic, copy) NSArray *children;
 
 /// If a container is a 'touchGroup', it will act as a single touchable object.
 /// Touch events will have the container as target, not the touched child (similar to

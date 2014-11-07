@@ -197,9 +197,35 @@ static void getDescendantEventListeners(SPDisplayObject *object, NSString *event
         [self removeChildAtIndex:i];
 }
 
+- (SPDisplayObject *)objectAtIndexedSubscript:(int)index
+{
+    return _children[index];
+}
+
+- (void)setObject:(SPDisplayObject *)child atIndexedSubscript:(int)index
+{
+    if (index != _children.count)
+        [self removeChildAtIndex:index];
+
+    [self addChild:child atIndex:index];
+}
+
 - (int)numChildren
 {
     return (int)[_children count];
+}
+
+- (NSArray *)children
+{
+    return _children;
+}
+
+- (void)setChildren:(NSArray *)children
+{
+    [self removeAllChildren];
+
+    for (SPDisplayObject *child in children)
+        [self addChild:child];
 }
 
 #pragma mark SPDisplayObject

@@ -63,6 +63,15 @@
 /// Clears the contexts of the current render target with a specified color and alpha.
 - (void)clearWithColor:(uint)color alpha:(float)alpha;
 
+/// Returns an image of the current render target.
+- (UIImage *)snapshot;
+
+/// Returns an image of a specified texture.
+- (UIImage *)snapshotOfTexture:(SPTexture *)texture;
+
+/// Returns an image of a display object and it's children.
+- (UIImage *)snapshotOfDisplayObject:(SPDisplayObject *)object;
+
 /// Makes the receiver the current current rendering context.
 - (BOOL)makeCurrentContext;
 

@@ -15,6 +15,7 @@
 // typedefs
 
 typedef void (^SPCallbackBlock)();
+typedef unsigned char uchar;
 
 // defines
 
@@ -58,23 +59,6 @@ typedef void (^SPCallbackBlock)();
 #define SP_FLOAT_EPSILON            0.0001f
 #define SP_MAX_DISPLAY_TREE_DEPTH   32
 
-SP_EXTERN const uint SPColorWhite;
-SP_EXTERN const uint SPColorSilver;
-SP_EXTERN const uint SPColorGray;
-SP_EXTERN const uint SPColorBlack;
-SP_EXTERN const uint SPColorRed;
-SP_EXTERN const uint SPColorMaroon;
-SP_EXTERN const uint SPColorYellow;
-SP_EXTERN const uint SPColorOlive;
-SP_EXTERN const uint SPColorLime;
-SP_EXTERN const uint SPColorGreen;
-SP_EXTERN const uint SPColorAqua;
-SP_EXTERN const uint SPColorTeal;
-SP_EXTERN const uint SPColorBlue;
-SP_EXTERN const uint SPColorNavy;
-SP_EXTERN const uint SPColorFuchsia;
-SP_EXTERN const uint SPColorPurple;
-
 enum { SPNotFound = -1 };
 
 // horizontal alignment
@@ -93,7 +77,56 @@ typedef NS_ENUM(uint, SPVAlign)
     SPVAlignBottom
 };
 
-// functions
+// colors
+
+SP_EXTERN const uint SPColorWhite;
+SP_EXTERN const uint SPColorSilver;
+SP_EXTERN const uint SPColorGray;
+SP_EXTERN const uint SPColorBlack;
+SP_EXTERN const uint SPColorRed;
+SP_EXTERN const uint SPColorMaroon;
+SP_EXTERN const uint SPColorYellow;
+SP_EXTERN const uint SPColorOlive;
+SP_EXTERN const uint SPColorLime;
+SP_EXTERN const uint SPColorGreen;
+SP_EXTERN const uint SPColorAqua;
+SP_EXTERN const uint SPColorTeal;
+SP_EXTERN const uint SPColorBlue;
+SP_EXTERN const uint SPColorNavy;
+SP_EXTERN const uint SPColorFuchsia;
+SP_EXTERN const uint SPColorPurple;
+
+SP_INLINE uint SPColorMake(uchar r, uchar g, uchar b)
+{
+    return ((int)(r) << 16) | ((int)(g) << 8) | (int)(b);
+}
+
+SP_INLINE uint SPColorMakeARGB(uchar r, uchar g, uchar b, uchar a)
+{
+    return ((int)(a) << 24) | ((int)(r) << 16) | ((int)(g) << 8) | (int)(b);
+}
+
+SP_INLINE uchar SPColorGetAlpha(uint color)
+{
+    return (color >> 24) & 0xff;
+}
+
+SP_INLINE uchar SPColorGetRed(uint color)
+{
+    return (color >> 16) & 0xff;
+}
+
+SP_INLINE uchar SPColorGetGreen(uint color)
+{
+    return (color >> 8) & 0xff;
+}
+
+SP_INLINE uchar SPColorGetBlue(uint color)
+{
+    return (color & 0xff);
+}
+
+// hashing
 
 SP_INLINE uint SPHashInt(uint value)
 {
@@ -121,6 +154,8 @@ SP_INLINE uint SPHashPointer(void *ptr)
   #endif
 }
 
+// helpers
+
 SP_INLINE uint SPShiftAndRotate(uint value, int shift)
 {
     return (value << 1) | (value >> ((sizeof(uint) * CHAR_BIT) - shift));
@@ -131,6 +166,21 @@ SP_INLINE int SPSign(int value)
     if (value > 0)      return  1;
     else if (value < 0) return -1;
     else                return  0;
+}
+
+SP_INLINE float SPRadiansToDegrees(float radians)
+{
+    return radians / PI * 180.0f;
+}
+
+SP_INLINE float SPDegreesToRadians(float degrees)
+{
+    return degrees / 180.0f * PI;
+}
+
+SP_INLINE BOOL SPIsFloatEqual(float f1, float f2)
+{
+    return fabsf(f1 - f2) < SP_FLOAT_EPSILON;
 }
 
 // exceptions
@@ -166,47 +216,31 @@ SP_EXTERN NSString *const SPExceptionOperationFailed;
 #define SP_COLOR_FLOAT(r, g, b)             (((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255))
 #define SP_COLOR_FLOAT_ARGB(a, r, g, b)     (((int)(a * 255) << 24) | ((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255))
 
-#define SP_COLOR_MULTIPLY(color1, color2) \
-    SP_COLOR_FLOAT( \
-        SP_COLOR_FLOAT_PART_RED(color1)   * SP_COLOR_FLOAT_PART_RED(color2), \
-        SP_COLOR_FLOAT_PART_GREEN(color1) * SP_COLOR_FLOAT_PART_GREEN(color2), \
-        SP_COLOR_FLOAT_PART_BLUE(color1)  * SP_COLOR_FLOAT_PART_BLUE(color2))
-
-#define SP_COLOR_MIX(color1, color2, ratio) \
-    SP_COLOR_FLOAT( \
-        (1.0f - ratio) * SP_COLOR_FLOAT_PART_RED(color1)   + ratio * SP_COLOR_FLOAT_PART_RED(color2), \
-        (1.0f - ratio) * SP_COLOR_FLOAT_PART_GREEN(color1) + ratio * SP_COLOR_FLOAT_PART_GREEN(color2), \
-        (1.0f - ratio) * SP_COLOR_FLOAT_PART_BLUE(color1)  + ratio * SP_COLOR_FLOAT_PART_BLUE(color2), \
-
 #define SP_IS_FLOAT_EQUAL(f1, f2)           (fabsf((f1)-(f2)) < SP_FLOAT_EPSILON)
 
 #define SP_CLAMP(value, min, max)           MIN((max), MAX((value), (min)))
 #define SP_SWAP(x, y, T)                    do { T temp##x##y = x; x = y; y = temp##x##y; } while (0)
-
 #define SP_SQUARE(x)                        ((x)*(x))
 
 // release and set value to nil
 
 #if __has_feature(objc_arc)
     #define SP_RELEASE_AND_NIL(_var)            \
-        _var = nil                              \
-
+        _var = nil
 #else
     #define SP_RELEASE_AND_NIL(_var)            \
         do {                                    \
             [_var release];                     \
             _var = nil;                         \
         }                                       \
-        while (0)                               \
-
+        while (0)
 #endif
 
 // release old and retain new
 
 #if __has_feature(objc_arc)
     #define SP_RELEASE_AND_RETAIN(_old, _new)   \
-        _old = _new                             \
-
+        _old = _new
 #else
     #define SP_RELEASE_AND_RETAIN(_old, _new)   \
         do {                                    \
@@ -215,16 +249,14 @@ SP_EXTERN NSString *const SPExceptionOperationFailed;
             _old = [_new retain];               \
             [tmp release];                      \
         }                                       \
-        while (0)                               \
-
+        while (0)
 #endif
 
 // release old and copy new
 
 #if __has_feature(objc_arc)
     #define SP_RELEASE_AND_COPY(_old, _new)     \
-        _old = [_new copy]                      \
-
+        _old = [_new copy]
 #else
     #define SP_RELEASE_AND_COPY(_old, _new)     \
         do {                                    \
@@ -232,18 +264,15 @@ SP_EXTERN NSString *const SPExceptionOperationFailed;
             _old = [_new copy];                 \
             [tmp release];                      \
         }                                       \
-        while (0)                               \
-
+        while (0)
 #endif
 
 // autorelase value
 
 #if __has_feature(objc_arc)
     #define SP_AUTORELEASE(_value)              \
-        _value                                  \
-
+        _value
 #else
     #define SP_AUTORELEASE(_value)              \
-        [_value autorelease]                    \
-
+        [_value autorelease]
 #endif

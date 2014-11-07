@@ -112,7 +112,7 @@ enum PVRPixelType
 - (void *)imageData
 {
     PVRTextureHeader *header = (PVRTextureHeader *)[_data bytes];
-    return (unsigned char *)header + header->headerSize;
+    return (uchar *)header + header->headerSize;
 }
 
 #pragma mark Private

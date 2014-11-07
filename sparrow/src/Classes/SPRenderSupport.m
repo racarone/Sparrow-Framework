@@ -193,12 +193,25 @@
 
 - (void)nextFrame
 {
+    [self trimQuadBatches];
+
     _clipRectStackSize = 0;
     _stateStackIndex = 0;
     _quadBatchIndex = 0;
     _numDrawCalls = 0;
     _quadBatchTop = _quadBatches[0];
     _stateStackTop = _stateStack[0];
+}
+
+- (void)trimQuadBatches
+{
+    int numUsedBatches = _quadBatchIndex + 1;
+    if (_quadBatchSize >= 16 && _quadBatchSize > 2 * numUsedBatches)
+    {
+        int numToRemove = _quadBatchSize - numUsedBatches;
+        [_quadBatches removeObjectsInRange:(NSRange){ _quadBatchSize-numToRemove-1, numToRemove }];
+        _quadBatchSize = (int)_quadBatches.count;
+    }
 }
 
 - (void)batchQuad:(SPQuad *)quad
@@ -329,12 +342,12 @@
 
         if (renderTarget)
         {
-            width = renderTarget.nativeWidth;
+            width  = renderTarget.nativeWidth;
             height = renderTarget.nativeHeight;
         }
         else
         {
-            width = context.backBufferWidth;
+            width  = context.backBufferWidth;
             height = context.backBufferHeight;
         }
 
