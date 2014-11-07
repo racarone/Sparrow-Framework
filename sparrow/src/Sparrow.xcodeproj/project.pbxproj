@@ -616,8 +616,6 @@
 				DED29C0516DFB48E000C2BD7 /* SPEventListener.h */,
 				DED29C0616DFB48E000C2BD7 /* SPEventListener.m */,
 				DEDCD44A0FADFF250022011C /* SPEvent_Internal.h */,
-				DEDCD3AC0FADEE280022011C /* SPTouchProcessor.h */,
-				DEDCD3AD0FADEE280022011C /* SPTouchProcessor.m */,
 				DEDCD3CF0FADF52B0022011C /* SPTouch_Internal.h */,
 			);
 			name = Internal;
@@ -677,6 +675,8 @@
 				DEE4449D0FABA7860085D36D /* SPTouch.m */,
 				DEE444A80FABABBB0085D36D /* SPTouchEvent.h */,
 				DEE444A90FABABBB0085D36D /* SPTouchEvent.m */,
+				DEDCD3AC0FADEE280022011C /* SPTouchProcessor.h */,
+				DEDCD3AD0FADEE280022011C /* SPTouchProcessor.m */,
 			);
 			name = Events;
 			sourceTree = "<group>";

@@ -61,7 +61,9 @@
 #import <Sparrow/SPTextField.h>
 #import <Sparrow/SPTexture.h>
 #import <Sparrow/SPTextureAtlas.h>
+#import <Sparrow/SPTouch.h>
 #import <Sparrow/SPTouchEvent.h>
+#import <Sparrow/SPTouchProcessor.h>
 #import <Sparrow/SPTransitions.h>
 #import <Sparrow/SPTween.h>
 #import <Sparrow/SPUniform.h>
