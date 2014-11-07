@@ -230,12 +230,12 @@ static int globalUniformsSeed = 0;
             // default uniforms
             _uTexture   = [_program uniformByName:@"uTexture"];
             _uMvpMatrix = [_program uniformByName:@"uMvpMatrix"];
-            _uTintColor  = [_program uniformByName:@"uTintColor"];
+            _uTintColor = [_program uniformByName:@"uTintColor"];
 
             // default attributes
-            _aPosition     = [_program attributeByName:@"aPosition"];
-            _aColor        = [_program attributeByName:@"aColor"];
-            _aTexCoords    = [_program attributeByName:@"aTexCoords"];
+            _aPosition  = [_program attributeByName:@"aPosition"];
+            _aColor     = [_program attributeByName:@"aColor"];
+            _aTexCoords = [_program attributeByName:@"aTexCoords"];
         }
     }
 }

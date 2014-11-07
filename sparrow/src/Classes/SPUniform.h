@@ -12,6 +12,8 @@
 #import <Foundation/Foundation.h>
 #import <GLKit/GLKMath.h>
 
+@class SPPoint;
+@class SPMatrix;
 @class SPTexture;
 
 /// An enum to identify the type of a uniform.
@@ -93,6 +95,12 @@ typedef NS_ENUM(int, SPUniformType)
 
 /// The uniform's value as a texture.
 @property (nonatomic, strong) SPTexture *textureValue;
+
+/// The uniform's value as an SPPoint object.
+@property (nonatomic, strong) SPPoint *pointValue;
+
+/// The uniform's value as an SPMatrix object.
+@property (nonatomic, strong) SPMatrix *matrixValue;
 
 @end
 

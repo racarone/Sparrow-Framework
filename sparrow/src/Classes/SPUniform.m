@@ -9,8 +9,9 @@
 //  it under the terms of the Simplified BSD License.
 //
 
+#import "SPMatrix.h"
+#import "SPPoint.h"
 #import "SPProgram.h"
-#import "SPMacros.h"
 #import "SPUniform.h"
 
 typedef union
@@ -270,6 +271,26 @@ typedef union
     }
 
     _value.matrix4Value = value;
+}
+
+- (SPPoint *)pointValue
+{
+    return [SPPoint pointWithGLKVector2:self.vector2Value];
+}
+
+- (void)setPointValue:(SPPoint *)pointValue
+{
+    self.vector2Value = pointValue.convertToGLKVector;
+}
+
+- (SPMatrix *)matrixValue
+{
+    return [SPMatrix matrixWithGLKMatrix4:self.matrix4Value];
+}
+
+- (void)setMatrixValue:(SPMatrix *)matrixValue
+{
+    self.matrix4Value = matrixValue.convertToGLKMatrix4;
 }
 
 @end
