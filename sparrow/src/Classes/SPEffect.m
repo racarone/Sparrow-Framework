@@ -46,8 +46,8 @@ static int globalUniformsSeed = 0;
     BOOL _uniformsDirty;
 }
 
-@synthesize attribPosition = _aPosition;
-@synthesize attribColor = _aColor;
+@synthesize attribPosition  = _aPosition;
+@synthesize attribColor     = _aColor;
 @synthesize attribTexCoords = _aTexCoords;
 
 #pragma mark Initialization

@@ -332,9 +332,9 @@ enum
 
     [SPBlendMode applyBlendFactorsForBlendMode:blendMode premultipliedAlpha:_premultipliedAlpha];
 
-    int attribPosition = _baseEffect.attribPosition;
-    int attribColor    = _baseEffect.attribColor;
-    int attribTexCoord = _baseEffect.attribTexCoords;
+    int attribPosition = currentEffect.attribPosition;
+    int attribColor    = currentEffect.attribColor;
+    int attribTexCoord = currentEffect.attribTexCoords;
 
     glBindVertexArray(_vertexArrayName);
 
