@@ -19,6 +19,7 @@ typedef NS_ENUM(int, SPUniformType)
 {
     SPUniformTypeNone,    /// The uniform does not currently hold any data.
     SPUniformTypeFloat,   /// The uniform holds a float value.
+    SPUniformTypeInt,     /// The uniform holds an integer value.
     SPUniformTypeVector2, /// The uniform holds a vector of 2 float values.
     SPUniformTypeVector3, /// The uniform holds a vector of 3 float values.
     SPUniformTypeVector4, /// The uniform holds a vector of 4 float values.
@@ -65,6 +66,9 @@ typedef NS_ENUM(int, SPUniformType)
 /// A uniform's type is set to SPUniformTypeNone until the first time the uniform’s value is set.
 /// Once the uniform is given an initial value, its type cannot be changed.
 @property (nonatomic, readonly) SPUniformType type;
+
+/// The uniform's value as an integer value.
+@property (nonatomic, assign) int intValue;
 
 /// The uniform's value as a floating point value.
 @property (nonatomic, assign) float floatValue;

@@ -131,6 +131,10 @@ static int globalUniformsSeed = 0;
                 glUniform1f(location, uniform.floatValue);
                 break;
 
+            case SPUniformTypeInt:
+                glUniform1i(location, uniform.intValue);
+                break;
+
             case SPUniformTypeVector2:
                 glUniform2fv(location, 1, uniform.vector2Value.v);
                 break;

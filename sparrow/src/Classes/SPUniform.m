@@ -15,6 +15,7 @@
 
 typedef union
 {
+    int intValue;
     float floatValue;
     GLKVector2 vector2Value;
     GLKVector3 vector3Value;
@@ -115,6 +116,28 @@ typedef union
     }
 
     _value.floatValue = value;
+}
+
+- (int)intValue
+{
+    if (_type == SPUniformTypeNone)
+    {
+        _type = SPUniformTypeFloat;
+        _value.intValue = 0;
+    }
+
+    return _value.intValue;
+}
+
+- (void)setIntValue:(int)value
+{
+    if (_type == SPUniformTypeNone)
+    {
+        _type = SPUniformTypeFloat;
+        _value.intValue = 0;
+    }
+
+    _value.intValue = value;
 }
 
 - (GLKVector2)vector2Value
