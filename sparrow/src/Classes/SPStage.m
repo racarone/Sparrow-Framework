@@ -10,6 +10,7 @@
 //
 
 #import "SparrowClass.h"
+#import "SPContext.h"
 #import "SPEnterFrameEvent.h"
 #import "SPDisplayObject_Internal.h"
 #import "SPDisplayObjectContainer_Internal.h"
@@ -72,6 +73,31 @@
     return [[self transformationMatrix3DToSpace:targetSpace] transformVectorWithX:_width  / 2.0f + _projectionOffset.x
                                                                                 y:_height / 2.0f + _projectionOffset.y
                                                                                 z:-self.focalLength];
+}
+
+- (UIImage *)drawToImage
+{
+    return [self drawToImage:YES];
+}
+
+- (UIImage *)drawToImage:(BOOL)transparent
+{
+    SPRenderSupport *support = [SPRenderSupport new];
+    
+    support.renderTarget = nil;
+    [support setProjectionMatrixWithX:0 y:0 width:_width height:_height
+                           stageWidth:_width stageHeight:_height cameraPos:self.cameraPosition];
+    
+    if (transparent) [support clear];
+    else             [support clearWithColor:_color alpha:1];
+    
+    [self render:support];
+    [support finishQuadBatch];
+    [support release];
+    
+    UIImage *image = [Sparrow.context drawToImage];
+    //[Sparrow.context present]; // required on some platforms to avoid flickering
+    return image;
 }
 
 #pragma mark SPDisplayObject

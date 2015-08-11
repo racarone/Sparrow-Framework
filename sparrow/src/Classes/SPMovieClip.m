@@ -165,9 +165,9 @@
 
 - (void)reverseFrames
 {
-    SP_RELEASE_AND_RETAIN(_textures, [[[_textures reverseObjectEnumerator] allObjects] mutableCopy]);
-    SP_RELEASE_AND_RETAIN(_sounds, [[[_textures reverseObjectEnumerator] allObjects] mutableCopy]);
-    SP_RELEASE_AND_RETAIN(_durations, [[[_textures reverseObjectEnumerator] allObjects] mutableCopy]);
+    SP_RELEASE_AND_RETAIN(_textures, [[[[_textures reverseObjectEnumerator] allObjects] mutableCopy] autorelease]);
+    SP_RELEASE_AND_RETAIN(_sounds, [[[[_textures reverseObjectEnumerator] allObjects] mutableCopy] autorelease]);
+    SP_RELEASE_AND_RETAIN(_durations, [[[[_textures reverseObjectEnumerator] allObjects] mutableCopy] autorelease]);
     
     _currentTime = _totalTime - _currentTime;
     _currentFrame = self.numFrames - _currentFrame - 1;

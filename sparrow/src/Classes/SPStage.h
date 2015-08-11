@@ -15,6 +15,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class SPJuggler;
+@class UIImage;
 
 /** ------------------------------------------------------------------------------------------------
 
@@ -47,6 +48,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// To change the position of the camera, you can modify the properties 'fieldOfView',
 /// 'focalDistance' and 'projectionOffset'.
 - (SPVector3D *)cameraPositionInSpace:(nullable SPDisplayObject *)targetSpace;
+
+
+/// Draws the complete stage into an UIImage object, empty areas will appear transparent.
+- (UIImage *)drawToImage;
+
+/// Draws the complete stage into an UIImage object.
+///
+/// @param transparent  If enabled, empty areas will appear transparent; otherwise, they
+///                     will be filled with the stage color.
+- (UIImage *)drawToImage:(BOOL)transparent;
 
 /// ----------------
 /// @name Properties
